@@ -1,0 +1,3639 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>피닉스 치과 병원</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        /* 배너 스타일 */
+        .top-banner, .bottom-banner {
+            position: fixed;
+            left: 0;
+            right: 0;
+            background: #ffd700;
+            color: #333;
+            padding: 15px 20px;
+            text-align: center;
+            z-index: 1000;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .top-banner {
+            top: 0;
+            animation: pulse 2s infinite;
+        }
+
+        .bottom-banner {
+            bottom: 0;
+        }
+
+        .top-banner:hover, .bottom-banner:hover {
+            background: #ffed4e;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* 메인 컨텐츠 */
+        .container {
+            max-width: 800px;
+            margin: 70px auto 80px;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+
+        .hospital-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .hospital-description {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .hospital-description p {
+            margin: 8px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .info-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .info-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-title::before {
+            content: "📋";
+            margin-right: 10px;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .time-info {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .location-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .address-text p {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .map-container {
+            min-height: 200px;
+        }
+
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .service-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .service-item:hover {
+            border-color: #4facfe;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .service-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .phone {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .address {
+            opacity: 0.9;
+        }
+
+        /* 로그인 버튼 */
+        .admin-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .admin-btn {
+            background: #4facfe;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .admin-btn:hover {
+            background: #3d8bfe;
+            transform: translateY(-2px);
+        }
+
+        .admin-btn.customer {
+            background: #666;
+        }
+
+        .admin-btn.customer:hover {
+            background: #555;
+        }
+
+        /* 팝업 페이지 공통 스타일 */
+        .popup-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .popup-header {
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .popup-content {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 예약 페이지 스타일 */
+        .reservation-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .reservation-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* 캘린더 스타일 */
+        .calendar-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        .calendar-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .calendar-nav button:hover {
+            background: #f8f9fa;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .calendar-day-header:first-child {
+            color: #e74c3c;
+        }
+
+        .calendar-day-header:last-child {
+            color: #3498db;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eee;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .calendar-day:hover:not(.disabled):not(.selected) {
+            background: #f8f9fa;
+        }
+
+        .calendar-day.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .calendar-day.selected {
+            background: #4facfe;
+            color: white;
+            font-weight: bold;
+        }
+
+        .calendar-day.sunday {
+            color: #e74c3c;
+        }
+
+        .calendar-day.saturday {
+            color: #3498db;
+        }
+
+        /* 시간 선택 스타일 */
+        .time-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .time-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .time-header::before {
+            content: "🕐";
+            margin-right: 8px;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .time-slot {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .time-slot:hover:not(.disabled):not(.selected) {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+
+        .time-slot.selected {
+            background: #4facfe;
+            color: white;
+            border-color: #4facfe;
+        }
+
+        .time-slot.disabled {
+            background: #f8f9fa;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 예약자 정보 스타일 */
+        .info-form-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-header::before {
+            content: "👤";
+            margin-right: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #e74c3c;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        /* 예약하기 버튼 */
+        .reservation-submit {
+            width: 100%;
+            padding: 15px;
+            background: #00aa82;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reservation-submit:hover {
+            background: #008866;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 170, 130, 0.3);
+        }
+
+        .reservation-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 예약 확인 팝업 */
+        .confirmation-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirmation-content {
+            background: white;
+            border-radius: 20px;
+            padding: 32px 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .confirmation-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-message {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .confirmation-details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .confirmation-details p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .confirmation-details strong {
+            color: #2c3e50;
+        }
+
+        .confirmation-note {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #fffbeb;
+            border-radius: 8px;
+        }
+
+        .confirmation-button {
+            padding: 15px 40px;
+            background: #00aa82;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .confirmation-button:hover {
+            background: #008866;
+            transform: translateY(-2px);
+        }
+
+        /* 관리자 페이지 스타일 */
+        .admin-header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+        }
+
+        .nav-btn.logout {
+            background: #e74c3c;
+        }
+
+        .nav-btn.logout:hover {
+            background: #c0392b;
+        }
+
+        .admin-content {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .admin-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+
+        /* API 설정 스타일 */
+        .api-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #4facfe;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3d8bfe;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+            white-space: pre-line;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* 파일 업로드 스타일 */
+        .upload-area {
+            border: 2px dashed #4facfe;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #3d8bfe;
+            background: #f0f8ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #28a745;
+            background: #f8fff8;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #4facfe;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .upload-types {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 20px;
+        }
+
+        .file-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .file-details {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .file-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* 통계 카드 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 테이블 스타일 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* 챗봇 스타일 */
+        .chatbot-button {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(79, 172, 254, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            z-index: 1500;
+            transition: all 0.3s;
+            animation: chatbot-pulse 2s infinite;
+        }
+
+        .chatbot-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(79, 172, 254, 0.6);
+        }
+
+        @keyframes chatbot-pulse {
+            0% { box-shadow: 0 4px 20px rgba(79, 172, 254, 0.4); }
+            50% { box-shadow: 0 4px 20px rgba(79, 172, 254, 0.8); }
+            100% { box-shadow: 0 4px 20px rgba(79, 172, 254, 0.4); }
+        }
+
+        .chatbot-popup {
+            position: fixed;
+            bottom: 170px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 1600;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chatbot-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .message.user .message-avatar {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 6px;
+        }
+
+        .message.user .message-content {
+            background: #4facfe;
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .chatbot-input {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chatbot-input input:focus {
+            border-color: #4facfe;
+        }
+
+        .chatbot-send {
+            background: #4facfe;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .chatbot-send:hover {
+            background: #3d8bfe;
+        }
+
+        .quick-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-button {
+            background: #f0f8ff;
+            color: #4facfe;
+            border: 1px solid #4facfe;
+            border-radius: 15px;
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-button:hover {
+            background: #4facfe;
+            color: white;
+        }
+
+        .reservation-link-btn {
+            background: #ffd700;
+            color: #333;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .reservation-link-btn:hover {
+            background: #ffed4e;
+            transform: translateY(-1px);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 60px 10px 70px;
+                padding: 10px;
+            }
+            
+            .hospital-name {
+                font-size: 24px;
+            }
+            
+            .services {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .location-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .admin-btn {
+                width: 200px;
+                margin: 5px 0;
+            }
+
+            .chatbot-popup {
+                bottom: 170px;
+                right: 10px;
+                width: calc(100vw - 20px);
+                max-width: 350px;
+            }
+            
+            .chatbot-button {
+                bottom: 90px;
+                right: 15px;
+            }
+
+            .time-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .confirmation-content {
+                padding: 24px 20px;
+                max-width: 315px;
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 예약 배너 -->
+    <div class="top-banner" onclick="openReservation()">
+        📅 지금 예약하기
+    </div>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <div class="logo">🦷</div>
+            <h1 class="hospital-name">피닉스 치과 병원</h1>
+            <p class="subtitle">건강한 미소, 밝은 내일을 위한 치과</p>
+            <div class="hospital-description">
+                <p>🏆 <strong>25년 경력의 치주질환 전문 홍길동 원장님이 직접 진료합니다</strong></p>
+                <p>✨ 최신 장비와 무균 시설로 안전하고 정확한 치료</p>
+                <p>💝 환자 중심의 맞춤형 치료 계획 수립</p>
+                <p>🎯 통증 없는 치료를 위한 디지털 마취 시스템</p>
+                <p>📞 <strong>24시간 응급상담 가능 (070-1234-1234)</strong></p>
+            </div>
+        </div>
+
+        <!-- 위치 안내 -->
+        <div class="info-section">
+            <h2 class="info-title">찾아오시는 길</h2>
+            <div class="location-info">
+                <div class="address-text">
+                    <p><strong>📍 주소:</strong> 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호</p>
+                    <p><strong>🚇 지하철:</strong> 2호선 강남역 3번 출구 도보 5분</p>
+                    <p><strong>🚌 버스:</strong> 강남역 정류장 하차 후 도보 3분</p>
+                    <p><strong>🚗 주차:</strong> 건물 지하 1~3층 무료 주차 (3시간)</p>
+                </div>
+                <div class="map-container">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3165.4823!2d127.0276!3d37.4979!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDI5JzUyLjQiTiAxMjfCsDA2JzI3LjQiRQ!5e0!3m2!1sko!2skr!4v1234567890"
+                        width="100%" 
+                        height="200" 
+                        style="border:0; border-radius: 10px;" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- 진료 안내 -->
+        <div class="info-section">
+            <h2 class="info-title">진료 안내</h2>
+            <div class="info-item">
+                <strong>평일:</strong> <span class="time-info">09:00 ~ 18:00</span>
+            </div>
+            <div class="info-item">
+                <strong>토요일:</strong> <span class="time-info">09:00 ~ 15:00</span>
+            </div>
+            <div class="info-item">
+                <strong>점심시간:</strong> 12:30 ~ 13:30
+            </div>
+            <div class="info-item">
+                <strong>휴진:</strong> 일요일, 공휴일
+            </div>
+        </div>
+
+        <!-- 진료 과목 -->
+        <div class="info-section">
+            <h2 class="info-title">진료 과목</h2>
+            <p style="color: #666; margin-bottom: 15px; font-size: 14px;">각 항목을 클릭하면 자세한 정보를 확인할 수 있습니다.</p>
+            <div class="services">
+                <div class="service-item" onclick="showServiceDetail('general')">
+                    <div class="service-icon">🦷</div>
+                    <div>일반진료</div>
+                </div>
+                <div class="service-item" onclick="showServiceDetail('whitening')">
+                    <div class="service-icon">✨</div>
+                    <div>미백치료</div>
+                </div>
+                <div class="service-item" onclick="showServiceDetail('orthodontics')">
+                    <div class="service-icon">🔧</div>
+                    <div>교정치료</div>
+                </div>
+                <div class="service-item" onclick="showServiceDetail('implant')">
+                    <div class="service-icon">🦴</div>
+                    <div>임플란트</div>
+                </div>
+                <div class="service-item" onclick="showServiceDetail('prosthetic')">
+                    <div class="service-icon">👑</div>
+                    <div>보철치료</div>
+                </div>
+                <div class="service-item" onclick="showServiceDetail('pediatric')">
+                    <div class="service-icon">🧒</div>
+                    <div>소아치과</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 연락처 -->
+        <div class="contact-info">
+            <div class="phone">📞 070-1234-1234</div>
+            <div class="address">📍 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호</div>
+        </div>
+
+        <!-- 관리자 로그인 버튼 -->
+        <div class="admin-buttons">
+            <button class="admin-btn" onclick="loginChatbotAdmin()">🤖 AI챗봇 관리 로그인</button>
+            <button class="admin-btn customer" onclick="loginCustomerAdmin()">👥 고객 관리 로그인</button>
+        </div>
+    </div>
+
+    <!-- 하단 예약 배너 -->
+    <div class="bottom-banner" onclick="openReservation()">
+        📅 지금 예약하기
+    </div>
+
+    <!-- AI 챗봇 버튼 -->
+    <button class="chatbot-button" onclick="toggleChatbot()">
+        🤖
+    </button>
+
+    <!-- AI 챗봇 팝업 -->
+    <div class="chatbot-popup" id="chatbotPopup">
+        <div class="chatbot-header">
+            <div class="chatbot-title">
+                <span>🤖</span>
+                <span>피닉스 AI 상담사</span>
+            </div>
+            <button class="chatbot-close" onclick="closeChatbot()">✕</button>
+        </div>
+        
+        <div class="chatbot-messages" id="chatbotMessages">
+            <!-- 초기 환영 메시지 -->
+            <div class="message bot">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br>
+                    치과 관련 궁금한 점이 있으시면 언제든 문의해주세요!
+                    <div class="quick-buttons">
+                        <button class="quick-button" onclick="sendQuickMessage('진료시간 알려주세요')">진료시간</button>
+                        <button class="quick-button" onclick="sendQuickMessage('예약하고 싶어요')">예약문의</button>
+                        <button class="quick-button" onclick="sendQuickMessage('치료비용 궁금해요')">치료비용</button>
+                        <button class="quick-button" onclick="sendQuickMessage('위치 알려주세요')">오시는길</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chatbot-input">
+            <textarea id="chatbotInput" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress(event)" style="flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 14px; resize: none; min-height: 45px; max-height: 120px; font-family: inherit;"></textarea>
+            <button class="chatbot-send" onclick="sendMessage()" style="min-width: 80px; border-radius: 25px; font-size: 14px;">
+                채팅 입력
+            </button>
+        </div>
+    </div>
+
+    <!-- 예약 페이지 -->
+    <div class="popup-page" id="reservationPage">
+        <div class="popup-header">
+            <h2>📅 예약 정보를 입력하세요</h2>
+            <button class="close-btn" onclick="closeReservation()">✕</button>
+        </div>
+        <div class="popup-content">
+            <div class="reservation-container">
+                <!-- 캘린더 섹션 -->
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <button class="calendar-nav" onclick="previousMonth()">◀</button>
+                        <div class="calendar-title" id="calendarTitle">2025년 7월</div>
+                        <button class="calendar-nav" onclick="nextMonth()">▶</button>
+                    </div>
+                    <div class="calendar-grid">
+                        <!-- 요일 헤더 -->
+                        <div class="calendar-day-header">일</div>
+                        <div class="calendar-day-header">월</div>
+                        <div class="calendar-day-header">화</div>
+                        <div class="calendar-day-header">수</div>
+                        <div class="calendar-day-header">목</div>
+                        <div class="calendar-day-header">금</div>
+                        <div class="calendar-day-header">토</div>
+                        <!-- 날짜들은 JavaScript로 생성 -->
+                    </div>
+                </div>
+
+                <!-- 시간 선택 섹션 -->
+                <div class="time-section" id="timeSection">
+                    <div class="time-header">시간을 선택하세요</div>
+                    <div class="time-grid">
+                        <div class="time-slot" onclick="selectTime(this, '09:00')">09:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '09:30')">09:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '10:00')">10:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '10:30')">10:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '11:00')">11:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '11:30')">11:30</div>
+                        <div class="time-slot disabled">12:00</div>
+                        <div class="time-slot disabled">12:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '13:30')">13:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '14:00')">14:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '14:30')">14:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '15:00')">15:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '15:30')">15:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '16:00')">16:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '16:30')">16:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '17:00')">17:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '17:30')">17:30</div>
+                    </div>
+                </div>
+
+                <!-- 예약자 정보 입력 -->
+                <div class="info-form-section" id="infoFormSection">
+                    <div class="form-header">예약자 정보를 입력하세요</div>
+                    <form id="reservationForm" onsubmit="event.preventDefault(); submitReservation();">
+                        <div class="form-group">
+                            <label class="form-label">이름 <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="userName" placeholder="이름을 입력하세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">생년월일 <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="birthDate" placeholder="예: 850101" maxlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">전화번호 <span class="required">*</span></label>
+                            <input type="tel" class="form-input" id="phoneNumber" placeholder="예: 010-1234-5678" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">상담 내용</label>
+                            <textarea class="form-input" id="consultContent" placeholder="상담 내용을 입력해주세요" rows="3" style="resize:vertical;"></textarea>
+                        </div>
+                        <button class="reservation-submit" type="submit">예약하기</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 예약 확인 팝업 -->
+    <div class="confirmation-popup" id="confirmationPopup">
+        <div class="confirmation-content">
+            <div class="confirmation-icon">✅</div>
+            <div class="confirmation-title">예약이 완료되었습니다!</div>
+            <div class="confirmation-message">
+                고객님의 예약이 성공적으로 접수되었습니다.<br>
+                아래 예약 정보를 확인해주세요.
+            </div>
+            <div class="confirmation-details" id="confirmationDetails">
+                <!-- 예약 상세 정보가 여기에 표시됩니다 -->
+            </div>
+            <div class="confirmation-note">
+                피닉스치과 연락처 070-1234-1234<br>
+                방문전까지 확인 및 연락을 취하겠습니다!<br>
+                그 밖의 궁금한 점이 있으시면 챗봇을 이용해주세요!
+            </div>
+            <button class="confirmation-button" onclick="closeConfirmation()">확인</button>
+        </div>
+    </div>
+
+    <!-- 서비스 상세 페이지 -->
+    <div class="popup-page" id="serviceDetailPage">
+        <div class="popup-header">
+            <h2 id="serviceDetailTitle">진료 과목 상세</h2>
+            <button class="close-btn" onclick="closeServiceDetail()">✕</button>
+        </div>
+        <div class="popup-content" id="serviceDetailContent">
+            <!-- 서비스 상세 내용이 여기에 표시됩니다 -->
+        </div>
+    </div>
+
+    <!-- AI 챗봇 관리 페이지 -->
+    <div class="popup-page" id="chatbotAdminPage">
+        <div class="admin-header">
+            <div class="admin-title">🤖 AI 챗봇 관리 시스템</div>
+            <div class="admin-nav">
+                <button class="nav-btn" onclick="closeChatbotAdmin()">🏠 메인으로</button>
+                <button class="nav-btn logout" onclick="closeChatbotAdmin()">로그아웃</button>
+            </div>
+        </div>
+        
+        <div class="admin-content">
+            <!-- AI 모델 API 설정 -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3>🤖 챗봇 AI 모델 연결하기</h3>
+                </div>
+                
+                <div class="api-form">
+                    <!-- ChatGPT 설정 -->
+                    <div class="form-group">
+                        <label for="chatgptApiKey">ChatGPT API Key</label>
+                        <input type="password" id="chatgptApiKey" placeholder="sk-proj-...">
+                    </div>
+                    <div class="form-group">
+                        <label for="chatgptModel">ChatGPT 모델선택</label>
+                        <select id="chatgptModel" onchange="toggleFinetuningInput('chatgpt')">
+                            <option value="">-- ChatGPT 모델을 선택하세요 --</option>
+                            <option value="gpt-4o">GPT-4o (최신 멀티모달)</option>
+                            <option value="gpt-4o-mini">GPT-4o Mini (경제적)</option>
+                            <option value="finetuning">Finetuning Model (커스텀 모델)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="chatgptFinetuningGroup" style="display: none;">
+                        <label for="chatgptFinetuningModel">Finetuning 모델명 입력</label>
+                        <input type="text" id="chatgptFinetuningModel" placeholder="ft:gpt-4o-mini-2024-07-18:...">
+                    </div>
+
+                    <!-- Gemini 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="geminiApiKey">Gemini 모델 API Key</label>
+                        <input type="password" id="geminiApiKey" placeholder="AIza...">
+                    </div>
+                    <div class="form-group">
+                        <label for="geminiModel">Gemini 모델선택</label>
+                        <select id="geminiModel">
+                            <option value="">-- Gemini 모델을 선택하세요 --</option>
+                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠른 응답)</option>
+                            <option value="gemini-1.5-pro">Gemini 1.5 Pro (고성능)</option>
+                            <option value="gemini-1.0-pro">Gemini 1.0 Pro (안정성)</option>
+                        </select>
+                    </div>
+
+                    <!-- Claude 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="claudeApiKey">Claude 모델 API Key</label>
+                        <input type="password" id="claudeApiKey" placeholder="sk-ant-...">
+                    </div>
+                    <div class="form-group">
+                        <label for="claudeModel">Claude 모델선택</label>
+                        <select id="claudeModel">
+                            <option value="">-- Claude 모델을 선택하세요 --</option>
+                            <option value="claude-3-haiku">Claude 3 Haiku (빠르고 효율적)</option>
+                            <option value="claude-3-sonnet">Claude 3 Sonnet (균형적 성능)</option>
+                            <option value="claude-3-opus">Claude 3 Opus (최고 성능)</option>
+                            <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (최신 모델)</option>
+                        </select>
+                    </div>
+
+                    <div class="btn-group" style="margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="saveApiSettings()">💾 설정 저장</button>
+                        <button class="btn btn-success" onclick="testApiConnection()">🔗 연결 테스트</button>
+                        <button class="btn btn-danger" onclick="resetApiSettings()">🔄 설정 초기화</button>
+                    </div>
+                    <div id="apiStatus" class="status-message"></div>
+                </div>
+            </div>
+
+            <!-- AI 지식 파일 업로드 -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3>📚 AI 지식 파일 업로드</h3>
+                </div>
+                
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()" ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">클릭하거나 파일을 여기로 드래그하세요</div>
+                    <div class="upload-types">💡 <strong>지원 형식: 텍스트 파일(.txt)</strong><br>
+                    <small style="color: #666;">※ PDF, Excel 파일은 내용을 복사해서 텍스트 파일로 저장 후 업로드해주세요</small></div>
+                </div>
+                <input type="file" id="fileInput" class="file-input" accept=".txt" multiple onchange="handleFileUpload(event)">
+                
+                <div class="file-list" id="fileList">
+                    <!-- 업로드된 파일들이 여기에 표시됩니다 -->
+                </div>
+                
+                <div id="knowledgeStatus" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; font-size: 14px;">
+                    📖 업로드된 지식 파일: 0개 | 상태: 비활성
+                </div>
+                
+                <!-- 지식 파일 설정 저장 버튼 -->
+                <div class="btn-group" style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="saveKnowledgeSettings()">💾 지식 파일 설정 저장</button>
+                    <button class="btn btn-primary" onclick="testKnowledgeBase()">🔍 지식 검색 테스트</button>
+                    <button class="btn" style="background: #17a2b8; color: white;" onclick="showParsedData()">📋 파싱된 Q&A 보기</button>
+                    <button class="btn btn-danger" onclick="clearAllKnowledge()">🗑️ 모든 지식 삭제</button>
+                </div>
+                <div id="knowledgeSettingsStatus" class="status-message"></div>
+                
+                <!-- 파싱된 Q&A 표시 영역 -->
+                <div id="parsedDataView" style="display: none; margin-top: 20px; background: white; border-radius: 10px; padding: 20px; max-height: 400px; overflow-y: auto; border: 1px solid #ddd;">
+                    <h4 style="margin-bottom: 15px; color: #2c3e50;">📋 파싱된 Q&A 데이터</h4>
+                    <div id="parsedDataContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 고객 관리 페이지 -->
+    <div class="popup-page" id="customerAdminPage">
+        <div class="admin-header">
+            <div class="admin-title">👥 피닉스치과 고객 관리 시스템</div>
+            <div class="admin-nav">
+                <button class="nav-btn" onclick="closeCustomerAdmin()">🏠 메인으로</button>
+                <button class="nav-btn logout" onclick="closeCustomerAdmin()">로그아웃</button>
+            </div>
+        </div>
+        
+        <div class="admin-content">
+            <!-- 통계 카드 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalReservations">0</div>
+                    <div class="stat-label">총 예약 수</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="todayReservations">0</div>
+                    <div class="stat-label">오늘 예약</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="thisWeekReservations">0</div>
+                    <div class="stat-label">이번주 예약</div>
+                </div>
+            </div>
+
+            <!-- 예약 명단 -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3>📋 예약 명단</h3>
+                    <button class="btn btn-success" onclick="downloadExcel()">
+                        📥 엑셀 다운로드
+                    </button>
+                </div>
+                
+                <table class="data-table" id="reservationTable">
+                    <thead>
+                        <tr>
+                            <th>순번</th>
+                            <th>예약자명</th>
+                            <th>생년월일</th>
+                            <th>전화번호</th>
+                            <th>예약날짜</th>
+                            <th>예약시간</th>
+                            <th>상담내용</th>
+                            <th>예약일시</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservationTableBody">
+                        <!-- 예약 데이터가 여기에 동적으로 추가됩니다 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 바로가기 링크 안내 -->
+    <div style="background: #f0f8ff; padding: 12px 0; text-align: center; font-size: 15px;">
+        <strong>바로가기 링크:</strong>
+        <a href="#reservation" style="margin: 0 10px; color: #007bff; text-decoration: underline;">예약하기 바로가기</a>
+        |
+        <a href="#chatbot" style="margin: 0 10px; color: #007bff; text-decoration: underline;">AI챗봇 바로가기</a>
+    </div>
+
+    <script>
+        console.log('페이지 로드 시작');
+
+        // 전역 변수
+        let chatbotOpen = false;
+        let currentYear = 2025;
+        let currentMonth = 6; // 7월 (0부터 시작)
+        let selectedDate = null;
+        let selectedTime = null;
+        let reservations = [];
+        
+        // API 설정 관련 변수들
+        let apiSettings = {
+            chatgpt: {
+                apiKey: '',
+                model: '',
+                enabled: false
+            },
+            gemini: {
+                apiKey: '',
+                model: '',
+                enabled: false
+            },
+            claude: {
+                apiKey: '',
+                model: '',
+                enabled: false
+            },
+            activeProvider: ''
+        };
+        let knowledgeBase = {
+            files: [],
+            content: '',
+            parsedData: [],
+            enabled: false
+        };
+
+        // 로그인 함수들
+        function loginChatbotAdmin() {
+            console.log('AI 챗봇 관리 로그인 클릭됨');
+            const username = prompt("AI 챗봇 관리자 아이디를 입력하세요:");
+            if (username === "phoenix") {
+                const password = prompt("비밀번호를 입력하세요:");
+                if (password === "phoenix") {
+                    openChatbotAdmin();
+                } else {
+                    alert("비밀번호가 틀렸습니다.");
+                }
+            } else if (username !== null) {
+                alert("아이디가 틀렸습니다.");
+            }
+        }
+
+        function loginCustomerAdmin() {
+            console.log('고객 관리 로그인 클릭됨');
+            const username = prompt("고객 관리자 아이디를 입력하세요:");
+            if (username === "phoenix") {
+                const password = prompt("비밀번호를 입력하세요:");
+                if (password === "phoenix") {
+                    openCustomerAdmin();
+                    updateReservationStats();
+                    displayReservations();
+                } else {
+                    alert("비밀번호가 틀렸습니다.");
+                }
+            } else if (username !== null) {
+                alert("아이디가 틀렸습니다.");
+            }
+        }
+
+        // 관리자 페이지 열기/닫기
+        function openChatbotAdmin() {
+            console.log('AI 챗봇 관리 페이지 열기');
+            document.getElementById('chatbotAdminPage').style.display = 'block';
+        }
+
+        function closeChatbotAdmin() {
+            console.log('AI 챗봇 관리 페이지 닫기');
+            document.getElementById('chatbotAdminPage').style.display = 'none';
+        }
+
+        function openCustomerAdmin() {
+            console.log('고객 관리 페이지 열기');
+            document.getElementById('customerAdminPage').style.display = 'block';
+        }
+
+        function closeCustomerAdmin() {
+            console.log('고객 관리 페이지 닫기');
+            document.getElementById('customerAdminPage').style.display = 'none';
+        }
+
+        // 예약 페이지
+        function openReservation() {
+            console.log('예약 페이지 열기');
+            document.getElementById('reservationPage').style.display = 'block';
+            renderCalendar();
+        }
+
+        function closeReservation() {
+            console.log('예약 페이지 닫기');
+            document.getElementById('reservationPage').style.display = 'none';
+            resetReservationForm();
+        }
+
+        // 예약 폼 초기화
+        function resetReservationForm() {
+            selectedDate = null;
+            selectedTime = null;
+            document.getElementById('userName').value = '';
+            document.getElementById('birthDate').value = '';
+            document.getElementById('phoneNumber').value = '';
+            document.getElementById('consultContent').value = '';
+            document.querySelectorAll('.calendar-day.selected').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.time-slot.selected').forEach(el => el.classList.remove('selected'));
+        }
+
+        // 캘린더 렌더링
+        function renderCalendar() {
+            const calendarGrid = document.querySelector('.calendar-grid');
+            const calendarTitle = document.getElementById('calendarTitle');
+            
+            // 요일 헤더 유지하고 날짜만 제거
+            const dayHeaders = calendarGrid.querySelectorAll('.calendar-day-header');
+            calendarGrid.innerHTML = '';
+            dayHeaders.forEach(header => calendarGrid.appendChild(header));
+            
+            // 현재 날짜
+            const today = new Date();
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const firstDayOfWeek = firstDay.getDay();
+            
+            // 캘린더 제목 업데이트
+            calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월`;
+            
+            // 빈 칸 채우기
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'calendar-day disabled';
+                calendarGrid.appendChild(emptyDiv);
+            }
+            
+            // 날짜 채우기
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                dayDiv.textContent = day;
+                
+                const date = new Date(currentYear, currentMonth, day);
+                const dayOfWeek = date.getDay();
+                
+                // 요일에 따른 색상
+                if (dayOfWeek === 0) dayDiv.classList.add('sunday');
+                if (dayOfWeek === 6) dayDiv.classList.add('saturday');
+                
+                // 과거 날짜, 일요일 비활성화
+                if (date < today || dayOfWeek === 0) {
+                    dayDiv.classList.add('disabled');
+                } else {
+                    dayDiv.onclick = () => selectDate(day);
+                }
+                
+                calendarGrid.appendChild(dayDiv);
+            }
+        }
+
+        // 날짜 선택
+        function selectDate(day) {
+            // 이전 선택 제거
+            document.querySelectorAll('.calendar-day.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // 새로운 선택
+            event.target.classList.add('selected');
+            selectedDate = new Date(currentYear, currentMonth, day);
+            
+            // 시간 선택 섹션 표시
+            document.getElementById('timeSection').style.display = 'block';
+            document.querySelector('.popup-header h2').textContent = '🕐 시간을 선택하세요';
+            
+            // 토요일인 경우 오후 시간 비활성화
+            updateTimeSlots();
+        }
+
+        // 시간대 업데이트
+        function updateTimeSlots() {
+            const timeSlots = document.querySelectorAll('.time-slot');
+            const isSaturday = selectedDate.getDay() === 6;
+            
+            timeSlots.forEach(slot => {
+                const time = slot.textContent;
+                const hour = parseInt(time.split(':')[0]);
+                
+                // 토요일 15시 이후 비활성화
+                if (isSaturday && hour >= 15) {
+                    slot.classList.add('disabled');
+                    slot.onclick = null;
+                } else if (!time.includes('12:')) { // 점심시간이 아닌 경우
+                    slot.classList.remove('disabled');
+                    slot.onclick = function() { selectTime(this, time); };
+                }
+            });
+        }
+
+        // 시간 선택
+        function selectTime(element, time) {
+            document.querySelectorAll('.time-slot.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedTime = time;
+        }
+
+        // 이전/다음 달
+        function previousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        }
+
+        // 예약 제출
+        function submitReservation() {
+            const userName = document.getElementById('userName').value.trim();
+            const birthDate = document.getElementById('birthDate').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const consultContent = document.getElementById('consultContent').value.trim();
+            if (!userName || !birthDate || !phoneNumber) {
+                alert('모든 정보를 입력해주세요.');
+                return;
+            }
+            if (birthDate.length !== 6 || isNaN(birthDate)) {
+                alert('생년월일은 6자리 숫자로 입력해주세요. (예: 850101)');
+                return;
+            }
+            const phoneRegex = /^010-\d{4}-\d{4}$/;
+            if (!phoneRegex.test(phoneNumber)) {
+                alert('전화번호는 010-0000-0000 형식으로 입력해주세요.');
+                return;
+            }
+            const reservation = {
+                id: reservations.length + 1,
+                name: userName,
+                birthDate: birthDate,
+                phone: phoneNumber,
+                date: selectedDate,
+                time: selectedTime,
+                consult: consultContent,
+                createdAt: new Date()
+            };
+            reservations.push(reservation);
+            showConfirmation(reservation);
+        }
+
+        // 예약 확인 팝업 표시
+        function showConfirmation(reservation) {
+            const details = document.getElementById('confirmationDetails');
+            const dateStr = `${reservation.date.getFullYear()}. ${reservation.date.getMonth() + 1}. ${reservation.date.getDate()}.`;
+            details.innerHTML = `
+                <p><strong>예약자:</strong> ${reservation.name}</p>
+                <p><strong>생년월일:</strong> ${reservation.birthDate}</p>
+                <p><strong>전화번호:</strong> ${reservation.phone}</p>
+                <p><strong>예약 날짜:</strong> ${dateStr}</p>
+                <p><strong>예약 시간:</strong> ${reservation.time}</p>
+                <p><strong>상담 내용:</strong> ${reservation.consult ? reservation.consult.replace(/\n/g, '<br>') : ''}</p>
+            `;
+            document.querySelector('.confirmation-title').textContent = '고객님의 예약이 성공적으로 접수되었습니다.';
+            document.querySelector('.confirmation-message').innerHTML = '아래 예약 정보를 확인해주세요.<br><br>';
+            document.querySelector('.confirmation-note').innerHTML = `피닉스치과 연락처 070-1234-1234<br>방문 하시기 전 이라도 언제든 연락주세요 <br>주말이나 평일 업무시간 이후에는 AI챗봇을 이용해주세요!`;
+            document.getElementById('confirmationPopup').style.display = 'flex';
+            closeReservation();
+        }
+
+        // 예약 확인 팝업 닫기
+        function closeConfirmation() {
+            document.getElementById('confirmationPopup').style.display = 'none';
+            updateReservationStats();
+        }
+
+        // 예약 통계 업데이트
+        function updateReservationStats() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const thisWeekStart = new Date(today);
+            thisWeekStart.setDate(today.getDate() - today.getDay());
+            
+            const todayReservations = reservations.filter(r => {
+                const rDate = new Date(r.date);
+                rDate.setHours(0, 0, 0, 0);
+                return rDate.getTime() === today.getTime();
+            });
+            
+            const thisWeekReservations = reservations.filter(r => {
+                const rDate = new Date(r.date);
+                return rDate >= thisWeekStart;
+            });
+            
+            document.getElementById('totalReservations').textContent = reservations.length;
+            document.getElementById('todayReservations').textContent = todayReservations.length;
+            document.getElementById('thisWeekReservations').textContent = thisWeekReservations.length;
+        }
+
+        // 예약 목록 표시
+        function displayReservations() {
+            const tbody = document.getElementById('reservationTableBody');
+            tbody.innerHTML = '';
+            
+            reservations.forEach(reservation => {
+                const row = document.createElement('tr');
+                const dateStr = `${reservation.date.getFullYear()}-${String(reservation.date.getMonth() + 1).padStart(2, '0')}-${String(reservation.date.getDate()).padStart(2, '0')}`;
+                const createdStr = `${reservation.createdAt.getFullYear()}-${String(reservation.createdAt.getMonth() + 1).padStart(2, '0')}-${String(reservation.createdAt.getDate()).padStart(2, '0')} ${String(reservation.createdAt.getHours()).padStart(2, '0')}:${String(reservation.createdAt.getMinutes()).padStart(2, '0')}`;
+                
+                row.innerHTML = `
+                    <td>${reservation.id}</td>
+                    <td>${reservation.name}</td>
+                    <td>${reservation.birthDate}</td>
+                    <td>${reservation.phone}</td>
+                    <td>${dateStr}</td>
+                    <td>${reservation.time}</td>
+                    <td>${reservation.consult ? reservation.consult.replace(/\n/g, '<br>') : ''}</td>
+                    <td>${createdStr}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // 서비스 상세 페이지
+        function showServiceDetail(serviceType) {
+            console.log('서비스 상세 페이지 열기:', serviceType);
+            
+            const services = {
+                general: {
+                    title: '🦷 일반진료',
+                    content: `
+                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                            <h3 style="color: #2c3e50; margin-bottom: 15px;">🔍 정밀 검진 및 진단</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 3D 디지털 파노라마 촬영으로 정확한 진단</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 구강 내 카메라를 이용한 상세 검사</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 치아 우식증(충치) 조기 발견 및 치료</li>
+                                <li style="padding: 8px 0;">✓ 잇몸병(치주염) 예방 및 치료</li>
+                            </ul>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; text-align: center;">
+                            <h4 style="margin-bottom: 15px;">💰 진료비 안내</h4>
+                            <p>초진료: 15,000원 | 재진료: 10,000원</p>
+                            <p>스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="closeServiceDetail()" style="width: 100%; margin-top: 20px; padding: 15px;">🏠 메인으로 돌아가기</button>
+                    `
+                },
+                whitening: {
+                    title: '✨ 미백치료',
+                    content: `
+                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                            <h3 style="color: #2c3e50; margin-bottom: 15px;">💎 전문가 미백 시술</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 1회 시술로 3-8단계 밝아지는 효과</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 안전한 과산화수소 젤 사용</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ LED 광선을 이용한 빠른 미백</li>
+                                <li style="padding: 8px 0;">✓ 시술 후 즉시 효과 확인 가능</li>
+                            </ul>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; text-align: center;">
+                            <h4 style="margin-bottom: 15px;">💰 미백 치료비</h4>
+                            <p>전문가 미백: 300,000원</p>
+                            <p>홈케어 미백: 200,000원</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="closeServiceDetail()" style="width: 100%; margin-top: 20px; padding: 15px;">🏠 메인으로 돌아가기</button>
+                    `
+                },
+                orthodontics: {
+                    title: '🔧 교정치료',
+                    content: `
+                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                            <h3 style="color: #2c3e50; margin-bottom: 15px;">📏 정밀 교정 진단</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 3D 구강 스캔을 통한 정확한 분석</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 개인별 맞춤 교정 계획 수립</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 치료 전후 예상 모습 시뮬레이션</li>
+                                <li style="padding: 8px 0;">✓ 부분교정부터 전체교정까지</li>
+                            </ul>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; text-align: center;">
+                            <h4 style="margin-bottom: 15px;">💰 교정 치료비</h4>
+                            <p>부분교정: 1,500,000원</p>
+                            <p>전체교정: 3,500,000원 ~ 6,000,000원</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="closeServiceDetail()" style="width: 100%; margin-top: 20px; padding: 15px;">🏠 메인으로 돌아가기</button>
+                    `
+                },
+                implant: {
+                    title: '🦴 임플란트',
+                    content: `
+                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                            <h3 style="color: #2c3e50; margin-bottom: 15px;">🏥 첨단 임플란트 시술</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 3D CT 촬영으로 정밀한 식립 위치 결정</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 디지털 가이드를 이용한 안전한 수술</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 프리미엄 임플란트 피스처 사용</li>
+                                <li style="padding: 8px 0;">✓ 무절개 수술로 빠른 회복</li>
+                            </ul>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; text-align: center;">
+                            <h4 style="margin-bottom: 15px;">💰 임플란트 비용</h4>
+                            <p>일반 임플란트: 1,200,000원</p>
+                            <p>프리미엄 임플란트: 1,500,000원</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="closeServiceDetail()" style="width: 100%; margin-top: 20px; padding: 15px;">🏠 메인으로 돌아가기</button>
+                    `
+                },
+                prosthetic: {
+                    title: '👑 보철치료',
+                    content: `
+                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                            <h3 style="color: #2c3e50; margin-bottom: 15px;">👑 정밀 보철 제작</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 지르코니아 크라운으로 자연스러운 색상</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ CAD/CAM 시스템으로 정밀 제작</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 개인별 치아 색상 매칭</li>
+                                <li style="padding: 8px 0;">✓ 오래 사용할 수 있는 내구성</li>
+                            </ul>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; text-align: center;">
+                            <h4 style="margin-bottom: 15px;">💰 보철 치료비</h4>
+                            <p>지르코니아 크라운: 800,000원</p>
+                            <p>브릿지(3본): 2,400,000원</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="closeServiceDetail()" style="width: 100%; margin-top: 20px; padding: 15px;">🏠 메인으로 돌아가기</button>
+                    `
+                },
+                pediatric: {
+                    title: '🧒 소아치과',
+                    content: `
+                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                            <h3 style="color: #2c3e50; margin-bottom: 15px;">👶 어린이 전용 진료</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 어린이 친화적인 진료 환경</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 놀이를 통한 치료 공포감 해소</li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">✓ 무해한 마취제 사용</li>
+                                <li style="padding: 8px 0;">✓ 부모님과 함께 진료 가능</li>
+                            </ul>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; text-align: center;">
+                            <h4 style="margin-bottom: 15px;">💰 소아 치료비</h4>
+                            <p>어린이 검진: 10,000원</p>
+                            <p>실란트(1개): 30,000원</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="closeServiceDetail()" style="width: 100%; margin-top: 20px; padding: 15px;">🏠 메인으로 돌아가기</button>
+                    `
+                }
+            };
+            
+            if (services[serviceType]) {
+                document.getElementById('serviceDetailTitle').textContent = services[serviceType].title;
+                document.getElementById('serviceDetailContent').innerHTML = services[serviceType].content;
+                document.getElementById('serviceDetailPage').style.display = 'block';
+            }
+        }
+
+        function closeServiceDetail() {
+            console.log('서비스 상세 페이지 닫기');
+            document.getElementById('serviceDetailPage').style.display = 'none';
+        }
+
+        // 챗봇 함수들
+        function toggleChatbot() {
+            console.log('챗봇 토글');
+            const popup = document.getElementById('chatbotPopup');
+            if (chatbotOpen) {
+                closeChatbot();
+            } else {
+                popup.style.display = 'flex';
+                chatbotOpen = true;
+                document.getElementById('chatbotInput').focus();
+                updateChatbotWelcomeMessage();
+            }
+        }
+
+        function updateChatbotWelcomeMessage() {
+            const messagesContainer = document.getElementById('chatbotMessages');
+            const firstMessage = messagesContainer.querySelector('.message.bot');
+            
+            if (firstMessage) {
+                const messageContent = firstMessage.querySelector('.message-content');
+                let welcomeText = `안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br>
+                치과 관련 궁금한 점이 있으시면 언제든 문의해주세요!`;
+                
+                const hasAPI = apiSettings.chatgpt.enabled || apiSettings.gemini.enabled || apiSettings.claude.enabled;
+                
+                if (hasAPI) {
+                    welcomeText += `<br><br>🤖 <strong>AI 모델 연결됨!</strong> 더욱 정확한 답변을 제공할 수 있습니다.`;
+                    
+                    if (apiSettings.activeProvider) {
+                        const providerName = apiSettings.activeProvider.toUpperCase();
+                        welcomeText += `<br>현재 활성 모델: ${providerName}`;
+                    }
+                }
+                
+                if (knowledgeBase.enabled) {
+                    welcomeText += `<br>📚 업로드된 지식 파일 ${knowledgeBase.files.length}개가 활성화되어 있습니다.`;
+                }
+                
+                welcomeText += `<div class="quick-buttons">
+                    <button class="quick-button" onclick="sendQuickMessage('진료시간 알려주세요')">진료시간</button>
+                    <button class="quick-button" onclick="sendQuickMessage('예약하고 싶어요')">예약문의</button>
+                    <button class="quick-button" onclick="sendQuickMessage('치료비용 궁금해요')">치료비용</button>
+                    <button class="quick-button" onclick="sendQuickMessage('위치 알려주세요')">오시는길</button>
+                </div>`;
+                
+                messageContent.innerHTML = welcomeText;
+            }
+        }
+
+        function closeChatbot() {
+            console.log('챗봇 닫기');
+            document.getElementById('chatbotPopup').style.display = 'none';
+            chatbotOpen = false;
+        }
+
+        function sendMessage() {
+            console.log('메시지 전송');
+            const input = document.getElementById('chatbotInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addUserMessage(message);
+                input.value = '';
+                input.style.height = '45px';
+                
+                const loadingMessage = addBotMessage('🤔 생각하고 있습니다...');
+                
+                generateAIResponse(message).then(response => {
+                    loadingMessage.remove();
+                    addBotMessage(response);
+                }).catch(error => {
+                    console.error('AI 응답 오류:', error);
+                    loadingMessage.remove();
+                    addBotMessage('❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                });
+            }
+        }
+
+        function sendQuickMessage(message) {
+            console.log('빠른 메시지:', message);
+            addUserMessage(message);
+            
+            const loadingMessage = addBotMessage('🤔 생각하고 있습니다...');
+            
+            generateAIResponse(message).then(response => {
+                loadingMessage.remove();
+                addBotMessage(response);
+            }).catch(error => {
+                console.error('AI 응답 오류:', error);
+                loadingMessage.remove();
+                addBotMessage('❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            });
+        }
+
+        function handleChatKeyPress(event) {
+            const textarea = event.target;
+            
+            if (event.key === 'Enter' && event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+                return;
+            }
+            
+            if (event.key === 'Enter') {
+                setTimeout(() => {
+                    autoResizeTextarea(textarea);
+                }, 0);
+            }
+        }
+
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = '45px';
+            const scrollHeight = textarea.scrollHeight;
+            const maxHeight = 120;
+            
+            if (scrollHeight > 45) {
+                textarea.style.height = Math.min(scrollHeight, maxHeight) + 'px';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatInput = document.getElementById('chatbotInput');
+            if (chatInput) {
+                chatInput.addEventListener('input', function() {
+                    autoResizeTextarea(this);
+                });
+            }
+        });
+
+        function addUserMessage(message) {
+            const messagesContainer = document.getElementById('chatbotMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">👤</div>
+                <div class="message-content">${message}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function addBotMessage(message) {
+            const messagesContainer = document.getElementById('chatbotMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">${message}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            scrollToBottom();
+            return messageDiv;
+        }
+
+        function scrollToBottom() {
+            const messagesContainer = document.getElementById('chatbotMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateAIResponse(userMessage) {
+            console.log('AI 응답 생성 시작:', userMessage);
+            
+            const knowledgeAnswer = searchInKnowledgeBase(userMessage);
+            if (knowledgeAnswer) {
+                console.log('지식베이스에서 답변 발견');
+                return Promise.resolve(knowledgeAnswer);
+            }
+            
+            if (apiSettings.activeProvider && apiSettings[apiSettings.activeProvider].enabled) {
+                console.log('API 호출로 답변 생성:', apiSettings.activeProvider);
+                return callAIAPIWithContext(userMessage);
+            }
+            
+            console.log('기본 FAQ 응답 사용');
+            return Promise.resolve(getDefaultResponse(userMessage));
+        }
+
+        async function callAIAPIWithContext(userMessage) {
+            const provider = apiSettings.activeProvider;
+            const settings = apiSettings[provider];
+            
+            try {
+                let response;
+                let contextInfo = getContextFromKnowledgeBase();
+                
+                switch (provider) {
+                    case 'chatgpt':
+                        response = await callChatGPTAPIWithContext(userMessage, settings, contextInfo);
+                        break;
+                    case 'gemini':
+                        response = await callGeminiAPIWithContext(userMessage, settings, contextInfo);
+                        break;
+                    case 'claude':
+                        response = await callClaudeAPIWithContext(userMessage, settings, contextInfo);
+                        break;
+                    default:
+                        return getDefaultResponse(userMessage);
+                }
+                
+                return formatFriendlyResponse(response, provider);
+                
+            } catch (error) {
+                console.error('AI API 호출 오류:', error);
+                return `❌ <strong>일시적인 오류가 발생했습니다</strong><br><br>
+                죄송합니다. AI 서비스 연결에 문제가 있어 잠시 기본 안내로 도움드리겠습니다.<br><br>
+                ${getDefaultResponse(userMessage)}<br><br>
+                <small>💡 오류 내용: ${error.message}</small>`;
+            }
+        }
+
+        function getContextFromKnowledgeBase() {
+            if (!knowledgeBase.enabled || knowledgeBase.parsedData.length === 0) {
+                return '';
+            }
+            
+            let context = '\n\n=== 병원 전문 지식 정보 ===\n';
+            knowledgeBase.parsedData.forEach((qa, index) => {
+                context += `${index + 1}. Q: ${qa.question}\n   A: ${qa.answer}\n`;
+            });
+            
+            return context;
+        }
+
+        function formatFriendlyResponse(response, provider) {
+            let formattedResponse = response.trim();
+            
+            formattedResponse = formattedResponse
+                .replace(/\n\n/g, '<br><br>')
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            const providerIcon = {
+                'chatgpt': '🧠',
+                'gemini': '💎', 
+                'claude': '🤖'
+            };
+            
+            const providerName = {
+                'chatgpt': 'ChatGPT',
+                'gemini': 'Gemini',
+                'claude': 'Claude'
+            };
+            
+            return `${providerIcon[provider]} <strong>피닉스 치과 AI 상담사 (${providerName[provider]})</strong><br><br>
+            ${formattedResponse}<br><br>
+            <small>💡 추가 궁금한 점이 있으시면 언제든 문의해주세요!</small>`;
+        }
+
+        async function callChatGPTAPIWithContext(message, settings, contextInfo) {
+            const systemPrompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
+            매우 친절하고 전문적으로 답변해주세요.
+
+            === 병원 기본 정보 ===
+            • 병원명: 피닉스 치과 병원
+            • 원장: 홍길동 (25년 경력 치주질환 전문의)
+            • 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00, 점심시간 12:30-13:30
+            • 휴진: 일요일, 공휴일
+            • 전화: 070-1234-1234 (24시간 응급상담 가능)
+            • 주소: 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호
+            • 교통: 지하철 2호선 강남역 3번 출구 도보 5분
+            • 주차: 건물 지하 1-3층 무료 주차 (3시간)
+            • 진료과목: 일반진료, 미백치료, 교정치료, 임플란트, 보철치료, 소아치과
+
+            === 치료비 안내 ===
+            • 일반진료: 초진 15,000원, 재진 10,000원
+            • 스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)
+            • 미백치료: 200,000-300,000원
+            • 교정치료: 1,500,000-6,000,000원
+            • 임플란트: 1,200,000-1,500,000원
+
+            ${contextInfo}
+
+            답변 가이드라인:
+            1. 매우 친절하고 따뜻한 말투를 사용하세요
+            2. 전문적이면서도 이해하기 쉽게 설명하세요
+            3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
+            4. 예약이나 상담이 필요한 경우 적극 안내하세요
+            5. 답변을 구조화하여 읽기 쉽게 정리해주세요`;
+
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${settings.apiKey}`
+                },
+                body: JSON.stringify({
+                    model: settings.model,
+                    messages: [
+                        {
+                            role: "system",
+                            content: systemPrompt
+                        },
+                        {
+                            role: "user",
+                            content: message
+                        }
+                    ],
+                    max_tokens: 800,
+                    temperature: 0.7
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+
+        async function callGeminiAPIWithContext(message, settings, contextInfo) {
+            const prompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
+            매우 친절하고 전문적으로 답변해주세요.
+
+            === 병원 기본 정보 ===
+            • 병원명: 피닉스 치과 병원
+            • 원장: 홍길동 (25년 경력 치주질환 전문의)
+            • 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00, 점심시간 12:30-13:30
+            • 휴진: 일요일, 공휴일
+            • 전화: 070-1234-1234 (24시간 응급상담 가능)
+            • 주소: 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호
+            • 교통: 지하철 2호선 강남역 3번 출구 도보 5분
+            • 주차: 건물 지하 1-3층 무료 주차 (3시간)
+            • 진료과목: 일반진료, 미백치료, 교정치료, 임플란트, 보철치료, 소아치과
+
+            === 치료비 안내 ===
+            • 일반진료: 초진 15,000원, 재진 10,000원
+            • 스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)
+            • 미백치료: 200,000-300,000원
+            • 교정치료: 1,500,000-6,000,000원
+            • 임플란트: 1,200,000-1,500,000원
+
+            ${contextInfo}
+
+            답변 가이드라인:
+            1. 매우 친절하고 따뜻한 말투를 사용하세요
+            2. 전문적이면서도 이해하기 쉽게 설명하세요
+            3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
+            4. 예약이나 상담이 필요한 경우 적극 안내하세요
+            5. 답변을 구조화하여 읽기 쉽게 정리해주세요
+
+            질문: ${message}`;
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${settings.model}:generateContent?key=${settings.apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }],
+                    generationConfig: {
+                        maxOutputTokens: 800,
+                        temperature: 0.7
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        async function callClaudeAPIWithContext(message, settings, contextInfo) {
+            const prompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
+            매우 친절하고 전문적으로 답변해주세요.
+
+            === 병원 기본 정보 ===
+            • 병원명: 피닉스 치과 병원
+            • 원장: 홍길동 (25년 경력 치주질환 전문의)
+            • 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00, 점심시간 12:30-13:30
+            • 휴진: 일요일, 공휴일
+            • 전화: 070-1234-1234 (24시간 응급상담 가능)
+            • 주소: 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호
+            • 교통: 지하철 2호선 강남역 3번 출구 도보 5분
+            • 주차: 건물 지하 1-3층 무료 주차 (3시간)
+            • 진료과목: 일반진료, 미백치료, 교정치료, 임플란트, 보철치료, 소아치과
+
+            === 치료비 안내 ===
+            • 일반진료: 초진 15,000원, 재진 10,000원
+            • 스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)
+            • 미백치료: 200,000-300,000원
+            • 교정치료: 1,500,000-6,000,000원
+            • 임플란트: 1,200,000-1,500,000원
+
+            ${contextInfo}
+
+            답변 가이드라인:
+            1. 매우 친절하고 따뜻한 말투를 사용하세요
+            2. 전문적이면서도 이해하기 쉽게 설명하세요
+            3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
+            4. 예약이나 상담이 필요한 경우 적극 안내하세요
+            5. 답변을 구조화하여 읽기 쉽게 정리해주세요
+
+            질문: ${message}`;
+
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': settings.apiKey,
+                    'anthropic-version': '2023-06-01'
+                },
+                body: JSON.stringify({
+                    model: settings.model,
+                    max_tokens: 800,
+                    messages: [{
+                        role: "user",
+                        content: prompt
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            return data.content[0].text;
+        }
+
+        function getDefaultResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            if (message.includes('진료시간') || message.includes('언제') || message.includes('몇시') || message.includes('운영시간')) {
+                return `🕘 <strong>피닉스 치과 진료시간 안내</strong><br><br>
+                
+                <div style="background: #f0f8ff; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                    📅 <strong>평일</strong>: 오전 9시 ~ 오후 6시<br>
+                    📅 <strong>토요일</strong>: 오전 9시 ~ 오후 3시<br>
+                    🍽️ <strong>점심시간</strong>: 12시 30분 ~ 1시 30분<br>
+                    🚫 <strong>휴진</strong>: 일요일, 공휴일
+                </div>
+                
+                💡 <strong>예약 안내</strong><br>
+                • 온라인 예약: 24시간 언제든 가능<br>
+                • 전화 예약: 070-1234-1234<br>
+                • 응급 상담: 24시간 가능<br><br>
+                
+                😊 편리한 온라인 예약을 추천드립니다!<br>
+                <button class="reservation-link-btn" onclick="openReservationFromChat()">📅 지금 바로 예약하기</button>`;
+            }
+            
+            if (message.includes('예약') || message.includes('신청') || message.includes('접수') || message.includes('방문')) {
+                return `📞 <strong>예약 및 상담 안내</strong><br><br>
+                
+                <div style="background: #fff8f0; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                    🌟 <strong>온라인 예약</strong> (추천)<br>
+                    • 24시간 언제든 예약 가능<br>
+                    • 원하는 날짜/시간 선택<br>
+                    • 즉시 예약 확인<br><br>
+                    
+                    📱 <strong>전화 예약</strong><br>
+                    • 070-1234-1234<br>
+                    • 평일 09:00-18:00, 토요일 09:00-15:00<br>
+                    • 24시간 응급상담 가능
+                </div>
+                
+                💝 <strong>초진 환자 특별 혜택</strong><br>
+                • 정밀 검진 및 상담<br>
+                • 개인별 맞춤 치료 계획 수립<br>
+                • 25년 경력 홍길동 원장님 직접 진료<br><br>
+                
+                <button class="reservation-link-btn" onclick="openReservationFromChat()">📅 지금 바로 예약하기</button>`;
+            }
+            
+            if (message.includes('비용') || message.includes('가격') || message.includes('얼마') || message.includes('돈') || message.includes('금액')) {
+                return `💰 <strong>치료비 안내</strong><br><br>
+                
+                <div style="background: #f8fff8; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                    🦷 <strong>기본 진료</strong><br>
+                    • 초진료: 15,000원<br>
+                    • 재진료: 10,000원<br>
+                    • 스케일링: 50,000원 (건강보험 적용시 연1회 무료)<br><br>
+                    
+                    ✨ <strong>전문 치료</strong><br>
+                    • 미백치료: 200,000 ~ 300,000원<br>
+                    • 교정치료: 1,500,000 ~ 6,000,000원<br>
+                    • 임플란트: 1,200,000 ~ 1,500,000원<br>
+                    • 보철치료: 개별 상담 후 안내
+                </div>
+                
+                💡 <strong>안내사항</strong><br>
+                • 정확한 비용은 검진 후 개별 안내드립니다<br>
+                • 분할 결제 및 카드 결제 가능<br>
+                • 건강보험 적용 항목 다수<br><br>
+                
+                🎯 정확한 치료비 상담을 위해 방문해주세요!`;
+            }
+            
+            if (message.includes('위치') || message.includes('주소') || message.includes('어디') || message.includes('찾아') || message.includes('교통')) {
+                return `🏥 <strong>피닉스 치과 오시는 길</strong><br><br>
+                
+                <div style="background: #f0fff0; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                    📍 <strong>주소</strong><br>
+                    피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호<br><br>
+                    
+                    🚇 <strong>지하철</strong><br>
+                    2호선 강남역 3번 출구 → 도보 5분<br><br>
+                    
+                    🚌 <strong>버스</strong><br>
+                    강남역 정류장 하차 → 도보 3분<br><br>
+                    
+                    🚗 <strong>주차 안내</strong><br>
+                    • 건물 지하 1~3층 무료 주차<br>
+                    • 3시간 무료 이용<br>
+                    • 주차 공간 넉넉함
+                </div>
+                
+                🗺️ <strong>찾아오시는 길이 궁금하시면</strong><br>
+                전화로 자세한 안내를 도와드리겠습니다!<br>
+                📞 070-1234-1234`;
+            }
+            
+            if (message.includes('치료') || message.includes('시술') || message.includes('진료과목')) {
+                return `🦷 <strong>피닉스 치과 진료과목 안내</strong><br><br>
+                
+                <div style="background: #fff0f8; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                    🔍 <strong>일반진료</strong><br>
+                    • 충치 치료, 잇몸 치료<br>
+                    • 스케일링, 정기 검진<br><br>
+                    
+                    ✨ <strong>미백치료</strong><br>
+                    • 전문가 미백, 홈케어 미백<br>
+                    • 1회 시술로 3-8단계 개선<br><br>
+                    
+                    🔧 <strong>교정치료</strong><br>
+                    • 부분교정, 전체교정<br>
+                    • 3D 시뮬레이션 상담<br><br>
+                    
+                    🦴 <strong>임플란트</strong><br>
+                    • 디지털 가이드 수술<br>
+                    • 프리미엄 재료 사용<br><br>
+                    
+                    👑 <strong>보철치료</strong><br>
+                    • 지르코니아 크라운<br>
+                    • 자연스러운 색상 매칭<br><br>
+                    
+                    🧒 <strong>소아치과</strong><br>
+                    • 어린이 친화적 환경<br>
+                    • 무해한 재료 사용
+                </div>
+                
+                💫 <strong>25년 경력 홍길동 원장님이 직접 진료합니다!</strong>`;
+            }
+            
+            return `😊 <strong>안녕하세요! 피닉스 치과 AI 상담사입니다</strong><br><br>
+            
+            <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); padding: 20px; border-radius: 12px; margin: 10px 0;">
+                🏥 <strong>피닉스 치과에 오신 것을 환영합니다!</strong><br><br>
+                
+                💡 <strong>무엇을 도와드릴까요?</strong><br>
+                • 진료시간 및 예약 안내<br>
+                • 치료 비용 상담<br>
+                • 오시는 길 안내<br>
+                • 진료과목 상세 정보<br>
+                • 기타 궁금한 점
+            </div>
+            
+            ${knowledgeBase.enabled ? 
+                `📚 <strong>업로드된 전문 지식 ${knowledgeBase.files.length}개 파일이 준비되어 있어</strong><br>더욱 정확하고 전문적인 답변을 제공할 수 있습니다!<br><br>` : 
+                ''
+            }
+            
+            🦷 건강한 미소를 위한 여러분의 든든한 파트너가 되겠습니다!<br>
+            궁금한 점이 있으시면 언제든 편하게 말씀해주세요! ✨`;
+        }
+
+        function openReservationFromChat() {
+            closeChatbot();
+            openReservation();
+        }
+
+        // API 관련 함수들
+        function saveApiSettings() {
+            console.log('API 설정 저장');
+            
+            const chatgptModel = document.getElementById('chatgptModel').value;
+            const chatgptApiKey = document.getElementById('chatgptApiKey').value.trim();
+            const chatgptFinetuningModel = document.getElementById('chatgptFinetuningModel').value.trim();
+            
+            const geminiModel = document.getElementById('geminiModel').value;
+            const geminiApiKey = document.getElementById('geminiApiKey').value.trim();
+            
+            const claudeModel = document.getElementById('claudeModel').value;
+            const claudeApiKey = document.getElementById('claudeApiKey').value.trim();
+            
+            let finalChatGPTModel = chatgptModel;
+            if (chatgptModel === 'finetuning' && chatgptFinetuningModel) {
+                finalChatGPTModel = chatgptFinetuningModel;
+            }
+            
+            apiSettings.chatgpt.model = finalChatGPTModel;
+            apiSettings.chatgpt.apiKey = chatgptApiKey;
+            apiSettings.chatgpt.enabled = finalChatGPTModel && chatgptApiKey;
+            
+            apiSettings.gemini.model = geminiModel;
+            apiSettings.gemini.apiKey = geminiApiKey;
+            apiSettings.gemini.enabled = geminiModel && geminiApiKey;
+            
+            apiSettings.claude.model = claudeModel;
+            apiSettings.claude.apiKey = claudeApiKey;
+            apiSettings.claude.enabled = claudeModel && claudeApiKey;
+            
+            let activeCount = 0;
+            let lastActive = '';
+            
+            if (apiSettings.chatgpt.enabled) {
+                activeCount++;
+                lastActive = 'ChatGPT';
+                apiSettings.activeProvider = 'chatgpt';
+            }
+            if (apiSettings.gemini.enabled) {
+                activeCount++;
+                lastActive = 'Gemini';
+                if (!apiSettings.activeProvider) apiSettings.activeProvider = 'gemini';
+            }
+            if (apiSettings.claude.enabled) {
+                activeCount++;
+                lastActive = 'Claude';
+                if (!apiSettings.activeProvider) apiSettings.activeProvider = 'claude';
+            }
+            
+            if (activeCount === 0) {
+                showStatus('apiStatus', '❌ 최소 하나의 AI 모델을 설정해주세요.', 'error');
+                return;
+            }
+            
+            let message = `✅ ${activeCount}개의 AI 모델이 설정되었습니다!`;
+            if (activeCount > 1) {
+                message += `\n🎯 기본 사용 모델: ${lastActive}`;
+            }
+            if (chatgptModel === 'finetuning') {
+                message += `\n🔧 Finetuning 모델: ${chatgptFinetuningModel}`;
+            }
+            
+            message += `\n\n🚀 이제 챗봇에서 AI 답변을 받을 수 있습니다!`;
+            message += `\n💡 메인 페이지의 챗봇 버튼을 클릭해서 테스트해보세요.`;
+            
+            showStatus('apiStatus', message, 'success');
+        }
+
+        function testApiConnection() {
+            console.log('API 연결 테스트');
+            
+            if (!apiSettings.chatgpt.enabled && !apiSettings.gemini.enabled && !apiSettings.claude.enabled) {
+                showStatus('apiStatus', '❌ 먼저 API 설정을 저장해주세요.', 'error');
+                return;
+            }
+            
+            showStatus('apiStatus', '🔄 API 연결을 테스트하고 있습니다...', 'success');
+            
+            testAllAPIs().then(results => {
+                const message = results.join('\n') + '\n🎉 모든 설정이 완료되었습니다!';
+                showStatus('apiStatus', message, 'success');
+            }).catch(error => {
+                showStatus('apiStatus', `❌ API 테스트 실패: ${error.message}`, 'error');
+            });
+        }
+
+        async function testAllAPIs() {
+            const testResults = [];
+            const testMessage = "안녕하세요. API 연결 테스트입니다.";
+            
+            if (apiSettings.chatgpt.enabled) {
+                try {
+                    await callChatGPTAPI(testMessage, apiSettings.chatgpt);
+                    testResults.push('✅ ChatGPT API 연결 성공');
+                } catch (error) {
+                    testResults.push(`❌ ChatGPT API 오류: ${error.message}`);
+                }
+            }
+            
+            if (apiSettings.gemini.enabled) {
+                try {
+                    await callGeminiAPI(testMessage, apiSettings.gemini);
+                    testResults.push('✅ Gemini API 연결 성공');
+                } catch (error) {
+                    testResults.push(`❌ Gemini API 오류: ${error.message}`);
+                }
+            }
+            
+            if (apiSettings.claude.enabled) {
+                try {
+                    await callClaudeAPI(testMessage, apiSettings.claude);
+                    testResults.push('✅ Claude API 연결 성공');
+                } catch (error) {
+                    testResults.push(`❌ Claude API 오류: ${error.message}`);
+                }
+            }
+            
+            return testResults;
+        }
+
+        async function callChatGPTAPI(message, settings) {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${settings.apiKey}`
+                },
+                body: JSON.stringify({
+                    model: settings.model,
+                    messages: [{
+                        role: "user",
+                        content: message
+                    }],
+                    max_tokens: 100
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+
+        async function callGeminiAPI(message, settings) {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${settings.model}:generateContent?key=${settings.apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: message
+                        }]
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        async function callClaudeAPI(message, settings) {
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': settings.apiKey,
+                    'anthropic-version': '2023-06-01'
+                },
+                body: JSON.stringify({
+                    model: settings.model,
+                    max_tokens: 100,
+                    messages: [{
+                        role: "user",
+                        content: message
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.content[0].text;
+        }
+
+        function resetApiSettings() {
+            console.log('API 설정 초기화');
+            
+            if (confirm('모든 API 설정을 초기화하시겠습니까?\n저장된 API 키와 모델 선택이 모두 삭제됩니다.')) {
+                document.getElementById('chatgptModel').value = '';
+                document.getElementById('chatgptApiKey').value = '';
+                document.getElementById('chatgptFinetuningModel').value = '';
+                document.getElementById('chatgptFinetuningGroup').style.display = 'none';
+                document.getElementById('geminiModel').value = '';
+                document.getElementById('geminiApiKey').value = '';
+                document.getElementById('claudeModel').value = '';
+                document.getElementById('claudeApiKey').value = '';
+                
+                apiSettings = {
+                    chatgpt: { apiKey: '', model: '', enabled: false },
+                    gemini: { apiKey: '', model: '', enabled: false },
+                    claude: { apiKey: '', model: '', enabled: false },
+                    activeProvider: ''
+                };
+                
+                showStatus('apiStatus', '🔄 모든 API 설정이 초기화되었습니다.', 'success');
+            }
+        }
+
+        function showStatus(elementId, message, type) {
+            const statusElement = document.getElementById(elementId);
+            statusElement.textContent = message;
+            statusElement.className = `status-message status-${type}`;
+            statusElement.style.display = 'block';
+            
+            const displayTime = type === 'success' ? 5000 : 3000;
+            
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, displayTime);
+        }
+
+        function downloadExcel() {
+            alert('고객 예약 내역이 다운로드 됩니다!');
+            // Excel 데이터 생성
+            const header = ['순번','예약자명','생년월일','전화번호','예약날짜','예약시간','상담내용','예약일시'];
+            const data = reservations.map(reservation => {
+                const dateStr = `${reservation.date.getFullYear()}-${String(reservation.date.getMonth() + 1).padStart(2, '0')}-${String(reservation.date.getDate()).padStart(2, '0')}`;
+                const createdStr = `${reservation.createdAt.getFullYear()}-${String(reservation.createdAt.getMonth() + 1).padStart(2, '0')}-${String(reservation.createdAt.getDate()).padStart(2, '0')} ${String(reservation.createdAt.getHours()).padStart(2, '0')}:${String(reservation.createdAt.getMinutes()).padStart(2, '0')}`;
+                return {
+                    '순번': reservation.id,
+                    '예약자명': reservation.name,
+                    '생년월일': reservation.birthDate,
+                    '전화번호': reservation.phone,
+                    '예약날짜': dateStr,
+                    '예약시간': reservation.time,
+                    '상담내용': reservation.consult ? reservation.consult : '',
+                    '예약일시': createdStr
+                };
+            });
+            // SheetJS 사용
+            const ws = XLSX.utils.json_to_sheet(data, {header: header});
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, '예약내역');
+            XLSX.writeFile(wb, 'reservation_list.xlsx');
+        }
+
+        function toggleFinetuningInput(provider) {
+            const selectElement = document.getElementById(`${provider}Model`);
+            const finetuningGroup = document.getElementById(`${provider}FinetuningGroup`);
+            
+            if (selectElement.value === 'finetuning') {
+                finetuningGroup.style.display = 'block';
+            } else {
+                finetuningGroup.style.display = 'none';
+            }
+        }
+
+        // 파일 업로드 관련 함수들
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            processUploadedFiles(files);
+        }
+
+        function handleFileDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.currentTarget.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            processUploadedFiles(files);
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function processUploadedFiles(files) {
+            console.log('파일 업로드 처리 시작:', files.length, '개');
+            showStatus('knowledgeSettingsStatus', '📁 파일을 처리하고 있습니다...', 'success');
+            
+            let processedCount = 0;
+            const totalFiles = files.length;
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                console.log('파일 처리 중:', file.name, file.type, file.size);
+                
+                const fileData = {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    uploadTime: new Date(),
+                    content: ''
+                };
+                
+                const fileExtension = file.name.toLowerCase().split('.').pop();
+                
+                if (fileExtension === 'pdf' || file.type === 'application/pdf') {
+                    console.warn('PDF 파일 감지:', file.name);
+                    processedCount++;
+                    
+                    if (processedCount === totalFiles) {
+                        showStatus('knowledgeSettingsStatus', 
+                            `❌ PDF 파일은 현재 지원되지 않습니다.\nPDF 내용을 텍스트 파일(.txt)로 복사해서 업로드해주세요.\n\n💡 PDF → 텍스트 변환 방법:\n1. PDF를 열고 내용을 복사\n2. 메모장에 붙여넣기\n3. .txt 파일로 저장 후 업로드`, 
+                            'error');
+                    }
+                    continue;
+                }
+                
+                if (fileExtension === 'txt' || file.type === 'text/plain' || file.type === '') {
+                    processTextFileWithEncoding(file, fileData, () => {
+                        processedCount++;
+                        
+                        if (processedCount === totalFiles) {
+                            console.log('전체 파일 처리 완료');
+                            
+                            knowledgeBase.enabled = knowledgeBase.parsedData.length > 0;
+                            
+                            updateFileList();
+                            updateKnowledgeStatus();
+                            
+                            if (knowledgeBase.parsedData.length > 0) {
+                                const message = `✅ ${totalFiles}개 파일 처리 완료!\n📚 총 ${knowledgeBase.parsedData.length}개의 Q&A가 파싱되었습니다.\n🤖 지식베이스가 자동으로 활성화되었습니다!`;
+                                showStatus('knowledgeSettingsStatus', message, 'success');
+                                
+                                setTimeout(() => {
+                                    testKnowledgeBaseAuto();
+                                }, 1000);
+                            } else {
+                                showStatus('knowledgeSettingsStatus', 
+                                    `⚠️ 파일은 읽었지만 Q&A 데이터를 찾지 못했습니다.\n\n📝 올바른 형식 예시:\nQ: 진료시간이 어떻게 되나요?\nA: 평일 09:00-18:00입니다.\n\n또는\n\n1. 예약은 어떻게 하나요?\n온라인이나 전화로 가능합니다.`, 
+                                    'error');
+                            }
+                        }
+                    });
+                } else {
+                    console.warn('지원되지 않는 파일 형식:', file.name, file.type);
+                    processedCount++;
+                    
+                    if (processedCount === totalFiles) {
+                        showStatus('knowledgeSettingsStatus', 
+                            `❌ 지원되지 않는 파일 형식입니다.\n현재 텍스트 파일(.txt)만 지원됩니다.\n\n💡 Excel이나 PDF 내용을 텍스트 파일로 변환해서 업로드해주세요.`, 
+                            'error');
+                    }
+                }
+            }
+        }
+
+        function processTextFileWithEncoding(file, fileData, callback) {
+            console.log('🔤 텍스트 파일 인코딩 처리:', file.name);
+            
+            const reader1 = new FileReader();
+            reader1.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    
+                    const hasKorean = /[가-힣]/.test(content);
+                    const hasBrokenChars = /[◆�]/.test(content) || content.includes('�');
+                    
+                    if (hasKorean && !hasBrokenChars) {
+                        console.log('✅ UTF-8 인코딩 성공:', file.name);
+                        fileData.content = content;
+                        knowledgeBase.files.push(fileData);
+                        parseFileContentImproved(fileData);
+                        callback();
+                        return;
+                    }
+                    
+                    console.log('❌ UTF-8 실패, EUC-KR 시도');
+                    tryEucKrEncoding();
+                    
+                } catch (error) {
+                    console.error('UTF-8 읽기 오류:', error);
+                    tryEucKrEncoding();
+                }
+            };
+            
+            reader1.onerror = function() {
+                console.error('UTF-8 파일 읽기 오류');
+                tryEucKrEncoding();
+            };
+            
+            function tryEucKrEncoding() {
+                const reader2 = new FileReader();
+                reader2.onload = function(e) {
+                    try {
+                        const content = e.target.result;
+                        const hasKorean = /[가-힣]/.test(content);
+                        const hasBrokenChars = /[◆�]/.test(content) || content.includes('�');
+                        
+                        if (hasKorean && !hasBrokenChars) {
+                            console.log('✅ EUC-KR 인코딩 성공:', file.name);
+                            fileData.content = content;
+                            knowledgeBase.files.push(fileData);
+                            parseFileContentImproved(fileData);
+                            callback();
+                            return;
+                        }
+                        
+                        console.log('⚠️ 한글 감지 실패, UTF-8 결과 사용:', file.name);
+                        reader1.readAsText(file, 'UTF-8');
+                        
+                    } catch (error) {
+                        console.error('EUC-KR 읽기 오류:', error);
+                        fileData.content = reader1.result || '';
+                        knowledgeBase.files.push(fileData);
+                        parseFileContentImproved(fileData);
+                        callback();
+                    }
+                };
+                
+                reader2.onerror = function() {
+                    console.error('EUC-KR 파일 읽기 오류');
+                    fileData.content = reader1.result || '';
+                    knowledgeBase.files.push(fileData);
+                    parseFileContentImproved(fileData);
+                    callback();
+                };
+                
+                reader2.readAsText(file, 'EUC-KR');
+            }
+            
+            reader1.readAsText(file, 'UTF-8');
+        }
+
+        function parseFileContentImproved(fileData) {
+            console.log('개선된 파일 파싱 시작:', fileData.name);
+            
+            if (!fileData.content || fileData.content.trim().length === 0) {
+                console.log('파일 내용이 비어있음:', fileData.name);
+                return;
+            }
+            
+            const content = fileData.content;
+            const lines = content.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+            console.log('파싱할 라인 수:', lines.length);
+            
+            const parsedQA = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                let question = '';
+                let answer = '';
+                
+                if (line.match(/^[QqㅁㅂㅊㄷㄹㅁㅏqQuestion문질의질문]\s*[:：]\s*(.+)$/i)) {
+                    question = line.replace(/^[QqㅁㅂㅊㄷㄹㅁㅏqQuestion문질의질문]\s*[:：]\s*/i, '').trim();
+                    
+                    for (let j = i + 1; j < lines.length && j < i + 5; j++) {
+                        const nextLine = lines[j];
+                        if (nextLine.match(/^[AaAnsw답변답응답]\s*[:：]\s*(.+)$/i)) {
+                            answer = nextLine.replace(/^[AaAnsw답변답응답]\s*[:：]\s*/i, '').trim();
+                            i = j;
+                            break;
+                        } else if (!nextLine.match(/^[QqㅁㅂㅊㄷㄹㅁㅏqQuestion문질의질문]\s*[:：]/i)) {
+                            answer = nextLine;
+                            i = j;
+                            break;
+                        }
+                    }
+                }
+                else if (line.match(/^\d+\.\s*(.+[?？])\s*$/)) {
+                    question = line.replace(/^\d+\.\s*/, '').trim();
+                    if (i + 1 < lines.length && !lines[i + 1].match(/^\d+\./)) {
+                        answer = lines[i + 1];
+                        i++;
+                    }
+                }
+                else if (line.match(/^[-•*]\s*(.+[?？])\s*$/)) {
+                    question = line.replace(/^[-•*]\s*/, '').trim();
+                    if (i + 1 < lines.length && !lines[i + 1].match(/^[-•*]/)) {
+                        answer = lines[i + 1];
+                        i++;
+                    }
+                }
+                else if (line.length > 5 && 
+                         (line.includes('?') || line.includes('？') ||
+                          line.match(/(어떻게|언제|어디서|왜|무엇|누가|얼마|몇시|어떤|뭔가|어디|몇|언제까지)/))) {
+                    question = line;
+                    
+                    const answerLines = [];
+                    for (let j = i + 1; j < Math.min(i + 4, lines.length); j++) {
+                        const nextLine = lines[j];
+                        if (nextLine.match(/(어떻게|언제|어디서|왜|무엇|누가|얼마|몇시|어떤)[?？]/) ||
+                            nextLine.match(/^[\d\-•*QqㅁㅂㅊㄷㄹㅁㅏqQuestion문질의질문]/)) {
+                            break;
+                        }
+                        answerLines.push(nextLine);
+                        if (answerLines.join(' ').length > 200) break;
+                    }
+                    
+                    if (answerLines.length > 0) {
+                        answer = answerLines.join(' ').trim();
+                        i += answerLines.length;
+                    }
+                }
+                else if (line.match(/^([^:：]{2,20})[:：]\s*(.{5,})$/)) {
+                    const matches = line.match(/^([^:：]{2,20})[:：]\s*(.{5,})$/);
+                    if (matches) {
+                        question = matches[1].trim();
+                        answer = matches[2].trim();
+                    }
+                }
+                
+                if (question && answer && question.length > 2 && answer.length > 3) {
+                    const qaItem = {
+                        question: question,
+                        answer: answer,
+                        source: fileData.name,
+                        lineNumber: i + 1,
+                        pattern: '자동감지'
+                    };
+                    
+                    parsedQA.push(qaItem);
+                    console.log('Q&A 추가:', question.substring(0, 30) + '...');
+                }
+            }
+            
+            parsedQA.forEach(newQA => {
+                const isDuplicate = knowledgeBase.parsedData.some(existingQA => 
+                    existingQA.question === newQA.question && existingQA.source === newQA.source
+                );
+                
+                if (!isDuplicate) {
+                    knowledgeBase.parsedData.push(newQA);
+                }
+            });
+            
+            console.log(`${fileData.name}에서 새로 파싱된 Q&A:`, parsedQA.length, '개');
+            console.log('전체 Q&A 데이터:', knowledgeBase.parsedData.length, '개');
+            
+            if (parsedQA.length > 0) {
+                console.log('파싱 결과 샘플:');
+                parsedQA.slice(0, 2).forEach((qa, idx) => {
+                    console.log(`${idx + 1}. Q: ${qa.question}`);
+                    console.log(`   A: ${qa.answer.substring(0, 50)}...`);
+                });
+            }
+        }
+
+        function updateFileList() {
+            const fileListContainer = document.getElementById('fileList');
+            fileListContainer.innerHTML = '';
+            
+            knowledgeBase.files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-name">📄 ${file.name}</div>
+                        <div class="file-details">
+                            크기: ${(file.size / 1024).toFixed(1)} KB | 
+                            업로드: ${file.uploadTime.toLocaleString()}
+                        </div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="file-btn btn-danger" onclick="removeFile(${index})">삭제</button>
+                    </div>
+                `;
+                fileListContainer.appendChild(fileItem);
+            });
+        }
+
+        function updateKnowledgeStatus() {
+            const statusElement = document.getElementById('knowledgeStatus');
+            const fileCount = knowledgeBase.files.length;
+            const qaCount = knowledgeBase.parsedData.length;
+            const status = knowledgeBase.enabled ? '✅ 활성' : '❌ 비활성';
+            
+            let statusHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px;">
+                    <div style="background: #e3f2fd; padding: 10px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 20px; font-weight: bold; color: #1976d2;">${fileCount}</div>
+                        <div style="font-size: 12px; color: #666;">업로드 파일</div>
+                    </div>
+                    <div style="background: #f3e5f5; padding: 10px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 20px; font-weight: bold; color: #7b1fa2;">${qaCount}</div>
+                        <div style="font-size: 12px; color: #666;">파싱된 Q&A</div>
+                    </div>
+                    <div style="background: ${knowledgeBase.enabled ? '#e8f5e8' : '#ffebee'}; padding: 10px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 16px; font-weight: bold; color: ${knowledgeBase.enabled ? '#2e7d32' : '#c62828'};">${status}</div>
+                        <div style="font-size: 12px; color: #666;">상태</div>
+                    </div>
+                </div>
+            `;
+            
+            if (knowledgeBase.enabled) {
+                statusHTML += `
+                    <div style="background: #f0f8ff; padding: 10px; border-radius: 8px; border-left: 4px solid #4facfe;">
+                        🎯 <strong>AI 답변 우선순위</strong><br>
+                        1차: 📚 업로드된 지식 파일 검색<br>
+                        2차: 🤖 AI API 모델 활용<br>
+                        3차: 💡 기본 FAQ 응답
+                    </div>
+                `;
+            } else {
+                statusHTML += `
+                    <div style="background: #fff3e0; padding: 10px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                        💡 <strong>파일을 업로드하면</strong><br>
+                        치과 전문 지식을 바탕으로 더욱 정확한 AI 상담이 가능합니다!
+                    </div>
+                `;
+            }
+            
+            statusElement.innerHTML = statusHTML;
+        }
+
+        function removeFile(index) {
+            console.log('파일 삭제:', index);
+            knowledgeBase.files.splice(index, 1);
+            
+            knowledgeBase.parsedData = [];
+            knowledgeBase.files.forEach(file => {
+                parseFileContentImproved(file);
+            });
+            
+            updateFileList();
+            updateKnowledgeStatus();
+        }
+
+        function saveKnowledgeSettings() {
+            console.log('지식 파일 설정 저장');
+            
+            if (knowledgeBase.files.length === 0) {
+                showStatus('knowledgeSettingsStatus', '❌ 업로드된 파일이 없습니다. 먼저 파일을 업로드해주세요.', 'error');
+                return;
+            }
+            
+            if (knowledgeBase.parsedData.length === 0) {
+                showStatus('knowledgeSettingsStatus', '❌ 파싱된 Q&A 데이터가 없습니다. 파일 형식을 확인해주세요.', 'error');
+                return;
+            }
+            
+            knowledgeBase.enabled = true;
+            
+            try {
+                const knowledgeData = {
+                    files: knowledgeBase.files.map(f => ({
+                        name: f.name,
+                        size: f.size,
+                        uploadTime: f.uploadTime,
+                        content: f.content
+                    })),
+                    parsedData: knowledgeBase.parsedData,
+                    enabled: knowledgeBase.enabled,
+                    lastSaved: new Date().toISOString()
+                };
+                
+                console.log('지식베이스 데이터 저장됨:', knowledgeData);
+                
+                showStatus('knowledgeSettingsStatus', 
+                    `✅ 지식 파일 설정이 저장되었습니다!\n📚 총 ${knowledgeBase.files.length}개 파일, ${knowledgeBase.parsedData.length}개 Q&A\n🤖 이제 챗봇이 업로드된 지식을 우선적으로 활용합니다.`, 
+                    'success');
+                
+                updateKnowledgeStatus();
+                
+            } catch (error) {
+                console.error('지식 파일 저장 오류:', error);
+                showStatus('knowledgeSettingsStatus', '❌ 저장 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        function testKnowledgeBase() {
+            console.log('지식베이스 검색 테스트');
+            
+            if (!knowledgeBase.enabled || knowledgeBase.parsedData.length === 0) {
+                showStatus('knowledgeSettingsStatus', '❌ 활성화된 지식 파일이 없습니다.', 'error');
+                return;
+            }
+            
+            const testQueries = ['진료시간', '예약', '비용', '위치', '치료'];
+            let testResults = [];
+            
+            testQueries.forEach(query => {
+                const result = searchInKnowledgeBase(query);
+                if (result) {
+                    testResults.push(`✅ "${query}" - 답변 발견`);
+                } else {
+                    testResults.push(`❌ "${query}" - 답변 없음`);
+                }
+            });
+            
+            const successCount = testResults.filter(r => r.includes('✅')).length;
+            const message = `🔍 검색 테스트 결과 (${successCount}/${testQueries.length})\n${testResults.join('\n')}`;
+            
+            showStatus('knowledgeSettingsStatus', message, successCount > 0 ? 'success' : 'error');
+        }
+
+        function clearAllKnowledge() {
+            if (confirm('모든 업로드된 지식 파일과 데이터를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+                knowledgeBase = {
+                    files: [],
+                    content: '',
+                    parsedData: [],
+                    enabled: false
+                };
+                
+                document.getElementById('fileList').innerHTML = '';
+                document.getElementById('parsedDataView').style.display = 'none';
+                updateKnowledgeStatus();
+                
+                showStatus('knowledgeSettingsStatus', '🗑️ 모든 지식 데이터가 삭제되었습니다.', 'success');
+                console.log('지식베이스 초기화 완료');
+            }
+        }
+
+        function showParsedData() {
+            console.log('파싱된 Q&A 데이터 표시');
+            const viewElement = document.getElementById('parsedDataView');
+            const contentElement = document.getElementById('parsedDataContent');
+            
+            if (knowledgeBase.parsedData.length === 0) {
+                contentElement.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">파싱된 데이터가 없습니다.<br>파일을 업로드하고 파싱을 기다려주세요.</p>';
+            } else {
+                let html = '';
+                knowledgeBase.parsedData.forEach((qa, index) => {
+                    html += `
+                        <div style="border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #f8f9fa;">
+                            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+                                <strong style="color: #495057; font-size: 14px;">#${index + 1} | 출처: ${qa.source}</strong>
+                                <small style="color: #6c757d;">라인: ${qa.lineNumber}</small>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong style="color: #28a745;">Q:</strong> ${qa.question}
+                            </div>
+                            <div>
+                                <strong style="color: #007bff;">A:</strong> ${qa.answer.length > 100 ? qa.answer.substring(0, 100) + '...' : qa.answer}
+                            </div>
+                        </div>
+                    `;
+                });
+                contentElement.innerHTML = html;
+            }
+            
+            if (viewElement.style.display === 'none') {
+                viewElement.style.display = 'block';
+            } else {
+                viewElement.style.display = 'none';
+            }
+        }
+
+        function searchInKnowledgeBase(userMessage) {
+            if (!knowledgeBase.enabled || knowledgeBase.parsedData.length === 0) {
+                console.log('❌ 지식베이스 비활성 또는 데이터 없음');
+                return null;
+            }
+            
+            const message = userMessage.toLowerCase().trim();
+            console.log('🔍 지식베이스 검색 시작:', message);
+            
+            let searchResults = [];
+            
+            for (let qa of knowledgeBase.parsedData) {
+                const question = qa.question.toLowerCase();
+                const answer = qa.answer.toLowerCase();
+                let score = 0;
+                let matchDetails = [];
+                
+                if (question === message || answer.includes(message)) {
+                    score += 1000;
+                    matchDetails.push('완전일치');
+                }
+                
+                if (question.includes(message) || message.includes(question)) {
+                    score += 800;
+                    matchDetails.push('부분포함');
+                }
+                
+                const messageWords = message.split(/\s+/).filter(word => word.length > 1);
+                const questionWords = question.split(/\s+/).filter(word => word.length > 1);
+                
+                let wordMatches = 0;
+                for (let word of messageWords) {
+                    if (question.includes(word)) {
+                        score += 200;
+                        wordMatches++;
+                    }
+                    if (answer.includes(word)) {
+                        score += 100;
+                        wordMatches++;
+                    }
+                }
+                
+                if (wordMatches > 0) {
+                    matchDetails.push(`단어매칭(${wordMatches})`);
+                }
+                
+                for (let qWord of questionWords) {
+                    for (let mWord of messageWords) {
+                        if ((qWord.includes(mWord) || mWord.includes(qWord)) && mWord.length > 1) {
+                            score += 50;
+                        }
+                    }
+                }
+                
+                const topics = {
+                    '시간': ['시간', '언제', '몇시', '오픈', '문여', '운영', '근무', '진료시간', '열어', '닫어'],
+                    '예약': ['예약', '신청', '접수', '방문', '가고싶', '상담', '예약하기', '신청하기', '예약문의', '신청문의'],
+                    '비용': ['비용', '가격', '얼마', '돈', '금액', '료', '수가', '치료비', '진료비', '요금', '값'],
+                    '위치': ['위치', '주소', '어디', '찾아', '오시는길', '교통', '길', '찾기', '어디에', '어느곳'],
+                    '치료': ['치료', '시술', '수술', '처치', '진료', '의료', '병원', '치과'],
+                    '통증': ['아프', '통증', '아픈', '쓰라린', '불편', '고통', '아파'],
+                    '임플란트': ['임플란트', '인공치아', '심기', '식립', '인공', '뼈에'],
+                    '교정': ['교정', '브라켓', '치열', '가지런', '고르게', '반듯', '삐뚤'],
+                    '미백': ['미백', '하얗게', '희게', '밝게', '화이트닝', '하양'],
+                    '보철': ['보철', '크라운', '씌우기', '씌워', '덮개', '덮어'],
+                    '소아': ['소아', '어린이', '아이', '아동', '유아', '애기'],
+                    '충치': ['충치', '우식', '썩', '벌레', '구멍', '까맣']
+                };
+                
+                let topicMatches = 0;
+                for (let [topic, keywords] of Object.entries(topics)) {
+                    for (let keyword of keywords) {
+                        if (message.includes(keyword)) {
+                            if (question.includes(keyword) || answer.includes(keyword) || question.includes(topic)) {
+                                score += 150;
+                                topicMatches++;
+                            }
+                        }
+                    }
+                }
+                
+                if (topicMatches > 0) {
+                    matchDetails.push(`주제매칭(${topicMatches})`);
+                }
+                
+                if (score > 0) {
+                    searchResults.push({ qa, score, matchDetails });
+                    console.log(`📝 검색 후보: "${qa.question.substring(0, 40)}..." | 점수: ${score}`);
+                }
+            }
+            
+            searchResults.sort((a, b) => b.score - a.score);
+            
+            if (searchResults.length > 0 && searchResults[0].score >= 30) {
+                const bestMatch = searchResults[0].qa;
+                console.log('✅ 지식베이스 답변 선택:', bestMatch.question);
+                return formatKnowledgeBaseAnswer(bestMatch, userMessage);
+            }
+            
+            console.log('❌ 지식베이스에서 적절한 답변을 찾지 못함');
+            return null;
+        }
+
+        function testKnowledgeBaseAuto() {
+            console.log('🧪 자동 지식베이스 테스트 시작');
+            
+            if (!knowledgeBase.enabled || knowledgeBase.parsedData.length === 0) {
+                console.log('❌ 테스트 불가: 지식베이스 비활성');
+                return;
+            }
+            
+            const testQueries = [];
+            
+            for (let i = 0; i < Math.min(3, knowledgeBase.parsedData.length); i++) {
+                const qa = knowledgeBase.parsedData[i];
+                const question = qa.question;
+                
+                const keywords = question.toLowerCase().split(/\s+/).filter(word => 
+                    word.length > 2 && !['어떻게', '언제', '어디서', '왜', '무엇', '누가'].includes(word)
+                );
+                
+                if (keywords.length > 0) {
+                    testQueries.push(keywords[0]);
+                }
+            }
+            
+            testQueries.push('진료시간', '예약', '비용');
+            
+            let successCount = 0;
+            let testResults = [];
+            
+            testQueries.forEach(query => {
+                const result = searchInKnowledgeBase(query);
+                if (result) {
+                    testResults.push(`✅ "${query}" - 답변 발견`);
+                    successCount++;
+                } else {
+                    testResults.push(`❌ "${query}" - 답변 없음`);
+                }
+            });
+            
+            const message = `🧪 자동 테스트 완료 (${successCount}/${testQueries.length})\n${testResults.join('\n')}\n\n${successCount > 0 ? '🎉 지식베이스가 정상 작동합니다!' : '⚠️ 지식베이스 검색에 문제가 있을 수 있습니다.'}`;
+            
+            showStatus('knowledgeSettingsStatus', message, successCount > 0 ? 'success' : 'error');
+        }
+
+        function formatKnowledgeBaseAnswer(qa, originalQuestion) {
+            let formattedAnswer = qa.answer.trim();
+            
+            formattedAnswer = formattedAnswer
+                .replace(/\n\n/g, '<br><br>')
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            if (formattedAnswer.includes('1.') || formattedAnswer.includes('•') || formattedAnswer.includes('-')) {
+                formattedAnswer = formattedAnswer
+                    .replace(/(\d+\.)/g, '<br>$1')
+                    .replace(/(•)/g, '<br>$1')
+                    .replace(/^-/gm, '<br>•');
+            }
+            
+            return `📚 <strong>피닉스 치과 전문 안내</strong><br><br>
+            ${formattedAnswer}<br><br>
+            <div style="background: #f0f8ff; padding: 10px; border-radius: 8px; margin-top: 10px;">
+                💡 <strong>추가 도움이 필요하시다면:</strong><br>
+                📞 전화상담: 070-1234-1234 (24시간)<br>
+                🕘 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00<br>
+                📍 위치: 강남역 3번 출구 도보 5분
+            </div><br>
+            <small>📖 출처: ${qa.source} | 더 궁금한 점이 있으시면 언제든 문의해주세요!</small>`;
+        }
+
+        // 페이지 로드 완료
+        console.log('모든 함수 로드 완료');
+        console.log('로그인 함수 확인:', typeof loginChatbotAdmin === 'function', typeof loginCustomerAdmin === 'function');
+
+        // 전화번호 자동 포맷팅
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.getElementById('phoneNumber');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/[^0-9]/g, '');
+                    if (value.length > 3 && value.length <= 7) {
+                        value = value.replace(/(\d{3})(\d+)/, '$1-$2');
+                    } else if (value.length > 7) {
+                        value = value.replace(/(\d{3})(\d{4})(\d{0,4})/, '$1-$2-$3');
+                    }
+                    e.target.value = value;
+                });
+            }
+        });
+
+        // 해시/파라미터로 바로 메뉴 열기
+        document.addEventListener('DOMContentLoaded', function() {
+            const hash = window.location.hash;
+            if (hash === '#reservation') {
+                openReservation();
+            }
+            if (hash === '#chatbot') {
+                toggleChatbot();
+            }
+        });
+    </script>
+    <!-- SheetJS (xlsx) for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</body>
+</html>
