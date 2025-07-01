@@ -1279,45 +1279,8 @@
         📅 지금 예약하기
     </div>
 
-    <!-- AI 챗봇 버튼 -->
-    <button class="chatbot-button" onclick="toggleChatbot()">
-        🤖
-    </button>
-
-    <!-- AI 챗봇 팝업 -->
-    <div class="chatbot-popup" id="chatbotPopup">
-        <div class="chatbot-header">
-            <div class="chatbot-title">
-                <span>🤖</span>
-                <span>피닉스 AI 상담사</span>
-            </div>
-            <button class="chatbot-close" onclick="closeChatbot()">✕</button>
-        </div>
-        
-        <div class="chatbot-messages" id="chatbotMessages">
-            <!-- 초기 환영 메시지 -->
-            <div class="message bot">
-                <div class="message-avatar">🤖</div>
-                <div class="message-content">
-                    안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br>
-                    치과 관련 궁금한 점이 있으시면 언제든 문의해주세요!
-                    <div class="quick-buttons">
-                        <button class="quick-button" onclick="sendQuickMessage('진료시간 알려주세요')">진료시간</button>
-                        <button class="quick-button" onclick="sendQuickMessage('예약하고 싶어요')">예약문의</button>
-                        <button class="quick-button" onclick="sendQuickMessage('치료비용 궁금해요')">치료비용</button>
-                        <button class="quick-button" onclick="sendQuickMessage('위치 알려주세요')">오시는길</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="chatbot-input">
-            <textarea id="chatbotInput" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress(event)" style="flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 14px; resize: none; min-height: 45px; max-height: 120px; font-family: inherit;"></textarea>
-            <button class="chatbot-send" onclick="sendMessage()" style="min-width: 80px; border-radius: 25px; font-size: 14px;">
-                채팅 입력
-            </button>
-        </div>
-    </div>
+    <!-- AI 챗봇 버튼 및 팝업 (공통 엔진으로 대체) -->
+    <div id="chatbot-root"></div>
 
     <!-- 예약 페이지 -->
     <div class="popup-page" id="reservationPage">
@@ -3636,4 +3599,5 @@
     <!-- SheetJS (xlsx) for Excel export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </body>
++<script src="js/chatbot.js"></script>
 </html>
