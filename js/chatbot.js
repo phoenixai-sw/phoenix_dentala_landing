@@ -103,11 +103,12 @@
   }
 
   function addBotMessage(message) {
+    const reservationBtn = '<br><button class="reservation-link-btn" onclick="openReservationFromChat()">📅 예약하기</button>';
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message bot';
     messageDiv.innerHTML = `
       <div class="message-avatar">🤖</div>
-      <div class="message-content">${message}</div>
+      <div class="message-content">${message}${reservationBtn}</div>
     `;
     messages.appendChild(messageDiv);
     scrollToBottom();
@@ -147,4 +148,10 @@
     chatbotOpen = true;
     input.focus();
   }
+
+  // 예약하기 버튼 동작 지원
+  window.openReservationFromChat = function() {
+    closeChatbot();
+    if (typeof openReservation === 'function') openReservation();
+  };
 })(); 
