@@ -208,4 +208,26 @@
 .chatbot-input textarea::-webkit-scrollbar-track {
   background: #f8f9fa;
   border-radius: 8px;
+}
+.reservation-link-btn {
+  background: #ffd700;
+  color: #333;
+  border: none;
+  border-radius: 18px;
+  padding: 14px 0;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 14px;
+  display: block;
+  width: 100%;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.10);
+  letter-spacing: 0.5px;
+}
+.reservation-link-btn:hover {
+  background: #ffed4e;
+  color: #222;
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.18);
 } 
