@@ -151,7 +151,14 @@
 
   // 예약하기 버튼 동작 지원
   window.openReservationFromChat = function() {
-    closeChatbot();
-    if (typeof openReservation === 'function') openReservation();
+    if (window.location.pathname.endsWith('ai-chatbot.html')) {
+      // 별도창: 랜딩페이지 예약창 새 창/탭으로 열고, 현재 창 닫기
+      window.open('https://phoenix-dentala.netlify.app/#reservation', '_blank');
+      window.close();
+    } else {
+      // 팝업형: 기존 예약창 오픈
+      closeChatbot();
+      if (typeof openReservation === 'function') openReservation();
+    }
   };
 })(); 
