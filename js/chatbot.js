@@ -75,20 +75,20 @@
       input.value = '';
       input.style.height = '45px';
       const loadingMessage = addBotMessage('🤔 생각하고 있습니다...');
-      setTimeout(() => {
+      window.AICore.generateAIResponse(message).then(response => {
         loadingMessage.remove();
-        addBotMessage(getDefaultResponse(message));
-      }, 600);
+        addBotMessage(response);
+      });
     }
   }
 
   function sendQuickMessage(message) {
     addUserMessage(message);
     const loadingMessage = addBotMessage('🤔 생각하고 있습니다...');
-    setTimeout(() => {
+    window.AICore.generateAIResponse(message).then(response => {
       loadingMessage.remove();
-      addBotMessage(getDefaultResponse(message));
-    }, 600);
+      addBotMessage(response);
+    });
   }
 
   function addUserMessage(message) {
