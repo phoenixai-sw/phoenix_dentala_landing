@@ -739,7 +739,7 @@
                 input.value = '';
                 input.style.height = '45px';
                 
-                const loadingMessage = addBotMessage2('🤔 생각하고 있습니다...');
+                const loadingMessage = addBotMessage2('👩‍⚕️😊 최고의 답변을 준비 중 입니다... 🏃‍♀️💨');
                 
                 generateAIResponse2(message).then(response => {
                     loadingMessage.remove();
@@ -756,7 +756,7 @@
             console.log('빠른 메시지:', message);
             addUserMessage2(message);
             
-            const loadingMessage = addBotMessage2('🤔 생각하고 있습니다...');
+            const loadingMessage = addBotMessage2('👩‍⚕️😊 최고의 답변을 준비 중 입니다... 🏃‍♀️💨');
             
             generateAIResponse2(message).then(response => {
                 loadingMessage.remove();
@@ -812,7 +812,7 @@
             messageDiv.className = 'message bot';
             
             // 로딩 메시지인지 확인 (공통 메시지 추가하지 않음)
-            const isLoadingMessage = message.includes('생각하고 있습니다') || message.includes('처리하고 있습니다');
+            const isLoadingMessage = message.includes('최고의 답변을 준비 중 입니다') || message.includes('처리하고 있습니다');
             
             let finalMessage = message;
             
