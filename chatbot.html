@@ -85,7 +85,7 @@
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             overflow: hidden;
-            height: 70vh;
+            height: 50vh;
             display: flex;
             flex-direction: column;
         }
@@ -94,7 +94,7 @@
         .chatbot-header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
         }
 
@@ -110,9 +110,11 @@
         /* 챗봇 메시지 영역 */
         .chatbot-messages {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
             background: #f8f9fa;
+            min-height: 200px;
+            max-height: calc(50vh - 140px);
         }
 
         .message {
@@ -213,7 +215,7 @@
 
         /* 챗봇 입력 영역 */
         .chatbot-input {
-            padding: 20px;
+            padding: 15px;
             background: white;
             border-top: 1px solid #e9ecef;
             display: flex;
@@ -532,7 +534,7 @@
             }
             
             .chatbot-main {
-                height: 80vh;
+                height: 60vh;
             }
 
             .admin-header {
