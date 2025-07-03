@@ -1,4 +1,4 @@
-if (window.AICore) {
+if (window.AICore || window.apiSettings) {
   console.warn('ai-core.js 중복 로드 방지');
   return;
 }
