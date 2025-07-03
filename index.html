@@ -449,6 +449,15 @@
             background: #c82333;
         }
 
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
         .status-message {
             margin-top: 15px;
             padding: 10px;
@@ -1195,6 +1204,16 @@
                 margin: 5px 0;
             }
 
+            .section-header > div {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .section-header .btn {
+                width: 100%;
+                text-align: center;
+            }
+
             .chatbot-popup {
                 bottom: 170px;
                 right: 10px;
@@ -1627,12 +1646,15 @@
             <div class="admin-section">
                 <div class="section-header">
                     <h3>📋 예약 명단</h3>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-success" onclick="downloadExcel()">
                             📥 전체 엑셀 다운로드
                         </button>
                         <button class="btn btn-primary" onclick="downloadDentalCheckupExcel()">
                             🦷 구강검진 대상자 다운로드
+                        </button>
+                        <button class="btn btn-warning" onclick="sendMessageToDentalTargets()">
+                            🦷 구강검진 대상자에게 메시지 보내기
                         </button>
                     </div>
                 </div>
@@ -3259,6 +3281,39 @@
             downloadCSV(csvData, `피닉스치과_${currentYear}년_구강검진대상자_${today}.csv`);
             
             alert(`${currentYear}년 구강검진 대상자 데이터가 다운로드되었습니다.\n총 ${currentYearCheckupCustomers.length}명의 고객 정보가 포함되어 있습니다.`);
+        }
+
+        // 구강검진 대상자에게 메시지 보내기
+        function sendMessageToDentalTargets() {
+            console.log('구강검진 대상자에게 메시지 보내기');
+            
+            const rawData = getReservationData();
+            const consolidatedData = consolidateCustomers(rawData);
+            const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
+            
+            // 현재 연도 구강검진 대상자만 필터링
+            const currentYear = new Date().getFullYear();
+            const currentYearCheckupCustomers = dataWithDentalInfo.filter(customer => 
+                customer.dentalCheckupYear === currentYear
+            );
+            
+            if (currentYearCheckupCustomers.length === 0) {
+                alert(`${currentYear}년 구강검진 대상자가 없습니다.`);
+                return;
+            }
+            
+            // 메시지 발송 확인
+            const confirmed = confirm(`📱 구강검진 대상자 ${currentYearCheckupCustomers.length}명에게 메시지를 발송하시겠습니까?\n\n🎯 발송 대상:\n- ${currentYear}년 국가 구강검진 대상자\n- 개인화된 안내 메시지\n\n⚠️ 실제 발송을 위해서는 솔라피 API 설정이 필요합니다.`);
+            
+            if (confirmed) {
+                // 메시지 발송 기능 (현재는 시뮬레이션)
+                showMessageSendingProgress(currentYearCheckupCustomers);
+            }
+        }
+
+        // 메시지 발송 진행 상황 표시
+        function showMessageSendingProgress(customers) {
+            alert(`📱 메시지 발송 기능 (개발 중)\n\n🔧 준비된 기능:\n✅ 구강검진 대상자 자동 필터링 (${customers.length}명)\n✅ 개인화 메시지 템플릿\n✅ 대량 발송 처리\n\n📋 발송 예정 메시지:\n"안녕하세요 [이름]님! 피닉스치과입니다.\n${new Date().getFullYear()}년 국가 무료 구강검진 대상자로 확인되었습니다.\n건강한 치아를 위해 검진을 받아보세요! 📞070-1234-1234"\n\n🚀 솔라피 API 연동 완료 후 실제 발송 가능합니다.`);
         }
 
         // 고객 테이블 업데이트
