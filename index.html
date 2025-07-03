@@ -1575,9 +1575,14 @@
             <div class="admin-section">
                 <div class="section-header">
                     <h3>📋 예약 명단</h3>
-                    <button class="btn btn-success" onclick="downloadExcel()">
-                        📥 엑셀 다운로드
-                    </button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-success" onclick="downloadExcel()">
+                            📥 전체 엑셀 다운로드
+                        </button>
+                        <button class="btn btn-primary" onclick="downloadDentalCheckupExcel()">
+                            🦷 구강검진 대상자 다운로드
+                        </button>
+                    </div>
                 </div>
                 
                 <table class="data-table">
@@ -1589,10 +1594,11 @@
                             <th>전화번호</th>
                             <th>예약날짜</th>
                             <th>예약시간</th>
+                            <th>구강검진 정보</th>
                             <th>예약일시</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="customerTableBody">
                         <tr>
                             <td>1</td>
                             <td>김철수</td>
@@ -1600,6 +1606,7 @@
                             <td>010-1234-5678</td>
                             <td>2025-06-15</td>
                             <td>10:00</td>
+                            <td style="background: #e8f5e8;">나이(40세), 2025년 국가 구강검진 대상</td>
                             <td>2025-06-12 09:30</td>
                         </tr>
                         <tr>
@@ -1609,6 +1616,7 @@
                             <td>010-9876-5432</td>
                             <td>2025-06-16</td>
                             <td>14:30</td>
+                            <td style="background: #ffeaa7;">나이(33세), 2026년 국가 구강검진 대상</td>
                             <td>2025-06-12 11:15</td>
                         </tr>
                         <tr>
@@ -1618,6 +1626,7 @@
                             <td>010-5555-7777</td>
                             <td>2025-06-12</td>
                             <td>16:00</td>
+                            <td style="background: #ffeaa7;">나이(47세), 2026년 국가 구강검진 대상</td>
                             <td>2025-06-11 14:20</td>
                         </tr>
                     </tbody>
@@ -2926,10 +2935,227 @@
             }, displayTime);
         }
 
-        // 엑셀 다운로드 (간단한 버전)
+        // 구강검진 대상 연도 계산 함수
+        function calculateDentalCheckupYear(birthYear) {
+            const currentYear = new Date().getFullYear();
+            const isOddBirth = birthYear % 2 === 1;
+            const isCurrentYearOdd = currentYear % 2 === 1;
+            
+            if (isOddBirth) {
+                // 홀수년 출생자 - 홀수년에 검진
+                return isCurrentYearOdd ? currentYear : currentYear + 1;
+            } else {
+                // 짝수년 출생자 - 짝수년에 검진
+                return isCurrentYearOdd ? currentYear + 1 : currentYear;
+            }
+        }
+
+        // 나이 계산 함수
+        function calculateAge(birthYear) {
+            const currentYear = new Date().getFullYear();
+            return currentYear - birthYear;
+        }
+
+        // 샘플 예약 데이터 생성 (실제 환경에서는 서버에서 가져옴)
+        function getSampleReservationData() {
+            const currentYear = new Date().getFullYear();
+            return [
+                {
+                    id: 1,
+                    name: '김철수',
+                    birth: '850315',
+                    phone: '010-1234-5678',
+                    date: '2025-06-15',
+                    time: '10:00',
+                    consult: '임플란트 상담',
+                    createdAt: '2025-06-12 09:30',
+                    reservationHistory: ['2025-06-15 10:00']
+                },
+                {
+                    id: 2,
+                    name: '이영희',
+                    birth: '920722',
+                    phone: '010-9876-5432',
+                    date: '2025-06-16',
+                    time: '14:30',
+                    consult: '치아 교정',
+                    createdAt: '2025-06-12 11:15',
+                    reservationHistory: ['2025-06-16 14:30']
+                },
+                {
+                    id: 3,
+                    name: '박민수',
+                    birth: '780904',
+                    phone: '010-5555-7777',
+                    date: '2025-06-12',
+                    time: '16:00',
+                    consult: '스케일링',
+                    createdAt: '2025-06-11 14:20',
+                    reservationHistory: ['2025-06-12 16:00']
+                },
+                {
+                    id: 4,
+                    name: '김철수',
+                    birth: '850315',
+                    phone: '010-1234-5678',
+                    date: '2025-07-20',
+                    time: '09:30',
+                    consult: '임플란트 2차',
+                    createdAt: '2025-06-15 10:30',
+                    reservationHistory: ['2025-06-15 10:00', '2025-07-20 09:30']
+                }
+            ];
+        }
+
+        // 중복 고객 통합 처리
+        function consolidateCustomers(reservations) {
+            const customerMap = new Map();
+            
+            reservations.forEach(reservation => {
+                const key = `${reservation.name}_${reservation.birth}`;
+                
+                if (customerMap.has(key)) {
+                    // 기존 고객의 예약 이력 추가
+                    const existingCustomer = customerMap.get(key);
+                    existingCustomer.reservationHistory.push(`${reservation.date} ${reservation.time}`);
+                    
+                    // 가장 최근 예약 정보로 업데이트
+                    if (new Date(reservation.createdAt) > new Date(existingCustomer.createdAt)) {
+                        existingCustomer.date = reservation.date;
+                        existingCustomer.time = reservation.time;
+                        existingCustomer.consult = reservation.consult;
+                        existingCustomer.createdAt = reservation.createdAt;
+                    }
+                } else {
+                    // 새로운 고객 추가
+                    customerMap.set(key, {
+                        ...reservation,
+                        reservationHistory: [`${reservation.date} ${reservation.time}`]
+                    });
+                }
+            });
+            
+            return Array.from(customerMap.values());
+        }
+
+        // 예약 데이터에 구강검진 정보 추가
+        function addDentalCheckupInfo(reservations) {
+            return reservations.map(reservation => {
+                const birthYear = parseInt('19' + reservation.birth.substr(0, 2));
+                const age = calculateAge(birthYear);
+                const dentalCheckupYear = calculateDentalCheckupYear(birthYear);
+                const dentalCheckupInfo = `나이(${age}세), ${dentalCheckupYear}년 국가 구강검진 대상`;
+                
+                return {
+                    ...reservation,
+                    age,
+                    dentalCheckupYear,
+                    dentalCheckupInfo
+                };
+            });
+        }
+
+        // CSV 파일 다운로드 함수
+        function downloadCSV(data, filename) {
+            const csvContent = data.map(row => row.join(',')).join('\n');
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        // 전체 예약 데이터 엑셀 다운로드
         function downloadExcel() {
-            console.log('엑셀 다운로드');
-            alert('엑셀 파일 다운로드 기능입니다.\n실제 환경에서는 예약 데이터가 다운로드됩니다.');
+            console.log('전체 예약 데이터 엑셀 다운로드');
+            
+            const rawData = getSampleReservationData();
+            const consolidatedData = consolidateCustomers(rawData);
+            const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
+            
+            // CSV 헤더
+            const headers = [
+                '순번', '예약자명', '생년월일', '전화번호', '최근예약날짜', '최근예약시간', 
+                '상담내용', '구강검진정보', '예약이력', '최초예약일시'
+            ];
+            
+            // CSV 데이터 생성
+            const csvData = [headers];
+            dataWithDentalInfo.forEach((customer, index) => {
+                csvData.push([
+                    index + 1,
+                    customer.name,
+                    customer.birth,
+                    customer.phone,
+                    customer.date,
+                    customer.time,
+                    customer.consult || '없음',
+                    customer.dentalCheckupInfo,
+                    customer.reservationHistory.join(' / '),
+                    customer.createdAt
+                ]);
+            });
+            
+            const today = new Date().toISOString().split('T')[0];
+            downloadCSV(csvData, `피닉스치과_전체예약명단_${today}.csv`);
+            
+            alert(`전체 예약 데이터가 다운로드되었습니다.\n총 ${dataWithDentalInfo.length}명의 고객 정보가 포함되어 있습니다.`);
+        }
+
+        // 구강검진 대상자만 엑셀 다운로드
+        function downloadDentalCheckupExcel() {
+            console.log('구강검진 대상자 엑셀 다운로드');
+            
+            const rawData = getSampleReservationData();
+            const consolidatedData = consolidateCustomers(rawData);
+            const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
+            
+            // 현재 연도 구강검진 대상자만 필터링
+            const currentYear = new Date().getFullYear();
+            const currentYearCheckupCustomers = dataWithDentalInfo.filter(customer => 
+                customer.dentalCheckupYear === currentYear
+            );
+            
+            if (currentYearCheckupCustomers.length === 0) {
+                alert(`${currentYear}년 구강검진 대상자가 없습니다.`);
+                return;
+            }
+            
+            // CSV 헤더
+            const headers = [
+                '순번', '예약자명', '생년월일', '전화번호', '나이', '구강검진대상연도', 
+                '최근예약날짜', '최근예약시간', '상담내용', '예약이력', '최초예약일시'
+            ];
+            
+            // CSV 데이터 생성
+            const csvData = [headers];
+            currentYearCheckupCustomers.forEach((customer, index) => {
+                csvData.push([
+                    index + 1,
+                    customer.name,
+                    customer.birth,
+                    customer.phone,
+                    customer.age,
+                    customer.dentalCheckupYear,
+                    customer.date,
+                    customer.time,
+                    customer.consult || '없음',
+                    customer.reservationHistory.join(' / '),
+                    customer.createdAt
+                ]);
+            });
+            
+            const today = new Date().toISOString().split('T')[0];
+            downloadCSV(csvData, `피닉스치과_${currentYear}년_구강검진대상자_${today}.csv`);
+            
+            alert(`${currentYear}년 구강검진 대상자 데이터가 다운로드되었습니다.\n총 ${currentYearCheckupCustomers.length}명의 고객 정보가 포함되어 있습니다.`);
         }
 
         // Finetuning 모델 입력 필드 토글

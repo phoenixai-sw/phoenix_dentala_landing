@@ -538,8 +538,69 @@
                     <label class="form-label">상담 내용</label>
                     <textarea class="form-input" id="consultContent" placeholder="상담 내용을 입력해주세요" rows="3"></textarea>
                 </div>
+                
+                <!-- 개인정보 동의 섹션 -->
+                <div class="form-group" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <div style="display: flex; align-items: flex-start; gap: 10px;">
+                        <input type="checkbox" id="privacyConsent" required style="margin-top: 4px; transform: scale(1.2);">
+                        <label for="privacyConsent" style="font-size: 14px; line-height: 1.4; cursor: pointer;">
+                            <strong style="color: #e74c3c;">개인정보 수집 및 마케팅 활용 동의 (3년) *</strong><br>
+                            <span style="color: #666; font-size: 13px;">
+                                상담 및 예약 서비스 제공, 치과 소식·이벤트·혜택 안내 등 마케팅 목적으로 개인정보를 3년간 활용하는 것에 동의합니다.
+                                <button type="button" onclick="showPrivacyPolicy()" style="background: none; border: none; color: #007bff; text-decoration: underline; cursor: pointer; font-size: 13px;">자세히 보기</button>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                
                 <button type="submit" class="reservation-submit">예약하기</button>
             </form>
+        </div>
+    </div>
+
+    <!-- 개인정보 동의 팝업 -->
+    <div class="confirmation-popup" id="privacyPolicyPopup" style="display: none;">
+        <div class="confirmation-content" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
+            <div style="font-size: 24px; margin-bottom: 20px;">📋 개인정보 수집 및 마케팅 활용 동의 안내</div>
+            
+            <div style="text-align: left; font-size: 14px; line-height: 1.6; color: #333; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #2c3e50; margin-bottom: 15px;">📌 개인정보 수집·이용 목적</h4>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>상담 및 예약 서비스 제공</li>
+                    <li>치료 이력 관리 및 진료 서비스 개선</li>
+                    <li>치과 소식, 이벤트, 혜택 정보 안내</li>
+                    <li>고객 만족도 조사 및 마케팅 활용</li>
+                </ul>
+                
+                <h4 style="color: #2c3e50; margin-bottom: 15px;">📋 수집하는 개인정보 항목</h4>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>이름, 생년월일, 전화번호</li>
+                    <li>예약 날짜 및 시간</li>
+                    <li>상담 내용 및 치료 이력</li>
+                </ul>
+                
+                <h4 style="color: #2c3e50; margin-bottom: 15px;">⏰ 개인정보 보유·이용 기간</h4>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li><strong>3년간</strong> 보관 후 자동 삭제</li>
+                    <li>관련 법령에 따른 보존 의무 기간이 있는 경우 해당 기간까지 보관</li>
+                </ul>
+                
+                <h4 style="color: #2c3e50; margin-bottom: 15px;">🛡️ 개인정보 처리 위탁</h4>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>SMS 발송: 문자 발송 업체</li>
+                    <li>이메일 발송: 이메일 서비스 업체</li>
+                </ul>
+                
+                <div style="background: #fff3cd; padding: 15px; border-radius: 6px; border-left: 4px solid #ffc107;">
+                    <strong>💡 동의 거부 시:</strong> 마케팅 정보 수신을 원하지 않으시면 언제든지 동의를 철회할 수 있으며, 
+                    필수 서비스(예약, 상담) 이용에는 영향을 주지 않습니다.
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="closePrivacyPolicy()" style="padding: 12px 30px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">닫기</button>
+                <button onclick="agreeAndClosePrivacyPolicy()" style="padding: 12px 30px; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer;">동의하고 닫기</button>
+            </div>
         </div>
     </div>
 
@@ -677,6 +738,43 @@
             renderCalendar();
         }
 
+        // 구강검진 대상 연도 계산 함수
+        function calculateDentalCheckupYear(birthYear) {
+            const currentYear = new Date().getFullYear();
+            const isOddBirth = birthYear % 2 === 1;
+            const isCurrentYearOdd = currentYear % 2 === 1;
+            
+            if (isOddBirth) {
+                // 홀수년 출생자 - 홀수년에 검진
+                return isCurrentYearOdd ? currentYear : currentYear + 1;
+            } else {
+                // 짝수년 출생자 - 짝수년에 검진
+                return isCurrentYearOdd ? currentYear + 1 : currentYear;
+            }
+        }
+
+        // 나이 계산 함수
+        function calculateAge(birthYear) {
+            const currentYear = new Date().getFullYear();
+            return currentYear - birthYear;
+        }
+
+        // 개인정보 동의 팝업 표시
+        function showPrivacyPolicy() {
+            document.getElementById('privacyPolicyPopup').style.display = 'flex';
+        }
+
+        // 개인정보 동의 팝업 닫기
+        function closePrivacyPolicy() {
+            document.getElementById('privacyPolicyPopup').style.display = 'none';
+        }
+
+        // 개인정보 동의하고 닫기
+        function agreeAndClosePrivacyPolicy() {
+            document.getElementById('privacyConsent').checked = true;
+            document.getElementById('privacyPolicyPopup').style.display = 'none';
+        }
+
         // 예약 제출
         function submitReservation(event) {
             event.preventDefault();
@@ -690,6 +788,7 @@
             const birth = document.getElementById('birthDate').value.trim();
             const phone = document.getElementById('phoneNumber').value.trim();
             const consult = document.getElementById('consultContent').value.trim();
+            const privacyConsent = document.getElementById('privacyConsent').checked;
 
             if (!name || !birth || !phone) {
                 alert('모든 필수 정보를 입력해주세요.');
@@ -706,6 +805,18 @@
                 return;
             }
 
+            // 개인정보 동의 체크
+            if (!privacyConsent) {
+                alert('개인정보 수집 및 마케팅 활용에 동의해주세요.');
+                return;
+            }
+
+            // 구강검진 대상 연도 계산
+            const birthYear = parseInt('19' + birth.substr(0, 2));
+            const age = calculateAge(birthYear);
+            const dentalCheckupYear = calculateDentalCheckupYear(birthYear);
+            const dentalCheckupInfo = `나이(${age}세), ${dentalCheckupYear}년 국가 구강검진 대상`;
+
             const reservation = {
                 id: reservations.length + 1,
                 name: name,
@@ -714,6 +825,10 @@
                 date: selectedDate,
                 time: selectedTime,
                 consult: consult,
+                age: age,
+                dentalCheckupYear: dentalCheckupYear,
+                dentalCheckupInfo: dentalCheckupInfo,
+                privacyConsent: privacyConsent,
                 createdAt: new Date()
             };
 
@@ -732,6 +847,9 @@
                 <p><strong>예약 날짜:</strong> ${dateStr}</p>
                 <p><strong>예약 시간:</strong> ${reservation.time}</p>
                 <p><strong>상담 내용:</strong> ${reservation.consult || '없음'}</p>
+                <p style="background: #e8f5e8; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <strong>🦷 구강검진 정보:</strong> ${reservation.dentalCheckupInfo}
+                </p>
             `;
             document.getElementById('confirmationPopup').style.display = 'flex';
         }
