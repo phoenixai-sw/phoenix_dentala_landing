@@ -1,7 +1,6 @@
 if (window.apiSettings || window.knowledgeBase || window.AICore) {
   console.warn('ai-core.js 중복 로드 방지 (apiSettings/knowledgeBase/AICore)');
-  return;
-}
+} else {
 // 피닉스 치과 AI 코어 엔진
 console.log('🤖 AICore 엔진 로딩 시작...');
 
@@ -486,4 +485,6 @@ window.AICore = {
 };
 
 console.log('🤖 AICore 엔진 로드 완료!');
-console.log('📋 사용 가능한 함수:', Object.keys(window.AICore)); 
+console.log('📋 사용 가능한 함수:', Object.keys(window.AICore));
+
+} // 중복 로드 방지 else 블록 종료 
