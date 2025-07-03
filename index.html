@@ -1164,6 +1164,218 @@
             transform: translateY(-2px);
         }
 
+        /* 메시지 발송 팝업 */
+        .message-sending-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .message-popup-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-popup-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .message-popup-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .message-popup-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message-popup-close:hover {
+            opacity: 0.7;
+        }
+
+        .message-popup-body {
+            padding: 30px;
+        }
+
+        .message-target-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .message-target-count {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4facfe;
+            margin-bottom: 8px;
+        }
+
+        .message-target-desc {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* 탭 스타일 */
+        .message-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button.active {
+            color: #4facfe;
+            border-bottom-color: #4facfe;
+        }
+
+        .tab-button:hover {
+            color: #4facfe;
+            background: #f8f9fa;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 파일 업로드 스타일 */
+        .file-upload-section {
+            background: #f8f9fa;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 25px;
+            transition: all 0.3s;
+        }
+
+        .file-upload-section:hover {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            color: #4facfe;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .file-upload-btn {
+            background: #4facfe;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-btn:hover {
+            background: #3d8bfe;
+        }
+
+        .file-upload-input {
+            display: none;
+        }
+
+        .file-selected {
+            margin-top: 15px;
+            padding: 10px;
+            background: #e8f5e8;
+            border-radius: 8px;
+            color: #2d8f44;
+            font-weight: bold;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* 발송 버튼 */
+        .send-message-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .send-message-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .send-message-btn.kakao {
+            background: linear-gradient(135deg, #fee500 0%, #ffd500 100%);
+            color: #333;
+        }
+
+        .send-message-btn.kakao:hover {
+            box-shadow: 0 8px 25px rgba(254, 229, 0, 0.4);
+        }
+
         /* 모바일 안정성 강화 */
         * {
             -webkit-tap-highlight-color: transparent;
@@ -1224,6 +1436,45 @@
             .chatbot-button {
                 bottom: 90px;
                 right: 15px;
+            }
+
+            .message-popup-content {
+                width: 95%;
+                max-height: 85vh;
+            }
+
+            .message-popup-header {
+                padding: 15px 20px;
+            }
+
+            .message-popup-title {
+                font-size: 18px;
+            }
+
+            .message-popup-body {
+                padding: 20px;
+            }
+
+            .message-tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                padding: 12px 15px;
+                font-size: 15px;
+            }
+
+            .file-upload-section {
+                padding: 20px;
+            }
+
+            .file-upload-icon {
+                font-size: 36px;
+            }
+
+            .send-message-btn {
+                padding: 15px;
+                font-size: 16px;
             }
         }
     </style>
@@ -1484,6 +1735,97 @@
                 그 밖의 궁금한 점이 있으시면 AI챗봇을 이용해주세요!
             </div>
             <button class="confirmation-button" onclick="closeConfirmation()">확인</button>
+        </div>
+    </div>
+
+    <!-- 메시지 발송 팝업 -->
+    <div class="message-sending-popup" id="messageSendingPopup">
+        <div class="message-popup-content">
+            <!-- 팝업 헤더 -->
+            <div class="message-popup-header">
+                <div class="message-popup-title">🦷 구강검진 대상자 메시지 발송</div>
+                <button class="message-popup-close" onclick="closeMessageSendingPopup()">✕</button>
+            </div>
+            
+            <!-- 팝업 내용 -->
+            <div class="message-popup-body">
+                <!-- 대상자 정보 -->
+                <div class="message-target-info">
+                    <div class="message-target-count" id="messageCustomerCount">0</div>
+                    <div class="message-target-desc">명의 구강검진 대상자에게 메시지를 발송합니다</div>
+                </div>
+                
+                <!-- 탭 메뉴 -->
+                <div class="message-tabs">
+                    <button class="tab-button active" onclick="switchMessageTab('sms')">📱 SMS 문자 메시지</button>
+                    <button class="tab-button" onclick="switchMessageTab('kakao')">💬 카카오 알림톡</button>
+                </div>
+                
+                <!-- SMS 탭 내용 -->
+                <div class="tab-content active" id="smsTab">
+                    <div class="file-upload-section">
+                        <div class="file-upload-icon">📁</div>
+                        <div class="file-upload-text">SMS 발송용 엑셀 파일 업로드</div>
+                        <div class="file-upload-desc">
+                            발송할 내용이 포함된 엑셀 파일을 업로드하세요<br>
+                            <small>지원 형식: .xlsx, .xls</small>
+                        </div>
+                        <button class="file-upload-btn" onclick="document.getElementById('smsFileInput').click()">
+                            📁 파일 선택
+                        </button>
+                        <input type="file" id="smsFileInput" class="file-upload-input" accept=".xlsx,.xls" onchange="uploadSmsFile(event)">
+                        <div class="file-selected" id="smsFileName" style="display: none;">선택된 파일 없음</div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; color: #333;">📋 SMS 메시지 템플릿 예시:</h4>
+                        <div style="background: white; padding: 12px; border-radius: 5px; font-family: monospace; font-size: 14px; line-height: 1.5;">
+                            안녕하세요 #{이름}님! 피닉스치과입니다.<br>
+                            #{검진연도}년 국가 무료 구강검진 대상자로 확인되었습니다.<br>
+                            건강한 치아를 위해 검진을 받아보세요!<br>
+                            예약: 070-1234-1234
+                        </div>
+                    </div>
+                    
+                    <button class="send-message-btn" onclick="sendSmsMessage()">
+                        📱 SMS 메시지 발송하기
+                    </button>
+                </div>
+                
+                <!-- 카카오 알림톡 탭 내용 -->
+                <div class="tab-content" id="kakaoTab">
+                    <div class="file-upload-section">
+                        <div class="file-upload-icon">📁</div>
+                        <div class="file-upload-text">카카오 알림톡 발송용 엑셀 파일 업로드</div>
+                        <div class="file-upload-desc">
+                            발송할 내용이 포함된 엑셀 파일을 업로드하세요<br>
+                            <small>지원 형식: .xlsx, .xls</small>
+                        </div>
+                        <button class="file-upload-btn" onclick="document.getElementById('kakaoFileInput').click()">
+                            📁 파일 선택
+                        </button>
+                        <input type="file" id="kakaoFileInput" class="file-upload-input" accept=".xlsx,.xls" onchange="uploadKakaoFile(event)">
+                        <div class="file-selected" id="kakaoFileName" style="display: none;">선택된 파일 없음</div>
+                    </div>
+                    
+                    <div style="background: #fffbeb; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #fbbf24;">
+                        <h4 style="margin-bottom: 10px; color: #333;">💬 카카오 알림톡 템플릿 예시:</h4>
+                        <div style="background: white; padding: 12px; border-radius: 5px; font-family: monospace; font-size: 14px; line-height: 1.5;">
+                            [피닉스치과] 무료 구강검진 안내<br><br>
+                            안녕하세요 #{이름}님!<br>
+                            #{검진연도}년 국가 무료 구강검진 대상자입니다.<br><br>
+                            🦷 검진 혜택: 무료<br>
+                            📞 예약: 070-1234-1234<br>
+                            📍 위치: 피닉스타워 11층<br><br>
+                            건강한 치아 관리를 시작해보세요!
+                        </div>
+                    </div>
+                    
+                    <button class="send-message-btn kakao" onclick="sendKakaoMessage()">
+                        💬 카카오 알림톡 발송하기
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -3302,18 +3644,117 @@
                 return;
             }
             
-            // 메시지 발송 확인
-            const confirmed = confirm(`📱 구강검진 대상자 ${currentYearCheckupCustomers.length}명에게 메시지를 발송하시겠습니까?\n\n🎯 발송 대상:\n- ${currentYear}년 국가 구강검진 대상자\n- 개인화된 안내 메시지\n\n⚠️ 실제 발송을 위해서는 솔라피 API 설정이 필요합니다.`);
+            // 메시지 발송 옵션 팝업 열기
+            showMessageSendingOptions(currentYearCheckupCustomers);
+        }
+
+        // 메시지 발송 옵션 팝업 표시
+        function showMessageSendingOptions(customers) {
+            const popup = document.getElementById('messageSendingPopup');
+            const customerCount = document.getElementById('messageCustomerCount');
             
-            if (confirmed) {
-                // 메시지 발송 기능 (현재는 시뮬레이션)
-                showMessageSendingProgress(currentYearCheckupCustomers);
+            customerCount.textContent = customers.length;
+            popup.style.display = 'flex';
+            
+            // 고객 데이터를 전역 변수에 저장 (탭에서 사용)
+            window.messageTargetCustomers = customers;
+        }
+
+        // 메시지 발송 팝업 닫기
+        function closeMessageSendingPopup() {
+            document.getElementById('messageSendingPopup').style.display = 'none';
+            
+            // 파일 입력 초기화
+            document.getElementById('smsFileInput').value = '';
+            document.getElementById('kakaoFileInput').value = '';
+            document.getElementById('smsFileName').style.display = 'none';
+            document.getElementById('kakaoFileName').style.display = 'none';
+            
+            // 첫 번째 탭으로 리셋
+            switchMessageTab('sms');
+        }
+
+        // 탭 전환
+        function switchMessageTab(tabName) {
+            // 모든 탭 버튼 비활성화
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 모든 탭 콘텐츠 숨기기
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 선택된 탭 활성화
+            document.querySelector(`[onclick="switchMessageTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+        }
+
+        // SMS 파일 업로드
+        function uploadSmsFile(event) {
+            const file = event.target.files[0];
+            const fileName = document.getElementById('smsFileName');
+            
+            if (file) {
+                fileName.textContent = `✅ ${file.name}`;
+                fileName.style.display = 'block';
+                console.log('SMS 파일 업로드:', file.name);
+            } else {
+                fileName.textContent = '선택된 파일 없음';
+                fileName.style.display = 'none';
             }
         }
 
-        // 메시지 발송 진행 상황 표시
-        function showMessageSendingProgress(customers) {
-            alert(`📱 메시지 발송 기능 (개발 중)\n\n🔧 준비된 기능:\n✅ 구강검진 대상자 자동 필터링 (${customers.length}명)\n✅ 개인화 메시지 템플릿\n✅ 대량 발송 처리\n\n📋 발송 예정 메시지:\n"안녕하세요 [이름]님! 피닉스치과입니다.\n${new Date().getFullYear()}년 국가 무료 구강검진 대상자로 확인되었습니다.\n건강한 치아를 위해 검진을 받아보세요! 📞070-1234-1234"\n\n🚀 솔라피 API 연동 완료 후 실제 발송 가능합니다.`);
+        // 카카오 파일 업로드
+        function uploadKakaoFile(event) {
+            const file = event.target.files[0];
+            const fileName = document.getElementById('kakaoFileName');
+            
+            if (file) {
+                fileName.textContent = `✅ ${file.name}`;
+                fileName.style.display = 'block';
+                console.log('카카오 파일 업로드:', file.name);
+            } else {
+                fileName.textContent = '선택된 파일 없음';
+                fileName.style.display = 'none';
+            }
+        }
+
+        // SMS 발송
+        function sendSmsMessage() {
+            const customers = window.messageTargetCustomers;
+            const fileInput = document.getElementById('smsFileInput');
+            
+            if (fileInput.files.length === 0) {
+                alert('⚠️ 엑셀 파일을 업로드해주세요.');
+                return;
+            }
+            
+            const confirmed = confirm(`📱 SMS 문자 메시지 발송\n\n🎯 발송 대상: ${customers.length}명\n📁 업로드 파일: ${fileInput.files[0].name}\n\n정말 발송하시겠습니까?`);
+            
+            if (confirmed) {
+                alert(`📱 SMS 발송 준비 완료!\n\n✅ 대상자: ${customers.length}명\n✅ 파일: ${fileInput.files[0].name}\n\n🚀 솔라피 SMS API 연동 후 실제 발송 가능`);
+                closeMessageSendingPopup();
+            }
+        }
+
+        // 카카오 알림톡 발송
+        function sendKakaoMessage() {
+            const customers = window.messageTargetCustomers;
+            const fileInput = document.getElementById('kakaoFileInput');
+            
+            if (fileInput.files.length === 0) {
+                alert('⚠️ 엑셀 파일을 업로드해주세요.');
+                return;
+            }
+            
+            const confirmed = confirm(`💬 카카오 알림톡 발송\n\n🎯 발송 대상: ${customers.length}명\n📁 업로드 파일: ${fileInput.files[0].name}\n\n정말 발송하시겠습니까?`);
+            
+            if (confirmed) {
+                alert(`💬 카카오 알림톡 발송 준비 완료!\n\n✅ 대상자: ${customers.length}명\n✅ 파일: ${fileInput.files[0].name}\n\n🚀 솔라피 알림톡 API + 템플릿 승인 후 실제 발송 가능`);
+                closeMessageSendingPopup();
+            }
         }
 
         // 고객 테이블 업데이트
@@ -4305,4 +4746,5 @@
         });
     </script>
 </body>
+</html>
 </html>
