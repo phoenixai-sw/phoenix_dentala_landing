@@ -239,6 +239,33 @@
             background: #555;
         }
 
+        /* 무료 검진 확인 버튼 */
+        .dental-checkup-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+            border: none;
+            padding: 18px 36px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dental-checkup-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(135deg, #ff5252 0%, #fdd835 100%);
+        }
+
+        .dental-checkup-btn:active {
+            transform: translateY(-1px);
+        }
+
         /* 팝업 페이지 공통 스타일 */
         .popup-page {
             display: none;
@@ -1264,6 +1291,13 @@
             <div class="address">📍 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호</div>
         </div>
 
+        <!-- 무료 검진(구강) 확인 버튼 -->
+        <div style="margin: 30px 0; text-align: center;">
+            <button class="dental-checkup-btn" onclick="goToDentalCheckup()">
+                🦷 무료 검진(구강) 확인
+            </button>
+        </div>
+
         <!-- 관리자 로그인 버튼 -->
         <div class="admin-buttons">
             <button class="admin-btn" onclick="loginChatbotAdmin()">🤖 AI챗봇 관리 로그인</button>
@@ -1657,6 +1691,12 @@
             initializeData();
             console.log('페이지 로드 완료');
         });
+
+        // 무료 검진(구강) 확인 페이지로 이동
+        function goToDentalCheckup() {
+            console.log('무료 검진(구강) 확인 페이지로 이동');
+            window.location.href = 'dental_checkup.html';
+        }
 
         // 전역 변수
         let chatbotOpen = false;

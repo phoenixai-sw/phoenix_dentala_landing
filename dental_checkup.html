@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>피닉스 치과 병원 - 무료 검진(구강) 확인</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.3s;
+        }
+
+        .back-link:hover {
+            opacity: 0.8;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 18px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 25px;
+            display: inline-block;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #4facfe;
+        }
+
+        .info-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .time-info {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .form-section {
+            text-align: center;
+        }
+
+        .form-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .check-button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3);
+        }
+
+        .check-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.4);
+        }
+
+        .check-button:active {
+            transform: translateY(0);
+        }
+
+        /* 팝업 스타일 */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: popupSlide 0.3s ease-out;
+        }
+
+        @keyframes popupSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .popup-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .popup-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .popup-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .popup-info p {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .popup-info strong {
+            color: #2c3e50;
+        }
+
+        .dental-info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #27ae60;
+        }
+
+        .congratulations {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .target-user {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: #2c3e50;
+        }
+
+        .non-target-user {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #2c3e50;
+        }
+
+        .popup-note {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .popup-button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reservation-button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+        }
+
+        .reservation-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .close-button {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        .close-button:hover {
+            background: #dee2e6;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .popup-content {
+                padding: 30px 20px;
+            }
+            
+            .popup-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <a href="index.html" class="back-link">← 메인으로</a>
+            <h1>🦷 피닉스 치과 병원</h1>
+            <p>온라인 [무료 검진(구강) 확인] 시스템</p>
+            <div class="subtitle">국가 구강검진 대상자 확인</div>
+        </div>
+
+        <!-- 메인 컨텐츠 -->
+        <div class="content">
+            <!-- 진료 시간 안내 -->
+            <div class="info-section">
+                <div class="info-title">
+                    <span>📋</span>
+                    <span>진료 시간 안내</span>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>평일:</strong> <span class="time-info">09:00 ~ 18:00</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>토요일:</strong> <span class="time-info">09:00 ~ 15:00</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>점심시간:</strong> 12:30 ~ 13:30
+                    </div>
+                    <div class="info-item">
+                        <strong>휴진:</strong> 일요일, 공휴일
+                    </div>
+                </div>
+            </div>
+
+            <!-- 검진 대상자 확인 폼 -->
+            <div class="form-section">
+                <div class="form-title">
+                    <span>👤</span>
+                    <span>무료 검진(구강) 대상자 확인 정보를 입력하세요</span>
+                </div>
+                
+                <form id="checkupForm" onsubmit="checkDentalTarget(event)">
+                    <div class="form-group">
+                        <label class="form-label">생년월일 <span style="color: red;">*</span></label>
+                        <input type="text" 
+                               class="form-input" 
+                               id="birthDate" 
+                               placeholder="예: 850101" 
+                               maxlength="6" 
+                               pattern="[0-9]{6}"
+                               required>
+                        <div style="font-size: 14px; color: #666; margin-top: 5px;">
+                            생년월일 6자리를 입력하세요 (예: 850101)
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="check-button">
+                        🔍 대상자 확인하기
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 결과 팝업 -->
+    <div class="popup-overlay" id="resultPopup">
+        <div class="popup-content">
+            <div class="popup-icon" id="popupIcon">✅</div>
+            <div class="popup-title">무료 검진(구강) 대상자 확인이 완료되었습니다!</div>
+            
+            <div class="popup-info">
+                <p><strong>생년월일:</strong> <span id="displayBirthDate"></span></p>
+                <div class="dental-info">
+                    <p><strong>🦷 구강검진 정보:</strong> <span id="dentalCheckupInfo"></span></p>
+                </div>
+            </div>
+            
+            <div class="congratulations" id="congratulationsMessage">
+                <!-- 여기에 축하 메시지가 들어갑니다 -->
+            </div>
+            
+            <div class="popup-note">
+                좀 더 자세한 사항은 아래의 예약하기를 눌러 주세요
+            </div>
+            
+            <div class="popup-buttons">
+                <button class="popup-button reservation-button" onclick="goToReservation()">
+                    📅 예약하기
+                </button>
+                <button class="popup-button close-button" onclick="closePopup()">
+                    닫기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 생년월일 6자리에서 출생연도 계산
+        function getBirthYear(birth) {
+            const yearPrefix = birth.substr(0, 2);
+            const year = parseInt(yearPrefix);
+            
+            // 기준점: 30 이상이면 19XX년, 30 미만이면 20XX년
+            if (year >= 30) {
+                return 1900 + year;
+            } else {
+                return 2000 + year;
+            }
+        }
+
+        // 구강검진 대상 연도 계산 함수
+        function calculateDentalCheckupYear(birthYear) {
+            const currentYear = new Date().getFullYear();
+            const isOddBirth = birthYear % 2 === 1;
+            const isCurrentYearOdd = currentYear % 2 === 1;
+            
+            if (isOddBirth) {
+                // 홀수년 출생자 - 홀수년에 검진
+                return isCurrentYearOdd ? currentYear : currentYear + 1;
+            } else {
+                // 짝수년 출생자 - 짝수년에 검진
+                return isCurrentYearOdd ? currentYear + 1 : currentYear;
+            }
+        }
+
+        // 나이 계산 함수
+        function calculateAge(birthYear) {
+            const currentYear = new Date().getFullYear();
+            return currentYear - birthYear;
+        }
+
+        // 대상자 확인 함수
+        function checkDentalTarget(event) {
+            event.preventDefault();
+            
+            const birth = document.getElementById('birthDate').value.trim();
+            
+            if (!birth) {
+                alert('생년월일을 입력해주세요.');
+                return;
+            }
+
+            if (birth.length !== 6 || isNaN(birth)) {
+                alert('생년월일은 6자리 숫자로 입력해주세요.');
+                return;
+            }
+
+            // 계산 수행
+            const birthYear = getBirthYear(birth);
+            const age = calculateAge(birthYear);
+            const dentalCheckupYear = calculateDentalCheckupYear(birthYear);
+            const currentYear = new Date().getFullYear();
+            
+            // 결과 표시
+            showResult(birth, age, dentalCheckupYear, currentYear);
+        }
+
+        // 결과 팝업 표시
+        function showResult(birth, age, dentalCheckupYear, currentYear) {
+            const displayBirthDate = document.getElementById('displayBirthDate');
+            const dentalCheckupInfo = document.getElementById('dentalCheckupInfo');
+            const congratulationsMessage = document.getElementById('congratulationsMessage');
+            
+            // 생년월일 표시
+            displayBirthDate.textContent = birth;
+            
+            // 구강검진 정보 표시
+            dentalCheckupInfo.textContent = `나이(${age}세), ${dentalCheckupYear}년 국가 구강검진 대상`;
+            
+            // 축하 메시지 설정
+            if (dentalCheckupYear === currentYear) {
+                // 올해 대상자
+                congratulationsMessage.className = 'congratulations target-user';
+                congratulationsMessage.innerHTML = `
+                    <div style="font-size: 20px; margin-bottom: 10px;">🎉</div>
+                    <div>축하 드립니다. 무료 검진(구강) 대상자 입니다 !!!</div>
+                `;
+            } else {
+                // 내년 대상자
+                congratulationsMessage.className = 'congratulations non-target-user';
+                congratulationsMessage.innerHTML = `
+                    <div style="font-size: 20px; margin-bottom: 10px;">🦷</div>
+                    <div>축하 드립니다. 튼튼한 치아와 건강한 구강을 위해서 관리 해주세요 !!!</div>
+                `;
+            }
+            
+            // 팝업 표시
+            document.getElementById('resultPopup').style.display = 'flex';
+        }
+
+        // 팝업 닫기
+        function closePopup() {
+            document.getElementById('resultPopup').style.display = 'none';
+        }
+
+        // 예약하기 페이지로 이동
+        function goToReservation() {
+            window.location.href = 'reservation.html';
+        }
+
+        // 생년월일 입력 시 숫자만 입력 가능하도록 제한
+        document.getElementById('birthDate').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            if (value.length > 6) {
+                value = value.substr(0, 6);
+            }
+            e.target.value = value;
+        });
+
+        // 팝업 외부 클릭 시 닫기
+        document.getElementById('resultPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+
+        console.log('무료 검진(구강) 확인 페이지 로드 완료');
+    </script>
+</body>
+</html> 
