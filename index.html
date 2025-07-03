@@ -2129,17 +2129,19 @@
                 input.style.height = '45px';
                 
                 // 로딩 메시지 표시
-                const loadingMessage = addBotMessage('👩‍⚕️😊 최고의 답변을 준비 중 입니다... 🏃‍♀️💨');
+                const loadingMessage = addBotMessage('👩‍⚕️🕐 최고의 답변을 준비 중 입니다...');
                 
                 // AI 응답 생성 (비동기)
                 generateAIResponse(message).then(response => {
-                    // 로딩 메시지 제거
+                    // 시계 애니메이션 중지 및 로딩 메시지 제거
+                    stopClockAnimation(loadingMessage);
                     loadingMessage.remove();
                     // 실제 응답 표시
                     addBotMessage(response);
                 }).catch(error => {
                     console.error('AI 응답 오류:', error);
-                    // 로딩 메시지 제거
+                    // 시계 애니메이션 중지 및 로딩 메시지 제거
+                    stopClockAnimation(loadingMessage);
                     loadingMessage.remove();
                     // 오류 메시지 표시
                     addBotMessage('❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
@@ -2152,17 +2154,19 @@
             addUserMessage(message);
             
             // 로딩 메시지 표시
-            const loadingMessage = addBotMessage('👩‍⚕️😊 최고의 답변을 준비 중 입니다... 🏃‍♀️💨');
+            const loadingMessage = addBotMessage('👩‍⚕️🕐 최고의 답변을 준비 중 입니다...');
             
             // AI 응답 생성 (비동기)
             generateAIResponse(message).then(response => {
-                // 로딩 메시지 제거
+                // 시계 애니메이션 중지 및 로딩 메시지 제거
+                stopClockAnimation(loadingMessage);
                 loadingMessage.remove();
                 // 실제 응답 표시
                 addBotMessage(response);
             }).catch(error => {
                 console.error('AI 응답 오류:', error);
-                // 로딩 메시지 제거
+                // 시계 애니메이션 중지 및 로딩 메시지 제거
+                stopClockAnimation(loadingMessage);
                 loadingMessage.remove();
                 // 오류 메시지 표시
                 addBotMessage('❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
@@ -2246,12 +2250,47 @@
             `;
             messagesContainer.appendChild(messageDiv);
             scrollToBottom();
+            
+            // 로딩 메시지인 경우 시계 애니메이션 시작
+            if (isLoadingMessage) {
+                startClockAnimation(messageDiv);
+            }
+            
             return messageDiv; // DOM 요소 반환
         }
 
         function scrollToBottom() {
             const messagesContainer = document.getElementById('chatbotMessages');
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // 시계 애니메이션 함수
+        function startClockAnimation(messageElement) {
+            const clockEmojis = ['🕐', '🕑', '🕒', '🕓', '🕔', '🕕', '🕖', '🕗', '🕘', '🕙', '🕚', '🕛'];
+            let clockIndex = 0;
+            
+            const animationInterval = setInterval(() => {
+                const messageContent = messageElement.querySelector('.message-content');
+                if (messageContent) {
+                    // 현재 메시지에서 시계 이모티콘을 다음 시계로 교체
+                    const currentText = messageContent.innerHTML;
+                    const newText = currentText.replace(/🕐|🕑|🕒|🕓|🕔|🕕|🕖|🕗|🕘|🕙|🕚|🕛/, clockEmojis[clockIndex]);
+                    messageContent.innerHTML = newText;
+                    
+                    clockIndex = (clockIndex + 1) % clockEmojis.length;
+                }
+            }, 300); // 300ms마다 시계 변경
+            
+            // 메시지 요소에 애니메이션 ID 저장 (나중에 중지용)
+            messageElement.clockAnimation = animationInterval;
+        }
+
+        // 시계 애니메이션 중지 함수
+        function stopClockAnimation(messageElement) {
+            if (messageElement && messageElement.clockAnimation) {
+                clearInterval(messageElement.clockAnimation);
+                messageElement.clockAnimation = null;
+            }
         }
 
         function generateAIResponse(userMessage) {
