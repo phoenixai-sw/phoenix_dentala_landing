@@ -159,7 +159,7 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: none;
+            display: block;
         }
 
         .time-header {
@@ -216,7 +216,7 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: none;
+            display: block;
         }
 
         .form-header {
@@ -379,25 +379,12 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-        }
-
-        .confirmation-button.primary {
             background: #00aa82;
             color: white;
         }
 
-        .confirmation-button.primary:hover {
+        .confirmation-button:hover {
             background: #008866;
-            transform: translateY(-2px);
-        }
-
-        .confirmation-button.secondary {
-            background: #4facfe;
-            color: white;
-        }
-
-        .confirmation-button.secondary:hover {
-            background: #3d8bfe;
             transform: translateY(-2px);
         }
 
@@ -571,8 +558,7 @@
                 예약 확인 및 연락을 드리겠습니다!<br>
                 그 밖의 궁금한 점이 있으시면 AI챗봇을 이용해주세요!
             </div>
-            <button class="confirmation-button primary" onclick="closeConfirmation()">확인</button>
-            <button class="confirmation-button secondary" onclick="goToMainPage()">메인으로</button>
+            <button class="confirmation-button" onclick="goToMainPage()">확인 - 메인으로 이동</button>
         </div>
     </div>
 
@@ -641,9 +627,6 @@
             event.target.classList.add('selected');
             selectedDate = new Date(currentYear, currentMonth, day);
             
-            document.getElementById('timeSection').style.display = 'block';
-            document.getElementById('timeSection').scrollIntoView({ behavior: 'smooth' });
-            
             updateTimeSlots();
         }
 
@@ -673,9 +656,6 @@
             });
             element.classList.add('selected');
             selectedTime = time;
-            
-            document.getElementById('infoFormSection').style.display = 'block';
-            document.getElementById('infoFormSection').scrollIntoView({ behavior: 'smooth' });
         }
 
         // 이전/다음 달
@@ -756,13 +736,9 @@
             document.getElementById('confirmationPopup').style.display = 'flex';
         }
 
-        // 예약 확인 팝업 닫기
-        function closeConfirmation() {
-            document.getElementById('confirmationPopup').style.display = 'none';
-        }
-
         // 메인 페이지로 이동
         function goToMainPage() {
+            document.getElementById('confirmationPopup').style.display = 'none';
             window.location.href = 'index.html';
         }
 
