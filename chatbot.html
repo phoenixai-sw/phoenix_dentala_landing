@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>피닉스 치과 병원 - AI 챗봇</title>
     <style>
         * {
@@ -16,6 +16,8 @@
             line-height: 1.6;
             color: #333;
             background-color: #f8f9fa;
+            -webkit-text-size-adjust: 100%;
+            -webkit-touch-callout: none;
         }
 
         /* 헤더 스타일 */
@@ -228,11 +230,12 @@
             border: 1px solid #ddd;
             border-radius: 25px;
             outline: none;
-            font-size: 14px;
+            font-size: 16px;
             resize: none;
             min-height: 45px;
             max-height: 120px;
             font-family: inherit;
+            touch-action: manipulation;
         }
 
         .chatbot-input textarea:focus {
@@ -515,6 +518,17 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
+        }
+
+        /* 모바일 안정성 강화 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        input, textarea, select, button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         /* 반응형 디자인 */
