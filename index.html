@@ -458,6 +458,173 @@
             background: #e0a800;
         }
 
+        /* 로딩 모달 스타일 */
+        .loading-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .loading-content h3 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        .loading-progress {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .loading-spinner {
+            font-size: 32px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 결과 모달 스타일 */
+        .result-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .result-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .result-content h3 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .result-summary {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .success-count {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .fail-count {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .result-section {
+            margin-bottom: 20px;
+        }
+
+        .result-section h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+
+        .result-list {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .result-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item.success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .result-item.fail {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        .result-item strong {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .result-item small {
+            color: #666;
+            font-size: 12px;
+        }
+
         .status-message {
             margin-top: 15px;
             padding: 10px;
@@ -3721,8 +3888,8 @@
             }
         }
 
-        // SMS 발송
-        function sendSmsMessage() {
+        // SMS 발송 (솔라피 API 연동)
+        async function sendSmsMessage() {
             const customers = window.messageTargetCustomers;
             const fileInput = document.getElementById('smsFileInput');
             
@@ -3733,9 +3900,304 @@
             
             const confirmed = confirm(`📱 SMS 문자 메시지 발송\n\n🎯 발송 대상: ${customers.length}명\n📁 업로드 파일: ${fileInput.files[0].name}\n\n정말 발송하시겠습니까?`);
             
-            if (confirmed) {
-                alert(`📱 SMS 발송 준비 완료!\n\n✅ 대상자: ${customers.length}명\n✅ 파일: ${fileInput.files[0].name}\n\n🚀 솔라피 SMS API 연동 후 실제 발송 가능`);
+            if (!confirmed) return;
+            
+            try {
+                // 발송 시작 안내
+                const loadingModal = showLoadingModal('📱 SMS 발송 중...', '잠시만 기다려주세요');
+                
+                // 엑셀 파일 파싱
+                const excelData = await parseExcelFile(fileInput.files[0]);
+                console.log('파싱된 엑셀 데이터:', excelData);
+                
+                // 발송 결과 추적
+                const sendResults = [];
+                let successCount = 0;
+                let failCount = 0;
+                
+                // 각 고객에게 개별 발송
+                for (let i = 0; i < excelData.length; i++) {
+                    const customer = excelData[i];
+                    
+                    // 로딩 진행률 업데이트
+                    updateLoadingProgress(loadingModal, i + 1, excelData.length);
+                    
+                    try {
+                        // 개인화된 메시지 생성
+                        const personalizedMessage = createPersonalizedMessage(customer);
+                        
+                        // 솔라피 API 호출
+                        const result = await sendSingleSMS(customer.전화번호, personalizedMessage);
+                        
+                        if (result.success) {
+                            successCount++;
+                            sendResults.push({
+                                name: customer.예약자명,
+                                phone: customer.전화번호,
+                                status: '성공',
+                                messageId: result.messageId
+                            });
+                        } else {
+                            failCount++;
+                            sendResults.push({
+                                name: customer.예약자명,
+                                phone: customer.전화번호,
+                                status: '실패',
+                                error: result.error
+                            });
+                        }
+                        
+                        // API 호출 간격 (솔라피 권장: 초당 최대 10건)
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        
+                    } catch (error) {
+                        failCount++;
+                        sendResults.push({
+                            name: customer.예약자명,
+                            phone: customer.전화번호,
+                            status: '실패',
+                            error: error.message
+                        });
+                        console.error('SMS 발송 실패:', customer.예약자명, error);
+                    }
+                }
+                
+                // 로딩 모달 닫기
+                hideLoadingModal(loadingModal);
+                
+                // 발송 결과 표시
+                showSendResults(sendResults, successCount, failCount);
+                
+                // 팝업 닫기
                 closeMessageSendingPopup();
+                
+            } catch (error) {
+                console.error('SMS 발송 프로세스 오류:', error);
+                alert(`❌ SMS 발송 중 오류가 발생했습니다:\n${error.message}`);
+            }
+        }
+
+        // 솔라피 API를 통한 개별 SMS 발송
+        async function sendSingleSMS(phoneNumber, message) {
+            try {
+                // 솔라피 API 설정
+                const apiKey = 'NCSB9YCYYOFTRCXO';
+                const apiSecret = 'FSBQEHIOEXDHW6OLGEWSJ7VDP2BHIEGF';
+                const fromNumber = '010-2965-7510';
+                
+                // 인증 헤더 생성
+                const timestamp = new Date().toISOString();
+                const signature = await generateSolapiSignature(apiKey, apiSecret, timestamp);
+                
+                // API 요청 데이터
+                const requestData = {
+                    message: {
+                        to: phoneNumber.replace(/[^0-9]/g, ''), // 숫자만 추출
+                        from: fromNumber.replace(/[^0-9]/g, ''),
+                        text: message,
+                        type: 'LMS', // 장문 메시지
+                        subject: '[피닉스치과] 무료 구강검진 안내'
+                    }
+                };
+                
+                // 솔라피 API 호출
+                const response = await fetch('https://api.solapi.com/messages/v4/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `HMAC-SHA256 ApiKey=${apiKey}, Date=${timestamp}, Signature=${signature}`
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.statusCode === '2000') {
+                    return {
+                        success: true,
+                        messageId: result.messageId,
+                        statusCode: result.statusCode
+                    };
+                } else {
+                    return {
+                        success: false,
+                        error: result.errorMessage || '발송 실패',
+                        statusCode: result.statusCode
+                    };
+                }
+                
+            } catch (error) {
+                console.error('솔라피 API 호출 오류:', error);
+                return {
+                    success: false,
+                    error: error.message || '네트워크 오류'
+                };
+            }
+        }
+
+        // 솔라피 API 서명 생성
+        async function generateSolapiSignature(apiKey, apiSecret, timestamp) {
+            const message = timestamp + apiKey;
+            const encoder = new TextEncoder();
+            const data = encoder.encode(message);
+            const key = encoder.encode(apiSecret);
+            
+            const cryptoKey = await crypto.subtle.importKey(
+                'raw',
+                key,
+                { name: 'HMAC', hash: 'SHA-256' },
+                false,
+                ['sign']
+            );
+            
+            const signature = await crypto.subtle.sign('HMAC', cryptoKey, data);
+            return Array.from(new Uint8Array(signature))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+
+        // 개인화된 메시지 생성
+        function createPersonalizedMessage(customer) {
+            const template = `[피닉스치과] 안녕하세요 #{이름}님!
+#{검진연도}년 구강검진 대상자로 
+무료 구강검진을 받으실 수 있습니다.
+
+온라인으로 무료 예약 하기
+https://phoenixai-agent.site/reservation.html
+
+예약 문의: 02-1234-5678`;
+            
+            return template
+                .replace(/#{이름}/g, customer.예약자명)
+                .replace(/#{나이}/g, customer.나이)
+                .replace(/#{검진연도}/g, customer.구강검진대상연도);
+        }
+
+        // 엑셀 파일 파싱 (CSV 형식)
+        async function parseExcelFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const csvData = e.target.result;
+                        const lines = csvData.split('\n');
+                        const headers = lines[0].split(',').map(h => h.trim());
+                        
+                        const data = [];
+                        for (let i = 1; i < lines.length; i++) {
+                            if (lines[i].trim()) {
+                                const values = lines[i].split(',').map(v => v.trim());
+                                const row = {};
+                                headers.forEach((header, index) => {
+                                    row[header] = values[index] || '';
+                                });
+                                data.push(row);
+                            }
+                        }
+                        
+                        resolve(data);
+                    } catch (error) {
+                        reject(new Error('엑셀 파일 파싱 실패: ' + error.message));
+                    }
+                };
+                reader.onerror = () => reject(new Error('파일 읽기 실패'));
+                reader.readAsText(file, 'UTF-8');
+            });
+        }
+
+        // 로딩 모달 표시
+        function showLoadingModal(title, message) {
+            const modal = document.createElement('div');
+            modal.className = 'loading-modal';
+            modal.innerHTML = `
+                <div class="loading-content">
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                    <div class="loading-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">0 / 0</div>
+                    </div>
+                    <div class="loading-spinner">⏳</div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            return modal;
+        }
+
+        // 로딩 진행률 업데이트
+        function updateLoadingProgress(modal, current, total) {
+            const progressFill = modal.querySelector('.progress-fill');
+            const progressText = modal.querySelector('.progress-text');
+            
+            const percentage = (current / total) * 100;
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = `${current} / ${total}`;
+        }
+
+        // 로딩 모달 숨기기
+        function hideLoadingModal(modal) {
+            document.body.removeChild(modal);
+        }
+
+        // 발송 결과 표시
+        function showSendResults(results, successCount, failCount) {
+            const resultModal = document.createElement('div');
+            resultModal.className = 'result-modal';
+            
+            const successList = results.filter(r => r.status === '성공');
+            const failList = results.filter(r => r.status === '실패');
+            
+            resultModal.innerHTML = `
+                <div class="result-content">
+                    <h3>📱 SMS 발송 결과</h3>
+                    <div class="result-summary">
+                        <div class="success-count">✅ 성공: ${successCount}건</div>
+                        <div class="fail-count">❌ 실패: ${failCount}건</div>
+                    </div>
+                    
+                    ${successCount > 0 ? `
+                        <div class="result-section">
+                            <h4>✅ 발송 성공 목록</h4>
+                            <div class="result-list">
+                                ${successList.map(r => `
+                                    <div class="result-item success">
+                                        <strong>${r.name}</strong> (${r.phone})
+                                        <small>메시지ID: ${r.messageId}</small>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${failCount > 0 ? `
+                        <div class="result-section">
+                            <h4>❌ 발송 실패 목록</h4>
+                            <div class="result-list">
+                                ${failList.map(r => `
+                                    <div class="result-item fail">
+                                        <strong>${r.name}</strong> (${r.phone})
+                                        <small>오류: ${r.error}</small>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <button class="btn btn-primary" onclick="closeResultModal()">확인</button>
+                </div>
+            `;
+            
+            document.body.appendChild(resultModal);
+            window.currentResultModal = resultModal;
+        }
+
+        // 결과 모달 닫기
+        function closeResultModal() {
+            if (window.currentResultModal) {
+                document.body.removeChild(window.currentResultModal);
+                window.currentResultModal = null;
             }
         }
 
