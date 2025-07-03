@@ -1166,7 +1166,7 @@
 </head>
 <body>
     <!-- 상단 예약 배너 -->
-    <div class="top-banner" onclick="openReservation()">
+    <div class="top-banner" onclick="location.href='reservation.html'">
         📅 지금 예약하기
     </div>
 
@@ -1272,7 +1272,7 @@
     </div>
 
     <!-- 하단 예약 배너 -->
-    <div class="bottom-banner" onclick="openReservation()">
+    <div class="bottom-banner" onclick="location.href='reservation.html'">
         📅 지금 예약하기
     </div>
 
@@ -2708,7 +2708,11 @@
 
         function openReservationFromChat() {
             closeChatbot();
-            openReservation();
+            window.location.href = 'reservation.html';
+        }
+
+        function goToReservationPage() {
+            window.location.href = 'reservation.html';
         }
 
         // API 관련 함수들
