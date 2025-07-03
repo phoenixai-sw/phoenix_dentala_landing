@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>피닉스 치과 병원</title>
+    <!-- SheetJS 라이브러리 추가 (엑셀 파일 생성용) -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -3808,6 +3810,56 @@ https://phoenixai-agent.site/reservation.html
             }
         }
 
+        // 엑셀 파일 다운로드 함수 (SheetJS 사용)
+        function downloadExcel(data, filename) {
+            try {
+                // 워크북 생성
+                const wb = XLSX.utils.book_new();
+                
+                // 워크시트 생성
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                
+                // 열 너비 자동 조정
+                const colWidths = [];
+                data.forEach(row => {
+                    row.forEach((cell, index) => {
+                        const cellLength = cell ? cell.toString().length : 0;
+                        colWidths[index] = Math.max(colWidths[index] || 0, cellLength);
+                    });
+                });
+                
+                // 열 너비 설정 (최소 10, 최대 30)
+                ws['!cols'] = colWidths.map(width => ({ 
+                    wch: Math.min(Math.max(width, 10), 30) 
+                }));
+                
+                // 헤더 스타일 설정
+                const headerRange = XLSX.utils.decode_range(ws['!ref']);
+                for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+                    if (ws[cellAddress]) {
+                        ws[cellAddress].s = {
+                            font: { bold: true },
+                            fill: { fgColor: { rgb: "FFCCCCCC" } },
+                            alignment: { horizontal: "center" }
+                        };
+                    }
+                }
+                
+                // 워크시트를 워크북에 추가
+                XLSX.utils.book_append_sheet(wb, ws, "구강검진 대상자");
+                
+                // 엑셀 파일 생성 및 다운로드
+                XLSX.writeFile(wb, filename);
+                
+                console.log('✅ 엑셀 파일 다운로드 완료:', filename);
+                
+            } catch (error) {
+                console.error('❌ 엑셀 파일 생성 오류:', error);
+                alert('엑셀 파일 생성 중 오류가 발생했습니다.\n' + error.message);
+            }
+        }
+
         // 전체 예약 데이터 엑셀 다운로드
         function downloadExcel() {
             console.log('전체 예약 데이터 엑셀 다운로드');
@@ -3864,16 +3916,16 @@ https://phoenixai-agent.site/reservation.html
                 return;
             }
             
-            // CSV 헤더
+            // 엑셀 헤더
             const headers = [
                 '순번', '예약자명', '생년월일', '전화번호', '나이', '구강검진대상연도', 
                 '최근예약날짜', '최근예약시간', '상담내용', '예약이력', '최초예약일시'
             ];
             
-            // CSV 데이터 생성
-            const csvData = [headers];
+            // 엑셀 데이터 생성
+            const excelData = [headers];
             currentYearCheckupCustomers.forEach((customer, index) => {
-                csvData.push([
+                excelData.push([
                     index + 1,
                     customer.name,
                     customer.birth,
@@ -3889,7 +3941,7 @@ https://phoenixai-agent.site/reservation.html
             });
             
             const today = new Date().toISOString().split('T')[0];
-            downloadCSV(csvData, `피닉스치과_${currentYear}년_구강검진대상자_${today}.csv`);
+            downloadExcel(excelData, `피닉스치과_${currentYear}년_구강검진대상자_${today}.xlsx`);
             
             alert(`${currentYear}년 구강검진 대상자 데이터가 다운로드되었습니다.\n총 ${currentYearCheckupCustomers.length}명의 고객 정보가 포함되어 있습니다.`);
         }
