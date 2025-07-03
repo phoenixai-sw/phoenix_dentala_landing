@@ -1,3 +1,7 @@
+if (window.AICore) {
+  console.warn('ai-core.js 중복 로드 방지');
+  return;
+}
 // 피닉스 치과 AI 코어 엔진
 console.log('🤖 AICore 엔진 로딩 시작...');
 
