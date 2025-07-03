@@ -75,20 +75,48 @@
       input.value = '';
       input.style.height = '45px';
       const loadingMessage = addBotMessage('🤔 생각하고 있습니다...');
-      window.AICore.generateAIResponse(message).then(response => {
-        loadingMessage.remove();
-        addBotMessage(response);
-      });
+      
+      // AICore가 있으면 사용, 없으면 기본 응답
+      if (window.AICore && window.AICore.generateAIResponse) {
+        window.AICore.generateAIResponse(message).then(response => {
+          loadingMessage.remove();
+          addBotMessage(response);
+        }).catch(error => {
+          console.error('AI 응답 오류:', error);
+          loadingMessage.remove();
+          addBotMessage(getDefaultResponse(message));
+        });
+      } else {
+        // AICore가 없으면 기본 응답
+        setTimeout(() => {
+          loadingMessage.remove();
+          addBotMessage(getDefaultResponse(message));
+        }, 1000);
+      }
     }
   }
 
   function sendQuickMessage(message) {
     addUserMessage(message);
     const loadingMessage = addBotMessage('🤔 생각하고 있습니다...');
-    window.AICore.generateAIResponse(message).then(response => {
-      loadingMessage.remove();
-      addBotMessage(response);
-    });
+    
+    // AICore가 있으면 사용, 없으면 기본 응답
+    if (window.AICore && window.AICore.generateAIResponse) {
+      window.AICore.generateAIResponse(message).then(response => {
+        loadingMessage.remove();
+        addBotMessage(response);
+      }).catch(error => {
+        console.error('AI 응답 오류:', error);
+        loadingMessage.remove();
+        addBotMessage(getDefaultResponse(message));
+      });
+    } else {
+      // AICore가 없으면 기본 응답
+      setTimeout(() => {
+        loadingMessage.remove();
+        addBotMessage(getDefaultResponse(message));
+      }, 1000);
+    }
   }
 
   function addUserMessage(message) {
@@ -138,6 +166,10 @@
 
   // 외부에서 빠른 버튼/예시 질문 전송 지원
   window.sendQuickMessage = sendQuickMessage;
+  
+  // index.html에서 호출할 수 있도록 toggleChatbot 함수 export
+  window.toggleChatbot = toggleChatbot;
+  window.closeChatbot = closeChatbot;
 
   // 최초 환영 메시지
   showWelcome();
