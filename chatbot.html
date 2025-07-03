@@ -810,9 +810,24 @@
             const messagesContainer = document.getElementById('chatbotMessages2');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message bot';
+            
+            // 로딩 메시지인지 확인 (공통 메시지 추가하지 않음)
+            const isLoadingMessage = message.includes('생각하고 있습니다') || message.includes('처리하고 있습니다');
+            
+            let finalMessage = message;
+            
+            // 로딩 메시지가 아닌 경우에만 공통 메시지와 예약 버튼 추가
+            if (!isLoadingMessage) {
+                finalMessage += `<br><br>
+                <div style="background: #f0f8ff; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center;">
+                    💝 <strong>좀더 자세한 사항은 직접 방문하시면 친절하게 상담 드리겠습니다!</strong><br><br>
+                    <button class="reservation-link-btn" onclick="goToReservationPage2()" style="margin-top: 5px;">📅 예약하기</button>
+                </div>`;
+            }
+            
             messageDiv.innerHTML = `
                 <div class="message-avatar">🤖</div>
-                <div class="message-content">${message}</div>
+                <div class="message-content">${finalMessage}</div>
             `;
             messagesContainer.appendChild(messageDiv);
             scrollToBottom2();
