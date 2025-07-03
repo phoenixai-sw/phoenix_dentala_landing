@@ -15,6 +15,33 @@ const knowledgeBase = {
   enabled: false
 };
 
+// 저장된 설정 로드
+function loadSavedSettings() {
+  try {
+    const savedSettings = localStorage.getItem('phoenix_ai_settings');
+    if (savedSettings) {
+      const parsed = JSON.parse(savedSettings);
+      Object.assign(apiSettings, parsed);
+      console.log('✅ 저장된 API 설정 로드됨');
+    }
+  } catch (error) {
+    console.log('⚠️ 저장된 설정 로드 실패:', error);
+  }
+}
+
+// 설정 저장
+function saveSettings() {
+  try {
+    localStorage.setItem('phoenix_ai_settings', JSON.stringify(apiSettings));
+    console.log('💾 API 설정 저장됨');
+  } catch (error) {
+    console.log('⚠️ 설정 저장 실패:', error);
+  }
+}
+
+// 페이지 로드 시 설정 복원
+loadSavedSettings();
+
 // 기본 응답 함수
 function getDefaultResponse(userMessage) {
   const message = userMessage.toLowerCase();
@@ -401,7 +428,38 @@ window.AICore = {
   // API 호출 함수들
   callChatGPTAPI: callChatGPTAPI,
   callGeminiAPI: callGeminiAPI,
-  callClaudeAPI: callClaudeAPI
+  callClaudeAPI: callClaudeAPI,
+  
+  // 설정 관리 함수들
+  saveSettings: saveSettings,
+  loadSavedSettings: loadSavedSettings,
+  
+  // 테스트 함수들
+  testAPISettings() {
+    console.log('🔍 API 설정 상태 확인:');
+    console.log('Active Provider:', apiSettings.activeProvider);
+    console.log('ChatGPT enabled:', apiSettings.chatgpt.enabled);
+    console.log('Gemini enabled:', apiSettings.gemini.enabled);
+    console.log('Claude enabled:', apiSettings.claude.enabled);
+    
+    if (!apiSettings.activeProvider) {
+      console.log('⚠️ 활성화된 API 제공자가 없습니다.');
+      console.log('💡 관리자 페이지에서 API 키를 설정해주세요.');
+    }
+  },
+  
+  // 테스트용 API 설정 (개발용)
+  setTestAPI(provider, apiKey, model) {
+    console.log(`🧪 테스트 API 설정: ${provider}`);
+    apiSettings[provider] = {
+      apiKey: apiKey,
+      model: model,
+      enabled: true
+    };
+    apiSettings.activeProvider = provider;
+    saveSettings();
+    console.log('✅ 테스트 API 설정 완료');
+  }
 };
 
 console.log('🤖 AICore 엔진 로드 완료!');
