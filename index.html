@@ -1070,7 +1070,43 @@
     </div>
 
     <!-- AI 챗봇 버튼 및 팝업 -->
-    <div id="chatbot-root"></div>
+    <button class="chatbot-button" onclick="window.ChatbotUI.toggleChatbot()">
+        🤖
+    </button>
+    
+    <div class="chatbot-popup" id="chatbotPopup">
+        <div class="chatbot-header">
+            <div class="chatbot-title">
+                <span>🤖</span>
+                <span>피닉스 치과 AI 상담사</span>
+            </div>
+            <button class="chatbot-close" onclick="window.ChatbotUI.closeChatbot()">✕</button>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="message bot">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br>
+                    치과 관련 궁금한 점이 있으시면 언제든 문의해주세요!
+                    <div class="quick-buttons">
+                        <button class="quick-button" onclick="window.ChatbotUI.sendQuickMessage('진료시간 알려주세요')">진료시간</button>
+                        <button class="quick-button" onclick="window.ChatbotUI.sendQuickMessage('예약하고 싶어요')">예약문의</button>
+                        <button class="quick-button" onclick="window.ChatbotUI.sendQuickMessage('치료비용 궁금해요')">치료비용</button>
+                        <button class="quick-button" onclick="window.ChatbotUI.sendQuickMessage('위치 알려주세요')">오시는길</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <textarea 
+                id="chatbotInput" 
+                placeholder="메시지를 입력하세요... (Shift+Enter로 전송)"
+                onkeydown="window.ChatbotUI.handleKeyPress(event)"
+                style="resize: none; height: 45px; padding: 12px 15px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 14px; flex: 1;"
+            ></textarea>
+            <button class="chatbot-send" onclick="window.ChatbotUI.sendMessage()">➤</button>
+        </div>
+    </div>
 
     <!-- 예약 페이지 -->
     <div class="popup-page" id="reservationPage">
@@ -2199,9 +2235,7 @@
                                 const message = `✅ ${totalFiles}개 파일 처리 완료!\n📚 총 ${knowledgeBase.parsedData.length}개의 Q&A가 파싱되었습니다.\n🤖 지식베이스가 자동으로 활성화되었습니다!`;
                                 showStatus('knowledgeSettingsStatus', message, 'success');
                                 
-                                setTimeout(() => {
-                                    testKnowledgeBaseAuto();
-                                }, 1000);
+                                // 자동 테스트는 js/ai-core.js에서 처리
                             } else {
                                 showStatus('knowledgeSettingsStatus', 
                                     `⚠️ 파일은 읽었지만 Q&A 데이터를 찾지 못했습니다.\n\n📝 올바른 형식 예시:\nQ: 진료시간이 어떻게 되나요?\nA: 평일 09:00-18:00입니다.\n\n또는\n\n1. 예약은 어떻게 하나요?\n온라인이나 전화로 가능합니다.`, 
@@ -2547,7 +2581,7 @@
             let testResults = [];
             
             testQueries.forEach(query => {
-                const result = searchInKnowledgeBase(query);
+                const result = window.AICore ? window.AICore.searchInKnowledgeBase(query) : null;
                 if (result) {
                     testResults.push(`✅ "${query}" - 답변 발견`);
                 } else {
@@ -2647,7 +2681,9 @@
                 openReservation();
             }
             if (hash === '#chatbot') {
-                toggleChatbot();
+                if (window.ChatbotUI) {
+                    window.ChatbotUI.toggleChatbot();
+                }
             }
         });
     </script>
@@ -2656,5 +2692,4 @@
     <script src="js/ai-core.js"></script>
     <script src="js/chatbot.js"></script>
 </body>
-<div id="chatbot-root"></div>
 </html>

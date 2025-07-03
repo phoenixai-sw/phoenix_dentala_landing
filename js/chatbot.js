@@ -157,19 +157,27 @@ console.log('🤖 Chatbot UI 로딩 시작...');
   }
 
   sendBtn.onclick = sendMessage;
-  input.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
+  
+  function handleKeyPress(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
       sendMessage();
     }
-  });
+  }
+  
+  input.addEventListener('keydown', handleKeyPress);
 
   // 외부에서 빠른 버튼/예시 질문 전송 지원
   window.sendQuickMessage = sendQuickMessage;
   
-  // index.html에서 호출할 수 있도록 toggleChatbot 함수 export
-  window.toggleChatbot = toggleChatbot;
-  window.closeChatbot = closeChatbot;
+  // ChatbotUI 객체를 전역으로 export
+  window.ChatbotUI = {
+    toggleChatbot: toggleChatbot,
+    closeChatbot: closeChatbot,
+    sendQuickMessage: sendQuickMessage,
+    sendMessage: sendMessage,
+    handleKeyPress: handleKeyPress
+  };
 
   // 최초 환영 메시지
   showWelcome();
