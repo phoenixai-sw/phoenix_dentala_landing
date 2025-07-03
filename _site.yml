@@ -1,0 +1,45 @@
+# Jekyll 사이트 설정
+title: "피닉스 치과 병원"
+description: "건강한 미소, 밝은 내일을 위한 치과"
+url: "https://phoenixai-agent.site"
+baseurl: ""
+
+# SEO 설정
+author:
+  name: "피닉스 치과"
+  email: "info@phoenixai-agent.site"
+
+# 소셜 미디어
+social:
+  - name: "카카오톡"
+    url: "https://pf.kakao.com/_xxxxxx"
+  - name: "전화"
+    url: "tel:070-1234-1234"
+
+# 도메인 정보
+domains:
+  - "phoenixai-agent.site"
+  - "www.phoenixai-agent.site"
+  - "phoenix-dentala.netlify.app"
+
+# 빌드 설정
+build:
+  publish: "."
+  command: ""
+
+# 환경 변수
+environment:
+  NODE_VERSION: "18"
+  NPM_VERSION: "9"
+
+# 플러그인
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# 제외 파일
+exclude:
+  - README.md
+  - netlify.toml
+  - _site.yml
+  - .gitignore 
