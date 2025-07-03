@@ -1,4 +1,6 @@
 // 피닉스치과 AI 챗봇 엔진 (팝업/별도창 공통)
+console.log('🤖 Chatbot UI 로딩 시작...');
+
 (function() {
   // --- 설정 및 상태 변수 ---
   let chatbotOpen = false;
@@ -51,11 +53,15 @@
     if (chatbotOpen) {
       closeChatbot();
     } else {
-      popup.style.display = 'flex';
-      chatbotOpen = true;
-      input.focus();
-      showWelcome();
+      openChatbot();
     }
+  }
+
+  function openChatbot() {
+    popup.style.display = 'flex';
+    chatbotOpen = true;
+    input.focus();
+    showWelcome();
   }
 
   function closeChatbot() {
@@ -74,48 +80,38 @@
       addUserMessage(message);
       input.value = '';
       input.style.height = '45px';
+      
       const loadingMessage = addBotMessage('🤔 생각하고 있습니다...');
       
-      // AICore가 있으면 사용, 없으면 기본 응답
-      if (window.AICore && window.AICore.generateAIResponse) {
-        console.log('🤖 AICore 사용하여 AI 응답 생성');
-        window.AICore.generateAIResponse(message).then(response => {
-          loadingMessage.remove();
-          addBotMessage(response);
-        }).catch(error => {
-          console.error('AI 응답 오류:', error);
-          loadingMessage.remove();
-          addBotMessage(getDefaultResponse(message));
-        });
-      } else {
-        console.log('⚠️ AICore 없음, 기본 응답 사용');
-        // AICore가 없으면 기본 응답
-        setTimeout(() => {
-          loadingMessage.remove();
-          addBotMessage(getDefaultResponse(message));
-        }, 1000);
-      }
+      // AI 응답 생성
+      generateResponse(message, loadingMessage);
     }
   }
 
   function sendQuickMessage(message) {
     addUserMessage(message);
     const loadingMessage = addBotMessage('🤔 생각하고 있습니다...');
+    generateResponse(message, loadingMessage);
+  }
+
+  function generateResponse(message, loadingMessage) {
+    console.log('🤖 응답 생성 시작:', message);
     
-    // AICore가 있으면 사용, 없으면 기본 응답
+    // AICore가 있으면 사용
     if (window.AICore && window.AICore.generateAIResponse) {
-      console.log('🤖 AICore 사용하여 AI 응답 생성 (빠른 버튼)');
-      window.AICore.generateAIResponse(message).then(response => {
-        loadingMessage.remove();
-        addBotMessage(response);
-      }).catch(error => {
-        console.error('AI 응답 오류:', error);
-        loadingMessage.remove();
-        addBotMessage(getDefaultResponse(message));
-      });
+      console.log('✅ AICore 사용');
+      window.AICore.generateAIResponse(message)
+        .then(response => {
+          loadingMessage.remove();
+          addBotMessage(response);
+        })
+        .catch(error => {
+          console.error('❌ AICore 오류:', error);
+          loadingMessage.remove();
+          addBotMessage(getDefaultResponse(message));
+        });
     } else {
-      console.log('⚠️ AICore 없음, 기본 응답 사용 (빠른 버튼)');
-      // AICore가 없으면 기본 응답
+      console.log('⚠️ AICore 없음, 기본 응답 사용');
       setTimeout(() => {
         loadingMessage.remove();
         addBotMessage(getDefaultResponse(message));
@@ -187,10 +183,9 @@
 
   // AICore 로드 확인
   console.log('🤖 Chatbot UI 로드 완료');
-  console.log('🔍 AICore 상태 확인:', {
-    windowAICore: !!window.AICore,
-    generateAIResponse: !!(window.AICore && window.AICore.generateAIResponse),
-    getDefaultResponse: !!(window.AICore && window.AICore.getDefaultResponse)
+  console.log('🔍 AICore 상태:', {
+    exists: !!window.AICore,
+    generateAIResponse: !!(window.AICore && window.AICore.generateAIResponse)
   });
 
   // 예약하기 버튼 동작 지원
