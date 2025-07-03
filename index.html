@@ -798,6 +798,329 @@
             transform: translateY(-1px);
         }
 
+        /* 예약 페이지 스타일 */
+        .reservation-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 캘린더 스타일 */
+        .calendar-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        .calendar-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .calendar-nav {
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .calendar-nav:hover {
+            background: #f8f9fa;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .calendar-day-header:first-child {
+            color: #e74c3c;
+        }
+
+        .calendar-day-header:last-child {
+            color: #3498db;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eee;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .calendar-day:hover:not(.disabled):not(.selected) {
+            background: #f8f9fa;
+        }
+
+        .calendar-day.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .calendar-day.selected {
+            background: #4facfe;
+            color: white;
+            font-weight: bold;
+        }
+
+        .calendar-day.sunday {
+            color: #e74c3c;
+        }
+
+        .calendar-day.saturday {
+            color: #3498db;
+        }
+
+        /* 시간 선택 스타일 */
+        .time-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .time-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .time-header::before {
+            content: "🕐";
+            margin-right: 8px;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .time-slot {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .time-slot:hover:not(.disabled):not(.selected) {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+
+        .time-slot.selected {
+            background: #4facfe;
+            color: white;
+            border-color: #4facfe;
+        }
+
+        .time-slot.disabled {
+            background: #f8f9fa;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 예약자 정보 스타일 */
+        .info-form-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-header::before {
+            content: "👤";
+            margin-right: 8px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #e74c3c;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        /* 예약하기 버튼 */
+        .reservation-submit {
+            width: 100%;
+            padding: 15px;
+            background: #00aa82;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reservation-submit:hover {
+            background: #008866;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 170, 130, 0.3);
+        }
+
+        .reservation-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 예약 확인 팝업 */
+        .confirmation-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirmation-content {
+            background: white;
+            border-radius: 20px;
+            padding: 32px 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .confirmation-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-message {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .confirmation-details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .confirmation-details p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .confirmation-details strong {
+            color: #2c3e50;
+        }
+
+        .confirmation-note {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #fffbeb;
+            border-radius: 8px;
+        }
+
+        .confirmation-button {
+            padding: 15px 40px;
+            background: #00aa82;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .confirmation-button:hover {
+            background: #008866;
+            transform: translateY(-2px);
+        }
+
         /* 반응형 디자인 */
         @media (max-width: 768px) {
             .container {
@@ -996,15 +1319,100 @@
     <!-- 예약 페이지 -->
     <div class="popup-page" id="reservationPage">
         <div class="popup-header">
-            <h2>예약하기</h2>
+            <h2>📅 예약 정보를 입력하세요</h2>
             <button class="close-btn" onclick="closeReservation()">✕</button>
         </div>
         <div class="popup-content">
-            <div style="text-align: center; padding: 50px;">
-                <h3>예약 시스템</h3>
-                <p>여기에 예약 캘린더와 시간 선택 기능이 들어갑니다.</p>
-                <button class="btn btn-primary" onclick="closeReservation()">닫기</button>
+            <div class="reservation-container">
+                <!-- 캘린더 섹션 -->
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <button class="calendar-nav" onclick="previousMonth()">◀</button>
+                        <div class="calendar-title" id="calendarTitle">2025년 7월</div>
+                        <button class="calendar-nav" onclick="nextMonth()">▶</button>
+                    </div>
+                    <div class="calendar-grid">
+                        <!-- 요일 헤더 -->
+                        <div class="calendar-day-header">일</div>
+                        <div class="calendar-day-header">월</div>
+                        <div class="calendar-day-header">화</div>
+                        <div class="calendar-day-header">수</div>
+                        <div class="calendar-day-header">목</div>
+                        <div class="calendar-day-header">금</div>
+                        <div class="calendar-day-header">토</div>
+                        <!-- 날짜들은 JavaScript로 생성 -->
+                    </div>
+                </div>
+
+                <!-- 시간 선택 섹션 -->
+                <div class="time-section" id="timeSection">
+                    <div class="time-header">시간을 선택하세요</div>
+                    <div class="time-grid">
+                        <div class="time-slot" onclick="selectTime(this, '09:00')">09:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '09:30')">09:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '10:00')">10:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '10:30')">10:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '11:00')">11:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '11:30')">11:30</div>
+                        <div class="time-slot disabled">12:00</div>
+                        <div class="time-slot disabled">12:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '13:30')">13:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '14:00')">14:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '14:30')">14:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '15:00')">15:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '15:30')">15:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '16:00')">16:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '16:30')">16:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '17:00')">17:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '17:30')">17:30</div>
+                    </div>
+                </div>
+
+                <!-- 예약자 정보 입력 -->
+                <div class="info-form-section" id="infoFormSection">
+                    <div class="form-header">예약자 정보를 입력하세요</div>
+                    <form id="reservationForm" onsubmit="event.preventDefault(); submitReservation();">
+                        <div class="form-group">
+                            <label class="form-label">이름 <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="userName" placeholder="이름을 입력하세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">생년월일 <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="birthDate" placeholder="예: 850101" maxlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">전화번호 <span class="required">*</span></label>
+                            <input type="tel" class="form-input" id="phoneNumber" placeholder="예: 010-1234-5678" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">상담 내용</label>
+                            <textarea class="form-input" id="consultContent" placeholder="상담 내용을 입력해주세요" rows="3" style="resize:vertical;"></textarea>
+                        </div>
+                        <button class="reservation-submit" type="submit">예약하기</button>
+                    </form>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- 예약 확인 팝업 -->
+    <div class="confirmation-popup" id="confirmationPopup">
+        <div class="confirmation-content">
+            <div class="confirmation-icon">✅</div>
+            <div class="confirmation-title">예약이 완료되었습니다!</div>
+            <div class="confirmation-message">
+                고객님의 예약이 성공적으로 접수되었습니다.<br>
+                아래 예약 정보를 확인해주세요.
+            </div>
+            <div class="confirmation-details" id="confirmationDetails">
+                <!-- 예약 상세 정보가 여기에 표시됩니다 -->
+            </div>
+            <div class="confirmation-note">
+                피닉스치과 연락처 070-1234-1234<br>
+                방문전까지 확인 및 연락을 취하겠습니다!<br>
+                그 밖의 궁금한 점이 있으시면 챗봇을 이용해주세요!
+            </div>
+            <button class="confirmation-button" onclick="closeConfirmation()">확인</button>
         </div>
     </div>
 
@@ -1300,15 +1708,216 @@
             document.getElementById('customerAdminPage').style.display = 'none';
         }
 
+        // 예약 관련 전역 변수
+        let currentYear = 2025;
+        let currentMonth = 6; // 7월 (0부터 시작)
+        let selectedDate = null;
+        let selectedTime = null;
+        let reservations = [];
+
         // 예약 페이지
         function openReservation() {
             console.log('예약 페이지 열기');
             document.getElementById('reservationPage').style.display = 'block';
+            renderCalendar();
         }
 
         function closeReservation() {
             console.log('예약 페이지 닫기');
             document.getElementById('reservationPage').style.display = 'none';
+            resetReservationForm();
+        }
+
+        // 예약 폼 초기화
+        function resetReservationForm() {
+            selectedDate = null;
+            selectedTime = null;
+            document.getElementById('userName').value = '';
+            document.getElementById('birthDate').value = '';
+            document.getElementById('phoneNumber').value = '';
+            document.getElementById('consultContent').value = '';
+            document.querySelectorAll('.calendar-day.selected').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.time-slot.selected').forEach(el => el.classList.remove('selected'));
+        }
+
+        // 캘린더 렌더링
+        function renderCalendar() {
+            const calendarGrid = document.querySelector('.calendar-grid');
+            const calendarTitle = document.getElementById('calendarTitle');
+            
+            // 요일 헤더 유지하고 날짜만 제거
+            const dayHeaders = calendarGrid.querySelectorAll('.calendar-day-header');
+            calendarGrid.innerHTML = '';
+            dayHeaders.forEach(header => calendarGrid.appendChild(header));
+            
+            // 현재 날짜
+            const today = new Date();
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const firstDayOfWeek = firstDay.getDay();
+            
+            // 캘린더 제목 업데이트
+            calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월`;
+            
+            // 빈 칸 채우기
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'calendar-day disabled';
+                calendarGrid.appendChild(emptyDiv);
+            }
+            
+            // 날짜 채우기
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                dayDiv.textContent = day;
+                
+                const date = new Date(currentYear, currentMonth, day);
+                const dayOfWeek = date.getDay();
+                
+                // 요일에 따른 색상
+                if (dayOfWeek === 0) dayDiv.classList.add('sunday');
+                if (dayOfWeek === 6) dayDiv.classList.add('saturday');
+                
+                // 과거 날짜, 일요일 비활성화
+                if (date < today || dayOfWeek === 0) {
+                    dayDiv.classList.add('disabled');
+                } else {
+                    dayDiv.onclick = () => selectDate(day);
+                }
+                
+                calendarGrid.appendChild(dayDiv);
+            }
+        }
+
+        // 날짜 선택
+        function selectDate(day) {
+            // 이전 선택 제거
+            document.querySelectorAll('.calendar-day.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // 새로운 선택
+            event.target.classList.add('selected');
+            selectedDate = new Date(currentYear, currentMonth, day);
+            
+            // 시간 선택 섹션 표시
+            document.getElementById('timeSection').style.display = 'block';
+            
+            // 토요일인 경우 오후 시간 비활성화
+            updateTimeSlots();
+        }
+
+        // 시간대 업데이트
+        function updateTimeSlots() {
+            const timeSlots = document.querySelectorAll('.time-slot');
+            const isSaturday = selectedDate.getDay() === 6;
+            
+            timeSlots.forEach(slot => {
+                const time = slot.textContent;
+                const hour = parseInt(time.split(':')[0]);
+                
+                // 토요일 15시 이후 비활성화
+                if (isSaturday && hour >= 15) {
+                    slot.classList.add('disabled');
+                    slot.onclick = null;
+                } else if (!time.includes('12:')) { // 점심시간이 아닌 경우
+                    slot.classList.remove('disabled');
+                    slot.onclick = function() { selectTime(this, time); };
+                }
+            });
+        }
+
+        // 시간 선택
+        function selectTime(element, time) {
+            document.querySelectorAll('.time-slot.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedTime = time;
+        }
+
+        // 이전/다음 달
+        function previousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        }
+
+        // 예약 제출
+        function submitReservation() {
+            if (!selectedDate || !selectedTime) {
+                alert('날짜와 시간을 선택해주세요.');
+                return;
+            }
+
+            const userName = document.getElementById('userName').value.trim();
+            const birthDate = document.getElementById('birthDate').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const consultContent = document.getElementById('consultContent').value.trim();
+
+            if (!userName || !birthDate || !phoneNumber) {
+                alert('모든 필수 정보를 입력해주세요.');
+                return;
+            }
+
+            if (birthDate.length !== 6 || isNaN(birthDate)) {
+                alert('생년월일은 6자리 숫자로 입력해주세요. (예: 850101)');
+                return;
+            }
+
+            const phoneRegex = /^010-\d{4}-\d{4}$/;
+            if (!phoneRegex.test(phoneNumber)) {
+                alert('전화번호는 010-0000-0000 형식으로 입력해주세요.');
+                return;
+            }
+
+            const reservation = {
+                id: reservations.length + 1,
+                name: userName,
+                birthDate: birthDate,
+                phone: phoneNumber,
+                date: selectedDate,
+                time: selectedTime,
+                consult: consultContent,
+                createdAt: new Date()
+            };
+
+            reservations.push(reservation);
+            showConfirmation(reservation);
+        }
+
+        // 예약 확인 팝업 표시
+        function showConfirmation(reservation) {
+            const details = document.getElementById('confirmationDetails');
+            const dateStr = `${reservation.date.getFullYear()}. ${reservation.date.getMonth() + 1}. ${reservation.date.getDate()}.`;
+            details.innerHTML = `
+                <p><strong>예약자:</strong> ${reservation.name}</p>
+                <p><strong>생년월일:</strong> ${reservation.birthDate}</p>
+                <p><strong>전화번호:</strong> ${reservation.phone}</p>
+                <p><strong>예약 날짜:</strong> ${dateStr}</p>
+                <p><strong>예약 시간:</strong> ${reservation.time}</p>
+                <p><strong>상담 내용:</strong> ${reservation.consult ? reservation.consult.replace(/\n/g, '<br>') : ''}</p>
+            `;
+            document.getElementById('confirmationPopup').style.display = 'flex';
+            closeReservation();
+        }
+
+        // 예약 확인 팝업 닫기
+        function closeConfirmation() {
+            document.getElementById('confirmationPopup').style.display = 'none';
         }
 
         // 서비스 상세 페이지
@@ -3173,6 +3782,34 @@
         // 페이지 로드 완료
         console.log('모든 함수 로드 완료');
         console.log('로그인 함수 확인:', typeof loginChatbotAdmin === 'function', typeof loginCustomerAdmin === 'function');
+
+        // 전화번호 자동 포맷팅 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM 로드 완료 - 예약 페이지 초기화');
+            
+            // 전화번호 자동 포맷팅
+            setTimeout(() => {
+                const phoneInput = document.getElementById('phoneNumber');
+                if (phoneInput) {
+                    phoneInput.addEventListener('input', function(e) {
+                        let value = e.target.value.replace(/[^0-9]/g, '');
+                        if (value.length > 3 && value.length <= 7) {
+                            value = value.replace(/(\d{3})(\d+)/, '$1-$2');
+                        } else if (value.length > 7) {
+                            value = value.replace(/(\d{3})(\d{4})(\d{0,4})/, '$1-$2-$3');
+                        }
+                        e.target.value = value;
+                    });
+                    console.log('전화번호 자동 포맷팅 설정 완료');
+                }
+            }, 100);
+            
+            // 해시/파라미터로 바로 메뉴 열기
+            const hash = window.location.hash;
+            if (hash === '#reservation') {
+                openReservation();
+            }
+        });
     </script>
 </body>
 </html>
