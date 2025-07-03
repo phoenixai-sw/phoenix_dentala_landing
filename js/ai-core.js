@@ -1,9 +1,16 @@
-if (window.AICore || window.apiSettings) {
-  console.warn('ai-core.js 중복 로드 방지');
+if (window.apiSettings || window.knowledgeBase || window.AICore) {
+  console.warn('ai-core.js 중복 로드 방지 (apiSettings/knowledgeBase/AICore)');
   return;
 }
 // 피닉스 치과 AI 코어 엔진
 console.log('🤖 AICore 엔진 로딩 시작...');
+
+// 관리자 로그인 더미 함수 (필요시 오버라이드)
+if (typeof adminLogin !== 'function') {
+  function adminLogin() {
+    alert('관리자 로그인 기능이 구현되지 않았습니다.');
+  }
+}
 
 // 기본 설정
 const apiSettings = {
@@ -421,11 +428,6 @@ function parseKnowledgeFile(fileData) {
   }
   
   return parsedQA;
-}
-
-// 관리자 로그인 함수
-function adminLogin(id, pw) {
-  return id === 'phoenix' && pw === 'phoenix';
 }
 
 // window.AICore 객체로 export
