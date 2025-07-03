@@ -258,6 +258,35 @@
             background: #3d8bfe;
         }
 
+        /* 메인 페이지 이동 버튼 스타일 */
+        .main-page-link {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .main-page-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .main-page-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .main-page-btn:active {
+            transform: translateY(0);
+        }
+
         /* 팝업 페이지 공통 스타일 */
         .popup-page {
             display: none;
@@ -551,6 +580,15 @@
                 height: 60vh;
             }
 
+            .main-page-link {
+                padding: 15px;
+            }
+
+            .main-page-btn {
+                padding: 12px 25px;
+                font-size: 15px;
+            }
+
             .admin-header {
                 flex-direction: column;
                 gap: 10px;
@@ -566,7 +604,6 @@
 <body>
     <!-- 헤더 -->
     <div class="header">
-        <a href="index.html" class="back-link">← 메인으로</a>
         <button class="admin-login-btn" onclick="loginChatbotAdmin2()">🤖 AI챗봇 관리 로그인2</button>
         <h1>🤖 피닉스 AI 상담사</h1>
         <p>24시간 언제든 궁금한 점을 문의해주세요!</p>
@@ -606,6 +643,13 @@
                 <textarea id="chatbotInput2" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress2(event)" rows="1"></textarea>
                 <button class="chatbot-send" onclick="sendMessage2()">전송</button>
             </div>
+        </div>
+        
+        <!-- 메인 페이지 이동 버튼 -->
+        <div class="main-page-link">
+            <button class="main-page-btn" onclick="goToMainPage()">
+                🏠 치과 메인 페이지로~
+            </button>
         </div>
     </div>
 
@@ -1085,6 +1129,11 @@
 
         function goToReservationPage2() {
             window.location.href = 'reservation.html';
+        }
+
+        // 메인 페이지로 이동
+        function goToMainPage() {
+            window.location.href = 'index.html';
         }
 
         function loginChatbotAdmin2() {
