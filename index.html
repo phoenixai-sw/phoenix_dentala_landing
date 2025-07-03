@@ -1638,6 +1638,26 @@
     <script>
         console.log('페이지 로드 시작');
 
+        // 페이지 로드 시 초기 데이터 설정
+        function initializeData() {
+            const existingData = localStorage.getItem('phoenixDentalReservations');
+            if (!existingData) {
+                // 초기 샘플 데이터를 localStorage에 저장
+                const initialData = getSampleReservationData().map(item => ({
+                    ...item,
+                    id: Date.now() + Math.random() // 고유 ID 생성
+                }));
+                localStorage.setItem('phoenixDentalReservations', JSON.stringify(initialData));
+                console.log('초기 예약 데이터 설정 완료');
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('load', function() {
+            initializeData();
+            console.log('페이지 로드 완료');
+        });
+
         // 전역 변수
         let chatbotOpen = false;
         let apiSettings = {
@@ -1710,6 +1730,10 @@
         function openCustomerAdmin() {
             console.log('고객 관리 페이지 열기');
             document.getElementById('customerAdminPage').style.display = 'block';
+            
+            // 최신 예약 데이터로 테이블 업데이트
+            updateCustomerTable();
+            updateStatistics();
         }
 
         function closeCustomerAdmin() {
@@ -2956,7 +2980,25 @@
             return currentYear - birthYear;
         }
 
-        // 샘플 예약 데이터 생성 (실제 환경에서는 서버에서 가져옴)
+        // 실제 예약 데이터 가져오기 (localStorage에서)
+        function getReservationData() {
+            try {
+                const storedReservations = JSON.parse(localStorage.getItem('phoenixDentalReservations') || '[]');
+                
+                // 저장된 데이터가 없으면 샘플 데이터 사용
+                if (storedReservations.length === 0) {
+                    return getSampleReservationData();
+                }
+                
+                return storedReservations;
+                
+            } catch (error) {
+                console.error('예약 데이터 로드 실패:', error);
+                return getSampleReservationData();
+            }
+        }
+
+        // 샘플 예약 데이터 (초기 데이터용)
         function getSampleReservationData() {
             const currentYear = new Date().getFullYear();
             return [
@@ -2968,7 +3010,7 @@
                     date: '2025-06-15',
                     time: '10:00',
                     consult: '임플란트 상담',
-                    createdAt: '2025-06-12 09:30',
+                    createdAt: '2025-06-12T09:30:00.000Z',
                     reservationHistory: ['2025-06-15 10:00']
                 },
                 {
@@ -2979,7 +3021,7 @@
                     date: '2025-06-16',
                     time: '14:30',
                     consult: '치아 교정',
-                    createdAt: '2025-06-12 11:15',
+                    createdAt: '2025-06-12T11:15:00.000Z',
                     reservationHistory: ['2025-06-16 14:30']
                 },
                 {
@@ -2990,19 +3032,8 @@
                     date: '2025-06-12',
                     time: '16:00',
                     consult: '스케일링',
-                    createdAt: '2025-06-11 14:20',
+                    createdAt: '2025-06-11T14:20:00.000Z',
                     reservationHistory: ['2025-06-12 16:00']
-                },
-                {
-                    id: 4,
-                    name: '김철수',
-                    birth: '850315',
-                    phone: '010-1234-5678',
-                    date: '2025-07-20',
-                    time: '09:30',
-                    consult: '임플란트 2차',
-                    createdAt: '2025-06-15 10:30',
-                    reservationHistory: ['2025-06-15 10:00', '2025-07-20 09:30']
                 }
             ];
         }
@@ -3038,10 +3069,24 @@
             return Array.from(customerMap.values());
         }
 
+        // 생년월일 6자리에서 출생연도 계산
+        function getBirthYear(birth) {
+            const yearPrefix = birth.substr(0, 2);
+            const year = parseInt(yearPrefix);
+            
+            // 기준점: 30 이상이면 19XX년, 30 미만이면 20XX년
+            // 예: 85 → 1985년, 05 → 2005년, 25 → 2025년
+            if (year >= 30) {
+                return 1900 + year;
+            } else {
+                return 2000 + year;
+            }
+        }
+
         // 예약 데이터에 구강검진 정보 추가
         function addDentalCheckupInfo(reservations) {
             return reservations.map(reservation => {
-                const birthYear = parseInt('19' + reservation.birth.substr(0, 2));
+                const birthYear = getBirthYear(reservation.birth);
                 const age = calculateAge(birthYear);
                 const dentalCheckupYear = calculateDentalCheckupYear(birthYear);
                 const dentalCheckupInfo = `나이(${age}세), ${dentalCheckupYear}년 국가 구강검진 대상`;
@@ -3076,7 +3121,7 @@
         function downloadExcel() {
             console.log('전체 예약 데이터 엑셀 다운로드');
             
-            const rawData = getSampleReservationData();
+            const rawData = getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
@@ -3113,7 +3158,7 @@
         function downloadDentalCheckupExcel() {
             console.log('구강검진 대상자 엑셀 다운로드');
             
-            const rawData = getSampleReservationData();
+            const rawData = getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
@@ -3156,6 +3201,70 @@
             downloadCSV(csvData, `피닉스치과_${currentYear}년_구강검진대상자_${today}.csv`);
             
             alert(`${currentYear}년 구강검진 대상자 데이터가 다운로드되었습니다.\n총 ${currentYearCheckupCustomers.length}명의 고객 정보가 포함되어 있습니다.`);
+        }
+
+        // 고객 테이블 업데이트
+        function updateCustomerTable() {
+            const rawData = getReservationData();
+            const consolidatedData = consolidateCustomers(rawData);
+            const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
+            
+            const tableBody = document.getElementById('customerTableBody');
+            if (!tableBody) return;
+            
+            // 테이블 내용 초기화
+            tableBody.innerHTML = '';
+            
+            // 새 데이터로 테이블 생성
+            dataWithDentalInfo.forEach((customer, index) => {
+                const row = document.createElement('tr');
+                
+                // 구강검진 대상 연도에 따른 배경색 설정
+                const currentYear = new Date().getFullYear();
+                const bgColor = customer.dentalCheckupYear === currentYear ? '#e8f5e8' : '#ffeaa7';
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${customer.name}</td>
+                    <td>${customer.birth}</td>
+                    <td>${customer.phone}</td>
+                    <td>${customer.date}</td>
+                    <td>${customer.time}</td>
+                    <td style="background: ${bgColor};">${customer.dentalCheckupInfo}</td>
+                    <td>${new Date(customer.createdAt).toLocaleString('ko-KR')}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 통계 업데이트
+        function updateStatistics() {
+            const rawData = getReservationData();
+            const consolidatedData = consolidateCustomers(rawData);
+            
+            const today = new Date().toISOString().split('T')[0];
+            const thisWeekStart = new Date();
+            thisWeekStart.setDate(thisWeekStart.getDate() - thisWeekStart.getDay());
+            const thisWeekStartStr = thisWeekStart.toISOString().split('T')[0];
+            
+            // 통계 계산
+            const totalReservations = consolidatedData.length;
+            const todayReservations = consolidatedData.filter(customer => 
+                customer.date === today
+            ).length;
+            const thisWeekReservations = consolidatedData.filter(customer => 
+                customer.date >= thisWeekStartStr
+            ).length;
+            
+            // 통계 업데이트
+            const totalElement = document.getElementById('totalReservations');
+            const todayElement = document.getElementById('todayReservations');
+            const weekElement = document.getElementById('thisWeekReservations');
+            
+            if (totalElement) totalElement.textContent = totalReservations;
+            if (todayElement) todayElement.textContent = todayReservations;
+            if (weekElement) weekElement.textContent = thisWeekReservations;
         }
 
         // Finetuning 모델 입력 필드 토글

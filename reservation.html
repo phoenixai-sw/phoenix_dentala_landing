@@ -759,6 +759,20 @@
             return currentYear - birthYear;
         }
 
+        // 생년월일 6자리에서 출생연도 계산
+        function getBirthYear(birth) {
+            const yearPrefix = birth.substr(0, 2);
+            const year = parseInt(yearPrefix);
+            
+            // 기준점: 30 이상이면 19XX년, 30 미만이면 20XX년
+            // 예: 85 → 1985년, 05 → 2005년, 25 → 2025년
+            if (year >= 30) {
+                return 1900 + year;
+            } else {
+                return 2000 + year;
+            }
+        }
+
         // 개인정보 동의 팝업 표시
         function showPrivacyPolicy() {
             document.getElementById('privacyPolicyPopup').style.display = 'flex';
@@ -773,6 +787,39 @@
         function agreeAndClosePrivacyPolicy() {
             document.getElementById('privacyConsent').checked = true;
             document.getElementById('privacyPolicyPopup').style.display = 'none';
+        }
+
+        // localStorage에 예약 데이터 저장
+        function saveReservationToStorage(reservation) {
+            try {
+                // 기존 예약 데이터 가져오기
+                const existingReservations = JSON.parse(localStorage.getItem('phoenixDentalReservations') || '[]');
+                
+                // 새 예약 데이터 추가
+                existingReservations.push({
+                    id: Date.now(), // 고유 ID
+                    name: reservation.name,
+                    birth: reservation.birth,
+                    phone: reservation.phone,
+                    date: reservation.date.toISOString().split('T')[0],
+                    time: reservation.time,
+                    consult: reservation.consult,
+                    age: reservation.age,
+                    dentalCheckupYear: reservation.dentalCheckupYear,
+                    dentalCheckupInfo: reservation.dentalCheckupInfo,
+                    privacyConsent: reservation.privacyConsent,
+                    createdAt: new Date().toISOString(),
+                    reservationHistory: [`${reservation.date.toISOString().split('T')[0]} ${reservation.time}`]
+                });
+                
+                // localStorage에 저장
+                localStorage.setItem('phoenixDentalReservations', JSON.stringify(existingReservations));
+                
+                console.log('예약 데이터 저장 완료:', reservation.name);
+                
+            } catch (error) {
+                console.error('예약 데이터 저장 실패:', error);
+            }
         }
 
         // 예약 제출
@@ -812,7 +859,7 @@
             }
 
             // 구강검진 대상 연도 계산
-            const birthYear = parseInt('19' + birth.substr(0, 2));
+            const birthYear = getBirthYear(birth);
             const age = calculateAge(birthYear);
             const dentalCheckupYear = calculateDentalCheckupYear(birthYear);
             const dentalCheckupInfo = `나이(${age}세), ${dentalCheckupYear}년 국가 구강검진 대상`;
@@ -833,6 +880,10 @@
             };
 
             reservations.push(reservation);
+            
+            // localStorage에 예약 데이터 저장
+            saveReservationToStorage(reservation);
+            
             showConfirmation(reservation);
         }
 
