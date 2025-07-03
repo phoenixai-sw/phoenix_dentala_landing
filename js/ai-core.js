@@ -1,7 +1,11 @@
 // --- 상태 변수 ---
 const apiSettings = (function(){
-  const saved = localStorage.getItem('apiSettings');
-  if (saved) return JSON.parse(saved);
+  try {
+    const saved = localStorage.getItem('apiSettings');
+    if (saved) return JSON.parse(saved);
+  } catch (error) {
+    console.warn('localStorage 접근 오류:', error);
+  }
   return {
     chatgpt: { apiKey: '', model: '', enabled: false },
     gemini: { apiKey: '', model: '', enabled: false },
@@ -10,8 +14,12 @@ const apiSettings = (function(){
   };
 })();
 const knowledgeBase = (function(){
-  const saved = localStorage.getItem('knowledgeBase');
-  if (saved) return JSON.parse(saved);
+  try {
+    const saved = localStorage.getItem('knowledgeBase');
+    if (saved) return JSON.parse(saved);
+  } catch (error) {
+    console.warn('localStorage 접근 오류:', error);
+  }
   return {
     files: [],
     content: '',
@@ -21,10 +29,18 @@ const knowledgeBase = (function(){
 })();
 
 function saveApiSettingsToStorage() {
-  localStorage.setItem('apiSettings', JSON.stringify(apiSettings));
+  try {
+    localStorage.setItem('apiSettings', JSON.stringify(apiSettings));
+  } catch (error) {
+    console.warn('localStorage 저장 오류:', error);
+  }
 }
 function saveKnowledgeBaseToStorage() {
-  localStorage.setItem('knowledgeBase', JSON.stringify(knowledgeBase));
+  try {
+    localStorage.setItem('knowledgeBase', JSON.stringify(knowledgeBase));
+  } catch (error) {
+    console.warn('localStorage 저장 오류:', error);
+  }
 }
 
 // apiSettings, knowledgeBase 값이 바뀔 때마다 저장하도록 Proxy 적용
@@ -258,20 +274,28 @@ function formatKnowledgeBaseAnswer(qa, originalQuestion) {
 
 // AI 응답 생성 함수
 function generateAIResponse(userMessage) {
-  console.log('AI 응답 생성 시작:', userMessage);
+  console.log('🤖 AI 응답 생성 시작:', userMessage);
+  console.log('📊 현재 설정:', {
+    activeProvider: apiSettings.activeProvider,
+    chatgptEnabled: apiSettings.chatgpt.enabled,
+    geminiEnabled: apiSettings.gemini.enabled,
+    claudeEnabled: apiSettings.claude.enabled,
+    knowledgeBaseEnabled: knowledgeBase.enabled,
+    knowledgeBaseDataCount: knowledgeBase.parsedData.length
+  });
   
   const knowledgeAnswer = searchInKnowledgeBase(userMessage);
   if (knowledgeAnswer) {
-    console.log('지식베이스에서 답변 발견');
+    console.log('✅ 지식베이스에서 답변 발견');
     return Promise.resolve(knowledgeAnswer);
   }
   
   if (apiSettings.activeProvider && apiSettings[apiSettings.activeProvider].enabled) {
-    console.log('API 호출로 답변 생성:', apiSettings.activeProvider);
+    console.log('🚀 API 호출로 답변 생성:', apiSettings.activeProvider);
     return callAIAPIWithContext(userMessage);
   }
   
-  console.log('기본 FAQ 응답 사용');
+  console.log('💡 기본 FAQ 응답 사용');
   return Promise.resolve(getDefaultResponse(userMessage));
 }
 
@@ -689,4 +713,13 @@ window.AICore = {
   formatFriendlyResponse: formatFriendlyResponse
 };
 
-console.log('🤖 AICore 엔진 로드 완료:', Object.keys(window.AICore).length, '개 함수'); 
+console.log('🤖 AICore 엔진 로드 완료:', Object.keys(window.AICore).length, '개 함수');
+console.log('📋 AICore 함수 목록:', Object.keys(window.AICore));
+console.log('🔧 초기 설정 상태:', {
+  apiSettings: apiSettings,
+  knowledgeBase: {
+    enabled: knowledgeBase.enabled,
+    filesCount: knowledgeBase.files.length,
+    parsedDataCount: knowledgeBase.parsedData.length
+  }
+}); 

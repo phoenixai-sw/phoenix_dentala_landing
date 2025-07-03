@@ -78,6 +78,7 @@
       
       // AICore가 있으면 사용, 없으면 기본 응답
       if (window.AICore && window.AICore.generateAIResponse) {
+        console.log('🤖 AICore 사용하여 AI 응답 생성');
         window.AICore.generateAIResponse(message).then(response => {
           loadingMessage.remove();
           addBotMessage(response);
@@ -87,6 +88,7 @@
           addBotMessage(getDefaultResponse(message));
         });
       } else {
+        console.log('⚠️ AICore 없음, 기본 응답 사용');
         // AICore가 없으면 기본 응답
         setTimeout(() => {
           loadingMessage.remove();
@@ -102,6 +104,7 @@
     
     // AICore가 있으면 사용, 없으면 기본 응답
     if (window.AICore && window.AICore.generateAIResponse) {
+      console.log('🤖 AICore 사용하여 AI 응답 생성 (빠른 버튼)');
       window.AICore.generateAIResponse(message).then(response => {
         loadingMessage.remove();
         addBotMessage(response);
@@ -111,6 +114,7 @@
         addBotMessage(getDefaultResponse(message));
       });
     } else {
+      console.log('⚠️ AICore 없음, 기본 응답 사용 (빠른 버튼)');
       // AICore가 없으면 기본 응답
       setTimeout(() => {
         loadingMessage.remove();
@@ -180,6 +184,14 @@
     chatbotOpen = true;
     input.focus();
   }
+
+  // AICore 로드 확인
+  console.log('🤖 Chatbot UI 로드 완료');
+  console.log('🔍 AICore 상태 확인:', {
+    windowAICore: !!window.AICore,
+    generateAIResponse: !!(window.AICore && window.AICore.generateAIResponse),
+    getDefaultResponse: !!(window.AICore && window.AICore.getDefaultResponse)
+  });
 
   // 예약하기 버튼 동작 지원
   function isKakaoInAppBrowser() {
