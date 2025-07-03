@@ -96,12 +96,25 @@ console.log('🤖 Chatbot UI 로딩 시작...');
 
   function generateResponse(message, loadingMessage) {
     console.log('🤖 응답 생성 시작:', message);
+    console.log('🔍 AICore 존재 여부:', !!window.AICore);
+    console.log('🔍 AICore.generateAIResponse 존재 여부:', !!(window.AICore && window.AICore.generateAIResponse));
+    
+    if (window.AICore) {
+      console.log('📊 AICore 상태:', {
+        apiSettings: window.AICore.apiSettings,
+        activeProvider: window.AICore.apiSettings.activeProvider,
+        chatgptEnabled: window.AICore.apiSettings.chatgpt.enabled,
+        geminiEnabled: window.AICore.apiSettings.gemini.enabled,
+        claudeEnabled: window.AICore.apiSettings.claude.enabled
+      });
+    }
     
     // AICore가 있으면 사용
     if (window.AICore && window.AICore.generateAIResponse) {
       console.log('✅ AICore 사용');
       window.AICore.generateAIResponse(message)
         .then(response => {
+          console.log('✅ AI 응답 성공:', response);
           loadingMessage.remove();
           addBotMessage(response);
         })

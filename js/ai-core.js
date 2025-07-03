@@ -159,7 +159,13 @@ function formatKnowledgeBaseAnswer(qa) {
 
 // AI 응답 생성 함수
 function generateAIResponse(userMessage) {
-  console.log('🤖 AI 응답 생성:', userMessage);
+  console.log('🤖 AI 응답 생성 시작:', userMessage);
+  console.log('📊 현재 API 설정 상태:', {
+    activeProvider: apiSettings.activeProvider,
+    chatgpt: apiSettings.chatgpt,
+    gemini: apiSettings.gemini,
+    claude: apiSettings.claude
+  });
   
   // 1. 지식베이스 검색
   const knowledgeAnswer = searchInKnowledgeBase(userMessage);
@@ -175,7 +181,7 @@ function generateAIResponse(userMessage) {
   }
   
   // 3. 기본 FAQ 응답
-  console.log('💡 기본 FAQ 응답 사용');
+  console.log('💡 기본 FAQ 응답 사용 (API 설정 없음)');
   return Promise.resolve(getDefaultResponse(userMessage));
 }
 
@@ -184,27 +190,38 @@ async function callAIAPI(userMessage) {
   const provider = apiSettings.activeProvider;
   const settings = apiSettings[provider];
   
+  console.log('🚀 API 호출 시작:', {
+    provider: provider,
+    settings: settings,
+    message: userMessage
+  });
+  
   try {
     let response;
     
     switch (provider) {
       case 'chatgpt':
+        console.log('🧠 ChatGPT API 호출 중...');
         response = await callChatGPTAPI(userMessage, settings);
         break;
       case 'gemini':
+        console.log('💎 Gemini API 호출 중...');
         response = await callGeminiAPI(userMessage, settings);
         break;
       case 'claude':
+        console.log('🤖 Claude API 호출 중...');
         response = await callClaudeAPI(userMessage, settings);
         break;
       default:
+        console.log('❌ 알 수 없는 API 제공자:', provider);
         return getDefaultResponse(userMessage);
     }
     
+    console.log('✅ API 응답 받음:', response);
     return formatAPIResponse(response, provider);
     
   } catch (error) {
-    console.error('API 호출 오류:', error);
+    console.error('❌ API 호출 오류:', error);
     return getDefaultResponse(userMessage);
   }
 }
