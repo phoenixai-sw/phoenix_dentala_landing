@@ -578,27 +578,43 @@
         /* 반응형 디자인 */
         @media (max-width: 768px) {
             .container {
-                padding: 0 8px;
-                margin: 5px auto;
+                padding: 0 5px;
+                margin: 2px auto;
+            }
+            
+            .header {
+                padding: 5px 0;
+                min-height: 40px;
             }
             
             .header h1 {
-                font-size: 20px;
+                font-size: 18px;
+                margin-bottom: 0;
             }
             
-            .back-link, .admin-login-btn {
+            .header p {
+                font-size: 14px;
+                margin: 0;
+            }
+            
+            .back-link {
                 position: static;
-                margin: 5px;
+                margin: 2px;
                 display: inline-block;
+                font-size: 14px;
+            }
+            
+            .admin-login-btn {
+                display: none !important; /* 모바일에서도 관리자 버튼 숨김 */
             }
             
             .chatbot-main {
-                height: 80vh;
+                height: 90vh;
                 border-radius: 10px;
             }
 
             .chatbot-messages {
-                max-height: calc(90vh - 120px);
+                max-height: calc(90vh - 100px);
             }
 
             .admin-header {
