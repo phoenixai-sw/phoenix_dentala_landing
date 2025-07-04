@@ -38,7 +38,7 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 5px 15px;
+            padding: 2px 10px;
         }
 
         /* 챗봇 메인 컨테이너 */
@@ -47,7 +47,7 @@
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             overflow: hidden;
-            height: 98vh;
+            height: 99vh;
             display: flex;
             flex-direction: column;
         }
@@ -101,7 +101,7 @@
             overflow-y: auto;
             background: #f8f9fa;
             min-height: 400px;
-            max-height: calc(98vh - 120px);
+            max-height: calc(99vh - 110px);
         }
 
         .message {
@@ -549,53 +549,98 @@
         /* 반응형 디자인 */
         @media (max-width: 768px) {
             .container {
-                padding: 0 2px;
-                margin: 0 auto;
-            }
-            
-            .chatbot-main {
-                height: 99vh;
-                border-radius: 8px;
-            }
-
-            .chatbot-messages {
-                max-height: calc(99vh - 80px);
-            }
-        }
-
-        /* 아이폰 미니 등 작은 화면용 추가 최적화 */
-        @media (max-width: 480px) {
-            .container {
                 padding: 0 1px;
                 margin: 0 auto;
             }
             
             .chatbot-main {
                 height: 100vh;
-                border-radius: 0;
+                border-radius: 6px;
             }
 
             .chatbot-messages {
-                max-height: calc(100vh - 70px);
-            }
-            
-            .chatbot-header {
-                padding: 6px;
-            }
-            
-            .home-button {
-                width: 30px;
-                height: 30px;
-                font-size: 14px;
-                left: 8px;
-            }
-            
-            .chatbot-title {
-                font-size: 14px;
+                max-height: calc(100vh - 75px);
             }
             
             .chatbot-input {
                 padding: 8px;
+            }
+        }
+
+        /* 아이폰 미니 등 작은 화면용 추가 최적화 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0;
+                margin: 0;
+            }
+            
+            .chatbot-main {
+                height: 100vh;
+                border-radius: 0;
+                margin: 0;
+            }
+
+            .chatbot-messages {
+                max-height: calc(100vh - 65px);
+                padding: 8px;
+            }
+            
+            .chatbot-header {
+                padding: 5px;
+            }
+            
+            .home-button {
+                width: 28px;
+                height: 28px;
+                font-size: 13px;
+                left: 6px;
+            }
+            
+            .chatbot-title {
+                font-size: 13px;
+            }
+            
+            .chatbot-input {
+                padding: 6px;
+            }
+            
+            .chatbot-input textarea {
+                padding: 8px 12px;
+                min-height: 36px;
+                font-size: 16px;
+            }
+            
+            .chatbot-send {
+                padding: 8px 12px;
+                min-width: 60px;
+                font-size: 13px;
+            }
+        }
+
+        /* 매우 작은 화면 (아이폰 SE 등) 추가 최적화 */
+        @media (max-width: 375px) {
+            .chatbot-messages {
+                max-height: calc(100vh - 60px);
+                padding: 6px;
+            }
+            
+            .chatbot-header {
+                padding: 4px;
+            }
+            
+            .chatbot-input {
+                padding: 4px;
+            }
+            
+            .home-button {
+                width: 26px;
+                height: 26px;
+                font-size: 12px;
+                left: 4px;
+            }
+            
+            .chatbot-title {
+                font-size: 12px;
             }
         }
 
