@@ -578,30 +578,31 @@
         /* 반응형 디자인 */
         @media (max-width: 768px) {
             .container {
-                padding: 0 5px;
-                margin: 2px auto;
+                padding: 0 3px;
+                margin: 0 auto;
             }
             
             .header {
-                padding: 5px 0;
-                min-height: 40px;
+                padding: 3px 0;
+                min-height: 35px;
             }
             
             .header h1 {
-                font-size: 18px;
+                font-size: 16px;
                 margin-bottom: 0;
             }
             
             .header p {
-                font-size: 14px;
+                font-size: 12px;
                 margin: 0;
+                display: none; /* 아예 숨김으로 공간 절약 */
             }
             
             .back-link {
                 position: static;
-                margin: 2px;
+                margin: 1px;
                 display: inline-block;
-                font-size: 14px;
+                font-size: 12px;
             }
             
             .admin-login-btn {
@@ -609,14 +610,61 @@
             }
             
             .chatbot-main {
-                height: 90vh;
-                border-radius: 10px;
+                height: 95vh;
+                border-radius: 8px;
             }
 
             .chatbot-messages {
-                max-height: calc(90vh - 100px);
+                max-height: calc(95vh - 90px);
+            }
+        }
+
+        /* 아이폰 미니 등 작은 화면용 추가 최적화 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 2px;
+                margin: 0 auto;
+            }
+            
+            .header {
+                padding: 2px 0;
+                min-height: 30px;
+            }
+            
+            .header h1 {
+                font-size: 14px;
+                margin: 0;
+            }
+            
+            .header p {
+                display: none; /* 완전히 숨김 */
+            }
+            
+            .back-link {
+                font-size: 11px;
+                margin: 0;
+            }
+            
+            .chatbot-main {
+                height: 97vh;
+                border-radius: 6px;
             }
 
+            .chatbot-messages {
+                max-height: calc(97vh - 80px);
+            }
+            
+            .chatbot-header {
+                padding: 8px;
+            }
+            
+            .chatbot-title {
+                font-size: 14px;
+            }
+        }
+
+        /* 관리자 페이지 모바일 최적화 */
+        @media (max-width: 768px) {
             .admin-header {
                 flex-direction: column;
                 gap: 10px;
