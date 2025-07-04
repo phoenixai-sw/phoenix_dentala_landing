@@ -75,10 +75,17 @@
             cursor: pointer;
             font-size: 14px;
             transition: all 0.3s;
+            display: none; /* 기본적으로 숨김 */
         }
 
         .admin-login-btn:hover {
             background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 채팅창 내 관리자 버튼 스타일 */
+        .admin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
         }
 
         /* 컨테이너 */
@@ -94,7 +101,7 @@
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             overflow: hidden;
-            height: 85vh;
+            height: 75vh;
             display: flex;
             flex-direction: column;
         }
@@ -586,7 +593,7 @@
             }
             
             .chatbot-main {
-                height: 90vh;
+                height: 80vh;
                 border-radius: 10px;
             }
 
@@ -794,6 +801,29 @@
                 input.value = '';
                 input.style.height = '45px';
                 
+                // "AI관리자 버튼"이라는 메시지를 감지하면 관리자 버튼 제공
+                if (message === "AI관리자 버튼") {
+                    const adminButtonMessage = `
+                        🔑 <strong>AI 관리자 기능을 요청하셨습니다.</strong><br><br>
+                        아래 버튼을 클릭하여 AI 챗봇 관리 시스템에 접속하세요.<br><br>
+                        <button class="admin-button" onclick="loginChatbotAdmin2()" style="
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 25px;
+                            font-size: 16px;
+                            font-weight: bold;
+                            cursor: pointer;
+                            transition: all 0.3s;
+                            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+                        ">🤖 AI챗봇 관리 로그인</button>
+                    `;
+                    
+                    addBotMessage2(adminButtonMessage);
+                    return;
+                }
+                
                 const loadingMessage = addBotMessage2('👩‍⚕️🕐 최고의 답변을 준비 중 입니다...');
                 
                 generateAIResponse2(message).then(response => {
@@ -812,6 +842,29 @@
         function sendQuickMessage2(message) {
             console.log('빠른 메시지:', message);
             addUserMessage2(message);
+            
+            // "AI관리자 버튼"이라는 메시지를 감지하면 관리자 버튼 제공
+            if (message === "AI관리자 버튼") {
+                const adminButtonMessage = `
+                    🔑 <strong>AI 관리자 기능을 요청하셨습니다.</strong><br><br>
+                    아래 버튼을 클릭하여 AI 챗봇 관리 시스템에 접속하세요.<br><br>
+                    <button class="admin-button" onclick="loginChatbotAdmin2()" style="
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        border: none;
+                        padding: 12px 24px;
+                        border-radius: 25px;
+                        font-size: 16px;
+                        font-weight: bold;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+                    ">🤖 AI챗봇 관리 로그인</button>
+                `;
+                
+                addBotMessage2(adminButtonMessage);
+                return;
+            }
             
             const loadingMessage = addBotMessage2('👩‍⚕️🕐 최고의 답변을 준비 중 입니다...');
             
@@ -873,10 +926,13 @@
             // 로딩 메시지인지 확인 (공통 메시지 추가하지 않음)
             const isLoadingMessage = message.includes('최고의 답변을 준비 중 입니다') || message.includes('처리하고 있습니다');
             
+            // 관리자 버튼 메시지인지 확인 (공통 메시지 추가하지 않음)
+            const isAdminMessage = message.includes('AI 관리자 기능을 요청하셨습니다');
+            
             let finalMessage = message;
             
-            // 로딩 메시지가 아닌 경우에만 공통 메시지와 예약 버튼 추가
-            if (!isLoadingMessage) {
+            // 로딩 메시지와 관리자 메시지가 아닌 경우에만 공통 메시지와 예약 버튼 추가
+            if (!isLoadingMessage && !isAdminMessage) {
                 finalMessage += `<br><br>
                 <div style="background: #f0f8ff; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center;">
                     💝 <strong>좀더 자세한 사항은 직접 방문하시면 친절하게 상담 드리겠습니다!</strong><br><br>
