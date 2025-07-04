@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>피닉스 치과 병원 - 무료 검진(구강) 확인</title>
+    
+    <!-- 카카오톡 인앱 브라우저 캐시 방지 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="format-detection" content="email=no">
     <style>
         * {
             margin: 0;
@@ -83,46 +91,46 @@
         }
 
         .info-section {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            border-left: 5px solid #4facfe;
+            background: #f8f9fa !important;
+            border-radius: 15px !important;
+            padding: 17px !important;
+            margin-bottom: 21px !important;
+            border-left: 5px solid #4facfe !important;
         }
 
         .info-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 18px !important;
+            font-weight: bold !important;
+            color: #2c3e50 !important;
+            margin-bottom: 10px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 5px !important;
         }
 
         .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
         }
 
         .info-item {
-            padding: 12px 0;
-            border-bottom: 1px solid #e9ecef;
+            padding: 8px 0 !important;
+            border-bottom: 1px solid #e9ecef !important;
         }
 
         .info-item:last-child {
-            border-bottom: none;
+            border-bottom: none !important;
         }
 
         .info-item strong {
-            color: #2c3e50;
-            font-weight: 600;
+            color: #2c3e50 !important;
+            font-weight: 600 !important;
         }
 
         .time-info {
-            color: #27ae60;
-            font-weight: bold;
+            color: #27ae60 !important;
+            font-weight: bold !important;
         }
 
         .form-section {
@@ -326,32 +334,99 @@
         /* 반응형 디자인 */
         @media (max-width: 768px) {
             .container {
-                margin: 10px;
-                border-radius: 15px;
+                margin: 10px !important;
+                border-radius: 15px !important;
             }
             
             .header {
-                padding: 25px 20px;
+                padding: 25px 20px !important;
             }
             
             .header h1 {
-                font-size: 24px;
+                font-size: 24px !important;
             }
             
             .content {
-                padding: 30px 20px;
+                padding: 30px 20px !important;
             }
             
             .info-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
             }
             
             .popup-content {
-                padding: 30px 20px;
+                padding: 30px 20px !important;
             }
             
             .popup-buttons {
-                flex-direction: column;
+                flex-direction: column !important;
+            }
+            
+            /* 모바일에서 진료 시간 안내 공간 더 줄이기 */
+            .info-section {
+                padding: 12px !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .info-title {
+                font-size: 16px !important;
+                margin-bottom: 7px !important;
+                gap: 4px !important;
+            }
+            
+            .info-grid {
+                gap: 7px !important;
+            }
+            
+            .info-item {
+                padding: 5px 0 !important;
+                font-size: 14px !important;
+            }
+        }
+        
+        /* 작은 모바일에서 더 컴팩트하게 */
+        @media (max-width: 480px) {
+            .info-section {
+                padding: 10px !important;
+                margin-bottom: 12px !important;
+            }
+            
+            .info-title {
+                font-size: 15px !important;
+                margin-bottom: 5px !important;
+                gap: 3px !important;
+            }
+            
+            .info-grid {
+                gap: 5px !important;
+            }
+            
+            .info-item {
+                padding: 4px 0 !important;
+                font-size: 13px !important;
+            }
+        }
+        
+        /* 매우 작은 모바일에서 최대한 컴팩트하게 */
+        @media (max-width: 360px) {
+            .info-section {
+                padding: 8px !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .info-title {
+                font-size: 14px !important;
+                margin-bottom: 4px !important;
+                gap: 2px !important;
+            }
+            
+            .info-grid {
+                gap: 4px !important;
+            }
+            
+            .info-item {
+                padding: 3px 0 !important;
+                font-size: 12px !important;
             }
         }
     </style>
@@ -570,6 +645,85 @@
             if (e.target === this) {
                 closePopup();
             }
+        });
+
+        // 카카오톡 인앱 브라우저에서 진료 시간 안내 스타일 강제 적용
+        function forceInfoSectionStyles() {
+            const isMobile = window.innerWidth <= 768;
+            const isKakaoTalk = navigator.userAgent.includes('KAKAO');
+            
+            if (isMobile || isKakaoTalk) {
+                const infoSection = document.querySelector('.info-section');
+                const infoTitle = document.querySelector('.info-title');
+                const infoItems = document.querySelectorAll('.info-item');
+                
+                if (infoSection) {
+                    if (window.innerWidth <= 360) {
+                        infoSection.style.setProperty('padding', '8px', 'important');
+                        infoSection.style.setProperty('margin-bottom', '10px', 'important');
+                    } else if (window.innerWidth <= 480) {
+                        infoSection.style.setProperty('padding', '10px', 'important');
+                        infoSection.style.setProperty('margin-bottom', '12px', 'important');
+                    } else if (window.innerWidth <= 768) {
+                        infoSection.style.setProperty('padding', '12px', 'important');
+                        infoSection.style.setProperty('margin-bottom', '15px', 'important');
+                    } else {
+                        infoSection.style.setProperty('padding', '17px', 'important');
+                        infoSection.style.setProperty('margin-bottom', '21px', 'important');
+                    }
+                }
+                
+                if (infoTitle) {
+                    if (window.innerWidth <= 360) {
+                        infoTitle.style.setProperty('font-size', '14px', 'important');
+                        infoTitle.style.setProperty('margin-bottom', '4px', 'important');
+                        infoTitle.style.setProperty('gap', '2px', 'important');
+                    } else if (window.innerWidth <= 480) {
+                        infoTitle.style.setProperty('font-size', '15px', 'important');
+                        infoTitle.style.setProperty('margin-bottom', '5px', 'important');
+                        infoTitle.style.setProperty('gap', '3px', 'important');
+                    } else if (window.innerWidth <= 768) {
+                        infoTitle.style.setProperty('font-size', '16px', 'important');
+                        infoTitle.style.setProperty('margin-bottom', '7px', 'important');
+                        infoTitle.style.setProperty('gap', '4px', 'important');
+                    } else {
+                        infoTitle.style.setProperty('font-size', '18px', 'important');
+                        infoTitle.style.setProperty('margin-bottom', '10px', 'important');
+                        infoTitle.style.setProperty('gap', '5px', 'important');
+                    }
+                }
+                
+                infoItems.forEach(item => {
+                    if (window.innerWidth <= 360) {
+                        item.style.setProperty('padding', '3px 0', 'important');
+                        item.style.setProperty('font-size', '12px', 'important');
+                    } else if (window.innerWidth <= 480) {
+                        item.style.setProperty('padding', '4px 0', 'important');
+                        item.style.setProperty('font-size', '13px', 'important');
+                    } else if (window.innerWidth <= 768) {
+                        item.style.setProperty('padding', '5px 0', 'important');
+                        item.style.setProperty('font-size', '14px', 'important');
+                    } else {
+                        item.style.setProperty('padding', '8px 0', 'important');
+                        item.style.setProperty('font-size', '16px', 'important');
+                    }
+                });
+                
+                console.log('카카오톡 인앱 브라우저 진료 시간 안내 스타일 강제 재적용 완료');
+            }
+        }
+
+        // 페이지 로드 시와 크기 변경 시 스타일 강제 적용
+        window.addEventListener('DOMContentLoaded', function() {
+            forceInfoSectionStyles();
+        });
+        
+        window.addEventListener('load', function() {
+            forceInfoSectionStyles();
+        });
+        
+        window.addEventListener('resize', function() {
+            setTimeout(forceInfoSectionStyles, 100);
         });
 
         console.log('무료 검진(구강) 확인 페이지 로드 완료');
