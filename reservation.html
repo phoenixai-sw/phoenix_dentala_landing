@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>피닉스 치과 병원 - 온라인 예약</title>
+    
+    <!-- 카카오톡 인앱 브라우저 캐시 방지 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="format-detection" content="email=no">
     <style>
         * {
             margin: 0;
@@ -390,61 +398,129 @@
 
         /* 안내 섹션 */
         .info-section {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: white !important;
+            border-radius: 10px !important;
+            padding: 14px !important;
+            margin-bottom: 14px !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
         }
 
         .info-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
+            font-size: 18px !important;
+            font-weight: bold !important;
+            color: #2c3e50 !important;
+            margin-bottom: 10px !important;
+            display: flex !important;
+            align-items: center !important;
         }
 
         .info-title::before {
-            content: "📋";
-            margin-right: 10px;
+            content: "📋" !important;
+            margin-right: 7px !important;
         }
 
         .info-item {
-            margin-bottom: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid #ecf0f1;
+            margin-bottom: 7px !important;
+            padding: 5px 0 !important;
+            border-bottom: 1px solid #ecf0f1 !important;
         }
 
         .info-item:last-child {
-            border-bottom: none;
+            border-bottom: none !important;
         }
 
         .time-info {
-            color: #27ae60;
-            font-weight: bold;
+            color: #27ae60 !important;
+            font-weight: bold !important;
         }
 
         /* 반응형 디자인 */
         @media (max-width: 768px) {
             .container {
-                padding: 0 10px;
+                padding: 0 10px !important;
             }
             
             .time-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(3, 1fr) !important;
             }
             
             .header h1 {
-                font-size: 20px;
+                font-size: 20px !important;
             }
             
             .back-link {
-                position: static;
-                margin-bottom: 10px;
+                position: static !important;
+                margin-bottom: 10px !important;
+            }
+            
+            /* 모바일에서 진료 시간 안내 공간 더 줄이기 */
+            .info-section {
+                padding: 10px !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .info-title {
+                font-size: 16px !important;
+                margin-bottom: 7px !important;
+            }
+            
+            .info-title::before {
+                margin-right: 5px !important;
+            }
+            
+            .info-item {
+                margin-bottom: 5px !important;
+                padding: 3px 0 !important;
+                font-size: 14px !important;
             }
         }
+        
+        /* 작은 모바일에서 더 컴팩트하게 */
+        @media (max-width: 480px) {
+            .info-section {
+                padding: 8px !important;
+                margin-bottom: 8px !important;
+            }
+            
+            .info-title {
+                font-size: 15px !important;
+                margin-bottom: 5px !important;
+            }
+            
+            .info-title::before {
+                margin-right: 4px !important;
+            }
+            
+            .info-item {
+                margin-bottom: 4px !important;
+                padding: 2px 0 !important;
+                font-size: 13px !important;
+            }
+        }
+        
+        /* 매우 작은 모바일에서 최대한 컴팩트하게 */
+        @media (max-width: 360px) {
+            .info-section {
+                padding: 6px !important;
+                margin-bottom: 6px !important;
+            }
+            
+            .info-title {
+                font-size: 14px !important;
+                margin-bottom: 4px !important;
+            }
+            
+            .info-title::before {
+                margin-right: 3px !important;
+            }
+            
+            .info-item {
+                margin-bottom: 3px !important;
+                padding: 1px 0 !important;
+                font-size: 12px !important;
+            }
+        }
+        
     </style>
 </head>
 <body>
@@ -635,6 +711,70 @@
         window.addEventListener('load', function() {
             renderCalendar();
             setupPhoneFormatting();
+            
+            // 카카오톡 인앱 브라우저에서 스타일 강제 재적용
+            forceInfoSectionStyles();
+        });
+
+        // 카카오톡 인앱 브라우저에서 진료 시간 안내 스타일 강제 적용
+        function forceInfoSectionStyles() {
+            const isMobile = window.innerWidth <= 768;
+            const isKakaoTalk = navigator.userAgent.includes('KAKAO');
+            
+            if (isMobile || isKakaoTalk) {
+                const infoSection = document.querySelector('.info-section');
+                const infoTitle = document.querySelector('.info-title');
+                const infoItems = document.querySelectorAll('.info-item');
+                
+                if (infoSection) {
+                    if (window.innerWidth <= 360) {
+                        infoSection.style.padding = '6px';
+                        infoSection.style.marginBottom = '6px';
+                    } else if (window.innerWidth <= 480) {
+                        infoSection.style.padding = '8px';
+                        infoSection.style.marginBottom = '8px';
+                    } else if (window.innerWidth <= 768) {
+                        infoSection.style.padding = '10px';
+                        infoSection.style.marginBottom = '10px';
+                    }
+                }
+                
+                if (infoTitle) {
+                    if (window.innerWidth <= 360) {
+                        infoTitle.style.fontSize = '14px';
+                        infoTitle.style.marginBottom = '4px';
+                    } else if (window.innerWidth <= 480) {
+                        infoTitle.style.fontSize = '15px';
+                        infoTitle.style.marginBottom = '5px';
+                    } else if (window.innerWidth <= 768) {
+                        infoTitle.style.fontSize = '16px';
+                        infoTitle.style.marginBottom = '7px';
+                    }
+                }
+                
+                infoItems.forEach(item => {
+                    if (window.innerWidth <= 360) {
+                        item.style.marginBottom = '3px';
+                        item.style.padding = '1px 0';
+                        item.style.fontSize = '12px';
+                    } else if (window.innerWidth <= 480) {
+                        item.style.marginBottom = '4px';
+                        item.style.padding = '2px 0';
+                        item.style.fontSize = '13px';
+                    } else if (window.innerWidth <= 768) {
+                        item.style.marginBottom = '5px';
+                        item.style.padding = '3px 0';
+                        item.style.fontSize = '14px';
+                    }
+                });
+                
+                console.log('카카오톡 인앱 브라우저 진료 시간 안내 스타일 강제 재적용 완료');
+            }
+        }
+
+        // 화면 크기 변경 시 스타일 재적용
+        window.addEventListener('resize', function() {
+            setTimeout(forceInfoSectionStyles, 100);
         });
 
         // 캘린더 렌더링
