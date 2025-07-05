@@ -30,35 +30,60 @@
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            padding: 20px 0;
+            padding: 18px;
             text-align: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+            font-size: 22px;
         }
 
         .header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 22px;
+            margin-bottom: 0;
+            font-weight: bold;
         }
 
         .header p {
             font-size: 16px;
             opacity: 0.9;
+            margin-top: 5px;
         }
 
         .back-link {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            width: 68px;
+            height: 75px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+            padding: 4px;
+            text-decoration: none;
         }
 
         .back-link:hover {
-            opacity: 0.8;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .home-icon {
+            font-size: 27px;
+            line-height: 1;
+        }
+
+        .home-arrow {
+            font-size: 17px;
+            line-height: 1;
+            margin-top: 3px;
         }
 
         /* 컨테이너 */
@@ -449,8 +474,17 @@
             }
             
             .back-link {
-                position: static !important;
-                margin-bottom: 10px !important;
+                width: 52px !important;
+                height: 58px !important;
+                left: 10px !important;
+            }
+            
+            .home-icon {
+                font-size: 22px !important;
+            }
+            
+            .home-arrow {
+                font-size: 14px !important;
             }
             
             /* 모바일에서 진료 시간 안내 공간 더 줄이기 */
@@ -477,6 +511,20 @@
         
         /* 작은 모바일에서 더 컴팩트하게 */
         @media (max-width: 480px) {
+            .back-link {
+                width: 45px !important;
+                height: 50px !important;
+                left: 8px !important;
+            }
+            
+            .home-icon {
+                font-size: 20px !important;
+            }
+            
+            .home-arrow {
+                font-size: 12px !important;
+            }
+            
             .info-section {
                 padding: 8px !important;
                 margin-bottom: 8px !important;
@@ -500,6 +548,20 @@
         
         /* 매우 작은 모바일에서 최대한 컴팩트하게 */
         @media (max-width: 360px) {
+            .back-link {
+                width: 38px !important;
+                height: 43px !important;
+                left: 6px !important;
+            }
+            
+            .home-icon {
+                font-size: 18px !important;
+            }
+            
+            .home-arrow {
+                font-size: 10px !important;
+            }
+            
             .info-section {
                 padding: 6px !important;
                 margin-bottom: 6px !important;
@@ -526,9 +588,11 @@
 <body>
     <!-- 헤더 -->
     <div class="header">
-        <a href="index.html" class="back-link">← 메인으로</a>
-        <h1>🦷 피닉스 치과 병원</h1>
-        <p>온라인 예약 시스템</p>
+        <a href="index.html" class="back-link">
+            <span class="home-icon">🏠</span>
+            <span class="home-arrow">←</span>
+        </a>
+        <h1>🦷 피닉스 치과 예약 시스템</h1>
     </div>
 
     <!-- 메인 컨텐츠 -->
