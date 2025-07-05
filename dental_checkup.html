@@ -43,31 +43,52 @@
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            padding: 30px;
+            padding: 18px;
             text-align: center;
             position: relative;
+            font-size: 22px;
         }
 
         .back-link {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            width: 68px;
+            height: 75px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
-            transition: opacity 0.3s;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+            padding: 4px;
+            text-decoration: none;
         }
 
         .back-link:hover {
-            opacity: 0.8;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .home-icon {
+            font-size: 27px;
+            line-height: 1;
+        }
+
+        .home-arrow {
+            font-size: 17px;
+            line-height: 1;
+            margin-top: 3px;
         }
 
         .header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
+            font-size: 22px;
+            margin-bottom: 0;
             font-weight: 700;
         }
 
@@ -346,6 +367,20 @@
                 font-size: 24px !important;
             }
             
+            .back-link {
+                width: 52px !important;
+                height: 58px !important;
+                left: 10px !important;
+            }
+            
+            .home-icon {
+                font-size: 22px !important;
+            }
+            
+            .home-arrow {
+                font-size: 14px !important;
+            }
+            
             .content {
                 padding: 30px 20px !important;
             }
@@ -386,6 +421,20 @@
         
         /* 작은 모바일에서 더 컴팩트하게 */
         @media (max-width: 480px) {
+            .back-link {
+                width: 45px !important;
+                height: 50px !important;
+                left: 8px !important;
+            }
+            
+            .home-icon {
+                font-size: 20px !important;
+            }
+            
+            .home-arrow {
+                font-size: 12px !important;
+            }
+            
             .info-section {
                 padding: 10px !important;
                 margin-bottom: 12px !important;
@@ -409,6 +458,20 @@
         
         /* 매우 작은 모바일에서 최대한 컴팩트하게 */
         @media (max-width: 360px) {
+            .back-link {
+                width: 38px !important;
+                height: 43px !important;
+                left: 6px !important;
+            }
+            
+            .home-icon {
+                font-size: 18px !important;
+            }
+            
+            .home-arrow {
+                font-size: 10px !important;
+            }
+            
             .info-section {
                 padding: 8px !important;
                 margin-bottom: 10px !important;
@@ -435,10 +498,11 @@
     <div class="container">
         <!-- 헤더 -->
         <div class="header">
-            <a href="index.html" class="back-link">← 메인으로</a>
-            <h1>🦷 피닉스 치과 병원</h1>
-            <p>온라인 [무료 검진(구강) 확인] 시스템</p>
-            <div class="subtitle">국가 구강검진 대상자 확인</div>
+            <a href="index.html" class="back-link">
+                <span class="home-icon">🏠</span>
+                <span class="home-arrow">←</span>
+            </a>
+            <h1>🦷 피닉스 치과 무료 검진 확인</h1>
         </div>
 
         <!-- 메인 컨텐츠 -->
