@@ -87,21 +87,33 @@
             transform: translateY(-50%);
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
+            border-radius: 15px;
+            width: 40px;
+            height: 45px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 16px;
             color: white;
             transition: all 0.3s ease;
+            padding: 4px;
         }
 
         .home-button:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-50%) scale(1.1);
+        }
+
+        .home-icon {
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .home-arrow {
+            font-size: 10px;
+            line-height: 1;
+            margin-top: 2px;
         }
 
         .chatbot-title {
@@ -644,10 +656,18 @@
             }
             
             .home-button {
-                width: 30px !important;
-                height: 30px !important;
-                font-size: 14px !important;
+                width: 32px !important;
+                height: 38px !important;
                 left: 6px !important;
+            }
+            
+            .home-icon {
+                font-size: 14px !important;
+            }
+            
+            .home-arrow {
+                font-size: 8px !important;
+                margin-top: 1px !important;
             }
             
             .chatbot-title {
@@ -703,10 +723,18 @@
             }
             
             .home-button {
-                width: 28px !important;
-                height: 28px !important;
-                font-size: 13px !important;
+                width: 30px !important;
+                height: 36px !important;
                 left: 5px !important;
+            }
+            
+            .home-icon {
+                font-size: 13px !important;
+            }
+            
+            .home-arrow {
+                font-size: 7px !important;
+                margin-top: 1px !important;
             }
             
             .chatbot-title {
@@ -742,10 +770,18 @@
             }
             
             .home-button {
-                width: 26px !important;
-                height: 26px !important;
-                font-size: 12px !important;
+                width: 28px !important;
+                height: 34px !important;
                 left: 4px !important;
+            }
+            
+            .home-icon {
+                font-size: 12px !important;
+            }
+            
+            .home-arrow {
+                font-size: 6px !important;
+                margin-top: 1px !important;
             }
             
             .chatbot-title {
@@ -781,10 +817,18 @@
             }
             
             .home-button {
-                width: 24px !important;
-                height: 24px !important;
-                font-size: 11px !important;
+                width: 26px !important;
+                height: 32px !important;
                 left: 3px !important;
+            }
+            
+            .home-icon {
+                font-size: 11px !important;
+            }
+            
+            .home-arrow {
+                font-size: 5px !important;
+                margin-top: 1px !important;
             }
             
             .chatbot-title {
@@ -821,10 +865,18 @@
             }
             
             .home-button {
-                width: 22px !important;
-                height: 22px !important;
-                font-size: 10px !important;
+                width: 24px !important;
+                height: 30px !important;
                 left: 2px !important;
+            }
+            
+            .home-icon {
+                font-size: 10px !important;
+            }
+            
+            .home-arrow {
+                font-size: 4px !important;
+                margin-top: 1px !important;
             }
             
             .chatbot-title {
@@ -861,10 +913,18 @@
             }
             
             .home-button {
-                width: 20px !important;
-                height: 20px !important;
-                font-size: 9px !important;
+                width: 22px !important;
+                height: 28px !important;
                 left: 1px !important;
+            }
+            
+            .home-icon {
+                font-size: 9px !important;
+            }
+            
+            .home-arrow {
+                font-size: 3px !important;
+                margin-top: 1px !important;
             }
             
             .chatbot-title {
@@ -929,7 +989,10 @@
         <div class="chatbot-main">
             <!-- 챗봇 헤더 -->
             <div class="chatbot-header">
-                <button class="home-button" onclick="goToMainPage()" title="메인 페이지로 이동">🏠</button>
+                <button class="home-button" onclick="goToMainPage()" title="메인 페이지로 이동">
+                <div class="home-icon">🏠</div>
+                <div class="home-arrow">←</div>
+            </button>
                 <div class="chatbot-title">
                     <span>🤖</span>
                     <span>피닉스 치과 AI 상담사</span>
