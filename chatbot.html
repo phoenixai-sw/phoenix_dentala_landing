@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>피닉스 치과 병원 - AI 챗봇</title>
     
-    <!-- 카카오톡 인앱 브라우저 캐시 방지 -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <!-- 카카오톡 인앱 브라우저 캐시 방지 강화 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="format-detection" content="telephone=no">
     <meta name="format-detection" content="address=no">
     <meta name="format-detection" content="email=no">
+    <!-- 강력한 캐시 버스터 -->
+    <meta name="cache-buster" content="<?= time() ?>">
+    <link rel="stylesheet" href="data:text/css;base64,LyogRm9yY2UgcmVmcmVzaCAqLw==">
+    <script>
+        // 카카오톡 브라우저 강제 새로고침
+        if (navigator.userAgent.includes('KAKAO')) {
+            if (performance.navigation.type !== 1) {
+                setTimeout(() => window.location.reload(), 100);
+            }
+        }
+    </script>
     <style>
         * {
             margin: 0;
@@ -71,33 +82,38 @@
             touch-action: manipulation;
         }
 
-        /* 챗봇 헤더 */
+        /* 챗봇 헤더 - 강력한 우선순위 */
+        .chatbot-main .chatbot-header,
+        div.chatbot-main div.chatbot-header,
         .chatbot-header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            position: relative;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+            color: white !important;
+            padding: 18px !important;
+            text-align: center !important;
+            position: relative !important;
+            font-size: 22px !important;
         }
 
+        .chatbot-main .home-button,
+        div.chatbot-main button.home-button,
         .home-button {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            width: 52px;
-            height: 58px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-            transition: all 0.3s ease;
-            padding: 4px;
+            position: absolute !important;
+            left: 15px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 15px !important;
+            width: 68px !important;
+            height: 75px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            color: white !important;
+            transition: all 0.3s ease !important;
+            padding: 4px !important;
         }
 
         .home-button:hover {
@@ -105,38 +121,46 @@
             transform: translateY(-50%) scale(1.1);
         }
 
+        .chatbot-main .home-icon,
+        div.chatbot-main .home-icon,
         .home-icon {
-            font-size: 21px;
-            line-height: 1;
+            font-size: 27px !important;
+            line-height: 1 !important;
         }
 
+        .chatbot-main .home-arrow,
+        div.chatbot-main .home-arrow,
         .home-arrow {
-            font-size: 13px;
-            line-height: 1;
-            margin-top: 2px;
+            font-size: 17px !important;
+            line-height: 1 !important;
+            margin-top: 3px !important;
         }
 
+        .chatbot-main .chatbot-title,
+        div.chatbot-main div.chatbot-title,
         .chatbot-title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-weight: bold;
-            font-size: 19px;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            font-weight: bold !important;
+            font-size: 22px !important;
         }
 
-        /* 챗봇 메시지 영역 */
+        /* 챗봇 메시지 영역 - 강력한 우선순위 */
+        .chatbot-main .chatbot-messages,
+        div.chatbot-main div.chatbot-messages,
         .chatbot-messages {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-            background: #f8f9fa;
-            min-height: 350px;
-            max-height: calc(99vh - 180px);
-            max-height: calc(99dvh - 180px);
+            flex: 1 !important;
+            padding: 10px !important;
+            overflow-y: auto !important;
+            background: #f8f9fa !important;
+            min-height: 350px !important;
+            max-height: calc(100vh - 220px) !important;
+            max-height: calc(100dvh - 220px) !important;
             /* 모바일 스크롤 최적화 */
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch !important;
+            scroll-behavior: smooth !important;
         }
 
         .message {
@@ -235,45 +259,51 @@
             transform: translateY(-1px);
         }
 
-        /* 챗봇 입력 영역 */
+        /* 챗봇 입력 영역 - 강력한 우선순위 */
+        .chatbot-main .chatbot-input,
+        div.chatbot-main div.chatbot-input,
         .chatbot-input {
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #e9ecef;
-            display: flex;
-            gap: 12px;
-            margin-top: -5px;
+            padding: 18px !important;
+            background: white !important;
+            border-top: 1px solid #e9ecef !important;
+            display: flex !important;
+            gap: 12px !important;
+            margin-top: -10px !important;
         }
 
+        .chatbot-main .chatbot-input textarea,
+        div.chatbot-main div.chatbot-input textarea,
         .chatbot-input textarea {
-            flex: 1;
-            padding: 15px 20px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            outline: none;
-            font-size: 19px;
-            resize: none;
-            min-height: 54px;
-            max-height: 140px;
-            font-family: inherit;
-            touch-action: manipulation;
+            flex: 1 !important;
+            padding: 18px 24px !important;
+            border: 1px solid #ddd !important;
+            border-radius: 25px !important;
+            outline: none !important;
+            font-size: 22px !important;
+            resize: none !important;
+            min-height: 65px !important;
+            max-height: 140px !important;
+            font-family: inherit !important;
+            touch-action: manipulation !important;
         }
 
         .chatbot-input textarea:focus {
             border-color: #4facfe;
         }
 
+        .chatbot-main .chatbot-send,
+        div.chatbot-main button.chatbot-send,
         .chatbot-send {
-            background: #4facfe;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            min-width: 90px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s;
-            padding: 15px 22px;
+            background: #4facfe !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 25px !important;
+            min-width: 108px !important;
+            cursor: pointer !important;
+            font-size: 21px !important;
+            font-weight: bold !important;
+            transition: all 0.3s !important;
+            padding: 18px 26px !important;
         }
 
         .chatbot-send:hover {
@@ -996,19 +1026,19 @@
     <div class="container">
         <div class="chatbot-main">
             <!-- 챗봇 헤더 -->
-            <div class="chatbot-header">
-                <button class="home-button" onclick="goToMainPage()" title="메인 페이지로 이동">
-                <div class="home-icon">🏠</div>
-                <div class="home-arrow">←</div>
+            <div class="chatbot-header" style="padding: 18px !important; font-size: 22px !important;">
+                <button class="home-button" onclick="goToMainPage()" title="메인 페이지로 이동" style="width: 68px !important; height: 75px !important; left: 15px !important;">
+                <div class="home-icon" style="font-size: 27px !important;">🏠</div>
+                <div class="home-arrow" style="font-size: 17px !important; margin-top: 3px !important;">←</div>
             </button>
-                <div class="chatbot-title">
+                <div class="chatbot-title" style="font-size: 22px !important; font-weight: bold !important;">
                     <span>🤖</span>
                     <span>피닉스 치과 AI 상담사</span>
                 </div>
             </div>
             
             <!-- 챗봇 메시지 영역 -->
-            <div class="chatbot-messages" id="chatbotMessages2">
+            <div class="chatbot-messages" id="chatbotMessages2" style="max-height: calc(100vh - 220px) !important; max-height: calc(100dvh - 220px) !important;">
                 <!-- 초기 환영 메시지 -->
                 <div class="message bot">
                     <div class="message-avatar">🤖</div>
@@ -1025,9 +1055,9 @@
             </div>
 
             <!-- 챗봇 입력 영역 -->
-            <div class="chatbot-input">
-                <textarea id="chatbotInput2" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress2(event)" rows="1"></textarea>
-                <button class="chatbot-send" onclick="sendMessage2()">전송</button>
+            <div class="chatbot-input" style="padding: 18px !important; margin-top: -10px !important;">
+                <textarea id="chatbotInput2" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress2(event)" rows="1" style="padding: 18px 24px !important; font-size: 22px !important; min-height: 65px !important; border-radius: 25px !important;"></textarea>
+                <button class="chatbot-send" onclick="sendMessage2()" style="padding: 18px 26px !important; font-size: 21px !important; min-width: 108px !important; border-radius: 25px !important;">전송</button>
             </div>
         </div>
     </div>
@@ -2016,7 +2046,84 @@
             
             // 카카오톡 인앱 브라우저에서 CSS 강제 재적용
             forceStyleReload();
+            
+            // 강력한 스타일 강제 적용
+            setTimeout(forceApplyStyles, 100);
+            setTimeout(forceApplyStyles, 500);
+            setTimeout(forceApplyStyles, 1000);
         });
+
+        // 강력한 스타일 강제 적용 함수
+        function forceApplyStyles() {
+            // 1. 상단 헤더 20% 확대
+            const chatbotHeader = document.querySelector('.chatbot-header');
+            if (chatbotHeader) {
+                chatbotHeader.style.setProperty('padding', '18px', 'important');
+                chatbotHeader.style.setProperty('font-size', '22px', 'important');
+            }
+            
+            // 2. 챗봇 제목 20% 확대
+            const chatbotTitle = document.querySelector('.chatbot-title');
+            if (chatbotTitle) {
+                chatbotTitle.style.setProperty('font-size', '22px', 'important');
+                chatbotTitle.style.setProperty('font-weight', 'bold', 'important');
+            }
+            
+            // 3. 홈 버튼 30% 확대
+            const homeButton = document.querySelector('.home-button');
+            if (homeButton) {
+                homeButton.style.setProperty('width', '68px', 'important');
+                homeButton.style.setProperty('height', '75px', 'important');
+                homeButton.style.setProperty('left', '15px', 'important');
+            }
+            
+            // 4. 홈 아이콘 30% 확대
+            const homeIcon = document.querySelector('.home-icon');
+            if (homeIcon) {
+                homeIcon.style.setProperty('font-size', '27px', 'important');
+            }
+            
+            // 5. 홈 화살표 30% 확대
+            const homeArrow = document.querySelector('.home-arrow');
+            if (homeArrow) {
+                homeArrow.style.setProperty('font-size', '17px', 'important');
+                homeArrow.style.setProperty('margin-top', '3px', 'important');
+            }
+            
+            // 6. 입력창 20% 확대 및 상향 조정
+            const chatbotInput = document.querySelector('.chatbot-input');
+            if (chatbotInput) {
+                chatbotInput.style.setProperty('padding', '18px', 'important');
+                chatbotInput.style.setProperty('margin-top', '-10px', 'important');
+            }
+            
+            // 7. 입력 텍스트박스 20% 확대
+            const inputTextarea = document.querySelector('.chatbot-input textarea');
+            if (inputTextarea) {
+                inputTextarea.style.setProperty('padding', '18px 24px', 'important');
+                inputTextarea.style.setProperty('font-size', '22px', 'important');
+                inputTextarea.style.setProperty('min-height', '65px', 'important');
+                inputTextarea.style.setProperty('border-radius', '25px', 'important');
+            }
+            
+            // 8. 전송 버튼 20% 확대
+            const sendButton = document.querySelector('.chatbot-send');
+            if (sendButton) {
+                sendButton.style.setProperty('padding', '18px 26px', 'important');
+                sendButton.style.setProperty('font-size', '21px', 'important');
+                sendButton.style.setProperty('min-width', '108px', 'important');
+                sendButton.style.setProperty('border-radius', '25px', 'important');
+            }
+            
+            // 9. 메시지 영역 높이 조정 (입력창이 커진 만큼 조정)
+            const chatbotMessages = document.querySelector('.chatbot-messages');
+            if (chatbotMessages) {
+                chatbotMessages.style.setProperty('max-height', 'calc(100vh - 220px)', 'important');
+                chatbotMessages.style.setProperty('max-height', 'calc(100dvh - 220px)', 'important');
+            }
+            
+            console.log('강력한 스타일 강제 적용 완료!');
+        }
 
         // 카카오톡 인앱 브라우저에서 CSS 강제 재적용
         function forceStyleReload() {
@@ -2189,14 +2296,113 @@
         // 화면 크기 변경 시 스타일 재적용
         window.addEventListener('resize', function() {
             setTimeout(forceStyleReload, 100);
+            setTimeout(forceApplyStyles, 200);
         });
 
         // 추가 브라우저 호환성 강화
         window.addEventListener('load', function() {
             setTimeout(forceStyleReload, 500);
+            setTimeout(forceApplyStyles, 700);
+            setTimeout(forceApplyStyles, 1500);
         });
 
-        console.log('AI 챗봇 페이지 로드 완료');
+        // 터치 이벤트 후에도 스타일 재적용 (모바일 대응)
+        document.addEventListener('touchstart', function() {
+            setTimeout(forceApplyStyles, 50);
+        }, { once: true });
+
+        // 스크롤 이벤트 후에도 스타일 재적용
+        window.addEventListener('scroll', function() {
+            setTimeout(forceApplyStyles, 100);
+        }, { once: true });
+
+        // 카카오톡 브라우저 특수 대응
+        if (navigator.userAgent.includes('KAKAO')) {
+            setTimeout(forceApplyStyles, 2000);
+            setTimeout(forceApplyStyles, 3000);
+            
+            // 주기적으로 스타일 확인 및 재적용
+            setInterval(function() {
+                const title = document.querySelector('.chatbot-title');
+                if (title && window.getComputedStyle(title).fontSize !== '22px') {
+                    forceApplyStyles();
+                }
+            }, 5000);
+        }
+
+        // 카카오톡 브라우저 초강력 스타일 강제 적용
+        function megaForceApplyStyles() {
+            try {
+                // DOM 요소들 가져오기
+                const elements = {
+                    header: document.querySelector('.chatbot-header'),
+                    title: document.querySelector('.chatbot-title'),
+                    homeButton: document.querySelector('.home-button'),
+                    homeIcon: document.querySelector('.home-icon'),
+                    homeArrow: document.querySelector('.home-arrow'),
+                    input: document.querySelector('.chatbot-input'),
+                    textarea: document.querySelector('.chatbot-input textarea'),
+                    sendBtn: document.querySelector('.chatbot-send'),
+                    messages: document.querySelector('.chatbot-messages')
+                };
+
+                // 강제로 스타일 적용
+                Object.entries(elements).forEach(([key, element]) => {
+                    if (element) {
+                        element.style.cssText += '; '; // 기존 스타일 보존
+                        
+                        switch(key) {
+                            case 'header':
+                                element.style.cssText += 'padding: 18px !important; font-size: 22px !important;';
+                                break;
+                            case 'title':
+                                element.style.cssText += 'font-size: 22px !important; font-weight: bold !important;';
+                                break;
+                            case 'homeButton':
+                                element.style.cssText += 'width: 68px !important; height: 75px !important; left: 15px !important;';
+                                break;
+                            case 'homeIcon':
+                                element.style.cssText += 'font-size: 27px !important;';
+                                break;
+                            case 'homeArrow':
+                                element.style.cssText += 'font-size: 17px !important; margin-top: 3px !important;';
+                                break;
+                            case 'input':
+                                element.style.cssText += 'padding: 18px !important; margin-top: -10px !important;';
+                                break;
+                            case 'textarea':
+                                element.style.cssText += 'padding: 18px 24px !important; font-size: 22px !important; min-height: 65px !important; border-radius: 25px !important;';
+                                break;
+                            case 'sendBtn':
+                                element.style.cssText += 'padding: 18px 26px !important; font-size: 21px !important; min-width: 108px !important; border-radius: 25px !important;';
+                                break;
+                            case 'messages':
+                                element.style.cssText += 'max-height: calc(100vh - 220px) !important;';
+                                break;
+                        }
+                    }
+                });
+
+                console.log('💪 초강력 스타일 강제 적용 완료!');
+            } catch (error) {
+                console.error('스타일 적용 오류:', error);
+            }
+        }
+
+        // 모든 이벤트에서 스타일 재적용
+        ['DOMContentLoaded', 'load', 'resize', 'focus', 'scroll', 'touchstart'].forEach(event => {
+            window.addEventListener(event, () => {
+                setTimeout(megaForceApplyStyles, 50);
+                setTimeout(forceApplyStyles, 100);
+            });
+        });
+
+        // 1초마다 스타일 확인 (카카오톡 브라우저 전용)
+        if (navigator.userAgent.includes('KAKAO')) {
+            setInterval(megaForceApplyStyles, 1000);
+        }
+
+        console.log('AI 챗봇 페이지 로드 완료 - 강력한 스타일 적용 시스템 활성화!');
     </script>
 </body>
 </html> 
