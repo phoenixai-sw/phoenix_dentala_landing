@@ -1032,7 +1032,7 @@
                 <div class="home-arrow" style="font-size: 17px !important; margin-top: 3px !important;">←</div>
             </button>
                 <div class="chatbot-title" style="font-size: 22px !important; font-weight: bold !important;">
-                    <span>🤖</span>
+                    <span>👩‍⚕️</span>
                     <span>피닉스 치과 AI 상담사</span>
                 </div>
             </div>
@@ -1041,7 +1041,7 @@
             <div class="chatbot-messages" id="chatbotMessages2" style="max-height: calc(100vh - 220px) !important; max-height: calc(100dvh - 220px) !important;">
                 <!-- 초기 환영 메시지 -->
                 <div class="message bot">
-                    <div class="message-avatar">🤖</div>
+                    <div class="message-avatar">👩‍⚕️</div>
                     <div class="message-content">
                         안녕하세요! 피닉스 치과 AI 상담사입니다. 😊
                         <div class="quick-buttons">
@@ -1348,7 +1348,7 @@
             }
             
             messageDiv.innerHTML = `
-                <div class="message-avatar">🤖</div>
+                <div class="message-avatar">👩‍⚕️</div>
                 <div class="message-content">${finalMessage}</div>
             `;
             messagesContainer.appendChild(messageDiv);
@@ -2062,12 +2062,16 @@
                 chatbotHeader.style.setProperty('font-size', '22px', 'important');
             }
             
-            // 2. 챗봇 제목 20% 확대
-            const chatbotTitle = document.querySelector('.chatbot-title');
-            if (chatbotTitle) {
-                chatbotTitle.style.setProperty('font-size', '22px', 'important');
-                chatbotTitle.style.setProperty('font-weight', 'bold', 'important');
-            }
+                         // 2. 챗봇 제목 20% 확대
+             const chatbotTitle = document.querySelector('.chatbot-title');
+             if (chatbotTitle) {
+                 chatbotTitle.style.setProperty('font-size', '22px', 'important');
+                 chatbotTitle.style.setProperty('font-weight', 'bold', 'important');
+                 // 간호사 이모티콘으로 업데이트 확인
+                 if (chatbotTitle.innerHTML.includes('🤖')) {
+                     chatbotTitle.innerHTML = chatbotTitle.innerHTML.replace('🤖', '👩‍⚕️');
+                 }
+             }
             
             // 3. 홈 버튼 30% 확대
             const homeButton = document.querySelector('.home-button');
@@ -2355,9 +2359,13 @@
                             case 'header':
                                 element.style.cssText += 'padding: 18px !important; font-size: 22px !important;';
                                 break;
-                            case 'title':
-                                element.style.cssText += 'font-size: 22px !important; font-weight: bold !important;';
-                                break;
+                                                         case 'title':
+                                 element.style.cssText += 'font-size: 22px !important; font-weight: bold !important;';
+                                 // 간호사 이모티콘으로 업데이트 확인
+                                 if (element.innerHTML.includes('🤖')) {
+                                     element.innerHTML = element.innerHTML.replace('🤖', '👩‍⚕️');
+                                 }
+                                 break;
                             case 'homeButton':
                                 element.style.cssText += 'width: 68px !important; height: 75px !important; left: 15px !important;';
                                 break;
