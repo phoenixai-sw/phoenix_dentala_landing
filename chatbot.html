@@ -155,9 +155,9 @@
             padding: 10px !important;
             overflow-y: auto !important;
             background: #f8f9fa !important;
-            min-height: 350px !important;
-            max-height: calc(100vh - 280px) !important;
-            max-height: calc(100dvh - 280px) !important;
+            min-height: 300px !important;
+            max-height: calc(100vh - 320px) !important;
+            max-height: calc(100dvh - 320px) !important;
             /* 모바일 스크롤 최적화 */
             -webkit-overflow-scrolling: touch !important;
             scroll-behavior: smooth !important;
@@ -245,22 +245,28 @@
             background: #4facfe;
             color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 13px;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 10px;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 500;
+            min-width: 50px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
 
         .language-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .language-btn.selected {
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transform: scale(1.02);
         }
 
         /* 언어 선택 영역 - 카카오톡 브라우저와 Galaxy XCover 5 최적화 */
@@ -268,9 +274,10 @@
             position: relative !important;
             background: #f8f9fa !important;
             border-top: 1px solid #e9ecef !important;
-            padding: 10px 18px 18px 18px !important;
+            padding: 6px 12px 12px 12px !important;
             text-align: center !important;
-            min-height: 60px !important;
+            min-height: 45px !important;
+            max-height: 50px !important;
             box-sizing: border-box !important;
             /* 카카오톡 브라우저 최적화 */
             -webkit-touch-callout: none !important;
@@ -280,19 +287,22 @@
             /* 잘림 방지 */
             z-index: 10 !important;
             flex-shrink: 0 !important;
+            /* 하단 안전 영역 확보 */
+            padding-bottom: env(safe-area-inset-bottom, 12px) !important;
         }
 
         .language-selector div {
-            font-size: 14px !important;
+            font-size: 11px !important;
             color: #6c757d !important;
-            margin-bottom: 8px !important;
+            margin-bottom: 4px !important;
             font-weight: 600 !important;
+            line-height: 1 !important;
         }
 
         .language-buttons {
             display: flex !important;
             justify-content: center !important;
-            gap: 8px !important;
+            gap: 4px !important;
             flex-wrap: wrap !important;
             align-items: center !important;
         }
@@ -1078,32 +1088,43 @@
         /* Galaxy XCover 5 시리즈 (SM-G525N) 특별 최적화 */
         @media screen and (max-width: 432px) and (max-height: 900px) {
             .chatbot-main {
-                height: 100vh !important;
-                min-height: 100vh !important;
+                height: calc(100vh - 20px) !important;
+                min-height: calc(100vh - 20px) !important;
+                margin-bottom: 20px !important;
             }
 
             .chatbot-messages {
-                max-height: calc(100vh - 300px) !important;
-                max-height: calc(100dvh - 300px) !important;
+                max-height: calc(100vh - 350px) !important;
+                max-height: calc(100dvh - 350px) !important;
+                min-height: 250px !important;
             }
 
             .language-selector {
-                position: sticky !important;
+                position: relative !important;
                 bottom: 0 !important;
                 background: #f8f9fa !important;
                 border-top: 2px solid #e9ecef !important;
-                padding: 8px 15px 15px 15px !important;
-                min-height: 55px !important;
+                padding: 4px 10px 8px 10px !important;
+                min-height: 35px !important;
+                max-height: 40px !important;
                 z-index: 50 !important;
+                margin-bottom: env(safe-area-inset-bottom, 10px) !important;
+            }
+
+            .language-selector div {
+                font-size: 9px !important;
+                margin-bottom: 2px !important;
             }
 
             .language-buttons {
-                gap: 6px !important;
+                gap: 3px !important;
             }
 
             .language-btn {
-                padding: 5px 10px !important;
-                font-size: 12px !important;
+                padding: 3px 6px !important;
+                font-size: 9px !important;
+                min-width: 40px !important;
+                height: 20px !important;
             }
         }
 
@@ -1115,18 +1136,21 @@
                 top: 0 !important;
                 left: 0 !important;
                 width: 100vw !important;
-                height: 100vh !important;
-                height: 100dvh !important;
+                height: calc(100vh - 50px) !important;
+                height: calc(100dvh - 50px) !important;
                 overflow: hidden !important;
                 display: flex !important;
                 flex-direction: column !important;
+                margin-bottom: 50px !important;
             }
 
             .chatbot-messages {
                 flex: 1 !important;
                 overflow-y: auto !important;
                 -webkit-overflow-scrolling: touch !important;
-                max-height: none !important;
+                max-height: calc(100vh - 200px) !important;
+                max-height: calc(100dvh - 200px) !important;
+                min-height: 200px !important;
             }
 
             .chatbot-input {
@@ -1138,67 +1162,86 @@
             }
 
             .language-selector {
-                position: relative !important;
-                bottom: 0 !important;
+                position: fixed !important;
+                bottom: env(safe-area-inset-bottom, 0px) !important;
                 left: 0 !important;
                 width: 100% !important;
                 flex-shrink: 0 !important;
                 background: #f8f9fa !important;
                 border-top: 2px solid #e9ecef !important;
-                padding: 8px 15px 15px 15px !important;
-                min-height: 55px !important;
-                z-index: 100 !important;
+                padding: 4px 10px 8px 10px !important;
+                min-height: 35px !important;
+                max-height: 40px !important;
+                z-index: 1000 !important;
                 box-sizing: border-box !important;
             }
 
             .language-selector div {
-                font-size: 13px !important;
-                margin-bottom: 6px !important;
+                font-size: 10px !important;
+                margin-bottom: 3px !important;
             }
 
             .language-buttons {
                 justify-content: center !important;
-                gap: 6px !important;
+                gap: 3px !important;
                 flex-wrap: wrap !important;
             }
 
             .language-btn {
-                padding: 5px 10px !important;
-                font-size: 12px !important;
-                border-radius: 12px !important;
+                padding: 3px 6px !important;
+                font-size: 9px !important;
+                border-radius: 8px !important;
                 touch-action: manipulation !important;
                 -webkit-touch-callout: none !important;
                 -webkit-user-select: none !important;
                 user-select: none !important;
+                min-width: 35px !important;
+                height: 18px !important;
             }
         }
 
         /* 초소형 기기 (Galaxy XCover 5 포함) 추가 최적화 */
         @media screen and (max-width: 432px) and (max-height: 800px) {
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+            }
+
             .chatbot-main {
-                height: calc(100vh - 10px) !important;
-                height: calc(100dvh - 10px) !important;
+                height: calc(100vh - 40px) !important;
+                height: calc(100dvh - 40px) !important;
+                margin-bottom: 40px !important;
             }
 
             .chatbot-messages {
-                max-height: calc(100vh - 320px) !important;
-                max-height: calc(100dvh - 320px) !important;
-                padding: 8px !important;
+                max-height: calc(100vh - 190px) !important;
+                max-height: calc(100dvh - 190px) !important;
+                min-height: 180px !important;
+                padding: 6px !important;
             }
 
             .language-selector {
-                padding: 6px 12px 12px 12px !important;
-                min-height: 50px !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                padding: 3px 8px 6px 8px !important;
+                min-height: 30px !important;
+                max-height: 32px !important;
+                z-index: 9999 !important;
+                border-top: 1px solid #ddd !important;
             }
 
             .language-selector div {
-                font-size: 12px !important;
-                margin-bottom: 5px !important;
+                font-size: 8px !important;
+                margin-bottom: 1px !important;
             }
 
             .language-btn {
-                padding: 4px 8px !important;
-                font-size: 11px !important;
+                padding: 2px 4px !important;
+                font-size: 8px !important;
+                min-width: 30px !important;
+                height: 16px !important;
+                border-radius: 6px !important;
             }
         }
     </style>
@@ -1221,7 +1264,7 @@
             </div>
             
             <!-- 챗봇 메시지 영역 -->
-            <div class="chatbot-messages" id="chatbotMessages2" style="max-height: calc(100vh - 280px) !important; max-height: calc(100dvh - 280px) !important;">
+            <div class="chatbot-messages" id="chatbotMessages2" style="max-height: calc(100vh - 320px) !important; max-height: calc(100dvh - 320px) !important;">
                 <!-- 초기 환영 메시지 -->
                 <div class="message bot">
                     <div class="message-avatar">👩‍⚕️</div>
@@ -1449,29 +1492,83 @@
                 // 언어 선택 영역 최적화
                 const languageSelector = document.querySelector('.language-selector');
                 if (languageSelector) {
-                    languageSelector.style.position = 'relative';
+                    if (isGalaxyXCover5 || (window.innerWidth <= 432 && window.innerHeight <= 800)) {
+                        languageSelector.style.position = 'fixed';
+                        languageSelector.style.bottom = '0';
+                        languageSelector.style.zIndex = '9999';
+                        languageSelector.style.padding = '3px 8px 6px 8px';
+                        languageSelector.style.minHeight = '30px';
+                        languageSelector.style.maxHeight = '32px';
+                        languageSelector.style.borderTop = '1px solid #ddd';
+                    } else if (isKakaoTalk) {
+                        languageSelector.style.position = 'fixed';
+                        languageSelector.style.bottom = 'env(safe-area-inset-bottom, 0px)';
+                        languageSelector.style.zIndex = '1000';
+                        languageSelector.style.padding = '4px 10px 8px 10px';
+                        languageSelector.style.minHeight = '35px';
+                        languageSelector.style.maxHeight = '40px';
+                    } else {
+                        languageSelector.style.position = 'relative';
+                        languageSelector.style.padding = '6px 12px 12px 12px';
+                        languageSelector.style.minHeight = '45px';
+                        languageSelector.style.maxHeight = '50px';
+                    }
+                    
                     languageSelector.style.flexShrink = '0';
                     languageSelector.style.background = '#f8f9fa';
                     languageSelector.style.borderTop = '2px solid #e9ecef';
-                    languageSelector.style.padding = '8px 15px 15px 15px';
-                    languageSelector.style.minHeight = '55px';
-                    languageSelector.style.zIndex = '100';
                     languageSelector.style.boxSizing = 'border-box';
                     languageSelector.style.width = '100%';
                     languageSelector.style.left = '0';
-                    languageSelector.style.bottom = '0';
                     
                     // 언어 버튼들 최적화
                     const languageButtons = languageSelector.querySelectorAll('.language-btn');
                     languageButtons.forEach(button => {
-                        button.style.padding = '5px 10px';
-                        button.style.fontSize = '12px';
-                        button.style.borderRadius = '12px';
+                        if (isGalaxyXCover5 || (window.innerWidth <= 432 && window.innerHeight <= 800)) {
+                            button.style.padding = '2px 4px';
+                            button.style.fontSize = '8px';
+                            button.style.minWidth = '30px';
+                            button.style.height = '16px';
+                            button.style.borderRadius = '6px';
+                        } else if (isKakaoTalk) {
+                            button.style.padding = '3px 6px';
+                            button.style.fontSize = '9px';
+                            button.style.minWidth = '35px';
+                            button.style.height = '18px';
+                            button.style.borderRadius = '8px';
+                        } else {
+                            button.style.padding = '4px 8px';
+                            button.style.fontSize = '10px';
+                            button.style.minWidth = '50px';
+                            button.style.height = '24px';
+                            button.style.borderRadius = '10px';
+                        }
+                        
                         button.style.touchAction = 'manipulation';
                         button.style.webkitTouchCallout = 'none';
                         button.style.webkitUserSelect = 'none';
                         button.style.userSelect = 'none';
+                        button.style.display = 'inline-flex';
+                        button.style.alignItems = 'center';
+                        button.style.justifyContent = 'center';
+                        button.style.lineHeight = '1';
                     });
+                    
+                    // 제목 텍스트 최적화
+                    const titleDiv = languageSelector.querySelector('div');
+                    if (titleDiv) {
+                        if (isGalaxyXCover5 || (window.innerWidth <= 432 && window.innerHeight <= 800)) {
+                            titleDiv.style.fontSize = '8px';
+                            titleDiv.style.marginBottom = '1px';
+                        } else if (isKakaoTalk) {
+                            titleDiv.style.fontSize = '10px';
+                            titleDiv.style.marginBottom = '3px';
+                        } else {
+                            titleDiv.style.fontSize = '11px';
+                            titleDiv.style.marginBottom = '4px';
+                        }
+                        titleDiv.style.lineHeight = '1';
+                    }
                 }
                 
                 // 입력 영역 최적화
@@ -1501,7 +1598,59 @@
                 document.addEventListener('touchstart', function(e) {
                     // 터치 이벤트 개선
                 }, { passive: true });
+                
+                // 카카오톡 브라우저에서 스크롤 방지
+                document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
             }
+            
+            // 추가 안전 조치: 언어 선택 영역이 보이지 않으면 강제 표시
+            setTimeout(() => {
+                const languageSelector = document.querySelector('.language-selector');
+                const languageButtons = document.querySelectorAll('.language-btn');
+                
+                if (languageSelector && languageButtons.length > 0) {
+                    const rect = languageSelector.getBoundingClientRect();
+                    const buttonsVisible = Array.from(languageButtons).every(btn => {
+                        const btnRect = btn.getBoundingClientRect();
+                        return btnRect.top >= 0 && btnRect.bottom <= window.innerHeight;
+                    });
+                    
+                    if (!buttonsVisible || rect.bottom > window.innerHeight) {
+                        console.log('언어 선택 영역이 잘림 감지 - 강제 수정 적용');
+                        
+                        // 강제로 고정 위치 적용
+                        languageSelector.style.position = 'fixed';
+                        languageSelector.style.bottom = '0';
+                        languageSelector.style.left = '0';
+                        languageSelector.style.width = '100%';
+                        languageSelector.style.zIndex = '99999';
+                        languageSelector.style.background = '#f8f9fa';
+                        languageSelector.style.borderTop = '2px solid #e9ecef';
+                        languageSelector.style.padding = '3px 8px 6px 8px';
+                        languageSelector.style.minHeight = '30px';
+                        languageSelector.style.maxHeight = '32px';
+                        
+                        // 메시지 영역 높이 재조정
+                        const messagesContainer = document.querySelector('.chatbot-messages');
+                        if (messagesContainer) {
+                            messagesContainer.style.maxHeight = 'calc(100vh - 180px)';
+                            messagesContainer.style.paddingBottom = '10px';
+                        }
+                        
+                        // 언어 버튼들 크기 재조정
+                        languageButtons.forEach(btn => {
+                            btn.style.padding = '2px 4px';
+                            btn.style.fontSize = '8px';
+                            btn.style.minWidth = '30px';
+                            btn.style.height = '16px';
+                            btn.style.borderRadius = '6px';
+                        });
+                        
+                        console.log('언어 선택 영역 강제 수정 완료');
+                    }
+                }
+            }, 500);
         }
         
         // 언어별 시스템 프롬프트
