@@ -582,6 +582,77 @@
                 font-size: 12px !important;
             }
         }
+
+        /* 언어 선택 버튼 호버 효과 */
+        .language-button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        .language-button.korean:hover {
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.5) !important;
+        }
+        
+        .language-button.english:hover {
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5) !important;
+        }
+        
+        .language-button.russian:hover {
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.5) !important;
+        }
+        
+        .language-button.japanese:hover {
+            box-shadow: 0 6px 20px rgba(252, 182, 159, 0.5) !important;
+        }
+
+        /* 언어 선택 섹션 모바일 최적화 */
+        @media (max-width: 768px) {
+            .language-section {
+                padding: 15px !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .language-buttons {
+                gap: 8px !important;
+            }
+            
+            .language-button {
+                padding: 10px 16px !important;
+                font-size: 14px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .language-section {
+                padding: 12px !important;
+                margin-bottom: 12px !important;
+            }
+            
+            .language-buttons {
+                gap: 6px !important;
+            }
+            
+            .language-button {
+                padding: 8px 12px !important;
+                font-size: 13px !important;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .language-section {
+                padding: 10px !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .language-buttons {
+                gap: 4px !important;
+            }
+            
+            .language-button {
+                padding: 6px 10px !important;
+                font-size: 12px !important;
+            }
+        }
         
     </style>
 </head>
@@ -597,6 +668,28 @@
 
     <!-- 메인 컨텐츠 -->
     <div class="container">
+        <!-- 언어 선택 섹션 -->
+        <div class="language-section" style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+            <h2 style="font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px; display: flex; align-items: center; justify-content: center;">
+                <span style="margin-right: 8px;">🌍</span>
+                <span>예약창의 언어를 선택하세요!</span>
+            </h2>
+            <div class="language-buttons" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="language-button korean" onclick="selectLanguage('ko')" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">
+                    🇰🇷 한국어
+                </button>
+                <button class="language-button english" onclick="selectLanguage('en')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                    🇺🇸 영어
+                </button>
+                <button class="language-button russian" onclick="selectLanguage('ru')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);">
+                    🇷🇺 러시아어
+                </button>
+                <button class="language-button japanese" onclick="selectLanguage('ja')" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);">
+                    🇯🇵 일본어
+                </button>
+            </div>
+        </div>
+
         <!-- 진료 시간 안내 -->
         <div class="info-section">
             <h2 class="info-title">진료 시간 안내</h2>
@@ -1127,6 +1220,67 @@
                 }
                 e.target.value = value;
             });
+        }
+
+        // 언어 선택 함수
+        function selectLanguage(language) {
+            console.log('언어 선택:', language);
+            
+            // 선택된 언어에 따른 메시지 표시
+            let message = '';
+            let flag = '';
+            
+            switch(language) {
+                case 'ko':
+                    message = '한국어로 예약을 진행하겠습니다! 🇰🇷';
+                    flag = '🇰🇷';
+                    break;
+                case 'en':
+                    message = 'We will proceed with the reservation in English! 🇺🇸';
+                    flag = '🇺🇸';
+                    break;
+                case 'ru':
+                    message = 'Мы продолжим бронирование на русском языке! 🇷🇺';
+                    flag = '🇷🇺';
+                    break;
+                case 'ja':
+                    message = '日本語で予約を進めさせていただきます！🇯🇵';
+                    flag = '🇯🇵';
+                    break;
+                default:
+                    message = '한국어로 예약을 진행하겠습니다! 🇰🇷';
+                    flag = '🇰🇷';
+            }
+            
+            // 선택 확인 알림
+            alert(message);
+            
+            // 선택된 언어 버튼 하이라이트
+            const buttons = document.querySelectorAll('.language-button');
+            buttons.forEach(button => {
+                button.style.opacity = '0.6';
+                button.style.transform = 'scale(0.95)';
+            });
+            
+            // 선택된 버튼만 강조
+            const selectedButton = document.querySelector(`[onclick="selectLanguage('${language}')"]`);
+            if (selectedButton) {
+                selectedButton.style.opacity = '1';
+                selectedButton.style.transform = 'scale(1.05)';
+                selectedButton.style.boxShadow = '0 6px 20px rgba(79, 172, 254, 0.5)';
+                
+                // 2초 후 원래 상태로 복구
+                setTimeout(() => {
+                    buttons.forEach(button => {
+                        button.style.opacity = '1';
+                        button.style.transform = 'scale(1)';
+                        button.style.boxShadow = '';
+                    });
+                }, 2000);
+            }
+            
+            // 선택된 언어를 로컬 스토리지에 저장
+            localStorage.setItem('selectedLanguage', language);
         }
 
         console.log('예약 페이지 로드 완료');
