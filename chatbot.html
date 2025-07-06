@@ -240,6 +240,29 @@
             color: white;
         }
 
+        /* 언어 선택 버튼 스타일 */
+        .language-btn {
+            background: #4facfe;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .language-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-btn.selected {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+        }
+
         .reservation-link-btn {
             background: #ffd700;
             color: #333;
@@ -1043,14 +1066,6 @@
                     <div class="message-avatar">👩‍⚕️</div>
                     <div class="message-content">
                         안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br><br>
-                        AI상담사의 언어를 선택하세요! (기본언어:한국어🇰🇷)
-                        <div class="quick-buttons" style="margin-top: 15px;">
-                            <button class="quick-button" onclick="setLanguage2('ko')" id="langBtn-ko-2">🇰🇷 한국어</button>
-                            <button class="quick-button" onclick="setLanguage2('en')" id="langBtn-en-2">🇺🇸 영어</button>
-                            <button class="quick-button" onclick="setLanguage2('ru')" id="langBtn-ru-2">🇷🇺 러시아어</button>
-                            <button class="quick-button" onclick="setLanguage2('ja')" id="langBtn-ja-2">🇯🇵 일본어</button>
-                        </div>
-                        <br>
                         <div class="quick-buttons">
                             <button class="quick-button" onclick="sendQuickMessage2('진료시간 알려주세요')">진료시간</button>
                             <button class="quick-button" onclick="sendQuickMessage2('예약하고 싶어요')">예약문의</button>
@@ -1065,6 +1080,19 @@
             <div class="chatbot-input" style="padding: 18px !important; margin-top: -10px !important;">
                 <textarea id="chatbotInput2" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress2(event)" rows="1" style="padding: 18px 24px !important; font-size: 22px !important; min-height: 65px !important; border-radius: 25px !important;"></textarea>
                 <button class="chatbot-send" onclick="sendMessage2()" style="padding: 18px 26px !important; font-size: 21px !important; min-width: 108px !important; border-radius: 25px !important;">전송</button>
+            </div>
+            
+            <!-- 언어 선택 버튼 섹션 -->
+            <div class="language-selector" style="padding: 10px 18px 18px 18px; text-align: center; background: #f8f9fa; border-top: 1px solid #e9ecef;">
+                <div style="font-size: 14px; color: #6c757d; margin-bottom: 8px; font-weight: 600;">
+                    AI상담사 언어 선택 
+                </div>
+                <div class="language-buttons" style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                    <button class="language-btn" onclick="setLanguage2('ko')" id="langBtn-ko-2" style="background: #4facfe; color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 13px; cursor: pointer; transition: all 0.3s; font-weight: 500;">🇰🇷 한국어</button>
+                    <button class="language-btn" onclick="setLanguage2('en')" id="langBtn-en-2" style="background: #667eea; color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 13px; cursor: pointer; transition: all 0.3s; font-weight: 500;">🇺🇸 영어</button>
+                    <button class="language-btn" onclick="setLanguage2('ru')" id="langBtn-ru-2" style="background: #f093fb; color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 13px; cursor: pointer; transition: all 0.3s; font-weight: 500;">🇷🇺 러시아어</button>
+                    <button class="language-btn" onclick="setLanguage2('ja')" id="langBtn-ja-2" style="background: #fcb69f; color: #333; border: none; padding: 6px 12px; border-radius: 15px; font-size: 13px; cursor: pointer; transition: all 0.3s; font-weight: 500;">🇯🇵 일본어</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1460,6 +1488,72 @@
                 updateLanguageButtons2();
             }
         }
+        
+        // 언어별 감지 키워드
+        const languageDetectionKeywords = {
+            ko: ['안녕', '감사', '죄송', '진료', '예약', '치료', '병원', '의사', '간호사', '상담', '비용', '가격', '시간', '언제', '어디', '무엇', '어떻게', '왜', '네', '아니요', '좋습니다', '알겠습니다', '도움', '문의', '질문', '하세요', '입니다', '이에요', '해주세요', '주세요', '고맙습니다', '죄송해요', '안녕하세요', '그래요', '맞아요'],
+            en: ['hello', 'thank', 'sorry', 'treatment', 'appointment', 'clinic', 'doctor', 'nurse', 'consultation', 'cost', 'price', 'time', 'when', 'where', 'what', 'how', 'why', 'yes', 'no', 'good', 'understand', 'help', 'question', 'please', 'thanks', 'hi', 'dental', 'tooth', 'teeth', 'hours', 'reservation', 'appointment', 'can', 'could', 'would', 'should'],
+            ru: ['привет', 'здравствуйте', 'спасибо', 'извините', 'лечение', 'запись', 'клиника', 'врач', 'медсестра', 'консультация', 'стоимость', 'цена', 'время', 'когда', 'где', 'что', 'как', 'почему', 'да', 'нет', 'хорошо', 'понимаю', 'помощь', 'вопрос', 'пожалуйста', 'зуб', 'зубы', 'стоматология', 'можете', 'можно', 'будет', 'есть'],
+            ja: ['こんにちは', 'ありがとう', 'すみません', '治療', '予約', 'クリニック', '医師', '看護師', '相談', '費用', '料金', '時間', 'いつ', 'どこ', '何', 'どう', 'なぜ', 'はい', 'いいえ', '良い', '分かり', '手伝い', '質問', 'お願い', '歯科', '歯', '歯医者', 'ください', 'です', 'ます', 'でしょう', 'どの', 'その']
+        };
+        
+        // 입력 메시지에서 언어 감지
+        function detectLanguage(message) {
+            const normalizedMessage = message.toLowerCase();
+            const scores = {};
+            
+            // 각 언어별 점수 계산
+            Object.keys(languageDetectionKeywords).forEach(lang => {
+                scores[lang] = 0;
+                languageDetectionKeywords[lang].forEach(keyword => {
+                    if (normalizedMessage.includes(keyword)) {
+                        scores[lang]++;
+                    }
+                });
+            });
+            
+            // 가장 높은 점수의 언어 찾기
+            let detectedLanguage = 'ko'; // 기본값
+            let maxScore = 0;
+            
+            Object.keys(scores).forEach(lang => {
+                if (scores[lang] > maxScore) {
+                    maxScore = scores[lang];
+                    detectedLanguage = lang;
+                }
+            });
+            
+            // 최소 1개 이상의 키워드가 매칭되어야 언어 변경 (민감도 증가)
+            return maxScore >= 1 ? detectedLanguage : null;
+        }
+        
+        // 자동 언어 변경 함수
+        function autoChangeLanguage(detectedLanguage) {
+            if (detectedLanguage && detectedLanguage !== currentLanguage2) {
+                console.log(`언어 자동 감지: ${currentLanguage2} → ${detectedLanguage}`);
+                
+                // 언어 변경
+                currentLanguage2 = detectedLanguage;
+                localStorage.setItem('chatbotLanguage2', detectedLanguage);
+                updateLanguageButtons2();
+                
+                // 언어 변경 알림 메시지
+                const changeNotifications = {
+                    ko: '🔄 한국어로 언어가 변경되었습니다.',
+                    en: '🔄 Language changed to English.',
+                    ru: '🔄 Язык изменен на русский.',
+                    ja: '🔄 言語が日本語に変更されました。'
+                };
+                
+                const notification = changeNotifications[detectedLanguage];
+                if (notification) {
+                    addBotMessage2(notification);
+                }
+                
+                return true;
+            }
+            return false;
+        }
 
         // 메시지 전송 함수
         function sendMessage2() {
@@ -1468,9 +1562,14 @@
             const message = input.value.trim();
             
             if (message) {
+                // 메시지 추가
                 addUserMessage2(message);
                 input.value = '';
                 input.style.height = '45px';
+                
+                // 언어 자동 감지 및 변경
+                const detectedLanguage = detectLanguage(message);
+                const languageChanged = autoChangeLanguage(detectedLanguage);
                 
                 // "AI 관리자"라는 메시지를 감지하면 관리자 버튼 제공 (대소문자 구분 없음)
                 const normalizedMessage = message.toLowerCase().replace(/\s+/g, '');
@@ -1503,36 +1602,45 @@
                     return;
                 }
                 
-                const loadingMessages = {
-                    ko: '👩‍⚕️🕐 최고의 답변을 준비 중 입니다...',
-                    en: '👩‍⚕️🕐 Preparing the best answer...',
-                    ru: '👩‍⚕️🕐 Готовлю лучший ответ...',
-                    ja: '👩‍⚕️🕐 最高の回答を準備中です...'
-                };
-                const loadingMessage = addBotMessage2(loadingMessages[currentLanguage2] || loadingMessages['ko']);
+                // 언어가 변경되었다면 잠시 대기 후 답변 생성 (변경 알림이 먼저 표시되도록)
+                const delay = languageChanged ? 1000 : 0;
                 
-                generateAIResponse2(message).then(response => {
-                    stopClockAnimation2(loadingMessage);
-                    loadingMessage.remove();
-                    addBotMessage2(response);
-                }).catch(error => {
-                    console.error('AI 응답 오류:', error);
-                    stopClockAnimation2(loadingMessage);
-                    loadingMessage.remove();
-                    const errorMessages = {
-                        ko: '❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-                        en: '❌ Sorry, a temporary error has occurred. Please try again later.',
-                        ru: '❌ Извините, произошла временная ошибка. Попробуйте еще раз позже.',
-                        ja: '❌ 申し訳ございません。一時的なエラーが発生しました。しばらくしてから再度お試しください。'
+                setTimeout(() => {
+                    const loadingMessages = {
+                        ko: '👩‍⚕️🕐 최고의 답변을 준비 중 입니다...',
+                        en: '👩‍⚕️🕐 Preparing the best answer...',
+                        ru: '👩‍⚕️🕐 Готовлю лучший ответ...',
+                        ja: '👩‍⚕️🕐 最高の回答を準備中です...'
                     };
-                    addBotMessage2(errorMessages[currentLanguage2] || errorMessages['ko']);
-                });
+                    const loadingMessage = addBotMessage2(loadingMessages[currentLanguage2] || loadingMessages['ko']);
+                    
+                    generateAIResponse2(message).then(response => {
+                        stopClockAnimation2(loadingMessage);
+                        loadingMessage.remove();
+                        addBotMessage2(response);
+                    }).catch(error => {
+                        console.error('AI 응답 오류:', error);
+                        stopClockAnimation2(loadingMessage);
+                        loadingMessage.remove();
+                        const errorMessages = {
+                            ko: '❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+                            en: '❌ Sorry, a temporary error has occurred. Please try again later.',
+                            ru: '❌ Извините, произошла временная ошибка. Попробуйте еще раз позже.',
+                            ja: '❌ 申し訳ございません。一時的なエラーが発生しました。しばらくしてから再度お試しください。'
+                        };
+                        addBotMessage2(errorMessages[currentLanguage2] || errorMessages['ko']);
+                    });
+                }, delay);
             }
         }
 
         function sendQuickMessage2(message) {
             console.log('빠른 메시지:', message);
             addUserMessage2(message);
+            
+            // 언어 자동 감지 및 변경
+            const detectedLanguage = detectLanguage(message);
+            const languageChanged = autoChangeLanguage(detectedLanguage);
             
             // "AI관리자 버튼"이라는 메시지를 감지하면 관리자 버튼 제공
             if (message === "AI관리자 버튼") {
@@ -1557,7 +1665,11 @@
                 return;
             }
             
-            const loadingMessages = {
+            // 언어가 변경되었다면 잠시 대기 후 답변 생성
+            const delay = languageChanged ? 1000 : 0;
+            
+            setTimeout(() => {
+                const loadingMessages = {
                 ko: '👩‍⚕️🕐 최고의 답변을 준비 중 입니다...',
                 en: '👩‍⚕️🕐 Preparing the best answer...',
                 ru: '👩‍⚕️🕐 Готовлю лучший ответ...',
@@ -1581,6 +1693,7 @@
                 };
                 addBotMessage2(errorMessages[currentLanguage2] || errorMessages['ko']);
             });
+            }, delay);
         }
 
         function handleChatKeyPress2(event) {
@@ -1627,19 +1740,40 @@
             messageDiv.className = 'message bot';
             
             // 로딩 메시지인지 확인 (공통 메시지 추가하지 않음)
-            const isLoadingMessage = message.includes('최고의 답변을 준비 중 입니다') || message.includes('처리하고 있습니다');
+            const isLoadingMessage = message.includes('최고의 답변을 준비 중 입니다') || 
+                                    message.includes('처리하고 있습니다') ||
+                                    message.includes('Preparing the best answer') ||
+                                    message.includes('Готовлю лучший ответ') ||
+                                    message.includes('最高の回答を準備中です');
             
             // 관리자 버튼 메시지인지 확인 (공통 메시지 추가하지 않음)
             const isAdminMessage = message.includes('AI 관리자 기능을 요청하셨습니다');
             
             let finalMessage = message;
             
-            // 로딩 메시지와 관리자 메시지가 아닌 경우에만 공통 메시지와 예약 버튼 추가
-            if (!isLoadingMessage && !isAdminMessage) {
+            // 언어 변경 알림 메시지인지 확인 (공통 메시지 추가하지 않음)
+            const isLanguageChangeMessage = message.includes('언어가 변경되었습니다') || 
+                                          message.includes('Language changed to') || 
+                                          message.includes('Язык изменен на') || 
+                                          message.includes('言語が日本語に変更されました');
+            
+            // 로딩 메시지와 관리자 메시지, 언어 변경 메시지가 아닌 경우에만 공통 메시지와 예약 버튼 추가
+            if (!isLoadingMessage && !isAdminMessage && !isLanguageChangeMessage) {
+                const commonMessages = {
+                    ko: `💝 <strong>좀더 자세한 사항은 직접 방문하시면 친절하게 상담 드리겠습니다!</strong><br><br>
+                        <button class="reservation-link-btn" onclick="goToReservationPage2()" style="margin-top: 5px;">📅 예약하기</button>`,
+                    en: `💝 <strong>For more detailed information, please visit us directly for kind consultation!</strong><br><br>
+                        <button class="reservation-link-btn" onclick="goToReservationPage2()" style="margin-top: 5px;">📅 Make Reservation</button>`,
+                    ru: `💝 <strong>Для получения более подробной информации, пожалуйста, посетите нас для консультации!</strong><br><br>
+                        <button class="reservation-link-btn" onclick="goToReservationPage2()" style="margin-top: 5px;">📅 Записаться</button>`,
+                    ja: `💝 <strong>詳細については、直接お越しいただければ親切にご相談いたします！</strong><br><br>
+                        <button class="reservation-link-btn" onclick="goToReservationPage2()" style="margin-top: 5px;">📅 予約する</button>`
+                };
+                
+                const commonMessage = commonMessages[currentLanguage2] || commonMessages['ko'];
                 finalMessage += `<br><br>
                 <div style="background: #f0f8ff; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center;">
-                    💝 <strong>좀더 자세한 사항은 직접 방문하시면 친절하게 상담 드리겠습니다!</strong><br><br>
-                    <button class="reservation-link-btn" onclick="goToReservationPage2()" style="margin-top: 5px;">📅 예약하기</button>
+                    ${commonMessage}
                 </div>`;
             }
             
