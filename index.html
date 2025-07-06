@@ -2931,8 +2931,8 @@ https://phoenixai-agent.site/reservation.html
             
             if (firstMessage) {
                 const messageContent = firstMessage.querySelector('.message-content');
-                let welcomeText = `안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br>
-                치과 관련 궁금한 점이 있으시면 언제든 문의해주세요!`;
+                let welcomeText = `안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br><br>
+                AI상담사의 언어를 선택하세요! (기본언어:한국어🇰🇷)`;
                 
                 // API 설정 상태 확인
                 const hasAPI = apiSettings.chatgpt.enabled || apiSettings.gemini.enabled || apiSettings.claude.enabled;
@@ -2950,7 +2950,14 @@ https://phoenixai-agent.site/reservation.html
                     welcomeText += `<br>📚 업로드된 지식 파일 ${knowledgeBase.files.length}개가 활성화되어 있습니다.`;
                 }
                 
-                welcomeText += `<div class="quick-buttons">
+                welcomeText += `<div class="quick-buttons" style="margin-top: 15px;">
+                    <button class="quick-button" onclick="sendQuickMessage('한국어로 상담하겠습니다')">🇰🇷 한국어</button>
+                    <button class="quick-button" onclick="sendQuickMessage('영어로 상담하겠습니다')">🇺🇸 영어</button>
+                    <button class="quick-button" onclick="sendQuickMessage('러시아어로 상담하겠습니다')">🇷🇺 러시아어</button>
+                    <button class="quick-button" onclick="sendQuickMessage('일본어로 상담하겠습니다')">🇯🇵 일본어</button>
+                </div>
+                <br>
+                <div class="quick-buttons">
                     <button class="quick-button" onclick="sendQuickMessage('진료시간 알려주세요')">진료시간</button>
                     <button class="quick-button" onclick="sendQuickMessage('예약하고 싶어요')">예약문의</button>
                     <button class="quick-button" onclick="sendQuickMessage('치료비용 궁금해요')">치료비용</button>
