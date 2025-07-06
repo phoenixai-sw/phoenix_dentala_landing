@@ -1045,10 +1045,10 @@
                         안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br><br>
                         AI상담사의 언어를 선택하세요! (기본언어:한국어🇰🇷)
                         <div class="quick-buttons" style="margin-top: 15px;">
-                            <button class="quick-button" onclick="sendQuickMessage2('한국어로 상담하겠습니다')">🇰🇷 한국어</button>
-                            <button class="quick-button" onclick="sendQuickMessage2('영어로 상담하겠습니다')">🇺🇸 영어</button>
-                            <button class="quick-button" onclick="sendQuickMessage2('러시아어로 상담하겠습니다')">🇷🇺 러시아어</button>
-                            <button class="quick-button" onclick="sendQuickMessage2('일본어로 상담하겠습니다')">🇯🇵 일본어</button>
+                            <button class="quick-button" onclick="setLanguage2('ko')" id="langBtn-ko-2">🇰🇷 한국어</button>
+                            <button class="quick-button" onclick="setLanguage2('en')" id="langBtn-en-2">🇺🇸 영어</button>
+                            <button class="quick-button" onclick="setLanguage2('ru')" id="langBtn-ru-2">🇷🇺 러시아어</button>
+                            <button class="quick-button" onclick="setLanguage2('ja')" id="langBtn-ja-2">🇯🇵 일본어</button>
                         </div>
                         <br>
                         <div class="quick-buttons">
@@ -1188,6 +1188,17 @@
 
     <script>
         console.log('AI 챗봇 페이지 로드 시작');
+        
+        // 페이지 로드 시 저장된 언어 설정 복원
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedLanguage2();
+            console.log('언어 설정 복원 완료, 현재 언어:', currentLanguage2);
+            
+            // 약간의 지연 후 언어 버튼 업데이트 (DOM 완전 로드 후)
+            setTimeout(() => {
+                updateLanguageButtons2();
+            }, 100);
+        });
 
         // 전역 변수 (기존과 분리하기 위해 2를 붙임)
         let apiSettings2 = {
@@ -1203,6 +1214,252 @@
             parsedData: [],
             enabled: false
         };
+        
+        // 언어 설정 전역 변수
+        let currentLanguage2 = 'ko'; // 기본 언어: 한국어
+        
+        // 언어별 시스템 프롬프트
+        const languagePrompts2 = {
+            ko: '당신은 피닉스 치과의 AI 상담사입니다. 한국어로 친절하고 전문적으로 답변해주세요.',
+            en: 'You are an AI consultant for Phoenix Dental. Please respond in English in a friendly and professional manner.',
+            ru: 'Вы - AI-консультант стоматологической клиники Phoenix. Пожалуйста, отвечайте на русском языке дружелюбно и профессионально.',
+            ja: 'あなたはフェニックス歯科のAIコンサルタントです。日本語で親切で専門的に回答してください。'
+        };
+        
+                // 언어별 확인 메시지
+        const languageConfirmMessages2 = {
+            ko: '🇰🇷 한국어로 상담을 진행하겠습니다! 무엇을 도와드릴까요?',
+            en: '🇺🇸 I will assist you in English! How can I help you?',
+            ru: '🇷🇺 Я буду помогать вам на русском языке! Чем могу помочь?',
+            ja: '🇯🇵 日本語でご相談を承ります！どのようなご質問でしょうか？'
+        };
+        
+        // 언어별 기본 응답 객체
+        const defaultResponses2 = {
+            ko: {
+                clinicHours: `🕘 <strong>피닉스 치과 진료시간 안내</strong><br><br>
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        📅 <strong>평일</strong>: 오전 9시 ~ 오후 6시<br>
+                        📅 <strong>토요일</strong>: 오전 9시 ~ 오후 3시<br>
+                        🍽️ <strong>점심시간</strong>: 12시 30분 ~ 1시 30분<br>
+                        🚫 <strong>휴진</strong>: 일요일, 공휴일
+                    </div>`,
+                        
+                reservation: `📞 <strong>예약 및 상담 안내</strong><br><br>
+                    <div style="background: #fff8f0; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        🌟 <strong>온라인 예약</strong> (추천)<br>
+                        • 24시간 언제든 예약 가능<br>
+                        • 원하는 날짜/시간 선택<br>
+                        • 즉시 예약 확인
+                    </div>`,
+                        
+                cost: `💰 <strong>치료비 안내</strong><br><br>
+                    <div style="background: #f8fff8; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        🦷 <strong>기본 진료</strong><br>
+                        • 초진료: 15,000원<br>
+                        • 재진료: 10,000원<br>
+                        • 스케일링: 50,000원
+                    </div>`,
+                        
+                location: `🏥 <strong>피닉스 치과 오시는 길</strong><br><br>
+                    <div style="background: #f0fff0; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        📍 <strong>주소</strong><br>
+                        피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호<br><br>
+                        🚇 <strong>지하철</strong><br>
+                        2호선 강남역 3번 출구 → 도보 5분
+                    </div>`,
+                        
+                welcome: `😊 <strong>안녕하세요! 피닉스 치과 AI 상담사입니다</strong><br><br>
+                    <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); padding: 20px; border-radius: 12px; margin: 10px 0;">
+                        🏥 <strong>피닉스 치과에 오신 것을 환영합니다!</strong><br><br>
+                        💡 <strong>무엇을 도와드릴까요?</strong><br>
+                        • 진료시간 및 예약 안내<br>
+                        • 치료 비용 상담<br>
+                        • 오시는 길 안내
+                    </div>`
+            },
+            en: {
+                clinicHours: `🕘 <strong>Phoenix Dental Clinic Hours</strong><br><br>
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        📅 <strong>Weekdays</strong>: 9:00 AM ~ 6:00 PM<br>
+                        📅 <strong>Saturday</strong>: 9:00 AM ~ 3:00 PM<br>
+                        🍽️ <strong>Lunch Break</strong>: 12:30 PM ~ 1:30 PM<br>
+                        🚫 <strong>Closed</strong>: Sunday, Holidays
+                    </div>`,
+                        
+                reservation: `📞 <strong>Reservation & Consultation Guide</strong><br><br>
+                    <div style="background: #fff8f0; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        🌟 <strong>Online Reservation</strong> (Recommended)<br>
+                        • Available 24/7<br>
+                        • Choose your preferred date/time<br>
+                        • Instant confirmation
+                    </div>`,
+                        
+                cost: `💰 <strong>Treatment Cost Information</strong><br><br>
+                    <div style="background: #f8fff8; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        🦷 <strong>Basic Treatment</strong><br>
+                        • First Visit: ₩15,000<br>
+                        • Follow-up: ₩10,000<br>
+                        • Scaling: ₩50,000
+                    </div>`,
+                        
+                location: `🏥 <strong>Phoenix Dental Location</strong><br><br>
+                    <div style="background: #f0fff0; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        📍 <strong>Address</strong><br>
+                        11-11 Phoenix Tower, 11th Floor, Phoenix-ro 11-gil, Phoenix City<br><br>
+                        🚇 <strong>Subway</strong><br>
+                        Line 2, Gangnam Station Exit 3 → 5 min walk
+                    </div>`,
+                        
+                welcome: `😊 <strong>Hello! Phoenix Dental AI Consultant</strong><br><br>
+                    <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); padding: 20px; border-radius: 12px; margin: 10px 0;">
+                        🏥 <strong>Welcome to Phoenix Dental!</strong><br><br>
+                        💡 <strong>How can I help you?</strong><br>
+                        • Clinic hours & appointments<br>
+                        • Treatment costs<br>
+                        • Location & directions
+                    </div>`
+            },
+            ru: {
+                clinicHours: `🕘 <strong>Часы работы стоматологии Phoenix</strong><br><br>
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        📅 <strong>Будние дни</strong>: 9:00 ~ 18:00<br>
+                        📅 <strong>Суббота</strong>: 9:00 ~ 15:00<br>
+                        🍽️ <strong>Обеденный перерыв</strong>: 12:30 ~ 13:30<br>
+                        🚫 <strong>Выходные</strong>: Воскресенье, праздники
+                    </div>`,
+                        
+                reservation: `📞 <strong>Информация о записи и консультации</strong><br><br>
+                    <div style="background: #fff8f0; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        🌟 <strong>Онлайн запись</strong> (рекомендуется)<br>
+                        • Доступно 24/7<br>
+                        • Выберите удобную дату/время<br>
+                        • Мгновенное подтверждение
+                    </div>`,
+                        
+                cost: `💰 <strong>Информация о стоимости лечения</strong><br><br>
+                    <div style="background: #f8fff8; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        🦷 <strong>Базовое лечение</strong><br>
+                        • Первичный прием: ₩15,000<br>
+                        • Повторный прием: ₩10,000<br>
+                        • Чистка зубов: ₩50,000
+                    </div>`,
+                        
+                location: `🏥 <strong>Расположение стоматологии Phoenix</strong><br><br>
+                    <div style="background: #f0fff0; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        📍 <strong>Адрес</strong><br>
+                        г. Феникс, ул. Феникс 11-11, башня Феникс, 11 этаж<br><br>
+                        🚇 <strong>Метро</strong><br>
+                        Линия 2, станция Каннам, выход 3 → 5 мин пешком
+                    </div>`,
+                        
+                welcome: `😊 <strong>Здравствуйте! AI-консультант стоматологии Phoenix</strong><br><br>
+                    <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); padding: 20px; border-radius: 12px; margin: 10px 0;">
+                        🏥 <strong>Добро пожаловать в стоматологию Phoenix!</strong><br><br>
+                        💡 <strong>Чем могу помочь?</strong><br>
+                        • Часы работы и запись<br>
+                        • Стоимость лечения<br>
+                        • Расположение и проезд
+                    </div>`
+            },
+            ja: {
+                clinicHours: `🕘 <strong>フェニックス歯科 診療時間のご案内</strong><br><br>
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        📅 <strong>平日</strong>: 9:00 ~ 18:00<br>
+                        📅 <strong>土曜日</strong>: 9:00 ~ 15:00<br>
+                        🍽️ <strong>昼休み</strong>: 12:30 ~ 13:30<br>
+                        🚫 <strong>休診</strong>: 日曜日、祝日
+                    </div>`,
+                        
+                reservation: `📞 <strong>予約・相談のご案内</strong><br><br>
+                    <div style="background: #fff8f0; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        🌟 <strong>オンライン予約</strong> (おすすめ)<br>
+                        • 24時間いつでも予約可能<br>
+                        • ご希望の日時を選択<br>
+                        • 即座に予約確認
+                    </div>`,
+                        
+                cost: `💰 <strong>治療費のご案内</strong><br><br>
+                    <div style="background: #f8fff8; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        🦷 <strong>基本診療</strong><br>
+                        • 初診料: ₩15,000<br>
+                        • 再診料: ₩10,000<br>
+                        • スケーリング: ₩50,000
+                    </div>`,
+                        
+                location: `🏥 <strong>フェニックス歯科 アクセス</strong><br><br>
+                    <div style="background: #f0fff0; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                        📍 <strong>住所</strong><br>
+                        フェニックス市フェニックス路11番地11、フェニックスタワー11階<br><br>
+                        🚇 <strong>地下鉄</strong><br>
+                        2号線江南駅3番出口より徒歩5分
+                    </div>`,
+                        
+                welcome: `😊 <strong>こんにちは！フェニックス歯科AIコンサルタントです</strong><br><br>
+                    <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); padding: 20px; border-radius: 12px; margin: 10px 0;">
+                        🏥 <strong>フェニックス歯科へようこそ！</strong><br><br>
+                        💡 <strong>どのようなご質問でしょうか？</strong><br>
+                        • 診療時間・予約について<br>
+                        • 治療費について<br>
+                        • アクセス・道案内
+                    </div>`
+            }
+        };
+
+        // 언어 설정 함수
+        function setLanguage2(language) {
+            console.log('언어 설정:', language);
+            
+            // 현재 언어 업데이트
+            currentLanguage2 = language;
+            
+            // 로컬 스토리지에 언어 설정 저장
+            localStorage.setItem('chatbotLanguage2', language);
+            
+            // 언어 버튼 시각적 업데이트
+            updateLanguageButtons2();
+            
+            // 확인 메시지 표시
+            const confirmMessage = languageConfirmMessages2[language];
+            addBotMessage2(confirmMessage);
+            
+            console.log(`언어가 ${language}로 설정되었습니다.`);
+        }
+        
+        // 언어 버튼 시각적 업데이트
+        function updateLanguageButtons2() {
+            // 모든 언어 버튼 스타일 초기화
+            const languages = ['ko', 'en', 'ru', 'ja'];
+            languages.forEach(lang => {
+                const button = document.getElementById(`langBtn-${lang}-2`);
+                if (button) {
+                    button.style.opacity = '0.6';
+                    button.style.transform = 'scale(0.95)';
+                    button.style.background = '';
+                    button.style.boxShadow = '';
+                }
+            });
+            
+            // 선택된 언어 버튼 강조
+            const selectedButton = document.getElementById(`langBtn-${currentLanguage2}-2`);
+            if (selectedButton) {
+                selectedButton.style.opacity = '1';
+                selectedButton.style.transform = 'scale(1.05)';
+                selectedButton.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+                selectedButton.style.boxShadow = '0 4px 15px rgba(79, 172, 254, 0.4)';
+                selectedButton.style.color = 'white';
+                selectedButton.style.fontWeight = 'bold';
+            }
+        }
+        
+        // 페이지 로드 시 저장된 언어 설정 복원
+        function loadSavedLanguage2() {
+            const savedLanguage = localStorage.getItem('chatbotLanguage2');
+            if (savedLanguage && ['ko', 'en', 'ru', 'ja'].includes(savedLanguage)) {
+                currentLanguage2 = savedLanguage;
+                updateLanguageButtons2();
+            }
+        }
 
         // 메시지 전송 함수
         function sendMessage2() {
@@ -1246,7 +1503,13 @@
                     return;
                 }
                 
-                const loadingMessage = addBotMessage2('👩‍⚕️🕐 최고의 답변을 준비 중 입니다...');
+                const loadingMessages = {
+                    ko: '👩‍⚕️🕐 최고의 답변을 준비 중 입니다...',
+                    en: '👩‍⚕️🕐 Preparing the best answer...',
+                    ru: '👩‍⚕️🕐 Готовлю лучший ответ...',
+                    ja: '👩‍⚕️🕐 最高の回答を準備中です...'
+                };
+                const loadingMessage = addBotMessage2(loadingMessages[currentLanguage2] || loadingMessages['ko']);
                 
                 generateAIResponse2(message).then(response => {
                     stopClockAnimation2(loadingMessage);
@@ -1256,7 +1519,13 @@
                     console.error('AI 응답 오류:', error);
                     stopClockAnimation2(loadingMessage);
                     loadingMessage.remove();
-                    addBotMessage2('❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                    const errorMessages = {
+                        ko: '❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+                        en: '❌ Sorry, a temporary error has occurred. Please try again later.',
+                        ru: '❌ Извините, произошла временная ошибка. Попробуйте еще раз позже.',
+                        ja: '❌ 申し訳ございません。一時的なエラーが発生しました。しばらくしてから再度お試しください。'
+                    };
+                    addBotMessage2(errorMessages[currentLanguage2] || errorMessages['ko']);
                 });
             }
         }
@@ -1288,7 +1557,13 @@
                 return;
             }
             
-            const loadingMessage = addBotMessage2('👩‍⚕️🕐 최고의 답변을 준비 중 입니다...');
+            const loadingMessages = {
+                ko: '👩‍⚕️🕐 최고의 답변을 준비 중 입니다...',
+                en: '👩‍⚕️🕐 Preparing the best answer...',
+                ru: '👩‍⚕️🕐 Готовлю лучший ответ...',
+                ja: '👩‍⚕️🕐 最高の回答を準備中です...'
+            };
+            const loadingMessage = addBotMessage2(loadingMessages[currentLanguage2] || loadingMessages['ko']);
             
             generateAIResponse2(message).then(response => {
                 stopClockAnimation2(loadingMessage);
@@ -1298,7 +1573,13 @@
                 console.error('AI 응답 오류:', error);
                 stopClockAnimation2(loadingMessage);
                 loadingMessage.remove();
-                addBotMessage2('❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                const errorMessages = {
+                    ko: '❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+                    en: '❌ Sorry, a temporary error has occurred. Please try again later.',
+                    ru: '❌ Извините, произошла временная ошибка. Попробуйте еще раз позже.',
+                    ja: '❌ 申し訳ございません。一時的なエラーが発生しました。しばらくしてから再度お試しください。'
+                };
+                addBotMessage2(errorMessages[currentLanguage2] || errorMessages['ko']);
             });
         }
 
@@ -1431,18 +1712,22 @@
             const provider = apiSettings2.activeProvider;
             const settings = apiSettings2[provider];
             
+            // 현재 언어에 따른 시스템 프롬프트 추가
+            const systemPrompt = languagePrompts2[currentLanguage2] || languagePrompts2['ko'];
+            const fullMessage = `${systemPrompt}\n\n사용자 질문: ${userMessage}`;
+            
             try {
                 let response;
                 
                 switch (provider) {
                     case 'chatgpt':
-                        response = await callChatGPTAPI2(userMessage, settings);
+                        response = await callChatGPTAPI2(fullMessage, settings);
                         break;
                     case 'gemini':
-                        response = await callGeminiAPI2(userMessage, settings);
+                        response = await callGeminiAPI2(fullMessage, settings);
                         break;
                     case 'claude':
-                        response = await callClaudeAPI2(userMessage, settings);
+                        response = await callClaudeAPI2(fullMessage, settings);
                         break;
                     default:
                         return getDefaultResponse2(userMessage);
@@ -1492,112 +1777,67 @@
 
         function getDefaultResponse2(userMessage) {
             const message = userMessage.toLowerCase();
+            const responses = defaultResponses2[currentLanguage2] || defaultResponses2['ko'];
             
-            if (message.includes('진료시간') || message.includes('언제') || message.includes('몇시') || message.includes('운영시간')) {
-                return `🕘 <strong>피닉스 치과 진료시간 안내</strong><br><br>
-                
-                <div style="background: #f0f8ff; padding: 15px; border-radius: 10px; margin: 10px 0;">
-                    📅 <strong>평일</strong>: 오전 9시 ~ 오후 6시<br>
-                    📅 <strong>토요일</strong>: 오전 9시 ~ 오후 3시<br>
-                    🍽️ <strong>점심시간</strong>: 12시 30분 ~ 1시 30분<br>
-                    🚫 <strong>휴진</strong>: 일요일, 공휴일
-                </div>
-                
-                💡 <strong>예약 안내</strong><br>
-                • 온라인 예약: 24시간 언제든 가능<br>
-                • 전화 예약: 070-1234-1234<br>
-                • 응급 상담: 24시간 가능<br><br>
-                
-                😊 편리한 온라인 예약을 추천드립니다!<br>
-                <button class="reservation-link-btn" onclick="goToReservationPage2()">📅 지금 바로 예약하기</button>`;
+            // 진료시간 관련 키워드 (다국어 지원)
+            const timeKeywords = {
+                ko: ['진료시간', '언제', '몇시', '운영시간', '시간'],
+                en: ['hours', 'time', 'when', 'open', 'clinic hours'],
+                ru: ['время', 'часы', 'когда', 'работа', 'режим'],
+                ja: ['時間', '営業', 'いつ', '診療時間', '何時']
+            };
+            
+            // 예약 관련 키워드
+            const reservationKeywords = {
+                ko: ['예약', '신청', '접수', '방문', '예약하기'],
+                en: ['reservation', 'appointment', 'booking', 'visit', 'schedule'],
+                ru: ['запись', 'резерв', 'визит', 'посещение'],
+                ja: ['予約', '申請', '受付', '訪問', 'アポイント']
+            };
+            
+            // 비용 관련 키워드
+            const costKeywords = {
+                ko: ['비용', '가격', '얼마', '돈', '금액', '요금'],
+                en: ['cost', 'price', 'fee', 'money', 'payment', 'how much'],
+                ru: ['стоимость', 'цена', 'деньги', 'оплата', 'сколько'],
+                ja: ['費用', '料金', 'いくら', 'お金', '価格', 'コスト']
+            };
+            
+            // 위치 관련 키워드
+            const locationKeywords = {
+                ko: ['위치', '주소', '어디', '찾아', '교통', '길', '오는'],
+                en: ['location', 'address', 'where', 'directions', 'way', 'how to get'],
+                ru: ['адрес', 'где', 'как добраться', 'расположение', 'проезд'],
+                ja: ['場所', '住所', 'どこ', 'アクセス', '道', '行き方']
+            };
+            
+            // 현재 언어의 키워드로 체크
+            const currentKeywords = {
+                time: timeKeywords[currentLanguage2] || timeKeywords['ko'],
+                reservation: reservationKeywords[currentLanguage2] || reservationKeywords['ko'],
+                cost: costKeywords[currentLanguage2] || costKeywords['ko'],
+                location: locationKeywords[currentLanguage2] || locationKeywords['ko']
+            };
+            
+            // 키워드 매칭
+            if (currentKeywords.time.some(keyword => message.includes(keyword))) {
+                return responses.clinicHours;
             }
             
-            if (message.includes('예약') || message.includes('신청') || message.includes('접수') || message.includes('방문')) {
-                return `📞 <strong>예약 및 상담 안내</strong><br><br>
-                
-                <div style="background: #fff8f0; padding: 15px; border-radius: 10px; margin: 10px 0;">
-                    🌟 <strong>온라인 예약</strong> (추천)<br>
-                    • 24시간 언제든 예약 가능<br>
-                    • 원하는 날짜/시간 선택<br>
-                    • 즉시 예약 확인<br><br>
-                    
-                    📱 <strong>전화 예약</strong><br>
-                    • 070-1234-1234<br>
-                    • 평일 09:00-18:00, 토요일 09:00-15:00<br>
-                    • 24시간 응급상담 가능
-                </div>
-                
-                💝 <strong>초진 환자 특별 혜택</strong><br>
-                • 정밀 검진 및 상담<br>
-                • 개인별 맞춤 치료 계획 수립<br>
-                • 25년 경력 홍길동 원장님 직접 진료<br><br>
-                
-                <button class="reservation-link-btn" onclick="goToReservationPage2()">📅 지금 바로 예약하기</button>`;
+            if (currentKeywords.reservation.some(keyword => message.includes(keyword))) {
+                return responses.reservation;
             }
             
-            if (message.includes('비용') || message.includes('가격') || message.includes('얼마') || message.includes('돈') || message.includes('금액')) {
-                return `💰 <strong>치료비 안내</strong><br><br>
-                
-                <div style="background: #f8fff8; padding: 15px; border-radius: 10px; margin: 10px 0;">
-                    🦷 <strong>기본 진료</strong><br>
-                    • 초진료: 15,000원<br>
-                    • 재진료: 10,000원<br>
-                    • 스케일링: 50,000원 (건강보험 적용시 연1회 무료)<br><br>
-                    
-                    ✨ <strong>전문 치료</strong><br>
-                    • 미백치료: 200,000 ~ 300,000원<br>
-                    • 교정치료: 1,500,000 ~ 6,000,000원<br>
-                    • 임플란트: 1,200,000 ~ 1,500,000원<br>
-                    • 보철치료: 개별 상담 후 안내
-                </div>
-                
-                💡 <strong>안내사항</strong><br>
-                • 정확한 비용은 검진 후 개별 안내드립니다<br>
-                • 분할 결제 및 카드 결제 가능<br>
-                • 건강보험 적용 항목 다수<br><br>
-                
-                🎯 정확한 치료비 상담을 위해 방문해주세요!`;
+            if (currentKeywords.cost.some(keyword => message.includes(keyword))) {
+                return responses.cost;
             }
             
-            if (message.includes('위치') || message.includes('주소') || message.includes('어디') || message.includes('찾아') || message.includes('교통')) {
-                return `🏥 <strong>피닉스 치과 오시는 길</strong><br><br>
-                
-                <div style="background: #f0fff0; padding: 15px; border-radius: 10px; margin: 10px 0;">
-                    📍 <strong>주소</strong><br>
-                    피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호<br><br>
-                    
-                    🚇 <strong>지하철</strong><br>
-                    2호선 강남역 3번 출구 → 도보 5분<br><br>
-                    
-                    🚌 <strong>버스</strong><br>
-                    강남역 정류장 하차 → 도보 3분<br><br>
-                    
-                    🚗 <strong>주차 안내</strong><br>
-                    • 건물 지하 1~3층 무료 주차<br>
-                    • 3시간 무료 이용<br>
-                    • 주차 공간 넉넉함
-                </div>
-                
-                🗺️ <strong>찾아오시는 길이 궁금하시면</strong><br>
-                전화로 자세한 안내를 도와드리겠습니다!<br>
-                📞 070-1234-1234`;
+            if (currentKeywords.location.some(keyword => message.includes(keyword))) {
+                return responses.location;
             }
             
-            return `😊 <strong>안녕하세요! 피닉스 치과 AI 상담사입니다</strong><br><br>
-            
-            <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); padding: 20px; border-radius: 12px; margin: 10px 0;">
-                🏥 <strong>피닉스 치과에 오신 것을 환영합니다!</strong><br><br>
-                
-                💡 <strong>무엇을 도와드릴까요?</strong><br>
-                • 진료시간 및 예약 안내<br>
-                • 치료 비용 상담<br>
-                • 오시는 길 안내<br>
-                • 진료과목 상세 정보<br>
-                • 기타 궁금한 점
-            </div>
-            
-            🦷 건강한 미소를 위한 여러분의 든든한 파트너가 되겠습니다!<br>
-            궁금한 점이 있으시면 언제든 편하게 말씀해주세요! ✨`;
+            // 기본 환영 메시지
+            return responses.welcome;
         }
 
         function goToReservationPage2() {
