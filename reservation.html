@@ -871,7 +871,33 @@
             
             // 카카오톡 인앱 브라우저에서 스타일 강제 재적용
             forceInfoSectionStyles();
+            
+            // 저장된 언어 설정 불러오기
+            const savedLanguage = localStorage.getItem('selectedLanguage') || 'ko';
+            if (savedLanguage !== 'ko') {
+                updatePageLanguage(savedLanguage);
+            }
+            
+            // 선택된 언어 버튼 하이라이트
+            highlightSelectedLanguage(savedLanguage);
         });
+        
+        // 선택된 언어 버튼 하이라이트 함수
+        function highlightSelectedLanguage(language) {
+            const buttons = document.querySelectorAll('.language-button');
+            buttons.forEach(button => {
+                button.style.opacity = '0.7';
+                button.style.transform = 'scale(0.95)';
+            });
+            
+            // 선택된 언어 버튼만 강조
+            const selectedButton = document.querySelector(`[onclick="selectLanguage('${language}')"]`);
+            if (selectedButton) {
+                selectedButton.style.opacity = '1';
+                selectedButton.style.transform = 'scale(1)';
+                selectedButton.style.fontWeight = 'bold';
+            }
+        }
 
         // 카카오톡 인앱 브라우저에서 진료 시간 안내 스타일 강제 적용
         function forceInfoSectionStyles() {
@@ -949,7 +975,19 @@
             const lastDay = new Date(currentYear, currentMonth + 1, 0);
             const firstDayOfWeek = firstDay.getDay();
             
-            title.textContent = `${currentYear}년 ${currentMonth + 1}월`;
+            // 현재 선택된 언어에 따라 월 이름 표시
+            const currentLanguage = localStorage.getItem('selectedLanguage') || 'ko';
+            const t = translations[currentLanguage] || translations['ko'];
+            
+            if (currentLanguage === 'en') {
+                title.textContent = `${t.monthNames[currentMonth]} ${currentYear}`;
+            } else if (currentLanguage === 'ru') {
+                title.textContent = `${t.monthNames[currentMonth]} ${currentYear}`;
+            } else if (currentLanguage === 'ja') {
+                title.textContent = `${currentYear}年 ${t.monthNames[currentMonth]}`;
+            } else {
+                title.textContent = `${currentYear}년 ${t.monthNames[currentMonth]}`;
+            }
             
             // Empty cells
             for (let i = 0; i < firstDayOfWeek; i++) {
@@ -1222,38 +1260,293 @@
             });
         }
 
+        // 다국어 번역 객체
+        const translations = {
+            ko: {
+                // 헤더
+                headerTitle: '피닉스 치과 예약 시스템👩‍⚕️',
+                languageSelectTitle: '예약창의 언어를 선택하세요!',
+                
+                // 진료 시간
+                clinicHoursTitle: '진료 시간 안내',
+                weekdays: '평일:',
+                weekdaysTime: '09:00 ~ 18:00',
+                saturday: '토요일:',
+                saturdayTime: '09:00 ~ 15:00',
+                lunchTime: '점심시간:',
+                lunchTimeHours: '12:30 ~ 13:30',
+                closedDays: '휴진:',
+                closedDaysInfo: '일요일, 공휴일',
+                
+                // 시간 선택
+                timeSelectTitle: '시간을 선택하세요',
+                
+                // 예약자 정보
+                userInfoTitle: '예약자 정보를 입력하세요',
+                nameLabel: '이름',
+                birthLabel: '생년월일',
+                phoneLabel: '전화번호',
+                consultLabel: '상담 내용',
+                namePlaceholder: '이름을 입력하세요',
+                birthPlaceholder: '예: 850101',
+                phonePlaceholder: '예: 010-1234-5678',
+                consultPlaceholder: '상담 내용을 입력해주세요',
+                
+                // 개인정보 동의
+                privacyTitle: '개인정보 수집 및 마케팅 활용 동의 (3년)',
+                privacyContent: '상담 및 예약 서비스 제공, 치과 소식·이벤트·혜택 안내 등 마케팅 목적으로 개인정보를 3년간 활용하는 것에 동의합니다.',
+                privacyDetail: '자세히 보기',
+                
+                // 버튼
+                reserveButton: '예약하기',
+                confirmMessage: '한국어로 예약을 진행하겠습니다! 🇰🇷',
+                
+                // 요일
+                dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+                
+                // 월 이름
+                monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
+            },
+            en: {
+                // 헤더
+                headerTitle: 'Phoenix Dental Reservation System👩‍⚕️',
+                languageSelectTitle: 'Please select your language!',
+                
+                // 진료 시간
+                clinicHoursTitle: 'Clinic Hours',
+                weekdays: 'Weekdays:',
+                weekdaysTime: '09:00 ~ 18:00',
+                saturday: 'Saturday:',
+                saturdayTime: '09:00 ~ 15:00',
+                lunchTime: 'Lunch Break:',
+                lunchTimeHours: '12:30 ~ 13:30',
+                closedDays: 'Closed:',
+                closedDaysInfo: 'Sunday, Holidays',
+                
+                // 시간 선택
+                timeSelectTitle: 'Please select a time',
+                
+                // 예약자 정보
+                userInfoTitle: 'Please enter your information',
+                nameLabel: 'Name',
+                birthLabel: 'Date of Birth',
+                phoneLabel: 'Phone Number',
+                consultLabel: 'Consultation Details',
+                namePlaceholder: 'Enter your name',
+                birthPlaceholder: 'e.g., 850101',
+                phonePlaceholder: 'e.g., 010-1234-5678',
+                consultPlaceholder: 'Enter consultation details',
+                
+                // 개인정보 동의
+                privacyTitle: 'Personal Information Collection & Marketing Consent (3 years)',
+                privacyContent: 'I agree to the use of personal information for 3 years for consultation and reservation services, dental news, events, and marketing purposes.',
+                privacyDetail: 'View Details',
+                
+                // 버튼
+                reserveButton: 'Make Reservation',
+                confirmMessage: 'We will proceed with the reservation in English! 🇺🇸',
+                
+                // 요일
+                dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                
+                // 월 이름
+                monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            },
+            ru: {
+                // 헤더
+                headerTitle: 'Система бронирования Phoenix Dental👩‍⚕️',
+                languageSelectTitle: 'Пожалуйста, выберите ваш язык!',
+                
+                // 진료 시간
+                clinicHoursTitle: 'Часы работы клиники',
+                weekdays: 'Будние дни:',
+                weekdaysTime: '09:00 ~ 18:00',
+                saturday: 'Суббота:',
+                saturdayTime: '09:00 ~ 15:00',
+                lunchTime: 'Обеденный перерыв:',
+                lunchTimeHours: '12:30 ~ 13:30',
+                closedDays: 'Выходные:',
+                closedDaysInfo: 'Воскресенье, Праздники',
+                
+                // 시간 선택
+                timeSelectTitle: 'Пожалуйста, выберите время',
+                
+                // 예약자 정보
+                userInfoTitle: 'Пожалуйста, введите вашу информацию',
+                nameLabel: 'Имя',
+                birthLabel: 'Дата рождения',
+                phoneLabel: 'Номер телефона',
+                consultLabel: 'Детали консультации',
+                namePlaceholder: 'Введите ваше имя',
+                birthPlaceholder: 'например, 850101',
+                phonePlaceholder: 'например, 010-1234-5678',
+                consultPlaceholder: 'Введите детали консультации',
+                
+                // 개인정보 동의
+                privacyTitle: 'Согласие на сбор персональных данных и маркетинг (3 года)',
+                privacyContent: 'Я согласен на использование персональных данных в течение 3 лет для консультаций, услуг бронирования, стоматологических новостей, событий и маркетинговых целей.',
+                privacyDetail: 'Подробнее',
+                
+                // 버튼
+                reserveButton: 'Забронировать',
+                confirmMessage: 'Мы продолжим бронирование на русском языке! 🇷🇺',
+                
+                // 요일
+                dayNames: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                
+                // 월 이름
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+            },
+            ja: {
+                // 헤더
+                headerTitle: 'フェニックス歯科予約システム👩‍⚕️',
+                languageSelectTitle: '言語を選択してください！',
+                
+                // 진료 시간
+                clinicHoursTitle: '診療時間のご案内',
+                weekdays: '平日:',
+                weekdaysTime: '09:00 ~ 18:00',
+                saturday: '土曜日:',
+                saturdayTime: '09:00 ~ 15:00',
+                lunchTime: '昼休み:',
+                lunchTimeHours: '12:30 ~ 13:30',
+                closedDays: '休診:',
+                closedDaysInfo: '日曜日、祝日',
+                
+                // 시간 선택
+                timeSelectTitle: '時間を選択してください',
+                
+                // 예약자 정보
+                userInfoTitle: 'お客様情報をご入力ください',
+                nameLabel: 'お名前',
+                birthLabel: '生年月日',
+                phoneLabel: '電話番号',
+                consultLabel: '相談内容',
+                namePlaceholder: 'お名前を入力してください',
+                birthPlaceholder: '例: 850101',
+                phonePlaceholder: '例: 010-1234-5678',
+                consultPlaceholder: '相談内容を入力してください',
+                
+                // 개인정보 동의
+                privacyTitle: '個人情報収集・マーケティング活用同意（3年）',
+                privacyContent: '相談及び予約サービス提供、歯科ニュース・イベント・特典案内等マーケティング目的で個人情報を3年間活用することに同意します。',
+                privacyDetail: '詳細を見る',
+                
+                // 버튼
+                reserveButton: '予約する',
+                confirmMessage: '日本語で予約を進めさせていただきます！🇯🇵',
+                
+                // 요일
+                dayNames: ['日', '月', '火', '水', '木', '金', '土'],
+                
+                // 월 이름
+                monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+            }
+        };
+
+        // 언어별 페이지 업데이트 함수
+        function updatePageLanguage(language) {
+            const t = translations[language] || translations['ko'];
+            
+            // 헤더 제목 업데이트
+            const headerTitle = document.querySelector('.header h1');
+            if (headerTitle) {
+                headerTitle.textContent = t.headerTitle;
+            }
+            
+            // 언어 선택 제목 업데이트
+            const languageTitle = document.querySelector('.language-section h2 span:last-child');
+            if (languageTitle) {
+                languageTitle.textContent = t.languageSelectTitle;
+            }
+            
+            // 진료 시간 안내 업데이트
+            const clinicTitle = document.querySelector('.info-title');
+            if (clinicTitle) {
+                clinicTitle.innerHTML = `<span style="margin-right: 7px;">📋</span>${t.clinicHoursTitle}`;
+            }
+            
+            // 진료 시간 항목들 업데이트
+            const infoItems = document.querySelectorAll('.info-item');
+            if (infoItems.length >= 4) {
+                infoItems[0].innerHTML = `<strong>${t.weekdays}</strong> <span class="time-info">${t.weekdaysTime}</span>`;
+                infoItems[1].innerHTML = `<strong>${t.saturday}</strong> <span class="time-info">${t.saturdayTime}</span>`;
+                infoItems[2].innerHTML = `<strong>${t.lunchTime}</strong> ${t.lunchTimeHours}`;
+                infoItems[3].innerHTML = `<strong>${t.closedDays}</strong> ${t.closedDaysInfo}`;
+            }
+            
+            // 시간 선택 제목 업데이트
+            const timeHeader = document.querySelector('.time-header');
+            if (timeHeader) {
+                timeHeader.innerHTML = `🕐 ${t.timeSelectTitle}`;
+            }
+            
+            // 예약자 정보 제목 업데이트
+            const formHeader = document.querySelector('.form-header');
+            if (formHeader) {
+                formHeader.innerHTML = `👤 ${t.userInfoTitle}`;
+            }
+            
+            // 폼 라벨들 업데이트
+            const labels = document.querySelectorAll('.form-label');
+            if (labels.length >= 4) {
+                labels[0].innerHTML = `${t.nameLabel} <span style="color: red;">*</span>`;
+                labels[1].innerHTML = `${t.birthLabel} <span style="color: red;">*</span>`;
+                labels[2].innerHTML = `${t.phoneLabel} <span style="color: red;">*</span>`;
+                labels[3].textContent = t.consultLabel;
+            }
+            
+            // 플레이스홀더 업데이트
+            const nameInput = document.getElementById('userName');
+            const birthInput = document.getElementById('birthDate');
+            const phoneInput = document.getElementById('phoneNumber');
+            const consultInput = document.getElementById('consultContent');
+            
+            if (nameInput) nameInput.placeholder = t.namePlaceholder;
+            if (birthInput) birthInput.placeholder = t.birthPlaceholder;
+            if (phoneInput) phoneInput.placeholder = t.phonePlaceholder;
+            if (consultInput) consultInput.placeholder = t.consultPlaceholder;
+            
+            // 개인정보 동의 라벨 업데이트
+            const privacyLabel = document.querySelector('label[for="privacyConsent"]');
+            if (privacyLabel) {
+                privacyLabel.innerHTML = `
+                    <strong style="color: #e74c3c;">${t.privacyTitle} *</strong><br>
+                    <span style="color: #666; font-size: 13px;">
+                        ${t.privacyContent}
+                        <button type="button" onclick="showPrivacyPolicy()" style="background: none; border: none; color: #007bff; text-decoration: underline; cursor: pointer; font-size: 13px;">${t.privacyDetail}</button>
+                    </span>
+                `;
+            }
+            
+            // 예약하기 버튼 업데이트
+            const reserveButton = document.querySelector('.reservation-submit');
+            if (reserveButton) {
+                reserveButton.textContent = t.reserveButton;
+            }
+            
+            // 캘린더 요일 헤더 업데이트
+            const dayHeaders = document.querySelectorAll('.calendar-day-header');
+            dayHeaders.forEach((header, index) => {
+                if (index < t.dayNames.length) {
+                    header.textContent = t.dayNames[index];
+                }
+            });
+            
+            // 캘린더 재렌더링 (월 이름 업데이트)
+            renderCalendar();
+        }
+
         // 언어 선택 함수
         function selectLanguage(language) {
             console.log('언어 선택:', language);
             
+            // 페이지 언어 업데이트
+            updatePageLanguage(language);
+            
             // 선택된 언어에 따른 메시지 표시
-            let message = '';
-            let flag = '';
-            
-            switch(language) {
-                case 'ko':
-                    message = '한국어로 예약을 진행하겠습니다! 🇰🇷';
-                    flag = '🇰🇷';
-                    break;
-                case 'en':
-                    message = 'We will proceed with the reservation in English! 🇺🇸';
-                    flag = '🇺🇸';
-                    break;
-                case 'ru':
-                    message = 'Мы продолжим бронирование на русском языке! 🇷🇺';
-                    flag = '🇷🇺';
-                    break;
-                case 'ja':
-                    message = '日本語で予約を進めさせていただきます！🇯🇵';
-                    flag = '🇯🇵';
-                    break;
-                default:
-                    message = '한국어로 예약을 진행하겠습니다! 🇰🇷';
-                    flag = '🇰🇷';
-            }
-            
-            // 선택 확인 알림
-            alert(message);
+            const t = translations[language] || translations['ko'];
+            alert(t.confirmMessage);
             
             // 선택된 언어 버튼 하이라이트
             const buttons = document.querySelectorAll('.language-button');
@@ -1269,13 +1562,9 @@
                 selectedButton.style.transform = 'scale(1.05)';
                 selectedButton.style.boxShadow = '0 6px 20px rgba(79, 172, 254, 0.5)';
                 
-                // 2초 후 원래 상태로 복구
+                // 2초 후 지속적인 하이라이트 상태로 복구
                 setTimeout(() => {
-                    buttons.forEach(button => {
-                        button.style.opacity = '1';
-                        button.style.transform = 'scale(1)';
-                        button.style.boxShadow = '';
-                    });
+                    highlightSelectedLanguage(language);
                 }, 2000);
             }
             
