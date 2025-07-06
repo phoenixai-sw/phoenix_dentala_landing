@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>피닉스 치과 병원</title>
+    
+    <!-- 카카오톡 인앱 브라우저 캐시 방지 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="format-detection" content="email=no">
+    
     <!-- SheetJS 라이브러리 추가 (엑셀 파일 생성용) -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <style>
@@ -913,8 +922,8 @@
             position: fixed;
             bottom: 170px;
             right: 20px;
-            width: 350px;
-            height: 500px;
+            width: 400px;
+            height: 600px;
             background: white;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
@@ -927,10 +936,11 @@
         .chatbot-header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            padding: 15px 20px;
+            padding: 18px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            font-size: 22px;
         }
 
         .chatbot-title {
@@ -938,6 +948,7 @@
             align-items: center;
             gap: 10px;
             font-weight: bold;
+            font-size: 22px;
         }
 
         .chatbot-close {
@@ -1009,11 +1020,11 @@
         }
 
         .chatbot-input {
-            padding: 15px 20px;
+            padding: 18px 20px;
             background: white;
             border-top: 1px solid #e9ecef;
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
 
         .chatbot-input input, .chatbot-input textarea {
@@ -1038,14 +1049,16 @@
             background: #4facfe;
             color: white;
             border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
+            border-radius: 25px;
+            min-width: 108px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 21px;
+            font-weight: bold;
+            padding: 18px 26px;
+            transition: all 0.3s;
         }
 
         .chatbot-send:hover {
@@ -1683,7 +1696,34 @@
                 bottom: 170px;
                 right: 10px;
                 width: calc(100vw - 20px);
-                max-width: 350px;
+                max-width: 400px;
+                height: 75%;
+            }
+            
+            .chatbot-header {
+                padding: 12px 15px;
+                font-size: 18px;
+            }
+            
+            .chatbot-title {
+                font-size: 18px;
+            }
+            
+            .chatbot-input {
+                padding: 12px 15px;
+                gap: 8px;
+            }
+            
+            .chatbot-input textarea {
+                padding: 12px 16px;
+                min-height: 50px;
+                font-size: 18px;
+            }
+            
+            .chatbot-send {
+                padding: 12px 18px;
+                min-width: 80px;
+                font-size: 16px;
             }
             
             .chatbot-button {
@@ -1728,6 +1768,80 @@
             .send-message-btn {
                 padding: 15px;
                 font-size: 16px;
+            }
+        }
+        
+        /* 카카오톡 브라우저 및 모바일 최적화 */
+        @media (max-width: 480px) {
+            .chatbot-popup {
+                width: 98%;
+                height: 85%;
+                bottom: 5px;
+                right: 1%;
+                max-width: none;
+            }
+            
+            .chatbot-header {
+                padding: 10px 12px;
+                font-size: 16px;
+            }
+            
+            .chatbot-title {
+                font-size: 16px;
+            }
+            
+            .chatbot-input {
+                padding: 10px 12px;
+                gap: 6px;
+            }
+            
+            .chatbot-input textarea {
+                padding: 10px 14px;
+                min-height: 45px;
+                font-size: 16px;
+            }
+            
+            .chatbot-send {
+                padding: 10px 14px;
+                min-width: 65px;
+                font-size: 14px;
+            }
+        }
+        
+        /* 매우 작은 모바일 */
+        @media (max-width: 360px) {
+            .chatbot-popup {
+                width: 100%;
+                height: 90%;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+            
+            .chatbot-header {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            
+            .chatbot-title {
+                font-size: 14px;
+            }
+            
+            .chatbot-input {
+                padding: 8px 10px;
+                gap: 5px;
+            }
+            
+            .chatbot-input textarea {
+                padding: 8px 12px;
+                min-height: 40px;
+                font-size: 15px;
+            }
+            
+            .chatbot-send {
+                padding: 8px 12px;
+                min-width: 55px;
+                font-size: 13px;
             }
         }
     </style>
@@ -1853,15 +1967,14 @@
 
     <!-- AI 챗봇 버튼 -->
     <button class="chatbot-button" onclick="toggleChatbot()">
-        🤖
+        👩‍⚕️
     </button>
 
     <!-- AI 챗봇 팝업 -->
     <div class="chatbot-popup" id="chatbotPopup">
         <div class="chatbot-header">
             <div class="chatbot-title">
-                <span>🤖</span>
-                <span>피닉스 AI 상담사</span>
+                <span>피닉스 치과 AI 상담사👩‍⚕️</span>
             </div>
             <button class="chatbot-close" onclick="closeChatbot()">✕</button>
         </div>
@@ -1869,10 +1982,17 @@
         <div class="chatbot-messages" id="chatbotMessages">
             <!-- 초기 환영 메시지 -->
             <div class="message bot">
-                <div class="message-avatar">🤖</div>
+                <div class="message-avatar">👩‍⚕️</div>
                 <div class="message-content">
-                    안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br>
-                    치과 관련 궁금한 점이 있으시면 언제든 문의해주세요!
+                    안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br><br>
+                    AI상담사의 언어를 선택하세요! (기본언어:한국어🇰🇷)
+                    <div class="quick-buttons" style="margin-top: 15px;">
+                        <button class="quick-button" onclick="sendQuickMessage('한국어로 상담하겠습니다')">🇰🇷 한국어</button>
+                        <button class="quick-button" onclick="sendQuickMessage('영어로 상담하겠습니다')">🇺🇸 영어</button>
+                        <button class="quick-button" onclick="sendQuickMessage('러시아어로 상담하겠습니다')">🇷🇺 러시아어</button>
+                        <button class="quick-button" onclick="sendQuickMessage('일본어로 상담하겠습니다')">🇯🇵 일본어</button>
+                    </div>
+                    <br>
                     <div class="quick-buttons">
                         <button class="quick-button" onclick="sendQuickMessage('진료시간 알려주세요')">진료시간</button>
                         <button class="quick-button" onclick="sendQuickMessage('예약하고 싶어요')">예약문의</button>
@@ -1884,9 +2004,9 @@
         </div>
 
         <div class="chatbot-input">
-            <textarea id="chatbotInput" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress(event)" style="flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 14px; resize: none; min-height: 45px; max-height: 120px; font-family: inherit;"></textarea>
-            <button class="chatbot-send" onclick="sendMessage()" style="min-width: 80px; border-radius: 25px; font-size: 14px;">
-                채팅 입력
+            <textarea id="chatbotInput" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress(event)" style="flex: 1; padding: 18px 24px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 22px; resize: none; min-height: 65px; max-height: 140px; font-family: inherit;"></textarea>
+            <button class="chatbot-send" onclick="sendMessage()" style="min-width: 108px; border-radius: 25px; font-size: 21px; padding: 18px 26px; font-weight: bold;">
+                전송
             </button>
         </div>
     </div>
@@ -2798,6 +2918,10 @@ https://phoenixai-agent.site/reservation.html
                 
                 // 초기 메시지 업데이트 (API 상태 반영)
                 updateChatbotWelcomeMessage();
+                
+                // 카카오톡 브라우저에서 스타일 강제 재적용
+                setTimeout(forceChatbotStyleReload, 100);
+                setTimeout(forceChatbotStyleReload, 500);
             }
         }
 
@@ -2937,7 +3061,58 @@ https://phoenixai-agent.site/reservation.html
                     autoResizeTextarea(this);
                 });
             }
+            
+            // 카카오톡 인앱 브라우저에서 스타일 강제 재적용
+            forceChatbotStyleReload();
+            setTimeout(forceChatbotStyleReload, 500);
+            setTimeout(forceChatbotStyleReload, 1000);
         });
+
+        // 카카오톡 인앱 브라우저에서 팝업 챗봇 스타일 강제 적용
+        function forceChatbotStyleReload() {
+            const isKakaoTalk = navigator.userAgent.includes('KAKAO');
+            
+            if (isKakaoTalk) {
+                const chatbotPopup = document.getElementById('chatbotPopup');
+                const chatbotHeader = chatbotPopup?.querySelector('.chatbot-header');
+                const chatbotTitle = chatbotPopup?.querySelector('.chatbot-title');
+                const chatbotInput = chatbotPopup?.querySelector('.chatbot-input');
+                const chatbotTextarea = chatbotPopup?.querySelector('.chatbot-input textarea');
+                const chatbotSend = chatbotPopup?.querySelector('.chatbot-send');
+                
+                if (chatbotHeader) {
+                    chatbotHeader.style.setProperty('padding', '18px 20px', 'important');
+                    chatbotHeader.style.setProperty('font-size', '22px', 'important');
+                }
+                
+                if (chatbotTitle) {
+                    chatbotTitle.style.setProperty('font-size', '22px', 'important');
+                    chatbotTitle.style.setProperty('font-weight', 'bold', 'important');
+                }
+                
+                if (chatbotInput) {
+                    chatbotInput.style.setProperty('padding', '18px 20px', 'important');
+                    chatbotInput.style.setProperty('gap', '12px', 'important');
+                }
+                
+                if (chatbotTextarea) {
+                    chatbotTextarea.style.setProperty('padding', '18px 24px', 'important');
+                    chatbotTextarea.style.setProperty('font-size', '22px', 'important');
+                    chatbotTextarea.style.setProperty('min-height', '65px', 'important');
+                    chatbotTextarea.style.setProperty('border-radius', '25px', 'important');
+                }
+                
+                if (chatbotSend) {
+                    chatbotSend.style.setProperty('padding', '18px 26px', 'important');
+                    chatbotSend.style.setProperty('font-size', '21px', 'important');
+                    chatbotSend.style.setProperty('min-width', '108px', 'important');
+                    chatbotSend.style.setProperty('border-radius', '25px', 'important');
+                    chatbotSend.style.setProperty('font-weight', 'bold', 'important');
+                }
+                
+                console.log('카카오톡 인앱 브라우저 팝업 챗봇 스타일 강제 재적용 완료');
+            }
+        }
 
         function addUserMessage(message) {
             const messagesContainer = document.getElementById('chatbotMessages');
@@ -2971,7 +3146,7 @@ https://phoenixai-agent.site/reservation.html
             }
             
             messageDiv.innerHTML = `
-                <div class="message-avatar">🤖</div>
+                <div class="message-avatar">👩‍⚕️</div>
                 <div class="message-content">${finalMessage}</div>
             `;
             messagesContainer.appendChild(messageDiv);
