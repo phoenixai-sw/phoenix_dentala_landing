@@ -1689,6 +1689,13 @@
             claude: { apiKey: '', model: '', enabled: false },
             activeProvider: ''
         };
+        
+        // 지식베이스 설정 (랜딩페이지와 동일한 구조)
+        let knowledgeBase = {
+            enabled: false,
+            files: [],
+            parsedData: []
+        };
 
         // 언어별 텍스트
         const translations = {
@@ -2509,8 +2516,59 @@
             setTimeout(() => {
                 optimizeForMobile();
                 forceInitializeTouchEvents();
+                
+                // 지식베이스 설정 불러오기
+                loadKnowledgeBaseSettings();
             }, 1000);
         });
+
+        // 지식베이스 설정 불러오기
+        function loadKnowledgeBaseSettings() {
+            try {
+                const savedKnowledgeBase = localStorage.getItem('chatbotKnowledgeBase');
+                if (savedKnowledgeBase) {
+                    const parsed = JSON.parse(savedKnowledgeBase);
+                    knowledgeBase.enabled = parsed.enabled || false;
+                    knowledgeBase.parsedData = parsed.parsedData || [];
+                    
+                    // 파일 정보 복원 (실제 파일 객체는 복원할 수 없으므로 메타데이터만)
+                    if (parsed.files) {
+                        knowledgeBase.files = parsed.files.map(fileInfo => ({
+                            name: fileInfo.name,
+                            size: fileInfo.size,
+                            type: fileInfo.type
+                        }));
+                    }
+                    
+                    console.log('📚 지식베이스 설정 불러옴:', knowledgeBase.parsedData.length, '개 Q&A,', knowledgeBase.files.length, '개 파일');
+                    
+                    // 파일 목록 UI 업데이트
+                    updateFileList2();
+                    updateKnowledgeStatus2();
+                }
+            } catch (error) {
+                console.error('지식베이스 설정 불러오기 실패:', error);
+            }
+        }
+
+        // 지식베이스 설정 저장
+        function saveKnowledgeBaseSettings() {
+            try {
+                const dataToSave = {
+                    enabled: knowledgeBase.enabled,
+                    parsedData: knowledgeBase.parsedData,
+                    files: knowledgeBase.files.map(file => ({
+                        name: file.name,
+                        size: file.size,
+                        type: file.type
+                    }))
+                };
+                localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(dataToSave));
+                console.log('📚 지식베이스 설정 저장됨:', knowledgeBase.parsedData.length, '개 Q&A');
+            } catch (error) {
+                console.error('지식베이스 설정 저장 실패:', error);
+            }
+        }
 
         console.log('별도창 AI챗봇 모바일 최적화 스크립트 로드 완료');
 
@@ -2767,7 +2825,23 @@
                 console.error('API 설정 불러오기 실패:', error);
             }
             
-            // 키워드 기반 답변 (다국어 지원 강화)
+            // 🎯 답변 우선순위 적용 (랜딩페이지와 동일)
+            // 1차: 📚 업로드된 지식 파일 검색
+            const knowledgeAnswer = searchInKnowledgeBase(message);
+            if (knowledgeAnswer) {
+                console.log('📚 지식베이스에서 답변 발견');
+                addBotMessage(knowledgeAnswer);
+                return;
+            }
+            
+            // 2차: 🤖 AI API 모델 활용
+            if (apiSettings && (apiSettings.chatgpt.enabled || apiSettings.gemini.enabled || apiSettings.claude.enabled)) {
+                console.log('🤖 AI API를 사용하여 답변 생성');
+                generateAIResponse(message, apiSettings);
+                return;
+            }
+            
+            // 3차: 기본 FAQ 응답 (키워드 기반 답변)
             const isClinicHours = message.includes('진료시간') || message.includes('clinic hours') || message.includes('hours') || 
                                 message.includes('часы работы') || message.includes('診療時間');
             
@@ -2816,25 +2890,18 @@
                 addBotMessage(adminLink);
                 return;
             } else {
-                // API 설정이 있고 활성화된 경우 AI 답변 생성
-                if (apiSettings && (apiSettings.chatgpt.enabled || apiSettings.gemini.enabled || apiSettings.claude.enabled)) {
-                    console.log('AI API를 사용하여 답변 생성');
-                    generateAIResponse(message, apiSettings);
-                    return;
-                } else {
-                    // API 설정이 없는 경우 기본 답변
-                    console.log('API 설정이 없어 기본 답변 사용');
-                    response = `
-                        ${t.welcomeMessage}<br><br>
-                        다음 중 궁금한 사항을 선택해주세요:<br><br>
-                        • 🕘 진료시간 안내<br>
-                        • 💰 치료비용 문의<br>
-                        • 📞 예약문의 안내<br>
-                        • 🗺️ 오시는길 안내<br>
-                        • 🔐 관리자 기능 ("AI관리자" 입력)<br><br>
-                        더 자세한 상담을 원하시면 언제든지 연락주세요!
-                    `;
-                }
+                // 기본 답변
+                console.log('💡 기본 FAQ 답변 사용');
+                response = `
+                    ${t.welcomeMessage}<br><br>
+                    다음 중 궁금한 사항을 선택해주세요:<br><br>
+                    • 🕘 진료시간 안내<br>
+                    • 💰 치료비용 문의<br>
+                    • 📞 예약문의 안내<br>
+                    • 🗺️ 오시는길 안내<br>
+                    • 🔐 관리자 기능 ("AI관리자" 입력)<br><br>
+                    더 자세한 상담을 원하시면 언제든지 연락주세요!
+                `;
             }
             
             // 답변에 예약 버튼 추가 (관리자 메시지가 아닌 경우)
@@ -2891,7 +2958,10 @@
             
             console.log('사용할 AI 제공자:', activeProvider);
             
-            // 치과 관련 컨텍스트 추가
+            // 지식베이스 컨텍스트 추가
+            let contextInfo = getContextFromKnowledgeBase();
+            
+            // 치과 관련 기본 컨텍스트
             const dentalContext = `
 당신은 피닉스치과의 AI 상담사입니다. 
 다음 정보를 바탕으로 친절하고 정확한 답변을 제공해주세요:
@@ -2908,16 +2978,18 @@
 - 필요시 예약 안내
 - 한국어로 답변
 
+${contextInfo}
+
 사용자 질문: ${message}
 `;
 
             // 실제 API 호출 시도
             if (activeProvider === 'chatgpt' && apiSettings.chatgpt.enabled) {
-                callChatGPTAPI(message, apiSettings.chatgpt, loadingMessage);
+                callChatGPTAPI(message, apiSettings.chatgpt, loadingMessage, contextInfo);
             } else if (activeProvider === 'gemini' && apiSettings.gemini.enabled) {
-                callGeminiAPI(message, apiSettings.gemini, loadingMessage);
+                callGeminiAPI(message, apiSettings.gemini, loadingMessage, contextInfo);
             } else if (activeProvider === 'claude' && apiSettings.claude.enabled) {
-                callClaudeAPI(message, apiSettings.claude, loadingMessage);
+                callClaudeAPI(message, apiSettings.claude, loadingMessage, contextInfo);
             } else {
                 // API 호출 실패 시 시뮬레이션된 답변 사용
                 setTimeout(() => {
@@ -2933,30 +3005,64 @@
             }
         }
 
+        // 지식베이스에서 컨텍스트 정보 추출
+        function getContextFromKnowledgeBase() {
+            if (!knowledgeBase.enabled || knowledgeBase.parsedData.length === 0) {
+                console.log('❌ 지식베이스 컨텍스트 추출 실패: 비활성 또는 데이터 없음');
+                return '';
+            }
+            
+            // 모든 Q&A를 컨텍스트로 정리
+            let context = '\n\n=== 병원 전문 지식 정보 ===\n';
+            knowledgeBase.parsedData.forEach((qa, index) => {
+                context += `${index + 1}. Q: ${qa.question}\n   A: ${qa.answer}\n`;
+            });
+            
+            console.log('✅ 지식베이스 컨텍스트 추출 완료:', knowledgeBase.parsedData.length, '개 Q&A');
+            return context;
+        }
+
         // ChatGPT API 호출
-        function callChatGPTAPI(message, settings, loadingMessage) {
+        function callChatGPTAPI(message, settings, loadingMessage, contextInfo = '') {
             const apiKey = settings.apiKey;
             const model = settings.model || 'gpt-4o-mini';
+            
+            const systemPrompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
+            매우 친절하고 전문적으로 답변해주세요.
+
+            === 병원 기본 정보 ===
+            • 병원명: 피닉스 치과 병원
+            • 원장: 홍길동 (25년 경력 치주질환 전문의)
+            • 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00, 점심시간 12:30-13:30
+            • 휴진: 일요일, 공휴일
+            • 전화: 070-1234-1234 (24시간 응급상담 가능)
+            • 주소: 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호
+            • 교통: 지하철 2호선 강남역 3번 출구 도보 5분
+            • 주차: 건물 지하 1-3층 무료 주차 (3시간)
+            • 진료과목: 일반진료, 미백치료, 교정치료, 임플란트, 보철치료, 소아치과
+
+            === 치료비 안내 ===
+            • 일반진료: 초진 15,000원, 재진 10,000원
+            • 스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)
+            • 미백치료: 200,000-300,000원
+            • 교정치료: 1,500,000-6,000,000원
+            • 임플란트: 1,200,000-1,500,000원
+
+            ${contextInfo}
+
+            답변 가이드라인:
+            1. 매우 친절하고 따뜻한 말투를 사용하세요
+            2. 전문적이면서도 이해하기 쉽게 설명하세요
+            3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
+            4. 예약이나 상담이 필요한 경우 적극 안내하세요
+            5. 답변을 구조화하여 읽기 쉽게 정리해주세요`;
             
             const requestBody = {
                 model: model,
                 messages: [
                     {
                         role: "system",
-                        content: `당신은 피닉스치과의 AI 상담사입니다. 
-다음 정보를 바탕으로 친절하고 정확한 답변을 제공해주세요:
-
-🏥 피닉스치과 정보:
-- 진료시간: 평일 09:00~18:00, 토요일 09:00~15:00, 점심시간 12:30~13:30
-- 휴진: 일요일, 공휴일
-- 위치: 서울시 강남구
-- 연락처: 070-1234-1234
-
-💡 답변 스타일:
-- 친절하고 이해하기 쉽게
-- 구체적인 정보 제공
-- 필요시 예약 안내
-- 한국어로 답변`
+                        content: systemPrompt
                     },
                     {
                         role: "user",
@@ -2988,7 +3094,7 @@
                 }
                 
                 const aiResponse = data.choices[0].message.content;
-                addBotMessage(`🤖 ChatGPT 답변:\n\n${aiResponse}`);
+                addBotMessage(`🤖 피닉스 치과 AI상담원의 답변:\n\n${aiResponse}`);
             })
             .catch(error => {
                 console.error('ChatGPT API 호출 실패:', error);
@@ -2999,36 +3105,53 @@
                 }
                 
                 // 에러 메시지 표시
-                addBotMessage(`❌ ChatGPT API 호출에 실패했습니다. 기본 답변을 제공합니다.\n\n${generateSimulatedAIResponse(message, 'chatgpt')}`);
+                addBotMessage(`❌ AI API 호출에 실패했습니다. 기본 답변을 제공합니다.\n\n${generateSimulatedAIResponse(message, 'chatgpt')}`);
             });
         }
 
         // Gemini API 호출
-        function callGeminiAPI(message, settings, loadingMessage) {
+        function callGeminiAPI(message, settings, loadingMessage, contextInfo = '') {
             const apiKey = settings.apiKey;
             const model = settings.model || 'gemini-1.5-flash';
+            
+            const prompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
+            매우 친절하고 전문적으로 답변해주세요.
+
+            === 병원 기본 정보 ===
+            • 병원명: 피닉스 치과 병원
+            • 원장: 홍길동 (25년 경력 치주질환 전문의)
+            • 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00, 점심시간 12:30-13:30
+            • 휴진: 일요일, 공휴일
+            • 전화: 070-1234-1234 (24시간 응급상담 가능)
+            • 주소: 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호
+            • 교통: 지하철 2호선 강남역 3번 출구 도보 5분
+            • 주차: 건물 지하 1-3층 무료 주차 (3시간)
+            • 진료과목: 일반진료, 미백치료, 교정치료, 임플란트, 보철치료, 소아치과
+
+            === 치료비 안내 ===
+            • 일반진료: 초진 15,000원, 재진 10,000원
+            • 스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)
+            • 미백치료: 200,000-300,000원
+            • 교정치료: 1,500,000-6,000,000원
+            • 임플란트: 1,200,000-1,500,000원
+
+            ${contextInfo}
+
+            답변 가이드라인:
+            1. 매우 친절하고 따뜻한 말투를 사용하세요
+            2. 전문적이면서도 이해하기 쉽게 설명하세요
+            3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
+            4. 예약이나 상담이 필요한 경우 적극 안내하세요
+            5. 답변을 구조화하여 읽기 쉽게 정리해주세요
+
+            사용자 질문: ${message}`;
             
             const requestBody = {
                 contents: [
                     {
                         parts: [
                             {
-                                text: `당신은 피닉스치과의 AI 상담사입니다. 
-다음 정보를 바탕으로 친절하고 정확한 답변을 제공해주세요:
-
-🏥 피닉스치과 정보:
-- 진료시간: 평일 09:00~18:00, 토요일 09:00~15:00, 점심시간 12:30~13:30
-- 휴진: 일요일, 공휴일
-- 위치: 서울시 강남구
-- 연락처: 070-1234-1234
-
-💡 답변 스타일:
-- 친절하고 이해하기 쉽게
-- 구체적인 정보 제공
-- 필요시 예약 안내
-- 한국어로 답변
-
-사용자 질문: ${message}`
+                                text: prompt
                             }
                         ]
                     }
@@ -3059,7 +3182,7 @@
                 }
                 
                 const aiResponse = data.candidates[0].content.parts[0].text;
-                addBotMessage(`🤖 Gemini 답변:\n\n${aiResponse}`);
+                addBotMessage(`🤖 피닉스 치과 AI상담원의 답변:\n\n${aiResponse}`);
             })
             .catch(error => {
                 console.error('Gemini API 호출 실패:', error);
@@ -3070,14 +3193,46 @@
                 }
                 
                 // 에러 메시지 표시
-                addBotMessage(`❌ Gemini API 호출에 실패했습니다. 기본 답변을 제공합니다.\n\n${generateSimulatedAIResponse(message, 'gemini')}`);
+                addBotMessage(`❌ AI API 호출에 실패했습니다. 기본 답변을 제공합니다.\n\n${generateSimulatedAIResponse(message, 'gemini')}`);
             });
         }
 
         // Claude API 호출
-        function callClaudeAPI(message, settings, loadingMessage) {
+        function callClaudeAPI(message, settings, loadingMessage, contextInfo = '') {
             const apiKey = settings.apiKey;
             const model = settings.model || 'claude-3-haiku-20240307';
+            
+            const prompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
+            매우 친절하고 전문적으로 답변해주세요.
+
+            === 병원 기본 정보 ===
+            • 병원명: 피닉스 치과 병원
+            • 원장: 홍길동 (25년 경력 치주질환 전문의)
+            • 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00, 점심시간 12:30-13:30
+            • 휴진: 일요일, 공휴일
+            • 전화: 070-1234-1234 (24시간 응급상담 가능)
+            • 주소: 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호
+            • 교통: 지하철 2호선 강남역 3번 출구 도보 5분
+            • 주차: 건물 지하 1-3층 무료 주차 (3시간)
+            • 진료과목: 일반진료, 미백치료, 교정치료, 임플란트, 보철치료, 소아치과
+
+            === 치료비 안내 ===
+            • 일반진료: 초진 15,000원, 재진 10,000원
+            • 스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)
+            • 미백치료: 200,000-300,000원
+            • 교정치료: 1,500,000-6,000,000원
+            • 임플란트: 1,200,000-1,500,000원
+
+            ${contextInfo}
+
+            답변 가이드라인:
+            1. 매우 친절하고 따뜻한 말투를 사용하세요
+            2. 전문적이면서도 이해하기 쉽게 설명하세요
+            3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
+            4. 예약이나 상담이 필요한 경우 적극 안내하세요
+            5. 답변을 구조화하여 읽기 쉽게 정리해주세요
+
+            사용자 질문: ${message}`;
             
             const requestBody = {
                 model: model,
@@ -3085,22 +3240,7 @@
                 messages: [
                     {
                         role: "user",
-                        content: `당신은 피닉스치과의 AI 상담사입니다. 
-다음 정보를 바탕으로 친절하고 정확한 답변을 제공해주세요:
-
-🏥 피닉스치과 정보:
-- 진료시간: 평일 09:00~18:00, 토요일 09:00~15:00, 점심시간 12:30~13:30
-- 휴진: 일요일, 공휴일
-- 위치: 서울시 강남구
-- 연락처: 070-1234-1234
-
-💡 답변 스타일:
-- 친절하고 이해하기 쉽게
-- 구체적인 정보 제공
-- 필요시 예약 안내
-- 한국어로 답변
-
-사용자 질문: ${message}`
+                        content: prompt
                     }
                 ]
             };
@@ -3127,7 +3267,7 @@
                 }
                 
                 const aiResponse = data.content[0].text;
-                addBotMessage(`🤖 Claude 답변:\n\n${aiResponse}`);
+                addBotMessage(`🤖 피닉스 치과 AI상담원의 답변:\n\n${aiResponse}`);
             })
             .catch(error => {
                 console.error('Claude API 호출 실패:', error);
@@ -3138,16 +3278,141 @@
                 }
                 
                 // 에러 메시지 표시
-                addBotMessage(`❌ Claude API 호출에 실패했습니다. 기본 답변을 제공합니다.\n\n${generateSimulatedAIResponse(message, 'claude')}`);
+                addBotMessage(`❌ AI API 호출에 실패했습니다. 기본 답변을 제공합니다.\n\n${generateSimulatedAIResponse(message, 'claude')}`);
             });
+        }
+
+        // 지식베이스에서 답변 검색 (랜딩페이지와 동일한 로직)
+        function searchInKnowledgeBase(userMessage) {
+            if (!knowledgeBase.enabled || knowledgeBase.parsedData.length === 0) {
+                console.log('❌ 지식베이스 비활성 또는 데이터 없음 (활성:', knowledgeBase.enabled, ', 데이터:', knowledgeBase.parsedData.length, '개)');
+                return null;
+            }
+            
+            const message = userMessage.toLowerCase().trim();
+            console.log('🔍 지식베이스 검색 시작:', message, '| 총 데이터:', knowledgeBase.parsedData.length);
+            
+            // 검색 결과를 점수별로 저장
+            let searchResults = [];
+            
+            for (let qa of knowledgeBase.parsedData) {
+                const question = qa.question.toLowerCase();
+                const answer = qa.answer.toLowerCase();
+                let score = 0;
+                let matchDetails = [];
+                
+                // 1. 완전 일치 (최고 점수)
+                if (question === message || answer.includes(message)) {
+                    score += 1000;
+                    matchDetails.push('완전일치');
+                }
+                
+                // 2. 부분 문자열 포함 (높은 점수)
+                if (question.includes(message) || message.includes(question)) {
+                    score += 800;
+                    matchDetails.push('부분포함');
+                }
+                
+                // 3. 개별 단어 매칭 (중간 점수)
+                const messageWords = message.split(/\s+/).filter(word => word.length > 1);
+                const questionWords = question.split(/\s+/).filter(word => word.length > 1);
+                
+                let wordMatches = 0;
+                for (let word of messageWords) {
+                    if (question.includes(word)) {
+                        score += 200;
+                        wordMatches++;
+                    }
+                    if (answer.includes(word)) {
+                        score += 100;
+                        wordMatches++;
+                    }
+                }
+                
+                if (wordMatches > 0) {
+                    matchDetails.push(`단어매칭(${wordMatches})`);
+                }
+                
+                // 4. 유사 단어 매칭
+                for (let qWord of questionWords) {
+                    for (let mWord of messageWords) {
+                        if ((qWord.includes(mWord) || mWord.includes(qWord)) && mWord.length > 1) {
+                            score += 50;
+                        }
+                    }
+                }
+                
+                // 5. 주제별 키워드 매칭
+                const topics = {
+                    '시간': ['시간', '언제', '몇시', '오픈', '문여', '운영', '근무', '진료시간', '열어', '닫어'],
+                    '예약': ['예약', '신청', '접수', '방문', '가고싶', '상담', '예약하기', '신청하기', '예약문의', '신청문의'],
+                    '비용': ['비용', '가격', '얼마', '돈', '금액', '료', '수가', '치료비', '진료비', '요금', '값'],
+                    '위치': ['위치', '주소', '어디', '찾아', '오시는길', '교통', '길', '찾기', '어디에', '어느곳'],
+                    '치료': ['치료', '시술', '수술', '처치', '진료', '의료', '병원', '치과'],
+                    '통증': ['아프', '통증', '아픈', '쓰라린', '불편', '고통', '아파'],
+                    '임플란트': ['임플란트', '인공치아', '심기', '식립', '인공', '뼈에'],
+                    '교정': ['교정', '브라켓', '치열', '가지런', '고르게', '반듯', '삐뚤'],
+                    '미백': ['미백', '하얗게', '희게', '밝게', '화이트닝', '하양'],
+                    '보철': ['보철', '크라운', '씌우기', '씌워', '덮개', '덮어'],
+                    '소아': ['소아', '어린이', '아이', '아동', '유아', '애기'],
+                    '충치': ['충치', '우식', '썩', '벌레', '구멍', '까맣']
+                };
+                
+                let topicMatches = 0;
+                for (let [topic, keywords] of Object.entries(topics)) {
+                    for (let keyword of keywords) {
+                        if (message.includes(keyword)) {
+                            if (question.includes(keyword) || answer.includes(keyword) || question.includes(topic)) {
+                                score += 150;
+                                topicMatches++;
+                            }
+                        }
+                    }
+                }
+                
+                if (topicMatches > 0) {
+                    matchDetails.push(`주제매칭(${topicMatches})`);
+                }
+                
+                if (score > 0) {
+                    searchResults.push({ qa, score, matchDetails });
+                    console.log(`📝 검색 후보: "${qa.question.substring(0, 40)}..." | 점수: ${score} | 매칭: ${matchDetails.join(', ')}`);
+                }
+            }
+            
+            // 점수별 정렬
+            searchResults.sort((a, b) => b.score - a.score);
+            
+            console.log(`📊 총 검색 결과: ${searchResults.length}개`);
+            if (searchResults.length > 0) {
+                console.log(`🏆 최고 점수: ${searchResults[0].score} | 질문: "${searchResults[0].qa.question}"`);
+            }
+            
+            // 점수 기준을 30점으로 설정 (랜딩페이지와 동일)
+            if (searchResults.length > 0 && searchResults[0].score >= 30) {
+                const bestMatch = searchResults[0].qa;
+                console.log('✅ 지식베이스 답변 선택:', bestMatch.question);
+                return formatKnowledgeBaseAnswer(bestMatch, userMessage);
+            }
+            
+            console.log('❌ 지식베이스에서 적절한 답변을 찾지 못함');
+            return null;
+        }
+
+        // 지식베이스 답변 포맷팅
+        function formatKnowledgeBaseAnswer(qa, userMessage) {
+            return `📚 <strong>피닉스 치과 전문 지식 답변</strong><br><br>
+            <strong>질문:</strong> ${qa.question}<br><br>
+            <strong>답변:</strong><br>${qa.answer}<br><br>
+            <small>💡 이 답변은 피닉스 치과의 전문 지식 데이터베이스에서 제공됩니다.</small>`;
         }
 
         // 시뮬레이션된 AI 답변 생성
         function generateSimulatedAIResponse(message, provider) {
             const responses = {
-                chatgpt: `🤖 ChatGPT 답변:\n\n안녕하세요! 피닉스치과 AI 상담사입니다.\n\n"${message}"에 대한 답변을 드리겠습니다.\n\n💡 추가적인 상담이 필요하시면 언제든지 연락주세요!\n📞 070-1234-1234\n\n더 자세한 정보나 예약을 원하시면 아래 버튼을 클릭해주세요.`,
-                gemini: `🤖 Gemini 답변:\n\n안녕하세요! 피닉스치과 AI 상담사입니다.\n\n"${message}"에 대한 답변을 드리겠습니다.\n\n💡 추가적인 상담이 필요하시면 언제든지 연락주세요!\n📞 070-1234-1234\n\n더 자세한 정보나 예약을 원하시면 아래 버튼을 클릭해주세요.`,
-                claude: `🤖 Claude 답변:\n\n안녕하세요! 피닉스치과 AI 상담사입니다.\n\n"${message}"에 대한 답변을 드리겠습니다.\n\n💡 추가적인 상담이 필요하시면 언제든지 연락주세요!\n📞 070-1234-1234\n\n더 자세한 정보나 예약을 원하시면 아래 버튼을 클릭해주세요.`
+                chatgpt: `🤖 피닉스 치과 AI상담원의 답변:\n\n안녕하세요! 피닉스치과 AI 상담사입니다.\n\n"${message}"에 대한 답변을 드리겠습니다.\n\n💡 추가적인 상담이 필요하시면 언제든지 연락주세요!\n📞 070-1234-1234\n\n더 자세한 정보나 예약을 원하시면 아래 버튼을 클릭해주세요.`,
+                gemini: `🤖 피닉스 치과 AI상담원의 답변:\n\n안녕하세요! 피닉스치과 AI 상담사입니다.\n\n"${message}"에 대한 답변을 드리겠습니다.\n\n💡 추가적인 상담이 필요하시면 언제든지 연락주세요!\n📞 070-1234-1234\n\n더 자세한 정보나 예약을 원하시면 아래 버튼을 클릭해주세요.`,
+                claude: `🤖 피닉스 치과 AI상담원의 답변:\n\n안녕하세요! 피닉스치과 AI 상담사입니다.\n\n"${message}"에 대한 답변을 드리겠습니다.\n\n💡 추가적인 상담이 필요하시면 언제든지 연락주세요!\n📞 070-1234-1234\n\n더 자세한 정보나 예약을 원하시면 아래 버튼을 클릭해주세요.`
             };
             
             return responses[provider] || responses.chatgpt;
@@ -3629,23 +3894,193 @@
 
         // 지식 파일 설정 저장 (새로운 버전)
         function saveKnowledgeSettings2() {
+            // 파일 업로드 이벤트 리스너 설정
+            const fileInput = document.getElementById('fileInput2');
+            if (fileInput) {
+                fileInput.addEventListener('change', handleFileUpload2);
+            }
+            
+            // 드래그 앤 드롭 이벤트 설정
+            const dropZone = document.querySelector('div[onclick="document.getElementById(\'fileInput2\').click()"]');
+            if (dropZone) {
+                dropZone.addEventListener('dragover', handleDragOver2);
+                dropZone.addEventListener('drop', handleDrop2);
+            }
+            
             showStatus2('knowledgeSettingsStatus2', '✅ 지식 파일 설정이 저장되었습니다!', 'success');
+        }
+
+        // 파일 업로드 처리
+        function handleFileUpload2(event) {
+            const files = event.target.files;
+            processFiles2(files);
+        }
+
+        // 드래그 앤 드롭 처리
+        function handleDragOver2(event) {
+            event.preventDefault();
+            event.currentTarget.style.borderColor = '#4facfe';
+            event.currentTarget.style.background = '#f0f8ff';
+        }
+
+        function handleDrop2(event) {
+            event.preventDefault();
+            event.currentTarget.style.borderColor = '#ddd';
+            event.currentTarget.style.background = 'white';
+            
+            const files = event.dataTransfer.files;
+            processFiles2(files);
+        }
+
+        // 파일 처리
+        function processFiles2(files) {
+            knowledgeBase.files = [];
+            knowledgeBase.parsedData = [];
+            
+            Array.from(files).forEach(file => {
+                if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                    knowledgeBase.files.push(file);
+                    parseFileContent2(file);
+                }
+            });
+            
+            updateFileList2();
+            updateKnowledgeStatus2();
+        }
+
+        // 파일 내용 파싱
+        function parseFileContent2(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const lines = content.split('\n').filter(line => line.trim());
+                
+                for (let i = 0; i < lines.length - 1; i += 2) {
+                    const question = lines[i].trim();
+                    const answer = lines[i + 1].trim();
+                    
+                    if (question && answer) {
+                        knowledgeBase.parsedData.push({
+                            question: question,
+                            answer: answer
+                        });
+                    }
+                }
+                
+                console.log(`📚 파일 "${file.name}" 파싱 완료: ${knowledgeBase.parsedData.length}개 Q&A`);
+                updateKnowledgeStatus2();
+                
+                // 지식베이스 설정 저장
+                saveKnowledgeBaseSettings();
+            };
+            reader.readAsText(file);
+        }
+
+        // 파일 목록 업데이트
+        function updateFileList2() {
+            const fileList = document.getElementById('fileList2');
+            if (!fileList) return;
+            
+            fileList.innerHTML = '';
+            
+            knowledgeBase.files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = 'background: #f8f9fa; padding: 10px; margin: 5px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;';
+                
+                // 파일 크기 계산 (실제 파일 객체가 없는 경우 size 속성 사용)
+                const fileSize = file.size ? (file.size / 1024).toFixed(1) : 'N/A';
+                
+                fileItem.innerHTML = `
+                    <span>📄 ${file.name} (${fileSize}KB)</span>
+                    <button onclick="removeFile2(${index})" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">삭제</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        // 파일 삭제
+        function removeFile2(index) {
+            knowledgeBase.files.splice(index, 1);
+            knowledgeBase.parsedData = [];
+            
+            // 남은 파일들 재파싱
+            knowledgeBase.files.forEach(file => {
+                parseFileContent2(file);
+            });
+            
+            updateFileList2();
+            updateKnowledgeStatus2();
+            
+            // 지식베이스 설정 저장
+            saveKnowledgeBaseSettings();
+        }
+
+        // 지식베이스 상태 업데이트
+        function updateKnowledgeStatus2() {
+            const statusElement = document.getElementById('knowledgeStatus2');
+            if (!statusElement) return;
+            
+            if (knowledgeBase.files.length > 0 && knowledgeBase.parsedData.length > 0) {
+                knowledgeBase.enabled = true;
+                statusElement.innerHTML = `📖 업로드된 지식 파일: ${knowledgeBase.files.length}개 | 상태: 활성 | Q&A: ${knowledgeBase.parsedData.length}개`;
+                statusElement.style.background = '#d4edda';
+                statusElement.style.color = '#155724';
+                statusElement.style.border = '1px solid #c3e6cb';
+            } else {
+                knowledgeBase.enabled = false;
+                statusElement.innerHTML = '📖 업로드된 지식 파일: 0개 | 상태: 비활성';
+                statusElement.style.background = '#e9ecef';
+                statusElement.style.color = '#6c757d';
+                statusElement.style.border = '1px solid #dee2e6';
+            }
+            
+            // 지식베이스 설정 저장
+            saveKnowledgeBaseSettings();
         }
 
         // 지식 검색 테스트 (새로운 버전)
         function testKnowledgeBase2() {
+            if (!knowledgeBase.enabled || knowledgeBase.parsedData.length === 0) {
+                showStatus2('knowledgeSettingsStatus2', '❌ 테스트할 지식 파일이 없습니다.', 'error');
+                return;
+            }
+            
             showStatus2('knowledgeSettingsStatus2', '🔍 지식 검색 테스트를 실행하고 있습니다...', 'info');
             
+            // 테스트 쿼리들
+            const testQueries = ['진료시간', '예약', '비용', '위치'];
+            let successCount = 0;
+            let testResults = [];
+            
+            testQueries.forEach(query => {
+                const result = searchInKnowledgeBase(query);
+                if (result) {
+                    testResults.push(`✅ "${query}" - 답변 발견`);
+                    successCount++;
+                } else {
+                    testResults.push(`❌ "${query}" - 답변 없음`);
+                }
+            });
+            
             setTimeout(() => {
-                showStatus2('knowledgeSettingsStatus2', '✅ 지식 검색 테스트 완료!', 'success');
+                const message = testResults.join('\n') + `\n\n📊 테스트 결과: ${successCount}/${testQueries.length} 성공`;
+                showStatus2('knowledgeSettingsStatus2', message, successCount > 0 ? 'success' : 'error');
             }, 1500);
         }
 
         // 모든 지식 삭제 (새로운 버전)
         function clearAllKnowledge2() {
             if (confirm('모든 지식 파일을 삭제하시겠습니까?')) {
-                document.getElementById('fileList2').innerHTML = '';
-                document.getElementById('knowledgeStatus2').innerHTML = '📖 업로드된 지식 파일: 0개 | 상태: 비활성';
+                knowledgeBase.files = [];
+                knowledgeBase.parsedData = [];
+                knowledgeBase.enabled = false;
+                
+                updateFileList2();
+                updateKnowledgeStatus2();
+                
+                // 지식베이스 설정 저장
+                saveKnowledgeBaseSettings();
+                
                 showStatus2('knowledgeSettingsStatus2', '🗑️ 모든 지식 파일이 삭제되었습니다.', 'success');
             }
         }
