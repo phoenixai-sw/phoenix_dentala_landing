@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>피닉스 치과 병원 - 무료 검진(구강) 확인</title>
     
     <!-- 카카오톡 인앱 브라우저 캐시 방지 -->
@@ -12,18 +12,52 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="format-detection" content="address=no">
     <meta name="format-detection" content="email=no">
+    
+    <!-- 모바일 최적화 메타 태그 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="theme-color" content="#ffd700">
+    
+    <!-- iOS 13+ 동적 뷰포트 높이 지원 -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- 안드로이드 크롬 브라우저 최적화 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="피닉스 치과 무료검진">
+    
+    <!-- 카카오톡 브라우저 최적화 -->
+    <meta name="kakao-link-color" content="#ffd700">
+    <meta name="kakao-link-bgcolor" content="#ffffff">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        
+        /* iOS Safari 뷰포트 높이 문제 해결 */
+        :root {
+            --vh: 1vh;
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-right: env(safe-area-inset-right);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --safe-area-inset-left: env(safe-area-inset-left);
+        }
+        
+        /* 터치 스크롤 최적화 */
+        html, body {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            touch-action: manipulation;
+        }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ffd700 0%, #ffeb3b 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -492,6 +526,152 @@
                 font-size: 12px !important;
             }
         }
+
+        /* 모바일 기기별 특화 최적화 */
+        
+        /* 아이폰11 최적화 (414×896) */
+        .device-iphone11 .container {
+            max-width: 400px !important;
+            margin: 15px !important;
+        }
+        
+        .device-iphone11 .header {
+            padding: 20px 18px !important;
+            font-size: 20px !important;
+        }
+        
+        .device-iphone11 .content {
+            padding: 35px 25px !important;
+        }
+        
+        /* 아이폰 미니 최적화 (375×812) */
+        .device-iphone-mini .container {
+            max-width: 360px !important;
+            margin: 12px !important;
+        }
+        
+        .device-iphone-mini .header {
+            padding: 18px 16px !important;
+            font-size: 19px !important;
+        }
+        
+        .device-iphone-mini .content {
+            padding: 30px 20px !important;
+        }
+        
+        /* Galaxy XCover 5 최적화 (432×900) */
+        .device-galaxy-xcover5 .container {
+            max-width: 410px !important;
+            margin: 16px !important;
+        }
+        
+        .device-galaxy-xcover5 .header {
+            padding: 22px 20px !important;
+            font-size: 21px !important;
+        }
+        
+        .device-galaxy-xcover5 .content {
+            padding: 38px 28px !important;
+        }
+        
+        /* 카카오톡 브라우저 최적화 */
+        .kakao-browser button {
+            -webkit-tap-highlight-color: transparent !important;
+            touch-action: manipulation !important;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+        }
+        
+        .kakao-browser .back-link {
+            -webkit-tap-highlight-color: transparent !important;
+            touch-action: manipulation !important;
+        }
+        
+        .kakao-browser .check-button {
+            min-height: 60px !important;
+            font-size: 18px !important;
+            padding: 20px 45px !important;
+        }
+        
+        .kakao-browser .form-input {
+            min-height: 50px !important;
+            font-size: 16px !important;
+            padding: 16px 22px !important;
+        }
+        
+        /* 모든 아이폰 기기 공통 최적화 */
+        .device-iphone .popup-content {
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+        }
+        
+        .device-iphone .form-input:focus {
+            transform: none !important;
+            zoom: 1 !important;
+        }
+        
+        /* 카카오톡 브라우저에서 입력 필드 줌 방지 */
+        .kakao-browser input[type="text"] {
+            font-size: 16px !important;
+        }
+        
+        .kakao-browser .form-input {
+            font-size: 16px !important;
+        }
+        
+        /* iOS Safe Area 지원 */
+        .device-ios body {
+            padding-top: var(--safe-area-inset-top);
+            padding-bottom: var(--safe-area-inset-bottom);
+            padding-left: var(--safe-area-inset-left);
+            padding-right: var(--safe-area-inset-right);
+        }
+        
+        .device-ios .container {
+            min-height: calc(100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+        }
+        
+        /* 안드로이드 키보드 열림 상태 최적화 */
+        .keyboard-open .container {
+            max-height: 70vh !important;
+            overflow-y: auto !important;
+        }
+        
+        .keyboard-open .popup-content {
+            max-height: 60vh !important;
+            overflow-y: auto !important;
+        }
+        
+        .keyboard-open .content {
+            padding: 20px 15px !important;
+        }
+        
+        /* 터치 성능 개선 */
+        .device-ios *, .device-android * {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+        }
+        
+        /* 스크롤 바운스 효과 제거 (iOS) */
+        .device-ios body {
+            overflow: hidden;
+        }
+        
+        .device-ios .container {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 안드로이드 스크롤 최적화 */
+        .device-android .container {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .device-android .container::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -776,20 +956,146 @@
             }
         }
 
+        // iOS Safari 뷰포트 높이 계산 함수
+        function setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+
+        // 안드로이드 키보드 감지 함수
+        function handleAndroidKeyboard() {
+            const initialHeight = window.innerHeight;
+            
+            window.addEventListener('resize', function() {
+                const currentHeight = window.innerHeight;
+                const heightDiff = initialHeight - currentHeight;
+                
+                // 키보드가 올라왔을 때 (높이가 150px 이상 감소)
+                if (heightDiff > 150) {
+                    document.body.classList.add('keyboard-open');
+                    console.log('안드로이드 키보드 열림 감지');
+                } else {
+                    document.body.classList.remove('keyboard-open');
+                    console.log('안드로이드 키보드 닫힘 감지');
+                }
+            });
+        }
+
+        // 모바일 기기별 특화 최적화 (아이폰11, 아이폰 미니, Galaxy XCover 5)
+        function applyMobileDeviceOptimizations() {
+            const userAgent = navigator.userAgent;
+            const isKakaoTalk = userAgent.includes('KAKAO');
+            const screenWidth = screen.width;
+            const screenHeight = screen.height;
+            const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+            const isAndroid = userAgent.includes('Android');
+            
+            console.log('기기 정보:', {
+                userAgent: userAgent,
+                isKakaoTalk: isKakaoTalk,
+                screenWidth: screenWidth,
+                screenHeight: screenHeight,
+                isIOS: isIOS,
+                isAndroid: isAndroid
+            });
+            
+            // iOS 기기일 때 뷰포트 높이 설정
+            if (isIOS) {
+                setViewportHeight();
+                window.addEventListener('resize', setViewportHeight);
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(setViewportHeight, 100);
+                });
+                document.body.classList.add('device-ios');
+            }
+            
+            // 안드로이드 기기일 때 키보드 감지
+            if (isAndroid) {
+                handleAndroidKeyboard();
+                document.body.classList.add('device-android');
+            }
+            
+            // 기기별 최적화 적용
+            if (userAgent.includes('iPhone')) {
+                // 아이폰11 (414×896)
+                if (screenWidth === 414 && screenHeight === 896) {
+                    document.body.classList.add('device-iphone11');
+                    console.log('아이폰11 최적화 적용');
+                }
+                // 아이폰 미니 (375×812)
+                else if (screenWidth === 375 && screenHeight === 812) {
+                    document.body.classList.add('device-iphone-mini');
+                    console.log('아이폰 미니 최적화 적용');
+                }
+                document.body.classList.add('device-iphone');
+            }
+            
+            // Galaxy XCover 5 (432×900)
+            if (userAgent.includes('Android') && screenWidth === 432 && screenHeight === 900) {
+                document.body.classList.add('device-galaxy-xcover5');
+                console.log('Galaxy XCover 5 최적화 적용');
+            }
+            
+            // 카카오톡 브라우저 특별 최적화
+            if (isKakaoTalk) {
+                document.body.classList.add('kakao-browser');
+                
+                // 카카오톡 브라우저에서 터치 이벤트 최적화
+                const allButtons = document.querySelectorAll('button, .back-link');
+                allButtons.forEach(button => {
+                    button.style.setProperty('-webkit-tap-highlight-color', 'transparent', 'important');
+                    button.style.setProperty('touch-action', 'manipulation', 'important');
+                    
+                    // 터치 이벤트 추가
+                    button.addEventListener('touchstart', function(e) {
+                        this.style.transform = 'scale(0.95)';
+                        this.style.transition = 'all 0.1s';
+                    }, { passive: true });
+                    
+                    button.addEventListener('touchend', function(e) {
+                        this.style.transform = '';
+                        this.style.transition = 'all 0.3s';
+                    }, { passive: true });
+                });
+                
+                console.log('카카오톡 브라우저 최적화 적용');
+            }
+        }
+
         // 페이지 로드 시와 크기 변경 시 스타일 강제 적용
         window.addEventListener('DOMContentLoaded', function() {
             forceInfoSectionStyles();
+            applyMobileDeviceOptimizations();
         });
         
         window.addEventListener('load', function() {
             forceInfoSectionStyles();
+            applyMobileDeviceOptimizations();
         });
         
         window.addEventListener('resize', function() {
             setTimeout(forceInfoSectionStyles, 100);
         });
 
-        console.log('무료 검진(구강) 확인 페이지 로드 완료');
+        // 페이지 포커스 복귀 시 최적화 재적용 (카카오톡 브라우저 대응)
+        window.addEventListener('pageshow', function(e) {
+            if (e.persisted) {
+                setTimeout(() => {
+                    forceInfoSectionStyles();
+                    applyMobileDeviceOptimizations();
+                }, 100);
+            }
+        });
+
+        // 뷰포트 변경 감지 (모바일 브라우저 대응)
+        window.addEventListener('orientationchange', function() {
+            setTimeout(() => {
+                forceInfoSectionStyles();
+                applyMobileDeviceOptimizations();
+            }, 300);
+        });
+
+        console.log('무료 검진(구강) 확인 페이지 로드 완료 - 모든 모바일 기기 및 카카오톡 브라우저 완벽 지원');
     </script>
 </body>
 </html> 
