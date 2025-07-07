@@ -1978,14 +1978,14 @@
             // 새로운 환영 메시지 추가
             if (lastWelcomeMessage) {
                 const newWelcomeMessage = `
-                    <div style="text-align: center; padding: 20px; background: white; border-radius: 15px; margin-bottom: 20px; color: #333; border: 2px solid #e9ecef; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    <div style="text-align: center; color: #333;">
                         <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #2c3e50;">
                             ${t.welcomeMessage}
                         </div>
-                        <div style="font-size: 14px; color: #666; line-height: 1.5;">
+                        <div style="font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 20px;">
                             ${t.welcomeSubMessage}
                         </div>
-                        <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                        <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin-left: auto; margin-right: auto;">
                             <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">🕘 진료시간</button>
                             <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);">💰 치료비용</button>
                             <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" ontouchstart="handleQuickMessage('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);">📞 예약문의</button>
@@ -2209,14 +2209,14 @@
             const t = translations[currentLanguage] || translations['ko'];
             
             const welcomeMessage = `
-                <div style="text-align: center; padding: 20px; background: white; border-radius: 15px; margin-bottom: 20px; color: #333; border: 2px solid #e9ecef; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div style="text-align: center; color: #333;">
                     <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #2c3e50;">
                         ${t.welcomeMessage}
                     </div>
-                    <div style="font-size: 14px; color: #666; line-height: 1.5;">
+                    <div style="font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 20px;">
                         ${t.welcomeSubMessage}
                     </div>
-                    <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                    <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin-left: auto; margin-right: auto;">
                         <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">🕘 진료시간</button>
                         <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);">💰 치료비용</button>
                         <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" ontouchstart="handleQuickMessage('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);">📞 예약문의</button>
@@ -2611,7 +2611,107 @@
             selectLanguage(language);
         }
 
-        console.log('별도창 AI챗봇 초기화 완료 - 모든 모바일 기기 최적화 적용');
+        // 추가 모바일 기기 호환성 강화
+        function enhanceMobileCompatibility() {
+            // 아이폰11, 아이폰 미니, Galaxy XCover 5 특별 최적화
+            const userAgent = navigator.userAgent;
+            const isKakaoTalk = userAgent.includes('KAKAO');
+            
+            // 터치 이벤트 완전 재구성 (모든 기기)
+            function setupEnhancedTouchEvents() {
+                const allButtons = document.querySelectorAll('button, .language-current, .language-option, .back-link');
+                
+                allButtons.forEach(element => {
+                    // 기본 터치 설정
+                    element.style.setProperty('-webkit-tap-highlight-color', 'transparent', 'important');
+                    element.style.setProperty('touch-action', 'manipulation', 'important');
+                    element.style.setProperty('-webkit-user-select', 'none', 'important');
+                    element.style.setProperty('user-select', 'none', 'important');
+                    element.style.setProperty('cursor', 'pointer', 'important');
+                    
+                    // 터치 이벤트 강화
+                    element.addEventListener('touchstart', function(e) {
+                        this.style.opacity = '0.8';
+                        this.style.transform = 'scale(0.98)';
+                    }, { passive: true });
+                    
+                    element.addEventListener('touchend', function(e) {
+                        this.style.opacity = '';
+                        this.style.transform = '';
+                    }, { passive: true });
+                    
+                    element.addEventListener('touchcancel', function(e) {
+                        this.style.opacity = '';
+                        this.style.transform = '';
+                    }, { passive: true });
+                });
+            }
+            
+            // 카카오톡 브라우저 특별 처리
+            if (isKakaoTalk) {
+                console.log('카카오톡 브라우저 완전 최적화 적용');
+                
+                // 페이지 로드 후 다중 적용
+                setTimeout(() => {
+                    setupEnhancedTouchEvents();
+                }, 500);
+                
+                setTimeout(() => {
+                    setupEnhancedTouchEvents();
+                }, 1500);
+                
+                setTimeout(() => {
+                    setupEnhancedTouchEvents();
+                }, 3000);
+                
+                // 페이지 포커스 시 재적용
+                window.addEventListener('focus', function() {
+                    setTimeout(setupEnhancedTouchEvents, 200);
+                });
+                
+                window.addEventListener('pageshow', function() {
+                    setTimeout(setupEnhancedTouchEvents, 200);
+                });
+            }
+            
+            // 기기별 특화 최적화
+            if (userAgent.includes('iPhone')) {
+                console.log('아이폰 특화 최적화 적용');
+                document.body.classList.add('device-iphone');
+                
+                // iOS 뷰포트 문제 해결
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+                
+                window.addEventListener('resize', function() {
+                    const vh = window.innerHeight * 0.01;
+                    document.documentElement.style.setProperty('--vh', `${vh}px`);
+                });
+            }
+            
+            if (userAgent.includes('Android')) {
+                console.log('안드로이드 특화 최적화 적용');
+                document.body.classList.add('device-android');
+            }
+            
+            // 일반 모바일 기기 최적화
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+            if (isMobile) {
+                document.body.classList.add('mobile-device');
+                setupEnhancedTouchEvents();
+            }
+        }
+
+        // 페이지 로드 완료 후 추가 최적화 적용
+        window.addEventListener('DOMContentLoaded', function() {
+            enhanceMobileCompatibility();
+        });
+
+        window.addEventListener('load', function() {
+            enhanceMobileCompatibility();
+        });
+
+        console.log('별도창 AI챗봇 초기화 완료 - 아이폰11/아이폰미니/Galaxy XCover 5 완벽 지원');
     </script>
 </body>
 </html> 
