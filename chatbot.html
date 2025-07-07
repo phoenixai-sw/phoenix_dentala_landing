@@ -2892,27 +2892,6 @@
                 return;
             }
             
-            // API 설정 불러오기 (개선된 버전)
-            let apiSettings = null;
-            try {
-                const savedSettings = localStorage.getItem('chatbotApiSettings');
-                if (savedSettings) {
-                    apiSettings = JSON.parse(savedSettings);
-                    console.log('✅ API 설정 불러옴:', apiSettings);
-                    
-                    // API 설정 상세 확인
-                    console.log('🔍 API 설정 상세 분석:');
-                    console.log('- ChatGPT 활성화:', apiSettings.chatgpt?.enabled, 'API 키:', apiSettings.chatgpt?.apiKey ? '있음' : '없음');
-                    console.log('- Gemini 활성화:', apiSettings.gemini?.enabled, 'API 키:', apiSettings.gemini?.apiKey ? '있음' : '없음');
-                    console.log('- Claude 활성화:', apiSettings.claude?.enabled, 'API 키:', apiSettings.claude?.apiKey ? '있음' : '없음');
-                    console.log('- 활성 제공자:', apiSettings.activeProvider);
-                } else {
-                    console.log('❌ 저장된 API 설정이 없습니다.');
-                }
-            } catch (error) {
-                console.error('❌ API 설정 불러오기 실패:', error);
-            }
-            
             // 2차: 📚 업로드된 지식 파일 검색
             const knowledgeAnswer = searchInKnowledgeBase(message);
             if (knowledgeAnswer) {
@@ -2921,52 +2900,59 @@
                 return;
             }
             
-            // 3차: 기본 FAQ 응답 (키워드 기반 답변)
-            console.log('🔍 키워드 기반 FAQ 답변 확인');
-            const isClinicHours = message.includes('진료시간') || message.includes('clinic hours') || message.includes('hours') || 
+            // ⭐ 3차: FAQ 키워드 체크 (API 체크보다 먼저!)
+            console.log('🔍 FAQ 키워드 체크');
+            const isClinicHours = message.includes('진료시간') || message.includes('시간') || message.includes('언제') || 
+                                message.includes('clinic hours') || message.includes('hours') || 
                                 message.includes('часы работы') || message.includes('診療時間');
             
-            const isTreatmentCost = message.includes('치료비용') || message.includes('가격') || 
+            const isTreatmentCost = message.includes('치료비용') || message.includes('가격') || message.includes('비용') || 
                                   message.includes('cost') || message.includes('price') || message.includes('treatment') || 
                                   message.includes('стоимость') || message.includes('цена') || 
                                   message.includes('料金') || message.includes('費用');
             
-            const isReservationInquiry = message.includes('예약문의') || message.includes('예약') || 
+            const isReservationInquiry = message.includes('예약') || message.includes('예약문의') || 
                                        message.includes('reservation') || message.includes('booking') || message.includes('inquiry') || 
                                        message.includes('запись') || message.includes('бронирование') || 
                                        message.includes('予約') || message.includes('問い合わせ');
             
-            const isDirections = message.includes('오시는길') || message.includes('주소') || message.includes('찾아가는') || 
+            const isDirections = message.includes('오시는길') || message.includes('주소') || message.includes('위치') || 
                                message.includes('directions') || message.includes('location') || message.includes('address') || 
                                message.includes('адрес') || message.includes('местоположение') || 
                                message.includes('場所') || message.includes('住所') || message.includes('アクセス');
             
+            // FAQ 답변 처리
             if (isClinicHours) {
-                console.log('🕘 진료시간 키워드 매칭');
-                response = t.clinicHours;
-                addBotMessage(response);
+                console.log('🕘 진료시간 FAQ 답변');
+                addBotMessage(t.clinicHours);
                 return;
             } else if (isTreatmentCost) {
-                console.log('💰 치료비용 키워드 매칭');
-                response = t.treatmentCost;
-                addBotMessage(response);
+                console.log('💰 치료비용 FAQ 답변');
+                addBotMessage(t.treatmentCost);
                 return;
             } else if (isReservationInquiry) {
-                console.log('📞 예약문의 키워드 매칭');
-                response = t.reservationInquiry;
-                addBotMessage(response);
+                console.log('📞 예약문의 FAQ 답변');
+                addBotMessage(t.reservationInquiry);
                 return;
             } else if (isDirections) {
-                console.log('🗺️ 오시는길 키워드 매칭');
-                response = t.directions;
-                addBotMessage(response);
+                console.log('🗺️ 오시는길 FAQ 답변');
+                addBotMessage(t.directions);
                 return;
             }
             
-            // 4차: 🤖 AI API 모델 활용 (키워드가 매칭되지 않은 경우)
-            console.log('🔍 API 설정 확인:', apiSettings);
+            // 4차: 🤖 AI API 모델 활용 (FAQ에 없는 경우만)
+            console.log('🔍 API 설정 확인');
+            let apiSettings = null;
+            try {
+                const savedSettings = localStorage.getItem('chatbotApiSettings');
+                if (savedSettings) {
+                    apiSettings = JSON.parse(savedSettings);
+                    console.log('✅ API 설정 불러옴:', apiSettings);
+                }
+            } catch (error) {
+                console.error('❌ API 설정 불러오기 실패:', error);
+            }
             
-            // API 설정이 있고 활성화된 API가 있는지 확인
             const hasActiveAPI = apiSettings && (
                 (apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey) ||
                 (apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey) ||
@@ -2975,23 +2961,10 @@
             
             if (hasActiveAPI) {
                 console.log('🤖 AI API를 사용하여 답변 생성');
-                console.log('활성화된 API:', {
-                    chatgpt: apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey ? '활성' : '비활성',
-                    gemini: apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey ? '활성' : '비활성',
-                    claude: apiSettings.claude?.enabled && apiSettings.claude?.apiKey ? '활성' : '비활성'
-                });
                 generateAIResponse(message, apiSettings);
                 return;
             } else {
-                console.log('❌ 활성화된 AI API가 없습니다. 시뮬레이션된 AI 답변 사용');
-                console.log('API 설정 상태:', {
-                    hasSettings: !!apiSettings,
-                    chatgpt: apiSettings?.chatgpt?.enabled && apiSettings?.chatgpt?.apiKey ? '활성' : '비활성',
-                    gemini: apiSettings?.gemini?.enabled && apiSettings?.gemini?.apiKey ? '활성' : '비활성',
-                    claude: apiSettings?.claude?.enabled && apiSettings?.claude?.apiKey ? '활성' : '비활성'
-                });
-                
-                // 시뮬레이션된 AI 답변 사용
+                console.log('🎭 시뮬레이션된 AI 답변 사용');
                 setTimeout(() => {
                     const aiResponse = generateSimulatedAIResponse(message, 'chatgpt');
                     addBotMessage(aiResponse);
