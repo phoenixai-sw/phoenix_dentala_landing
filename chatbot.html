@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>피닉스 치과 AI 상담사</title>
     
     <!-- 카카오톡 인앱 브라우저 캐시 방지 -->
@@ -20,15 +20,22 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --vh: 1vh;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f0f2f5;
             height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             overflow: hidden;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-overflow-scrolling: touch;
         }
 
         .chatbot-main {
@@ -164,11 +171,12 @@
         }
 
         .language-option:hover {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
         }
 
         .language-option.active {
-            background: #4facfe;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
         }
 
@@ -363,6 +371,28 @@
                 margin-bottom: 75px;
             }
             
+            /* 환영 메시지 일반 모바일 최적화 */
+            .message.bot .message-content div[style*="font-size: 18px"] {
+                font-size: 17px !important;
+            }
+            
+            .message.bot .message-content div[style*="font-size: 14px"] {
+                font-size: 13px !important;
+                line-height: 1.5 !important;
+                padding: 0 5px !important;
+            }
+            
+            .quick-buttons {
+                gap: 8px !important;
+                justify-content: center !important;
+            }
+            
+            .quick-button {
+                font-size: 12px !important;
+                padding: 8px 12px !important;
+                border-radius: 12px !important;
+            }
+            
             .chatbot-input {
                 padding: 10px;
             }
@@ -411,6 +441,28 @@
             .chatbot-messages {
                 padding: 10px;
                 margin-bottom: 70px;
+            }
+            
+            /* 환영 메시지 480px 이하 모바일 최적화 */
+            .message.bot .message-content div[style*="font-size: 18px"] {
+                font-size: 16px !important;
+            }
+            
+            .message.bot .message-content div[style*="font-size: 14px"] {
+                font-size: 12px !important;
+                line-height: 1.4 !important;
+                padding: 0 3px !important;
+            }
+            
+            .quick-buttons {
+                gap: 6px !important;
+                justify-content: center !important;
+            }
+            
+            .quick-button {
+                font-size: 11px !important;
+                padding: 6px 10px !important;
+                border-radius: 10px !important;
             }
             
             .chatbot-input {
@@ -514,6 +566,323 @@
             user-select: none;
             touch-action: manipulation;
         }
+
+        /* iOS Safari 특별 최적화 */
+        @supports (-webkit-touch-callout: none) {
+            .chatbot-main {
+                height: 100vh;
+                height: -webkit-fill-available;
+            }
+            
+            .chatbot-input {
+                padding-bottom: env(safe-area-inset-bottom, 15px);
+            }
+            
+            .chatbot-messages {
+                padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+            }
+        }
+
+        /* 아이폰11 특별 최적화 (414×896) */
+        @media screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) {
+            .chatbot-header {
+                padding: 15px 8px;
+            }
+            
+            .chatbot-title {
+                font-size: 18px;
+                margin: 0 130px;
+            }
+            
+            .header-language-dropdown {
+                right: 8px;
+            }
+            
+            .language-current {
+                padding: 8px 12px;
+                font-size: 13px;
+                min-width: 110px;
+            }
+            
+            .chatbot-messages {
+                margin-bottom: 85px;
+            }
+            
+            /* 환영 메시지 아이폰11 최적화 */
+            .message.bot .message-content div[style*="font-size: 18px"] {
+                font-size: 18px !important;
+            }
+            
+            .message.bot .message-content div[style*="font-size: 14px"] {
+                font-size: 14px !important;
+                line-height: 1.5 !important;
+            }
+            
+            .quick-buttons {
+                gap: 10px !important;
+            }
+            
+            .quick-button {
+                font-size: 13px !important;
+                padding: 8px 14px !important;
+            }
+        }
+
+        /* 아이폰 미니 추가 최적화 (375×812) */
+        @media screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+            .chatbot-header {
+                padding: 12px 5px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+            
+            .chatbot-title {
+                font-size: 16px;
+                margin: 0 100px;
+                line-height: 1.2;
+            }
+            
+            .header-language-dropdown {
+                right: 5px;
+            }
+            
+            .language-current {
+                padding: 6px 10px;
+                font-size: 11px;
+                min-width: 85px;
+            }
+            
+            .chatbot-messages {
+                margin-bottom: 75px;
+                padding: 10px;
+            }
+            
+            /* 환영 메시지 아이폰 미니 최적화 */
+            .message.bot .message-content div[style*="font-size: 18px"] {
+                font-size: 17px !important;
+            }
+            
+            .message.bot .message-content div[style*="font-size: 14px"] {
+                font-size: 13px !important;
+                line-height: 1.5 !important;
+            }
+            
+            .quick-buttons {
+                gap: 8px !important;
+            }
+            
+            .quick-button {
+                font-size: 12px !important;
+                padding: 7px 12px !important;
+            }
+            
+            .chatbot-input {
+                padding: 8px;
+            }
+            
+            .chatbot-input textarea {
+                font-size: 16px; /* iOS zoom 방지 */
+                padding: 10px 14px;
+            }
+        }
+
+        /* Galaxy XCover 5 및 유사 안드로이드 기기 최적화 */
+        @media screen and (max-width: 432px) and (max-height: 900px) and (orientation: portrait) {
+            body {
+                font-size: 14px;
+            }
+            
+            .chatbot-header {
+                padding: 10px 5px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+            
+            .chatbot-title {
+                font-size: 15px;
+                margin: 0 95px;
+                line-height: 1.2;
+            }
+            
+            .back-link {
+                width: 42px;
+                height: 47px;
+                left: 5px;
+            }
+            
+            .home-icon {
+                font-size: 18px;
+            }
+            
+            .home-arrow {
+                font-size: 10px;
+            }
+            
+            .header-language-dropdown {
+                right: 5px;
+            }
+            
+            .language-current {
+                padding: 5px 8px;
+                font-size: 10px;
+                min-width: 80px;
+            }
+            
+            .language-menu {
+                min-width: 120px;
+                font-size: 12px;
+            }
+            
+            .language-option {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+            
+            .chatbot-messages {
+                padding: 8px;
+                margin-bottom: 70px;
+            }
+            
+            .message-content {
+                max-width: 85%;
+                font-size: 13px;
+                padding: 10px 14px;
+            }
+            
+            /* 환영 메시지 Galaxy XCover 5 최적화 */
+            .message.bot .message-content div[style*="font-size: 18px"] {
+                font-size: 16px !important;
+            }
+            
+            .message.bot .message-content div[style*="font-size: 14px"] {
+                font-size: 12px !important;
+                line-height: 1.5 !important;
+            }
+            
+            .quick-buttons {
+                gap: 6px !important;
+            }
+            
+            .quick-button {
+                font-size: 11px !important;
+                padding: 6px 10px !important;
+            }
+            
+            .chatbot-input {
+                padding: 6px;
+            }
+            
+            .chatbot-input textarea {
+                font-size: 16px; /* 안드로이드 zoom 방지 */
+                padding: 10px 12px;
+                min-height: 42px;
+            }
+            
+            .chatbot-send {
+                min-width: 65px;
+                padding: 6px 14px;
+                font-size: 12px;
+                height: 42px;
+            }
+        }
+
+        /* 극소형 모바일 (320px 이하) 최적화 */
+        @media screen and (max-width: 320px) {
+            .chatbot-title {
+                font-size: 14px;
+                margin: 0 80px;
+            }
+            
+            .back-link {
+                width: 35px;
+                height: 40px;
+                left: 3px;
+            }
+            
+            .home-icon {
+                font-size: 16px;
+            }
+            
+            .home-arrow {
+                font-size: 9px;
+            }
+            
+            .header-language-dropdown {
+                right: 3px;
+            }
+            
+            .language-current {
+                padding: 4px 6px;
+                font-size: 9px;
+                min-width: 70px;
+            }
+            
+            .chatbot-messages {
+                padding: 6px;
+                margin-bottom: 65px;
+            }
+            
+            .message-content {
+                max-width: 90%;
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            
+            /* 환영 메시지 모바일 최적화 */
+            .message.bot .message-content div[style*="font-size: 18px"] {
+                font-size: 16px !important;
+            }
+            
+            .message.bot .message-content div[style*="font-size: 14px"] {
+                font-size: 13px !important;
+                line-height: 1.4 !important;
+            }
+            
+            .chatbot-input textarea {
+                font-size: 16px;
+                padding: 8px 10px;
+                min-height: 38px;
+            }
+            
+            .chatbot-send {
+                min-width: 55px;
+                padding: 5px 10px;
+                font-size: 11px;
+                height: 38px;
+            }
+        }
+
+        /* 가로 모드 최적화 */
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            .chatbot-header {
+                padding: 8px;
+            }
+            
+            .chatbot-title {
+                font-size: 16px;
+            }
+            
+            .back-link {
+                width: 45px;
+                height: 50px;
+            }
+            
+            .language-current {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
+            .chatbot-messages {
+                margin-bottom: 60px;
+                padding: 10px;
+            }
+            
+            .chatbot-input {
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -529,15 +898,15 @@
             <!-- 우측 상단 언어 선택 드롭다운 -->
             <div class="header-language-dropdown">
                 <div class="language-dropdown">
-                    <button class="language-current" onclick="toggleLanguageDropdown()">
+                    <button class="language-current">
                         <span id="currentLanguageText">🇰🇷 한국어</span>
                         <span>▼</span>
                     </button>
                     <div class="language-menu" id="languageMenu">
-                        <div class="language-option active" onclick="selectLanguage('ko')">🇰🇷 한국어</div>
-                        <div class="language-option" onclick="selectLanguage('en')">🇺🇸 영어</div>
-                        <div class="language-option" onclick="selectLanguage('ru')">🇷🇺 러시아어</div>
-                        <div class="language-option" onclick="selectLanguage('ja')">🇯🇵 일본어</div>
+                        <div class="language-option active" data-lang="ko">🇰🇷 한국어</div>
+                        <div class="language-option" data-lang="en">🇺🇸 영어</div>
+                        <div class="language-option" data-lang="ru">🇷🇺 러시아어</div>
+                        <div class="language-option" data-lang="ja">🇯🇵 일본어</div>
                     </div>
                 </div>
             </div>
@@ -574,7 +943,7 @@
                 placeholder: '메시지를 입력하세요... (Shift+Enter: 전송)',
                 sendButton: '전송',
                 currentLanguage: '🇰🇷 한국어',
-                welcomeMessage: '안녕하세요~ 피닉스 치과 AI상담사 입니다.',
+                welcomeMessage: '피닉스 치과 AI상담사 입니다.',
                 clinicHours: `🕘 <strong>피닉스 치과 진료시간 안내</strong><br><br>
                     📅 <strong>평일:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>토요일:</strong> 09:00 ~ 15:00<br>
@@ -662,16 +1031,21 @@
             }, 200);
         });
 
-        // 카카오톡 브라우저 최적화
+        // 모바일 브라우저 최적화
         function optimizeForKakaoTalk() {
             const userAgent = navigator.userAgent;
             const isKakaoTalk = userAgent.includes('KAKAOTALK') || userAgent.includes('KAKAO');
             const isGalaxyXCover5 = userAgent.includes('SM-G525N') || 
                                    (window.screen.width <= 432 && window.screen.height <= 900);
+            const isIPhone11 = /iPhone.*Mobile/.test(navigator.userAgent) && 
+                              (window.screen.width === 414 && window.screen.height === 896);
             const isIPhoneMini = /iPhone.*Mobile/.test(navigator.userAgent) && 
                                (window.screen.width === 375 && window.screen.height === 812);
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            const isMobile = /Mobi|Android/i.test(navigator.userAgent);
             
-            if (isKakaoTalk || isGalaxyXCover5 || isIPhoneMini) {
+            if (isKakaoTalk || isGalaxyXCover5 || isIPhoneMini || isIPhone11 || isMobile) {
                 document.body.classList.add('kakao-optimized');
                 
                 // 모든 요소에 터치 최적화 적용
@@ -687,9 +1061,67 @@
                     textarea.style.webkitUserSelect = 'text';
                     textarea.style.userSelect = 'text';
                     textarea.style.touchAction = 'manipulation';
+                    
+                    // iOS에서 입력 시 zoom 방지
+                    if (isIOS) {
+                        textarea.style.fontSize = '16px';
+                        textarea.addEventListener('focus', function() {
+                            this.style.fontSize = '16px';
+                        });
+                    }
                 }
                 
-                console.log('카카오톡/모바일 브라우저 최적화 완료');
+                // iOS Safari 뷰포트 높이 수정
+                if (isIOS) {
+                    const setViewportHeight = () => {
+                        const vh = window.innerHeight * 0.01;
+                        document.documentElement.style.setProperty('--vh', `${vh}px`);
+                    };
+                    
+                    setViewportHeight();
+                    window.addEventListener('resize', setViewportHeight);
+                    window.addEventListener('orientationchange', () => {
+                        setTimeout(setViewportHeight, 500);
+                    });
+                }
+                
+                // 안드로이드 키보드 처리
+                if (isAndroid) {
+                    const originalHeight = window.innerHeight;
+                    
+                    window.addEventListener('resize', function() {
+                        const currentHeight = window.innerHeight;
+                        const heightDiff = originalHeight - currentHeight;
+                        
+                        if (heightDiff > 150) {
+                            // 키보드가 열린 상태
+                            document.body.style.height = `${currentHeight}px`;
+                        } else {
+                            // 키보드가 닫힌 상태
+                            document.body.style.height = '100vh';
+                        }
+                    });
+                }
+                
+                // 더블 탭 zoom 방지
+                let lastTouchEnd = 0;
+                document.addEventListener('touchend', function (event) {
+                    const now = (new Date()).getTime();
+                    if (now - lastTouchEnd <= 300) {
+                        event.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                }, false);
+                
+                // 드롭다운 메뉴 터치 최적화
+                const languageDropdown = document.querySelector('.language-dropdown');
+                if (languageDropdown) {
+                    languageDropdown.addEventListener('touchstart', function(e) {
+                        e.stopPropagation();
+                    }, { passive: true });
+                }
+                
+                console.log(`모바일 브라우저 최적화 완료 - ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Mobile'} ${isKakaoTalk ? '(카카오톡)' : ''}`);
             }
         }
 
@@ -702,8 +1134,9 @@
                     <div style="font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px;">
                         ${t.welcomeMessage}
                     </div>
-                    <div style="font-size: 14px; color: #666; margin-bottom: 15px;">
-                        무엇을 도와드릴까요? 아래 버튼을 클릭하거나 직접 메시지를 입력해주세요.
+                    <div style="font-size: 14px; color: #666; margin-bottom: 15px; line-height: 1.5;">
+                        아래 버튼을 클릭하거나 직접 메시지를 입력해 주세요,<br>
+                        우측 상단에서 AI의 언어를 변경 가능 합니다
                     </div>
                 </div>
                 
@@ -720,10 +1153,18 @@
         function setupEventListeners() {
             console.log('이벤트 리스너 설정 시작');
             
-            // 전송 버튼 클릭 이벤트
+            // 전송 버튼 클릭/터치 이벤트
             const sendButton = document.querySelector('.chatbot-send');
             if (sendButton) {
+                // 클릭 이벤트
                 sendButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    sendMessage();
+                });
+                
+                // 터치 이벤트 (모바일 최적화)
+                sendButton.addEventListener('touchend', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
                     sendMessage();
@@ -739,9 +1180,58 @@
                         sendMessage();
                     }
                 });
+                
+                // 모바일에서 포커스 시 스크롤 방지
+                inputTextarea.addEventListener('focus', function() {
+                    setTimeout(() => {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }, 300);
+                });
             }
 
-            // 드롭다운 외부 클릭 이벤트
+            // 드롭다운 메뉴 이벤트 (클릭 + 터치)
+            const languageCurrent = document.querySelector('.language-current');
+            if (languageCurrent) {
+                // 클릭 이벤트
+                languageCurrent.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleLanguageDropdown();
+                });
+                
+                // 터치 이벤트
+                languageCurrent.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleLanguageDropdown();
+                });
+            }
+
+            // 언어 옵션 클릭/터치 이벤트
+            const languageOptions = document.querySelectorAll('.language-option');
+            languageOptions.forEach(option => {
+                // 클릭 이벤트
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const lang = this.getAttribute('data-lang');
+                    if (lang) {
+                        selectLanguage(lang);
+                    }
+                });
+                
+                // 터치 이벤트
+                option.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const lang = this.getAttribute('data-lang');
+                    if (lang) {
+                        selectLanguage(lang);
+                    }
+                });
+            });
+
+            // 드롭다운 외부 클릭/터치 이벤트
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.language-dropdown')) {
                     const menu = document.getElementById('languageMenu');
@@ -749,6 +1239,31 @@
                         menu.style.display = 'none';
                         menu.classList.remove('show');
                     }
+                }
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                if (!e.target.closest('.language-dropdown')) {
+                    const menu = document.getElementById('languageMenu');
+                    if (menu && menu.classList.contains('show')) {
+                        menu.style.display = 'none';
+                        menu.classList.remove('show');
+                    }
+                }
+            });
+
+            // 빠른 버튼 터치 이벤트 최적화
+            document.addEventListener('click', function(e) {
+                if (e.target.classList && e.target.classList.contains('quick-button')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                if (e.target.classList && e.target.classList.contains('quick-button')) {
+                    e.preventDefault();
+                    e.stopPropagation();
                 }
             });
 
@@ -833,7 +1348,7 @@
             const options = document.querySelectorAll('.language-option');
             options.forEach(option => {
                 option.classList.remove('active');
-                if (option.getAttribute('onclick').includes(`'${language}'`)) {
+                if (option.getAttribute('data-lang') === language) {
                     option.classList.add('active');
                 }
             });
