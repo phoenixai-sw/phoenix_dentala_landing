@@ -1310,13 +1310,12 @@
             <div class="language-selector" style="background: white; border-radius: 10px; padding: 20px; margin: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
                 <h2 style="font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px; display: flex; align-items: center; justify-content: center;">
                     <span style="margin-right: 8px;">🌍</span>
-                    <span>예약창의 언어를 선택하세요!</span>
+                    <span>AI상담사의 언어를 선택하세요!</span>
                 </h2>
                 <div class="language-buttons" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                     <button class="language-btn korean" onclick="setLanguage2('ko')" id="langBtn-ko-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇰🇷 한국어</button>
                     <button class="language-btn english" onclick="setLanguage2('en')" id="langBtn-en-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇺🇸 영어</button>
                     <button class="language-btn russian" onclick="setLanguage2('ru')" id="langBtn-ru-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇷🇺 러시아어</button>
-                    <button class="language-btn japanese" onclick="setLanguage2('ja')" id="langBtn-ja-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇯🇵 일본어</button>
                 </div>
             </div>
 
@@ -1714,16 +1713,14 @@
         const languagePrompts2 = {
             ko: '당신은 피닉스 치과의 AI 상담사입니다. 한국어로 친절하고 전문적으로 답변해주세요.',
             en: 'You are an AI consultant for Phoenix Dental. Please respond in English in a friendly and professional manner.',
-            ru: 'Вы - AI-консультант стоматологической клиники Phoenix. Пожалуйста, отвечайте на русском языке дружелюбно и профессионально.',
-            ja: 'あなたはフェニックス歯科のAIコンサルタントです。日本語で親切で専門的に回答してください。'
+            ru: 'Вы - AI-консультант стоматологической клиники Phoenix. Пожалуйста, отвечайте на русском языке дружелюбно и профессионально.'
         };
         
                 // 언어별 확인 메시지
         const languageConfirmMessages2 = {
             ko: '🇰🇷 한국어로 상담을 진행하겠습니다! 무엇을 도와드릴까요?',
             en: '🇺🇸 I will assist you in English! How can I help you?',
-            ru: '🇷🇺 Я буду помогать вам на русском языке! Чем могу помочь?',
-            ja: '🇯🇵 日本語でご相談を承ります！どのようなご質問でしょうか？'
+            ru: '🇷🇺 Я буду помогать вам на русском языке! Чем могу помочь?'
         };
         
         // 언어별 기본 응답 객체
@@ -1853,48 +1850,6 @@
                         • Стоимость лечения<br>
                         • Расположение и проезд
                     </div>`
-            },
-            ja: {
-                clinicHours: `🕘 <strong>フェニックス歯科 診療時間のご案内</strong><br><br>
-                    <div style="background: #f0f8ff; padding: 15px; border-radius: 10px; margin: 10px 0;">
-                        📅 <strong>平日</strong>: 9:00 ~ 18:00<br>
-                        📅 <strong>土曜日</strong>: 9:00 ~ 15:00<br>
-                        🍽️ <strong>昼休み</strong>: 12:30 ~ 13:30<br>
-                        🚫 <strong>休診</strong>: 日曜日、祝日
-                    </div>`,
-                        
-                reservation: `📞 <strong>予約・相談のご案内</strong><br><br>
-                    <div style="background: #fff8f0; padding: 15px; border-radius: 10px; margin: 10px 0;">
-                        🌟 <strong>オンライン予約</strong> (おすすめ)<br>
-                        • 24時間いつでも予約可能<br>
-                        • ご希望の日時を選択<br>
-                        • 即座に予約確認
-                    </div>`,
-                        
-                cost: `💰 <strong>治療費のご案内</strong><br><br>
-                    <div style="background: #f8fff8; padding: 15px; border-radius: 10px; margin: 10px 0;">
-                        🦷 <strong>基本診療</strong><br>
-                        • 初診料: ₩15,000<br>
-                        • 再診料: ₩10,000<br>
-                        • スケーリング: ₩50,000
-                    </div>`,
-                        
-                location: `🏥 <strong>フェニックス歯科 アクセス</strong><br><br>
-                    <div style="background: #f0fff0; padding: 15px; border-radius: 10px; margin: 10px 0;">
-                        📍 <strong>住所</strong><br>
-                        フェニックス市フェニックス路11番地11、フェニックスタワー11階<br><br>
-                        🚇 <strong>地下鉄</strong><br>
-                        2号線江南駅3番出口より徒歩5分
-                    </div>`,
-                        
-                welcome: `😊 <strong>こんにちは！フェニックス歯科AIコンサルタントです</strong><br><br>
-                    <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); padding: 20px; border-radius: 12px; margin: 10px 0;">
-                        🏥 <strong>フェニックス歯科へようこそ！</strong><br><br>
-                        💡 <strong>どのようなご質問でしょうか？</strong><br>
-                        • 診療時間・予約について<br>
-                        • 治療費について<br>
-                        • アクセス・道案内
-                    </div>`
             }
         };
 
@@ -1923,7 +1878,7 @@
             console.log('언어 버튼 시각적 업데이트 시작');
             
             // 모든 언어 버튼을 푸른색(기본색)으로 설정
-            const languages = ['ko', 'en', 'ru', 'ja'];
+            const languages = ['ko', 'en', 'ru'];
             languages.forEach(lang => {
                 const button = document.getElementById(`langBtn-${lang}-2`);
                 if (button) {
@@ -1967,7 +1922,7 @@
         // 페이지 로드 시 저장된 언어 설정 복원
         function loadSavedLanguage2() {
             const savedLanguage = localStorage.getItem('chatbotLanguage2');
-            if (savedLanguage && ['ko', 'en', 'ru', 'ja'].includes(savedLanguage)) {
+            if (savedLanguage && ['ko', 'en', 'ru'].includes(savedLanguage)) {
                 currentLanguage2 = savedLanguage;
                 updateLanguageButtons2();
             }
@@ -1977,8 +1932,7 @@
         const languageDetectionKeywords = {
             ko: ['안녕', '감사', '죄송', '진료', '예약', '치료', '병원', '의사', '간호사', '상담', '비용', '가격', '시간', '언제', '어디', '무엇', '어떻게', '왜', '네', '아니요', '좋습니다', '알겠습니다', '도움', '문의', '질문', '하세요', '입니다', '이에요', '해주세요', '주세요', '고맙습니다', '죄송해요', '안녕하세요', '그래요', '맞아요'],
             en: ['hello', 'thank', 'sorry', 'treatment', 'appointment', 'clinic', 'doctor', 'nurse', 'consultation', 'cost', 'price', 'time', 'when', 'where', 'what', 'how', 'why', 'yes', 'no', 'good', 'understand', 'help', 'question', 'please', 'thanks', 'hi', 'dental', 'tooth', 'teeth', 'hours', 'reservation', 'appointment', 'can', 'could', 'would', 'should'],
-            ru: ['привет', 'здравствуйте', 'спасибо', 'извините', 'лечение', 'запись', 'клиника', 'врач', 'медсестра', 'консультация', 'стоимость', 'цена', 'время', 'когда', 'где', 'что', 'как', 'почему', 'да', 'нет', 'хорошо', 'понимаю', 'помощь', 'вопрос', 'пожалуйста', 'зуб', 'зубы', 'стоматология', 'можете', 'можно', 'будет', 'есть'],
-            ja: ['こんにちは', 'ありがとう', 'すみません', '治療', '予約', 'クリニック', '医師', '看護師', '相談', '費用', '料金', '時間', 'いつ', 'どこ', '何', 'どう', 'なぜ', 'はい', 'いいえ', '良い', '分かり', '手伝い', '質問', 'お願い', '歯科', '歯', '歯医者', 'ください', 'です', 'ます', 'でしょう', 'どの', 'その']
+            ru: ['привет', 'здравствуйте', 'спасибо', 'извините', 'лечение', 'запись', 'клиника', 'врач', 'медсестра', 'консультация', 'стоимость', 'цена', 'время', 'когда', 'где', 'что', 'как', 'почему', 'да', 'нет', 'хорошо', 'понимаю', 'помощь', 'вопрос', 'пожалуйста', 'зуб', 'зубы', 'стоматология', 'можете', 'можно', 'будет', 'есть']
         };
         
         // 입력 메시지에서 언어 감지
@@ -2025,8 +1979,7 @@
                 const changeNotifications = {
                     ko: '🔄 한국어로 언어가 변경되었습니다.',
                     en: '🔄 Language changed to English.',
-                    ru: '🔄 Язык изменен на русский.',
-                    ja: '🔄 言語が日本語に変更されました。'
+                    ru: '🔄 Язык изменен на русский.'
                 };
                 
                 const notification = changeNotifications[detectedLanguage];
@@ -2093,8 +2046,7 @@
                     const loadingMessages = {
                         ko: '👩‍⚕️🕐 최고의 답변을 준비 중 입니다...',
                         en: '👩‍⚕️🕐 Preparing the best answer...',
-                        ru: '👩‍⚕️🕐 Готовлю лучший ответ...',
-                        ja: '👩‍⚕️🕐 最高の回答を準備中です...'
+                        ru: '👩‍⚕️🕐 Готовлю лучший ответ...'
                     };
                     const loadingMessage = addBotMessage2(loadingMessages[currentLanguage2] || loadingMessages['ko']);
                     
@@ -2109,8 +2061,7 @@
                         const errorMessages = {
                             ko: '❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
                             en: '❌ Sorry, a temporary error has occurred. Please try again later.',
-                            ru: '❌ Извините, произошла временная ошибка. Попробуйте еще раз позже.',
-                            ja: '❌ 申し訳ございません。一時的なエラーが発生しました。しばらくしてから再度お試しください。'
+                            ru: '❌ Извините, произошла временная ошибка. Попробуйте еще раз позже.'
                         };
                         addBotMessage2(errorMessages[currentLanguage2] || errorMessages['ko']);
                     });
@@ -2156,8 +2107,7 @@
                 const loadingMessages = {
                 ko: '👩‍⚕️🕐 최고의 답변을 준비 중 입니다...',
                 en: '👩‍⚕️🕐 Preparing the best answer...',
-                ru: '👩‍⚕️🕐 Готовлю лучший ответ...',
-                ja: '👩‍⚕️🕐 最高の回答を準備中です...'
+                ru: '👩‍⚕️🕐 Готовлю лучший ответ...'
             };
             const loadingMessage = addBotMessage2(loadingMessages[currentLanguage2] || loadingMessages['ko']);
             
@@ -2172,8 +2122,7 @@
                 const errorMessages = {
                     ko: '❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
                     en: '❌ Sorry, a temporary error has occurred. Please try again later.',
-                    ru: '❌ Извините, произошла временная ошибка. Попробуйте еще раз позже.',
-                    ja: '❌ 申し訳ございません。一時的なエラーが発生しました。しばらくしてから再度お試しください。'
+                    ru: '❌ Извините, произошла временная ошибка. Попробуйте еще раз позже.'
                 };
                 addBotMessage2(errorMessages[currentLanguage2] || errorMessages['ko']);
             });
@@ -2249,9 +2198,7 @@
                     en: `💝 <strong>For more detailed information, please visit us directly for kind consultation!</strong><br><br>
                         <button class="reservation-link-btn" onclick="goToReservationPage2()" style="margin-top: 5px;">📅 Make Reservation</button>`,
                     ru: `💝 <strong>Для получения более подробной информации, пожалуйста, посетите нас для консультации!</strong><br><br>
-                        <button class="reservation-link-btn" onclick="goToReservationPage2()" style="margin-top: 5px;">📅 Записаться</button>`,
-                    ja: `💝 <strong>詳細については、直接お越しいただければ親切にご相談いたします！</strong><br><br>
-                        <button class="reservation-link-btn" onclick="goToReservationPage2()" style="margin-top: 5px;">📅 予約する</button>`
+                        <button class="reservation-link-btn" onclick="goToReservationPage2()" style="margin-top: 5px;">📅 Записаться</button>`
                 };
                 
                 const commonMessage = commonMessages[currentLanguage2] || commonMessages['ko'];
@@ -2401,32 +2348,28 @@
             const timeKeywords = {
                 ko: ['진료시간', '언제', '몇시', '운영시간', '시간'],
                 en: ['hours', 'time', 'when', 'open', 'clinic hours'],
-                ru: ['время', 'часы', 'когда', 'работа', 'режим'],
-                ja: ['時間', '営業', 'いつ', '診療時間', '何時']
+                ru: ['время', 'часы', 'когда', 'работа', 'режим']
             };
             
             // 예약 관련 키워드
             const reservationKeywords = {
                 ko: ['예약', '신청', '접수', '방문', '예약하기'],
                 en: ['reservation', 'appointment', 'booking', 'visit', 'schedule'],
-                ru: ['запись', 'резерв', 'визит', 'посещение'],
-                ja: ['予約', '申請', '受付', '訪問', 'アポイント']
+                ru: ['запись', 'резерв', 'визит', 'посещение']
             };
             
             // 비용 관련 키워드
             const costKeywords = {
                 ko: ['비용', '가격', '얼마', '돈', '금액', '요금'],
                 en: ['cost', 'price', 'fee', 'money', 'payment', 'how much'],
-                ru: ['стоимость', 'цена', 'деньги', 'оплата', 'сколько'],
-                ja: ['費用', '料金', 'いくら', 'お金', '価格', 'コスト']
+                ru: ['стоимость', 'цена', 'деньги', 'оплата', 'сколько']
             };
             
             // 위치 관련 키워드
             const locationKeywords = {
                 ko: ['위치', '주소', '어디', '찾아', '교통', '길', '오는'],
                 en: ['location', 'address', 'where', 'directions', 'way', 'how to get'],
-                ru: ['адрес', 'где', 'как добраться', 'расположение', 'проезд'],
-                ja: ['場所', '住所', 'どこ', 'アクセス', '道', '行き方']
+                ru: ['адрес', 'где', 'как добраться', 'расположение', 'проезд']
             };
             
             // 현재 언어의 키워드로 체크
