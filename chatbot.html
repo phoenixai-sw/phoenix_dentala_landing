@@ -18,6 +18,10 @@
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <!-- Galaxy XCover 5 카카오톡 브라우저 키보드 최적화 -->
+    <meta name="theme-color" content="#4facfe">
+    <meta name="mobile-web-app-title" content="피닉스 치과 AI 챗봇">
     <link rel="stylesheet" href="data:text/css;base64,LyogRm9yY2UgcmVmcmVzaCAqLw==">
     <script>
         // 카카오톡 브라우저 강제 새로고침 및 DOM 재구성
@@ -248,6 +252,63 @@
                 padding: 15px 22px !important;
                 font-size: 18px !important;
                 min-width: 90px !important;
+            }
+        }
+        
+        /* Galaxy XCover 5 (432x900) 카카오톡 브라우저 특화 최적화 */
+        @media screen and (max-width: 432px) and (max-height: 900px) {
+            /* 키보드 표시 시 레이아웃 고정 */
+            .chatbot-input {
+                position: relative !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 1000 !important;
+                background: white !important;
+                border-top: 1px solid #ddd !important;
+            }
+            
+            .chatbot-input textarea {
+                -webkit-user-select: text !important;
+                user-select: text !important;
+                -webkit-touch-callout: default !important;
+                touch-action: manipulation !important;
+                padding: 16px 20px !important;
+                font-size: 16px !important;
+                min-height: 50px !important;
+                border-radius: 20px !important;
+                resize: none !important;
+                outline: none !important;
+                border: 2px solid #4facfe !important;
+            }
+            
+            .chatbot-input textarea:focus {
+                border-color: #00f2fe !important;
+                box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2) !important;
+            }
+            
+            .chatbot-send {
+                padding: 16px 24px !important;
+                font-size: 16px !important;
+                min-width: 80px !important;
+                touch-action: manipulation !important;
+            }
+            
+            /* 메시지 영역 키보드 대응 */
+            .chatbot-messages {
+                padding-bottom: 20px !important;
+                -webkit-overflow-scrolling: touch !important;
+                scroll-behavior: smooth !important;
+            }
+            
+            /* 언어 선택 버튼 터치 최적화 */
+            .language-btn {
+                touch-action: manipulation !important;
+                -webkit-touch-callout: none !important;
+                -webkit-user-select: none !important;
+                user-select: none !important;
+                padding: 10px 16px !important;
+                font-size: 15px !important;
             }
         }
 
@@ -1376,9 +1437,7 @@
                         안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br><br>
                         <div class="quick-buttons">
                             <button class="quick-button" onclick="sendQuickMessage2('진료시간 알려주세요')">진료시간</button>
-                            <button class="quick-button" onclick="sendQuickMessage2('예약하고 싶어요')">예약문의</button>
                             <button class="quick-button" onclick="sendQuickMessage2('치료비용 궁금해요')">치료비용</button>
-                            <button class="quick-button" onclick="sendQuickMessage2('위치 알려주세요')">오시는길</button>
                         </div>
                     </div>
                 </div>
@@ -1581,12 +1640,14 @@
                                    (window.screen.width <= 432 && window.screen.height <= 900);
             const isIPhoneMini = /iPhone.*Mobile/.test(navigator.userAgent) && 
                                (window.screen.width === 375 && window.screen.height === 812);
+            const isAndroid = /Android/.test(navigator.userAgent);
             
             console.log('브라우저 최적화 시작:', {
                 userAgent: userAgent,
                 isKakaoTalk: isKakaoTalk,
                 isGalaxyXCover5: isGalaxyXCover5,
                 isIPhoneMini: isIPhoneMini,
+                isAndroid: isAndroid,
                 screenWidth: window.screen.width,
                 screenHeight: window.screen.height
             });
@@ -1733,6 +1794,138 @@
                         
                         console.log('아이폰 미니 - 입력창 최적화 적용');
                     }
+                    
+                    // Galaxy XCover 5 & Android 카카오톡 브라우저 키보드 문제 해결
+                    if (isGalaxyXCover5 && isAndroid && isKakaoTalk) {
+                        console.log('Galaxy XCover 5 Android 카카오톡 브라우저 키보드 최적화 시작');
+                        
+                        const textArea = inputContainer.querySelector('textarea');
+                        if (textArea) {
+                            // 키보드 표시/숨김 감지를 위한 viewport 높이 추적
+                            let initialViewportHeight = window.innerHeight;
+                            let isKeyboardVisible = false;
+                            
+                            // 키보드 표시/숨김 감지 함수
+                            function detectKeyboard() {
+                                const currentHeight = window.innerHeight;
+                                const heightDifference = initialViewportHeight - currentHeight;
+                                
+                                // 키보드가 표시된 것으로 판단 (높이가 150px 이상 줄어들면)
+                                if (heightDifference > 150 && !isKeyboardVisible) {
+                                    isKeyboardVisible = true;
+                                    console.log('키보드 표시 감지');
+                                    handleKeyboardShow();
+                                } 
+                                // 키보드가 숨겨진 것으로 판단
+                                else if (heightDifference < 50 && isKeyboardVisible) {
+                                    isKeyboardVisible = false;
+                                    console.log('키보드 숨김 감지');
+                                    handleKeyboardHide();
+                                }
+                            }
+                            
+                            // 키보드 표시 시 처리
+                            function handleKeyboardShow() {
+                                document.body.style.setProperty('height', `${window.innerHeight}px`, 'important');
+                                
+                                // 입력창을 화면 하단에 고정
+                                inputContainer.style.setProperty('position', 'fixed', 'important');
+                                inputContainer.style.setProperty('bottom', '0', 'important');
+                                inputContainer.style.setProperty('left', '0', 'important');
+                                inputContainer.style.setProperty('right', '0', 'important');
+                                inputContainer.style.setProperty('z-index', '9999', 'important');
+                                
+                                // 메시지 영역 높이 조정
+                                const messagesContainer = document.querySelector('.chatbot-messages');
+                                if (messagesContainer) {
+                                    messagesContainer.style.setProperty('max-height', `${window.innerHeight - 200}px`, 'important');
+                                    messagesContainer.style.setProperty('padding-bottom', '120px', 'important');
+                                }
+                                
+                                // 입력창으로 스크롤
+                                setTimeout(() => {
+                                    textArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                }, 100);
+                            }
+                            
+                            // 키보드 숨김 시 처리
+                            function handleKeyboardHide() {
+                                document.body.style.removeProperty('height');
+                                
+                                // 입력창 위치 복원
+                                inputContainer.style.removeProperty('position');
+                                inputContainer.style.removeProperty('bottom');
+                                inputContainer.style.removeProperty('left');
+                                inputContainer.style.removeProperty('right');
+                                inputContainer.style.removeProperty('z-index');
+                                
+                                // 메시지 영역 높이 복원
+                                const messagesContainer = document.querySelector('.chatbot-messages');
+                                if (messagesContainer) {
+                                    messagesContainer.style.removeProperty('max-height');
+                                    messagesContainer.style.removeProperty('padding-bottom');
+                                }
+                            }
+                            
+                            // 터치 및 포커스 이벤트 최적화
+                            textArea.addEventListener('touchstart', function(e) {
+                                e.stopPropagation();
+                                console.log('텍스트 영역 터치 시작');
+                            }, { passive: false });
+                            
+                            textArea.addEventListener('focus', function(e) {
+                                console.log('텍스트 영역 포커스');
+                                
+                                // 포커스 시 약간의 지연 후 키보드 감지 시작
+                                setTimeout(() => {
+                                    initialViewportHeight = window.innerHeight;
+                                    detectKeyboard();
+                                }, 300);
+                                
+                                // 포커스 유지를 위한 처리
+                                textArea.style.setProperty('-webkit-user-select', 'text', 'important');
+                                textArea.style.setProperty('user-select', 'text', 'important');
+                                textArea.style.setProperty('-webkit-touch-callout', 'default', 'important');
+                            }, { passive: true });
+                            
+                            textArea.addEventListener('blur', function(e) {
+                                console.log('텍스트 영역 블러');
+                                // 블러 시 키보드 숨김 처리
+                                setTimeout(() => {
+                                    detectKeyboard();
+                                }, 300);
+                            }, { passive: true });
+                            
+                            // 화면 크기 변경 감지 (키보드 표시/숨김)
+                            window.addEventListener('resize', detectKeyboard, { passive: true });
+                            
+                            // orientationchange 이벤트도 감지
+                            window.addEventListener('orientationchange', function() {
+                                setTimeout(() => {
+                                    initialViewportHeight = window.innerHeight;
+                                    detectKeyboard();
+                                }, 500);
+                            }, { passive: true });
+                            
+                            // visualViewport API 지원 시 사용
+                            if (window.visualViewport) {
+                                window.visualViewport.addEventListener('resize', function() {
+                                    console.log('VisualViewport 크기 변경:', window.visualViewport.height);
+                                    const heightDifference = window.innerHeight - window.visualViewport.height;
+                                    
+                                    if (heightDifference > 150 && !isKeyboardVisible) {
+                                        isKeyboardVisible = true;
+                                        handleKeyboardShow();
+                                    } else if (heightDifference < 50 && isKeyboardVisible) {
+                                        isKeyboardVisible = false;
+                                        handleKeyboardHide();
+                                    }
+                                });
+                            }
+                            
+                            console.log('Galaxy XCover 5 키보드 최적화 완료');
+                        }
+                    }
                 }
                 
                 console.log('카카오톡 브라우저/모바일 기기(Galaxy XCover 5, 아이폰 미니) 최적화 완료');
@@ -1750,12 +1943,52 @@
             // 터치 이벤트 최적화
             if (isKakaoTalk) {
                 document.addEventListener('touchstart', function(e) {
-                    // 터치 이벤트 개선
+                    // 입력창 터치는 허용
+                    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+                        return;
+                    }
                 }, { passive: true });
                 
                 // 카카오톡 브라우저에서 스크롤 방지
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
+                
+                // Galaxy XCover 5 특화 터치 이벤트 추가 최적화
+                if (isGalaxyXCover5 && isAndroid) {
+                    console.log('Galaxy XCover 5 터치 이벤트 추가 최적화');
+                    
+                    // 전역 터치 이벤트 처리
+                    document.addEventListener('touchmove', function(e) {
+                        // 입력창 및 메시지 영역 스크롤은 허용
+                        const target = e.target;
+                        if (target.closest('.chatbot-input') || target.closest('.chatbot-messages')) {
+                            return;
+                        }
+                        // 다른 영역의 스크롤은 방지
+                        e.preventDefault();
+                    }, { passive: false });
+                    
+                    // 입력창 특별 처리
+                    const textArea = document.querySelector('#chatbotInput2');
+                    if (textArea) {
+                        // 더블 탭 방지 (확대/축소 방지)
+                        textArea.addEventListener('touchend', function(e) {
+                            e.preventDefault();
+                            const touch = e.changedTouches[0];
+                            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                            if (element === textArea) {
+                                textArea.focus();
+                            }
+                        }, { passive: false });
+                        
+                        // 포커스 강제 유지
+                        textArea.addEventListener('touchcancel', function(e) {
+                            setTimeout(() => {
+                                textArea.focus();
+                            }, 100);
+                        }, { passive: true });
+                    }
+                }
             }
             
             // 추가 안전 조치: 언어 선택 영역이 입력창 위에 올바르게 표시되도록 강제 적용
