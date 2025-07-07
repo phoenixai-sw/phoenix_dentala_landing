@@ -259,13 +259,16 @@
         @media screen and (max-width: 432px) and (max-height: 900px) {
             /* 키보드 표시 시 레이아웃 고정 */
             .chatbot-input {
-                position: relative !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
+                position: absolute !important;
+                bottom: 10px !important;
+                left: 10px !important;
+                right: 10px !important;
+                top: 90% !important;
                 z-index: 1000 !important;
                 background: white !important;
                 border-top: 1px solid #ddd !important;
+                border-radius: 10px !important;
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important;
             }
             
             .chatbot-input textarea {
@@ -4383,7 +4386,131 @@
         // 키보드 최적화 초기화
         setupKeyboardOptimization();
 
+        // 모든 이벤트 리스너 설정
+        setupAllEventListeners2();
+
         console.log('AI 챗봇 페이지 로드 완료 - 강력한 스타일 적용 시스템 활성화!');
+
+        // 모든 이벤트 리스너 설정 함수
+        function setupAllEventListeners2() {
+            console.log('🔧 모든 이벤트 리스너 설정 시작');
+            
+            setTimeout(() => {
+                // 1. 메시지 전송 버튼 이벤트
+                const sendButton = document.querySelector('.chatbot-send');
+                if (sendButton) {
+                    // 기존 이벤트 리스너 제거 후 재설정
+                    sendButton.onclick = null;
+                    sendButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('📤 전송 버튼 클릭됨');
+                        sendMessage2();
+                    });
+                    console.log('✅ 전송 버튼 이벤트 설정 완료');
+                } else {
+                    console.warn('⚠️ 전송 버튼을 찾을 수 없음');
+                }
+                
+                // 2. 입력창 키보드 이벤트
+                const inputTextarea = document.getElementById('chatbotInput2');
+                if (inputTextarea) {
+                    inputTextarea.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' && e.shiftKey) {
+                            e.preventDefault();
+                            console.log('📤 Shift+Enter로 메시지 전송');
+                            sendMessage2();
+                        }
+                    });
+                    console.log('✅ 입력창 키보드 이벤트 설정 완료');
+                } else {
+                    console.warn('⚠️ 입력창을 찾을 수 없음');
+                }
+                
+                // 3. 드롭다운 토글 버튼 이벤트
+                const languageCurrent = document.querySelector('.language-current');
+                if (languageCurrent) {
+                    languageCurrent.onclick = null;
+                    languageCurrent.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🌍 드롭다운 버튼 클릭됨');
+                        toggleLanguageDropdown2();
+                    });
+                    console.log('✅ 드롭다운 토글 이벤트 설정 완료');
+                } else {
+                    console.warn('⚠️ 드롭다운 토글 버튼을 찾을 수 없음');
+                }
+                
+                // 4. 드롭다운 메뉴 옵션 이벤트
+                const languageOptions = document.querySelectorAll('.language-option');
+                if (languageOptions.length > 0) {
+                    languageOptions.forEach((option, index) => {
+                        const languages = ['ko', 'en', 'ru'];
+                        const language = languages[index];
+                        
+                        if (language) {
+                            option.onclick = null;
+                            option.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                console.log(`🌍 언어 옵션 클릭됨: ${language}`);
+                                selectLanguageFromDropdown2(language);
+                            });
+                        }
+                    });
+                    console.log('✅ 드롭다운 옵션 이벤트 설정 완료');
+                } else {
+                    console.warn('⚠️ 드롭다운 옵션을 찾을 수 없음');
+                }
+                
+                // 5. 기본 답변 버튼들 이벤트 (동적으로 생성된 버튼들을 위해 이벤트 위임 사용)
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('quick-button')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const buttonText = e.target.textContent;
+                        let message = '';
+                        
+                        switch(buttonText) {
+                            case '진료시간':
+                                message = '진료시간 알려주세요';
+                                break;
+                            case '예약문의':
+                                message = '예약문의';
+                                break;
+                            case '치료비용':
+                                message = '치료비용 궁금해요';
+                                break;
+                            case '오시는길':
+                                message = '오시는길';
+                                break;
+                            default:
+                                message = buttonText;
+                        }
+                        
+                        console.log(`🔘 기본 답변 버튼 클릭: ${buttonText} → ${message}`);
+                        sendQuickMessage2(message);
+                    }
+                });
+                console.log('✅ 기본 답변 버튼 이벤트 설정 완료');
+                
+                // 6. 외부 클릭으로 드롭다운 닫기
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.language-dropdown')) {
+                        const menu = document.getElementById('languageMenu2');
+                        if (menu && menu.style.display === 'block') {
+                            menu.style.display = 'none';
+                            menu.classList.remove('show');
+                            console.log('🌍 외부 클릭으로 드롭다운 닫힘');
+                        }
+                    }
+                });
+                
+                console.log('🎉 모든 이벤트 리스너 설정 완료');
+            }, 500); // DOM이 완전히 로드된 후 설정
+        }
     </script>
 </body>
 </html> 
