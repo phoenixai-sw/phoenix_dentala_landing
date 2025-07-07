@@ -1397,104 +1397,186 @@
             }
         }
 
-        /* 새로운 언어 선택 컴팩트 모드 모바일 최적화 */
+        /* 언어 드롭다운 스타일 */
+        .language-dropdown {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .language-current:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+            transform: scale(1.05);
+        }
+
+        .language-option:hover {
+            background: #f8f9fa !important;
+            transform: translateX(2px);
+        }
+
+        .language-option.selected {
+            background: #e3f2fd !important;
+            font-weight: bold;
+        }
+
+        /* 드롭다운 애니메이션 */
+        .language-menu {
+            transition: all 0.3s ease;
+            transform-origin: top right;
+        }
+
+        .language-menu.show {
+            display: block !important;
+            animation: dropdownFadeIn 0.3s ease;
+        }
+
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* 모바일 최적화 */
         @media (max-width: 768px) {
-            .chatbot-input {
-                flex-direction: row !important;
-                align-items: flex-start !important;
-                gap: 8px !important;
-                padding: 12px !important;
+            .language-dropdown {
+                right: 10px !important;
             }
             
-            .language-selector-compact {
-                min-width: 60px !important;
-                padding: 6px !important;
-                border-radius: 12px !important;
-            }
-            
-            .language-selector-compact div:first-child {
+            .language-dropdown div:first-child {
                 font-size: 10px !important;
-                margin-bottom: 4px !important;
+                margin-bottom: 3px !important;
             }
             
-            .language-flag {
-                width: 42px !important;
-                padding: 3px 6px !important;
+            .language-current {
+                padding: 6px 10px !important;
+                min-width: 50px !important;
+            }
+            
+            .language-current span:first-child {
+                font-size: 18px !important;
+            }
+            
+            .language-menu {
+                min-width: 100px !important;
+                right: -10px !important;
+            }
+            
+            .language-option {
+                padding: 6px 10px !important;
+            }
+            
+            .language-option span:first-child {
                 font-size: 14px !important;
-                margin: 1px 0 !important;
-                border-radius: 6px !important;
+            }
+            
+            .language-option span:last-child {
+                font-size: 12px !important;
             }
         }
 
         @media (max-width: 480px) {
-            .chatbot-input {
-                gap: 6px !important;
-                padding: 10px !important;
-            }
-            
-            .language-selector-compact {
-                min-width: 55px !important;
-                padding: 5px !important;
-            }
-            
-            .language-selector-compact div:first-child {
+            .language-dropdown div:first-child {
                 font-size: 9px !important;
-                margin-bottom: 3px !important;
+                margin-bottom: 2px !important;
             }
             
-            .language-flag {
-                width: 38px !important;
-                padding: 2px 5px !important;
+            .language-current {
+                padding: 5px 8px !important;
+                min-width: 45px !important;
+            }
+            
+            .language-current span:first-child {
+                font-size: 16px !important;
+            }
+            
+            .language-menu {
+                min-width: 90px !important;
+                right: -15px !important;
+            }
+            
+            .language-option {
+                padding: 5px 8px !important;
+            }
+            
+            .language-option span:first-child {
                 font-size: 13px !important;
-                margin: 1px 0 !important;
+            }
+            
+            .language-option span:last-child {
+                font-size: 11px !important;
             }
         }
 
         @media (max-width: 432px) {
-            .chatbot-input {
-                gap: 5px !important;
-                padding: 8px !important;
-            }
-            
-            .language-selector-compact {
-                min-width: 50px !important;
-                padding: 4px !important;
-            }
-            
-            .language-selector-compact div:first-child {
+            .language-dropdown div:first-child {
                 font-size: 8px !important;
                 margin-bottom: 2px !important;
             }
             
-            .language-flag {
-                width: 35px !important;
-                padding: 2px 4px !important;
-                font-size: 12px !important;
-                margin: 0.5px 0 !important;
+            .language-current {
+                padding: 4px 6px !important;
+                min-width: 40px !important;
+            }
+            
+            .language-current span:first-child {
+                font-size: 15px !important;
+            }
+            
+            .language-current span:last-child {
+                font-size: 10px !important;
+                margin-left: 2px !important;
+            }
+            
+            .language-menu {
+                min-width: 85px !important;
+                right: -20px !important;
             }
         }
 
         @media (max-width: 360px) {
-            .chatbot-input {
-                gap: 4px !important;
+            .language-dropdown {
+                right: 8px !important;
+            }
+            
+            .language-dropdown div:first-child {
+                font-size: 7px !important;
+                margin-bottom: 1px !important;
+            }
+            
+            .language-current {
+                padding: 3px 5px !important;
+                min-width: 35px !important;
+            }
+            
+            .language-current span:first-child {
+                font-size: 14px !important;
+            }
+            
+            .language-current span:last-child {
+                font-size: 9px !important;
+                margin-left: 1px !important;
+            }
+            
+            .language-menu {
+                min-width: 80px !important;
+                right: -25px !important;
                 padding: 6px !important;
             }
             
-            .language-selector-compact {
-                min-width: 45px !important;
-                padding: 3px !important;
+            .language-option {
+                padding: 4px 6px !important;
             }
             
-            .language-selector-compact div:first-child {
-                font-size: 7px !important;
-                margin-bottom: 2px !important;
+            .language-option span:first-child {
+                font-size: 12px !important;
             }
             
-            .language-flag {
-                width: 32px !important;
-                padding: 1px 3px !important;
-                font-size: 11px !important;
-                margin: 0.5px 0 !important;
+            .language-option span:last-child {
+                font-size: 10px !important;
             }
         }
     </style>
@@ -1506,13 +1588,36 @@
     <div class="container">
         <div class="chatbot-main">
             <!-- 챗봇 헤더 -->
-            <div class="chatbot-header" style="padding: 18px !important; font-size: 22px !important;">
+            <div class="chatbot-header" style="padding: 18px !important; font-size: 22px !important; position: relative !important;">
                 <button class="home-button" onclick="goToMainPage()" title="메인 페이지로 이동" style="width: 68px !important; height: 75px !important; left: 15px !important;">
                 <div class="home-icon" style="font-size: 27px !important;">🏠</div>
                 <div class="home-arrow" style="font-size: 17px !important; margin-top: 3px !important;">←</div>
             </button>
                 <div class="chatbot-title" style="font-size: 22px !important; font-weight: bold !important;">
                     <span>피닉스 치과 AI 상담사👩‍⚕️</span>
+                </div>
+                
+                <!-- 언어 선택 드롭다운 -->
+                <div class="language-dropdown" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); z-index: 1000;">
+                    <div style="font-size: 12px; color: white; text-align: center; margin-bottom: 4px; font-weight: bold;">언어</div>
+                    <div class="language-current" onclick="toggleLanguageDropdown2()" style="background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 8px 12px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; min-width: 60px; position: relative;">
+                        <span id="currentLanguageFlag2" style="font-size: 20px;">🇰🇷</span>
+                        <span style="font-size: 12px; color: white; margin-left: 4px;">▼</span>
+                    </div>
+                    <div class="language-menu" id="languageMenu2" style="position: absolute; top: 100%; right: 0; background: white; border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px; display: none; min-width: 120px; z-index: 1001;">
+                        <div class="language-option" onclick="selectLanguageFromDropdown2('ko')" style="display: flex; align-items: center; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 16px; color: #2c3e50;">
+                            <span style="margin-right: 8px;">🇰🇷</span>
+                            <span style="font-size: 14px;">한국어</span>
+                        </div>
+                        <div class="language-option" onclick="selectLanguageFromDropdown2('en')" style="display: flex; align-items: center; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 16px; color: #2c3e50;">
+                            <span style="margin-right: 8px;">🇺🇸</span>
+                            <span style="font-size: 14px;">영어</span>
+                        </div>
+                        <div class="language-option" onclick="selectLanguageFromDropdown2('ru')" style="display: flex; align-items: center; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 16px; color: #2c3e50;">
+                            <span style="margin-right: 8px;">🇷🇺</span>
+                            <span style="font-size: 14px;">러시아어</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -1533,23 +1638,10 @@
                 </div>
             </div>
 
-            <!-- 챗봇 입력 영역 - 언어 선택 통합 -->
-            <div class="chatbot-input" style="padding: 18px !important; margin: 0 10px 10px 10px !important; display: flex !important; align-items: flex-start !important; gap: 12px !important;">
-                <!-- 언어 선택 버튼 영역 -->
-                <div class="language-selector-compact" style="min-width: 70px; background: #f8f9fa; border-radius: 15px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <div style="font-size: 12px; font-weight: bold; color: #2c3e50; text-align: center; margin-bottom: 6px;">[언어]</div>
-                    <div class="language-flags" style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
-                        <button class="language-flag korean active" onclick="setLanguage2('ko')" id="langFlag-ko-2" style="background: transparent; border: 2px solid #4facfe; border-radius: 8px; padding: 4px 8px; font-size: 16px; cursor: pointer; transition: all 0.3s; width: 50px; text-align: center;">🇰🇷</button>
-                        <button class="language-flag english" onclick="setLanguage2('en')" id="langFlag-en-2" style="background: transparent; border: 2px solid #ddd; border-radius: 8px; padding: 4px 8px; font-size: 16px; cursor: pointer; transition: all 0.3s; width: 50px; text-align: center;">🇺🇸</button>
-                        <button class="language-flag russian" onclick="setLanguage2('ru')" id="langFlag-ru-2" style="background: transparent; border: 2px solid #ddd; border-radius: 8px; padding: 4px 8px; font-size: 16px; cursor: pointer; transition: all 0.3s; width: 50px; text-align: center;">🇷🇺</button>
-                    </div>
-                </div>
-                
-                <!-- 메시지 입력창 -->
-                <div style="flex: 1; display: flex; align-items: flex-end; gap: 10px;">
-                    <textarea id="chatbotInput2" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress2(event)" rows="1" style="flex: 1; padding: 18px 24px !important; font-size: 22px !important; min-height: 65px !important; border-radius: 25px !important; border: 2px solid #e9ecef; resize: none; line-height: 1.4;"></textarea>
-                    <button class="chatbot-send" onclick="sendMessage2()" style="padding: 18px 26px !important; font-size: 21px !important; min-width: 108px !important; border-radius: 25px !important; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; cursor: pointer; transition: all 0.3s;">전송</button>
-                </div>
+            <!-- 챗봇 입력 영역 -->
+            <div class="chatbot-input" style="padding: 18px !important; margin: 0 10px 10px 10px !important; display: flex !important; align-items: flex-end !important; gap: 10px !important;">
+                <textarea id="chatbotInput2" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress2(event)" rows="1" style="flex: 1; padding: 18px 24px !important; font-size: 22px !important; min-height: 65px !important; border-radius: 25px !important; border: 2px solid #e9ecef; resize: none; line-height: 1.4;"></textarea>
+                <button class="chatbot-send" onclick="sendMessage2()" style="padding: 18px 26px !important; font-size: 21px !important; min-width: 108px !important; border-radius: 25px !important; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; cursor: pointer; transition: all 0.3s;">전송</button>
             </div>
         </div>
     </div>
@@ -2506,40 +2598,95 @@
             console.log(`언어가 ${language}로 설정되었습니다.`);
         }
         
-        // 언어 버튼 시각적 업데이트 (국기 버튼용)
+        // 언어 드롭다운 업데이트
         function updateLanguageButtons2() {
-            console.log('국기 언어 버튼 시각적 업데이트 시작');
+            console.log('언어 드롭다운 시각적 업데이트 시작');
             
-            // 모든 언어 국기 버튼을 기본 상태로 설정
-            const languages = ['ko', 'en', 'ru'];
-            languages.forEach(lang => {
-                const flagButton = document.getElementById(`langFlag-${lang}-2`);
-                if (flagButton) {
-                    // 기본 상태: 회색 테두리
-                    flagButton.style.setProperty('border', '2px solid #ddd', 'important');
-                    flagButton.style.setProperty('background', 'transparent', 'important');
-                    flagButton.style.setProperty('transform', 'scale(1)', 'important');
-                    flagButton.style.setProperty('box-shadow', 'none', 'important');
-                    flagButton.classList.remove('active');
-                    
-                    console.log(`${lang} 국기 버튼을 기본 상태로 설정`);
+            // 현재 언어 국기 업데이트
+            const currentFlagElement = document.getElementById('currentLanguageFlag2');
+            if (currentFlagElement) {
+                const languageFlags = {
+                    'ko': '🇰🇷',
+                    'en': '🇺🇸',
+                    'ru': '🇷🇺'
+                };
+                
+                currentFlagElement.textContent = languageFlags[currentLanguage2] || '🇰🇷';
+                console.log(`현재 언어 표시: ${currentLanguage2} → ${languageFlags[currentLanguage2]}`);
+            }
+            
+            // 드롭다운 메뉴의 선택된 옵션 강조
+            const languageOptions = document.querySelectorAll('.language-option');
+            languageOptions.forEach((option, index) => {
+                const languages = ['ko', 'en', 'ru'];
+                const optionLang = languages[index];
+                
+                option.classList.remove('selected');
+                if (optionLang === currentLanguage2) {
+                    option.classList.add('selected');
+                    console.log(`드롭다운에서 ${optionLang} 옵션 강조`);
                 }
             });
             
-            // 선택된 언어 국기 버튼을 강조 표시
-            const selectedFlagButton = document.getElementById(`langFlag-${currentLanguage2}-2`);
-            if (selectedFlagButton) {
-                // 선택된 상태: 파란색 테두리 및 배경
-                selectedFlagButton.style.setProperty('border', '2px solid #4facfe', 'important');
-                selectedFlagButton.style.setProperty('background', 'rgba(79, 172, 254, 0.1)', 'important');
-                selectedFlagButton.style.setProperty('transform', 'scale(1.1)', 'important');
-                selectedFlagButton.style.setProperty('box-shadow', '0 4px 15px rgba(79, 172, 254, 0.3)', 'important');
-                selectedFlagButton.classList.add('active');
+            console.log('언어 드롭다운 시각적 업데이트 완료');
+        }
+
+        // 언어 드롭다운 토글
+        function toggleLanguageDropdown2() {
+            console.log('언어 드롭다운 토글');
+            
+            const menu = document.getElementById('languageMenu2');
+            if (menu) {
+                const isVisible = menu.style.display === 'block';
                 
-                console.log(`${currentLanguage2} 국기 버튼을 강조 표시 완료`);
+                if (isVisible) {
+                    // 메뉴 숨기기
+                    menu.style.display = 'none';
+                    menu.classList.remove('show');
+                    console.log('드롭다운 메뉴 숨김');
+                } else {
+                    // 메뉴 보이기
+                    menu.style.display = 'block';
+                    menu.classList.add('show');
+                    console.log('드롭다운 메뉴 표시');
+                    
+                    // 메뉴 외부 클릭 시 닫기
+                    setTimeout(() => {
+                        document.addEventListener('click', closeDropdownOnOutsideClick2, { once: true });
+                    }, 100);
+                }
+            }
+        }
+
+        // 드롭다운 외부 클릭 시 닫기
+        function closeDropdownOnOutsideClick2(event) {
+            const dropdown = event.target.closest('.language-dropdown');
+            if (!dropdown) {
+                const menu = document.getElementById('languageMenu2');
+                if (menu) {
+                    menu.style.display = 'none';
+                    menu.classList.remove('show');
+                    console.log('외부 클릭으로 드롭다운 메뉴 닫힌됨');
+                }
+            }
+        }
+
+        // 드롭다운에서 언어 선택
+        function selectLanguageFromDropdown2(language) {
+            console.log(`드롭다운에서 언어 선택: ${language}`);
+            
+            // 언어 설정 변경 (기존 setLanguage2 함수 호출)
+            setLanguage2(language);
+            
+            // 드롭다운 메뉴 닫기
+            const menu = document.getElementById('languageMenu2');
+            if (menu) {
+                menu.style.display = 'none';
+                menu.classList.remove('show');
             }
             
-            console.log('국기 언어 버튼 시각적 업데이트 완료');
+            // 시각적 업데이트
+            updateLanguageButtons2();
         }
         
         // 페이지 로드 시 저장된 언어 설정 복원
