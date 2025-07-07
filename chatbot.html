@@ -109,9 +109,9 @@
         }
 
         .language-current {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border: 2px solid #ffbf00;
+            color: #333;
             padding: 10px 15px;
             border-radius: 20px;
             font-size: 14px;
@@ -123,10 +123,13 @@
             gap: 8px;
             min-width: 120px;
             justify-content: center;
+            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.4);
         }
 
         .language-current:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #ffbf00 0%, #ffd700 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 215, 0, 0.6);
         }
 
         .language-menu {
