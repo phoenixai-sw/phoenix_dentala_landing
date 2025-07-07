@@ -155,9 +155,9 @@
             padding: 10px !important;
             overflow-y: auto !important;
             background: #f8f9fa !important;
-            min-height: 300px !important;
-            max-height: calc(100vh - 320px) !important;
-            max-height: calc(100dvh - 320px) !important;
+            min-height: 250px !important;
+            max-height: calc(100vh - 380px) !important;
+            max-height: calc(100dvh - 380px) !important;
             /* 모바일 스크롤 최적화 */
             -webkit-overflow-scrolling: touch !important;
             scroll-behavior: smooth !important;
@@ -245,14 +245,14 @@
             background: #4facfe;
             color: white;
             border: none;
-            padding: 4px 8px;
-            border-radius: 10px;
-            font-size: 10px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 20px;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 500;
-            min-width: 50px;
-            height: 24px;
+            min-width: 100px;
+            height: 48px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -260,13 +260,13 @@
         }
 
         .language-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
         .language-btn.selected {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            transform: scale(1.02);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
         }
 
         /* 언어 선택 영역 - 카카오톡 브라우저와 Galaxy XCover 5 최적화 */
@@ -274,10 +274,10 @@
             position: relative !important;
             background: #f8f9fa !important;
             border-top: 1px solid #e9ecef !important;
-            padding: 6px 12px 12px 12px !important;
+            padding: 12px 16px 20px 16px !important;
             text-align: center !important;
-            min-height: 45px !important;
-            max-height: 50px !important;
+            min-height: 80px !important;
+            max-height: 90px !important;
             box-sizing: border-box !important;
             /* 카카오톡 브라우저 최적화 */
             -webkit-touch-callout: none !important;
@@ -288,13 +288,13 @@
             z-index: 10 !important;
             flex-shrink: 0 !important;
             /* 하단 안전 영역 확보 */
-            padding-bottom: env(safe-area-inset-bottom, 12px) !important;
+            padding-bottom: env(safe-area-inset-bottom, 20px) !important;
         }
 
         .language-selector div {
-            font-size: 11px !important;
+            font-size: 22px !important;
             color: #6c757d !important;
-            margin-bottom: 4px !important;
+            margin-bottom: 8px !important;
             font-weight: 600 !important;
             line-height: 1 !important;
         }
@@ -302,7 +302,7 @@
         .language-buttons {
             display: flex !important;
             justify-content: center !important;
-            gap: 4px !important;
+            gap: 8px !important;
             flex-wrap: wrap !important;
             align-items: center !important;
         }
@@ -1088,15 +1088,15 @@
         /* Galaxy XCover 5 시리즈 (SM-G525N) 특별 최적화 */
         @media screen and (max-width: 432px) and (max-height: 900px) {
             .chatbot-main {
-                height: calc(100vh - 20px) !important;
-                min-height: calc(100vh - 20px) !important;
-                margin-bottom: 20px !important;
+                height: calc(100vh - 40px) !important;
+                min-height: calc(100vh - 40px) !important;
+                margin-bottom: 40px !important;
             }
 
             .chatbot-messages {
-                max-height: calc(100vh - 350px) !important;
-                max-height: calc(100dvh - 350px) !important;
-                min-height: 250px !important;
+                max-height: calc(100vh - 180px) !important;
+                max-height: calc(100dvh - 180px) !important;
+                min-height: 150px !important;
             }
 
             .language-selector {
@@ -1104,27 +1104,27 @@
                 bottom: 0 !important;
                 background: #f8f9fa !important;
                 border-top: 2px solid #e9ecef !important;
-                padding: 4px 10px 8px 10px !important;
-                min-height: 35px !important;
-                max-height: 40px !important;
+                padding: 8px 15px 16px 15px !important;
+                min-height: 70px !important;
+                max-height: 80px !important;
                 z-index: 50 !important;
-                margin-bottom: env(safe-area-inset-bottom, 10px) !important;
+                margin-bottom: env(safe-area-inset-bottom, 16px) !important;
             }
 
             .language-selector div {
-                font-size: 9px !important;
-                margin-bottom: 2px !important;
+                font-size: 18px !important;
+                margin-bottom: 4px !important;
             }
 
             .language-buttons {
-                gap: 3px !important;
+                gap: 6px !important;
             }
 
             .language-btn {
-                padding: 3px 6px !important;
-                font-size: 9px !important;
-                min-width: 40px !important;
-                height: 20px !important;
+                padding: 6px 12px !important;
+                font-size: 18px !important;
+                min-width: 80px !important;
+                height: 40px !important;
             }
         }
 
@@ -1136,21 +1136,21 @@
                 top: 0 !important;
                 left: 0 !important;
                 width: 100vw !important;
-                height: calc(100vh - 50px) !important;
-                height: calc(100dvh - 50px) !important;
+                height: calc(100vh - 100px) !important;
+                height: calc(100dvh - 100px) !important;
                 overflow: hidden !important;
                 display: flex !important;
                 flex-direction: column !important;
-                margin-bottom: 50px !important;
+                margin-bottom: 100px !important;
             }
 
             .chatbot-messages {
                 flex: 1 !important;
                 overflow-y: auto !important;
                 -webkit-overflow-scrolling: touch !important;
-                max-height: calc(100vh - 200px) !important;
-                max-height: calc(100dvh - 200px) !important;
-                min-height: 200px !important;
+                max-height: calc(100vh - 260px) !important;
+                max-height: calc(100dvh - 260px) !important;
+                min-height: 180px !important;
             }
 
             .chatbot-input {
@@ -1169,34 +1169,34 @@
                 flex-shrink: 0 !important;
                 background: #f8f9fa !important;
                 border-top: 2px solid #e9ecef !important;
-                padding: 4px 10px 8px 10px !important;
-                min-height: 35px !important;
-                max-height: 40px !important;
+                padding: 8px 15px 16px 15px !important;
+                min-height: 70px !important;
+                max-height: 80px !important;
                 z-index: 1000 !important;
                 box-sizing: border-box !important;
             }
 
             .language-selector div {
-                font-size: 10px !important;
-                margin-bottom: 3px !important;
+                font-size: 20px !important;
+                margin-bottom: 6px !important;
             }
 
             .language-buttons {
                 justify-content: center !important;
-                gap: 3px !important;
+                gap: 6px !important;
                 flex-wrap: wrap !important;
             }
 
             .language-btn {
-                padding: 3px 6px !important;
-                font-size: 9px !important;
-                border-radius: 8px !important;
+                padding: 6px 12px !important;
+                font-size: 18px !important;
+                border-radius: 16px !important;
                 touch-action: manipulation !important;
                 -webkit-touch-callout: none !important;
                 -webkit-user-select: none !important;
                 user-select: none !important;
-                min-width: 35px !important;
-                height: 18px !important;
+                min-width: 70px !important;
+                height: 36px !important;
             }
         }
 
@@ -1496,22 +1496,22 @@
                         languageSelector.style.position = 'fixed';
                         languageSelector.style.bottom = '0';
                         languageSelector.style.zIndex = '9999';
-                        languageSelector.style.padding = '3px 8px 6px 8px';
-                        languageSelector.style.minHeight = '30px';
-                        languageSelector.style.maxHeight = '32px';
+                        languageSelector.style.padding = '8px 15px 16px 15px';
+                        languageSelector.style.minHeight = '70px';
+                        languageSelector.style.maxHeight = '80px';
                         languageSelector.style.borderTop = '1px solid #ddd';
                     } else if (isKakaoTalk) {
                         languageSelector.style.position = 'fixed';
                         languageSelector.style.bottom = 'env(safe-area-inset-bottom, 0px)';
                         languageSelector.style.zIndex = '1000';
-                        languageSelector.style.padding = '4px 10px 8px 10px';
-                        languageSelector.style.minHeight = '35px';
-                        languageSelector.style.maxHeight = '40px';
+                        languageSelector.style.padding = '8px 15px 16px 15px';
+                        languageSelector.style.minHeight = '70px';
+                        languageSelector.style.maxHeight = '80px';
                     } else {
                         languageSelector.style.position = 'relative';
-                        languageSelector.style.padding = '6px 12px 12px 12px';
-                        languageSelector.style.minHeight = '45px';
-                        languageSelector.style.maxHeight = '50px';
+                        languageSelector.style.padding = '12px 16px 20px 16px';
+                        languageSelector.style.minHeight = '80px';
+                        languageSelector.style.maxHeight = '90px';
                     }
                     
                     languageSelector.style.flexShrink = '0';
@@ -1525,23 +1525,23 @@
                     const languageButtons = languageSelector.querySelectorAll('.language-btn');
                     languageButtons.forEach(button => {
                         if (isGalaxyXCover5 || (window.innerWidth <= 432 && window.innerHeight <= 800)) {
-                            button.style.padding = '2px 4px';
-                            button.style.fontSize = '8px';
-                            button.style.minWidth = '30px';
-                            button.style.height = '16px';
-                            button.style.borderRadius = '6px';
+                            button.style.padding = '6px 12px';
+                            button.style.fontSize = '18px';
+                            button.style.minWidth = '80px';
+                            button.style.height = '40px';
+                            button.style.borderRadius = '16px';
                         } else if (isKakaoTalk) {
-                            button.style.padding = '3px 6px';
-                            button.style.fontSize = '9px';
-                            button.style.minWidth = '35px';
-                            button.style.height = '18px';
-                            button.style.borderRadius = '8px';
+                            button.style.padding = '6px 12px';
+                            button.style.fontSize = '18px';
+                            button.style.minWidth = '70px';
+                            button.style.height = '36px';
+                            button.style.borderRadius = '16px';
                         } else {
-                            button.style.padding = '4px 8px';
-                            button.style.fontSize = '10px';
-                            button.style.minWidth = '50px';
-                            button.style.height = '24px';
-                            button.style.borderRadius = '10px';
+                            button.style.padding = '8px 16px';
+                            button.style.fontSize = '20px';
+                            button.style.minWidth = '100px';
+                            button.style.height = '48px';
+                            button.style.borderRadius = '20px';
                         }
                         
                         button.style.touchAction = 'manipulation';
@@ -1558,14 +1558,14 @@
                     const titleDiv = languageSelector.querySelector('div');
                     if (titleDiv) {
                         if (isGalaxyXCover5 || (window.innerWidth <= 432 && window.innerHeight <= 800)) {
-                            titleDiv.style.fontSize = '8px';
-                            titleDiv.style.marginBottom = '1px';
-                        } else if (isKakaoTalk) {
-                            titleDiv.style.fontSize = '10px';
-                            titleDiv.style.marginBottom = '3px';
-                        } else {
-                            titleDiv.style.fontSize = '11px';
+                            titleDiv.style.fontSize = '18px';
                             titleDiv.style.marginBottom = '4px';
+                        } else if (isKakaoTalk) {
+                            titleDiv.style.fontSize = '20px';
+                            titleDiv.style.marginBottom = '6px';
+                        } else {
+                            titleDiv.style.fontSize = '22px';
+                            titleDiv.style.marginBottom = '8px';
                         }
                         titleDiv.style.lineHeight = '1';
                     }
@@ -1627,25 +1627,32 @@
                         languageSelector.style.zIndex = '99999';
                         languageSelector.style.background = '#f8f9fa';
                         languageSelector.style.borderTop = '2px solid #e9ecef';
-                        languageSelector.style.padding = '3px 8px 6px 8px';
-                        languageSelector.style.minHeight = '30px';
-                        languageSelector.style.maxHeight = '32px';
+                        languageSelector.style.padding = '8px 15px 16px 15px';
+                        languageSelector.style.minHeight = '70px';
+                        languageSelector.style.maxHeight = '80px';
                         
                         // 메시지 영역 높이 재조정
                         const messagesContainer = document.querySelector('.chatbot-messages');
                         if (messagesContainer) {
-                            messagesContainer.style.maxHeight = 'calc(100vh - 180px)';
+                            messagesContainer.style.maxHeight = 'calc(100vh - 240px)';
                             messagesContainer.style.paddingBottom = '10px';
                         }
                         
                         // 언어 버튼들 크기 재조정
                         languageButtons.forEach(btn => {
-                            btn.style.padding = '2px 4px';
-                            btn.style.fontSize = '8px';
-                            btn.style.minWidth = '30px';
-                            btn.style.height = '16px';
-                            btn.style.borderRadius = '6px';
+                            btn.style.padding = '6px 12px';
+                            btn.style.fontSize = '18px';
+                            btn.style.minWidth = '80px';
+                            btn.style.height = '40px';
+                            btn.style.borderRadius = '16px';
                         });
+                        
+                        // 제목 텍스트 크기 재조정
+                        const titleDiv = languageSelector.querySelector('div');
+                        if (titleDiv) {
+                            titleDiv.style.fontSize = '18px';
+                            titleDiv.style.marginBottom = '4px';
+                        }
                         
                         console.log('언어 선택 영역 강제 수정 완료');
                     }
