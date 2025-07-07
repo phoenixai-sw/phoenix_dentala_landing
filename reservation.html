@@ -601,6 +601,10 @@
             box-shadow: 0 6px 20px rgba(245, 87, 108, 0.5) !important;
         }
         
+        .language-button.japanese:hover {
+            box-shadow: 0 6px 20px rgba(255, 154, 158, 0.5) !important;
+        }
+        
         /* 선택된 언어 버튼 스타일 */
         .language-button.selected {
             background: linear-gradient(135deg, #ffd700 0%, #ffeb3b 100%) !important;
@@ -680,13 +684,16 @@
             </h2>
             <div class="language-buttons" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                 <button class="language-button korean" onclick="selectLanguage('ko')" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">
-                    🇰🇷 한국어
+                    🇰🇷 한국어KR
                 </button>
                 <button class="language-button english" onclick="selectLanguage('en')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                    🇺🇸 영어
+                    🇺🇸 영어US
                 </button>
                 <button class="language-button russian" onclick="selectLanguage('ru')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);">
-                    🇷🇺 러시아어
+                    🇷🇺 러시아어RU
+                </button>
+                <button class="language-button japanese" onclick="selectLanguage('ja')" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 154, 158, 0.3);">
+                    🇯🇵 일본어JP
                 </button>
             </div>
         </div>
