@@ -125,8 +125,11 @@
             font-size: 22px;
             margin-bottom: 0;
             font-weight: 700;
-            margin-left: 90px;
-            margin-right: 90px;
+            margin-left: 100px;
+            margin-right: 80px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .header p {
@@ -401,7 +404,12 @@
             }
             
             .header h1 {
-                font-size: 24px !important;
+                font-size: 20px !important;
+                margin-left: 90px !important;
+                margin-right: 70px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
             }
             
             .back-link {
@@ -472,6 +480,15 @@
                 font-size: 12px !important;
             }
             
+            .header h1 {
+                font-size: 18px !important;
+                margin-left: 80px !important;
+                margin-right: 60px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            
             .info-section {
                 padding: 10px !important;
                 margin-bottom: 12px !important;
@@ -507,6 +524,15 @@
             
             .home-arrow {
                 font-size: 10px !important;
+            }
+            
+            .header h1 {
+                font-size: 16px !important;
+                margin-left: 70px !important;
+                margin-right: 50px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
             }
             
             .info-section {
@@ -560,8 +586,12 @@
         }
         
         .device-iphone11 .header h1 {
-            margin-left: 80px !important;
-            margin-right: 80px !important;
+            margin-left: 90px !important;
+            margin-right: 70px !important;
+            font-size: 20px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
         }
         
         .device-iphone11 .content {
@@ -596,8 +626,12 @@
         }
         
         .device-iphone-mini .header h1 {
-            margin-left: 75px !important;
-            margin-right: 75px !important;
+            margin-left: 85px !important;
+            margin-right: 65px !important;
+            font-size: 19px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
         }
         
         .device-iphone-mini .content {
@@ -632,8 +666,12 @@
         }
         
         .device-galaxy-xcover5 .header h1 {
-            margin-left: 85px !important;
-            margin-right: 85px !important;
+            margin-left: 95px !important;
+            margin-right: 75px !important;
+            font-size: 21px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
         }
         
         .device-galaxy-xcover5 .content {
@@ -713,8 +751,11 @@
         }
         
         .device-ios .header h1 {
-            margin-left: 90px !important;
-            margin-right: 90px !important;
+            margin-left: 100px !important;
+            margin-right: 80px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
         }
         
         .device-ios .container {
@@ -785,8 +826,11 @@
         }
         
         .device-android .header h1 {
-            margin-left: 90px !important;
-            margin-right: 90px !important;
+            margin-left: 100px !important;
+            margin-right: 80px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
         }
     </style>
 </head>
@@ -798,7 +842,7 @@
                 <span class="home-icon">🏠</span>
                 <span class="home-arrow">←</span>
             </a>
-            <h1>무료 검진(구강) 확인<span style="font-size: 150%;">👩‍⚕️</span></h1>
+            <h1>무료 검진 확인</h1>
         </div>
 
         <!-- 메인 컨텐츠 -->
@@ -1088,10 +1132,13 @@
                     backLink.style.setProperty('z-index', '1000', 'important');
                     
                     // 제목 위치 조정 (백 링크와 겹치지 않도록)
-                    headerTitle.style.setProperty('margin-left', '90px', 'important');
-                    headerTitle.style.setProperty('margin-right', '90px', 'important');
+                    headerTitle.style.setProperty('margin-left', '100px', 'important');
+                    headerTitle.style.setProperty('margin-right', '80px', 'important');
                     headerTitle.style.setProperty('position', 'relative', 'important');
                     headerTitle.style.setProperty('z-index', '1', 'important');
+                    headerTitle.style.setProperty('white-space', 'nowrap', 'important');
+                    headerTitle.style.setProperty('overflow', 'hidden', 'important');
+                    headerTitle.style.setProperty('text-overflow', 'ellipsis', 'important');
                 }
                 
                 console.log('카카오톡 인앱 브라우저 진료 시간 안내 및 헤더 스타일 강제 재적용 완료');
@@ -1218,10 +1265,13 @@
                         backLink.style.setProperty('transform', 'translateY(-50%)', 'important');
                         backLink.style.setProperty('z-index', '1000', 'important');
                         
-                        headerTitle.style.setProperty('margin-left', '90px', 'important');
-                        headerTitle.style.setProperty('margin-right', '90px', 'important');
+                        headerTitle.style.setProperty('margin-left', '100px', 'important');
+                        headerTitle.style.setProperty('margin-right', '80px', 'important');
                         headerTitle.style.setProperty('position', 'relative', 'important');
                         headerTitle.style.setProperty('z-index', '1', 'important');
+                        headerTitle.style.setProperty('white-space', 'nowrap', 'important');
+                        headerTitle.style.setProperty('overflow', 'hidden', 'important');
+                        headerTitle.style.setProperty('text-overflow', 'ellipsis', 'important');
                     }
                 }, 100);
                 
