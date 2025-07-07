@@ -113,6 +113,7 @@
             transition: all 0.3s ease;
             padding: 4px;
             text-decoration: none;
+            z-index: 1000;
         }
 
         .back-link:hover {
@@ -1334,6 +1335,22 @@
             font-size: 20px !important;
         }
         
+        .device-iphone11 .back-link {
+            left: 12px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 60px !important;
+            height: 66px !important;
+        }
+        
+        .device-iphone11 .home-icon {
+            font-size: 24px !important;
+        }
+        
+        .device-iphone11 .home-arrow {
+            font-size: 15px !important;
+        }
+        
         .device-iphone11 .chatbot-input {
             padding: 15px 18px !important;
         }
@@ -1349,6 +1366,22 @@
             font-size: 19px !important;
         }
         
+        .device-iphone-mini .back-link {
+            left: 10px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 55px !important;
+            height: 60px !important;
+        }
+        
+        .device-iphone-mini .home-icon {
+            font-size: 22px !important;
+        }
+        
+        .device-iphone-mini .home-arrow {
+            font-size: 14px !important;
+        }
+        
         .device-iphone-mini .chatbot-input {
             padding: 12px 16px !important;
         }
@@ -1362,6 +1395,22 @@
         .device-galaxy-xcover5 .chatbot-header {
             padding: 22px 20px !important;
             font-size: 21px !important;
+        }
+        
+        .device-galaxy-xcover5 .back-link {
+            left: 14px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 62px !important;
+            height: 68px !important;
+        }
+        
+        .device-galaxy-xcover5 .home-icon {
+            font-size: 25px !important;
+        }
+        
+        .device-galaxy-xcover5 .home-arrow {
+            font-size: 16px !important;
         }
         
         .device-galaxy-xcover5 .chatbot-input {
@@ -1380,6 +1429,8 @@
         .kakao-browser .back-link {
             -webkit-tap-highlight-color: transparent !important;
             touch-action: manipulation !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
         }
         
         .kakao-browser .chatbot-input textarea {
@@ -1395,6 +1446,11 @@
         /* 모든 아이폰 기기 공통 최적화 */
         .device-iphone .chatbot-main {
             min-height: calc(100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)) !important;
+        }
+        
+        .device-iphone .back-link {
+            top: 50% !important;
+            transform: translateY(-50%) !important;
         }
         
         .device-iphone .chatbot-input textarea:focus {
@@ -1419,6 +1475,22 @@
             padding-right: var(--safe-area-inset-right);
         }
         
+        /* iOS 기기에서 헤더 내 요소들 정확한 중앙 정렬 */
+        .device-ios .chatbot-header {
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        .device-ios .back-link {
+            position: absolute !important;
+            left: 15px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            z-index: 1000 !important;
+        }
+        
         /* 안드로이드 키보드 열림 상태 최적화 */
         .keyboard-open .chatbot-messages {
             max-height: 60vh !important;
@@ -1438,6 +1510,22 @@
             transform: translate3d(0, 0, 0);
         }
         
+        /* 모바일 기기에서 헤더 요소들 정확한 위치 조정 */
+        .device-ios .chatbot-header,
+        .device-android .chatbot-header {
+            position: relative !important;
+            min-height: 60px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        .device-ios .chatbot-title,
+        .device-android .chatbot-title {
+            position: relative !important;
+            z-index: 1 !important;
+        }
+        
         /* 스크롤 바운스 효과 제거 (iOS) */
         .device-ios .chatbot-messages {
             -webkit-overflow-scrolling: touch;
@@ -1452,6 +1540,12 @@
         
         .device-android .chatbot-messages::-webkit-scrollbar {
             display: none;
+        }
+        
+        /* 안드로이드 기기 공통 최적화 */
+        .device-android .back-link {
+            top: 50% !important;
+            transform: translateY(-50%) !important;
         }
         
         /* 예약하기 버튼 스타일 */
