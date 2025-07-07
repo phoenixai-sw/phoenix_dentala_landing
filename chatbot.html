@@ -911,6 +911,64 @@
                 padding: 8px;
             }
         }
+
+        /* 모바일 기기 터치 이벤트 최적화 */
+        .quick-button {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .quick-button:active {
+            transform: scale(0.95);
+        }
+
+        .language-current, .language-option {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .chatbot-send {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .chatbot-send:active {
+            transform: scale(0.95);
+        }
+
+        /* 카카오톡 브라우저 특별 최적화 */
+        @supports (-webkit-touch-callout: none) {
+            .quick-buttons {
+                gap: 12px !important;
+            }
+            
+            .quick-button {
+                min-height: 44px !important;
+                padding: 12px 16px !important;
+            }
+        }
+
+        /* 키보드 열림 상태 최적화 */
+        .keyboard-open .chatbot-messages {
+            padding-bottom: 20px;
+        }
+
+        .keyboard-open .chatbot-input {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
@@ -1045,277 +1103,156 @@
         };
 
         // 초기화
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM 로드 완료');
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 별도창 AI챗봇 페이지 로드 시작');
             
-            // 카카오톡 브라우저 감지 및 최적화
-            optimizeForKakaoTalk();
+            // 카카오톡 브라우저 감지
+            const isKakaoTalk = navigator.userAgent.includes('KAKAO');
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            // 환영 메시지 및 빠른 버튼 추가
-            setTimeout(() => {
-                addWelcomeMessage();
-                setupEventListeners();
-                setupTextareaResize();
-            }, 200);
-        });
-
-        // 모바일 브라우저 최적화
-        function optimizeForKakaoTalk() {
-            const userAgent = navigator.userAgent;
-            const isKakaoTalk = userAgent.includes('KAKAOTALK') || userAgent.includes('KAKAO');
-            const isGalaxyXCover5 = userAgent.includes('SM-G525N') || 
-                                   (window.screen.width <= 432 && window.screen.height <= 900);
-            const isIPhone11 = /iPhone.*Mobile/.test(navigator.userAgent) && 
-                              (window.screen.width === 414 && window.screen.height === 896);
-            const isIPhoneMini = /iPhone.*Mobile/.test(navigator.userAgent) && 
-                               (window.screen.width === 375 && window.screen.height === 812);
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isAndroid = /Android/.test(navigator.userAgent);
-            const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-            
-            if (isKakaoTalk || isGalaxyXCover5 || isIPhoneMini || isIPhone11 || isMobile) {
+            if (isKakaoTalk || isMobile) {
+                console.log('카카오톡 브라우저 또는 모바일 기기 감지됨');
                 document.body.classList.add('kakao-optimized');
                 
-                // 모든 요소에 터치 최적화 적용
-                const elements = document.querySelectorAll('*');
-                elements.forEach(el => {
-                    el.style.touchAction = 'manipulation';
-                    el.style.webkitTouchCallout = 'none';
-                });
-                
-                // 입력창만 텍스트 선택 허용
-                const textarea = document.getElementById('chatbotInput');
-                if (textarea) {
-                    textarea.style.webkitUserSelect = 'text';
-                    textarea.style.userSelect = 'text';
-                    textarea.style.touchAction = 'manipulation';
-                    
-                    // iOS에서 입력 시 zoom 방지
-                    if (isIOS) {
-                        textarea.style.fontSize = '16px';
-                        textarea.addEventListener('focus', function() {
-                            this.style.fontSize = '16px';
-                        });
-                    }
-                }
-                
-                // iOS Safari 뷰포트 높이 수정
-                if (isIOS) {
-                    const setViewportHeight = () => {
-                        const vh = window.innerHeight * 0.01;
-                        document.documentElement.style.setProperty('--vh', `${vh}px`);
-                    };
-                    
-                    setViewportHeight();
-                    window.addEventListener('resize', setViewportHeight);
-                    window.addEventListener('orientationchange', () => {
-                        setTimeout(setViewportHeight, 500);
-                    });
-                }
-                
-                // 안드로이드 키보드 처리
-                if (isAndroid) {
-                    const originalHeight = window.innerHeight;
-                    
-                    window.addEventListener('resize', function() {
-                        const currentHeight = window.innerHeight;
-                        const heightDiff = originalHeight - currentHeight;
-                        
-                        if (heightDiff > 150) {
-                            // 키보드가 열린 상태
-                            document.body.style.height = `${currentHeight}px`;
-                        } else {
-                            // 키보드가 닫힌 상태
-                            document.body.style.height = '100vh';
-                        }
-                    });
-                }
-                
-                // 더블 탭 zoom 방지
-                let lastTouchEnd = 0;
-                document.addEventListener('touchend', function (event) {
-                    const now = (new Date()).getTime();
-                    if (now - lastTouchEnd <= 300) {
-                        event.preventDefault();
-                    }
-                    lastTouchEnd = now;
-                }, false);
-                
-                // 드롭다운 메뉴 터치 최적화
-                const languageDropdown = document.querySelector('.language-dropdown');
-                if (languageDropdown) {
-                    languageDropdown.addEventListener('touchstart', function(e) {
-                        e.stopPropagation();
-                    }, { passive: true });
-                }
-                
-                console.log(`모바일 브라우저 최적화 완료 - ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Mobile'} ${isKakaoTalk ? '(카카오톡)' : ''}`);
+                // 모바일 기기 최적화 강화
+                optimizeForMobile();
             }
-        }
-
-        // 환영 메시지 추가
-        function addWelcomeMessage() {
-            const t = translations[currentLanguage] || translations['ko'];
             
-            const welcomeMessage = `
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <div style="font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px;">
-                        ${t.welcomeMessage}
-                    </div>
-                    <div style="font-size: 14px; color: #666; margin-bottom: 15px; line-height: 1.5;">
-                        아래 버튼 클릭 또는 직접 메시지를 입력해 주세요,<br>
-                        우측 상단 메뉴에서 AI상담사의 언어 변경 가능 합니다!
-                    </div>
-                </div>
-                
-                <div class="quick-buttons">
-                    <button class="quick-button" onclick="sendQuickMessage('진료시간 알려주세요')">🕘 진료시간</button>
-                    <button class="quick-button" onclick="sendQuickMessage('치료비용 궁금해요')">💰 치료비용</button>
-                </div>
-            `;
+            // 뷰포트 높이 설정
+            function setViewportHeight() {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+            }
             
-            addBotMessage(welcomeMessage);
-        }
-
-        // 모든 이벤트 리스너 설정
-        function setupEventListeners() {
-            console.log('이벤트 리스너 설정 시작');
+            setViewportHeight();
+            window.addEventListener('resize', setViewportHeight);
             
-            // 전송 버튼 클릭/터치 이벤트
-            const sendButton = document.querySelector('.chatbot-send');
-            if (sendButton) {
-                // 클릭 이벤트
-                sendButton.addEventListener('click', function(e) {
+            // 드롭다운 메뉴 이벤트 리스너
+            const languageBtn = document.querySelector('.language-current');
+            const languageMenu = document.getElementById('languageMenu');
+            
+            if (languageBtn) {
+                languageBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    sendMessage();
+                    toggleLanguageMenu();
                 });
                 
-                // 터치 이벤트 (모바일 최적화)
-                sendButton.addEventListener('touchend', function(e) {
+                // 터치 이벤트 추가 (모바일 기기용)
+                languageBtn.addEventListener('touchstart', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    sendMessage();
+                    toggleLanguageMenu();
                 });
             }
-
-            // 입력창 키보드 이벤트
-            const inputTextarea = document.getElementById('chatbotInput');
-            if (inputTextarea) {
-                inputTextarea.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' && e.shiftKey) {
+            
+            // 언어 옵션 클릭 이벤트
+            const languageOptions = document.querySelectorAll('.language-option');
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const lang = this.getAttribute('data-lang');
+                    selectLanguage(lang);
+                });
+                
+                // 터치 이벤트 추가 (모바일 기기용)
+                option.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const lang = this.getAttribute('data-lang');
+                    selectLanguage(lang);
+                });
+            });
+            
+            // 외부 클릭 시 드롭다운 닫기
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.language-dropdown')) {
+                    const menu = document.getElementById('languageMenu');
+                    if (menu) {
+                        menu.style.display = 'none';
+                        menu.classList.remove('show');
+                    }
+                }
+            });
+            
+            // 터치 이벤트로도 드롭다운 닫기
+            document.addEventListener('touchstart', function(e) {
+                if (!e.target.closest('.language-dropdown')) {
+                    const menu = document.getElementById('languageMenu');
+                    if (menu) {
+                        menu.style.display = 'none';
+                        menu.classList.remove('show');
+                    }
+                }
+            });
+            
+            // 입력창 이벤트 리스너
+            const chatInput = document.getElementById('chatbotInput');
+            if (chatInput) {
+                chatInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
                         sendMessage();
                     }
                 });
                 
-                // 모바일에서 포커스 시 스크롤 방지
-                inputTextarea.addEventListener('focus', function() {
-                    setTimeout(() => {
-                        this.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }, 300);
-                });
-            }
-
-            // 드롭다운 메뉴 이벤트 (클릭 + 터치)
-            const languageCurrent = document.querySelector('.language-current');
-            if (languageCurrent) {
-                // 클릭 이벤트
-                languageCurrent.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleLanguageDropdown();
-                });
-                
-                // 터치 이벤트
-                languageCurrent.addEventListener('touchend', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleLanguageDropdown();
-                });
-            }
-
-            // 언어 옵션 클릭/터치 이벤트
-            const languageOptions = document.querySelectorAll('.language-option');
-            languageOptions.forEach(option => {
-                // 클릭 이벤트
-                option.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const lang = this.getAttribute('data-lang');
-                    if (lang) {
-                        selectLanguage(lang);
-                    }
-                });
-                
-                // 터치 이벤트
-                option.addEventListener('touchend', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const lang = this.getAttribute('data-lang');
-                    if (lang) {
-                        selectLanguage(lang);
-                    }
-                });
-            });
-
-            // 드롭다운 외부 클릭/터치 이벤트
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.language-dropdown')) {
-                    const menu = document.getElementById('languageMenu');
-                    if (menu && menu.classList.contains('show')) {
-                        menu.style.display = 'none';
-                        menu.classList.remove('show');
-                    }
-                }
-            });
-            
-            document.addEventListener('touchend', function(e) {
-                if (!e.target.closest('.language-dropdown')) {
-                    const menu = document.getElementById('languageMenu');
-                    if (menu && menu.classList.contains('show')) {
-                        menu.style.display = 'none';
-                        menu.classList.remove('show');
-                    }
-                }
-            });
-
-            // 빠른 버튼 터치 이벤트 최적화
-            document.addEventListener('click', function(e) {
-                if (e.target.classList && e.target.classList.contains('quick-button')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-            
-            document.addEventListener('touchend', function(e) {
-                if (e.target.classList && e.target.classList.contains('quick-button')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-
-            console.log('이벤트 리스너 설정 완료');
-        }
-
-        // 텍스트 영역 자동 크기 조정
-        function setupTextareaResize() {
-            const textarea = document.getElementById('chatbotInput');
-            if (textarea) {
-                textarea.addEventListener('input', function() {
+                // 자동 높이 조절
+                chatInput.addEventListener('input', function() {
                     this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                    this.style.height = Math.min(this.scrollHeight, 100) + 'px';
                 });
             }
+            
+            // 환영 메시지 추가
+            setTimeout(() => {
+                addWelcomeMessage();
+            }, 500);
+            
+            // 초기 UI 업데이트
+            updateLanguageUI(currentLanguage);
+        });
+
+        // 모바일 기기 최적화
+        function optimizeForMobile() {
+            // 터치 이벤트 최적화
+            const chatbotMain = document.querySelector('.chatbot-main');
+            if (chatbotMain) {
+                chatbotMain.style.touchAction = 'manipulation';
+                chatbotMain.style.webkitTouchCallout = 'none';
+                chatbotMain.style.webkitUserSelect = 'none';
+                chatbotMain.style.userSelect = 'none';
+            }
+            
+            // 키보드 감지 및 대응
+            const originalHeight = window.innerHeight;
+            window.addEventListener('resize', function() {
+                const currentHeight = window.innerHeight;
+                const keyboardHeight = originalHeight - currentHeight;
+                
+                if (keyboardHeight > 100) {
+                    // 키보드가 열렸을 때
+                    document.body.classList.add('keyboard-open');
+                    const messagesContainer = document.getElementById('chatbotMessages');
+                    if (messagesContainer) {
+                        messagesContainer.style.marginBottom = (keyboardHeight + 20) + 'px';
+                    }
+                } else {
+                    // 키보드가 닫혔을 때
+                    document.body.classList.remove('keyboard-open');
+                    const messagesContainer = document.getElementById('chatbotMessages');
+                    if (messagesContainer) {
+                        messagesContainer.style.marginBottom = '80px';
+                    }
+                }
+            });
         }
 
-        // 언어 드롭다운 토글
-        function toggleLanguageDropdown() {
+        // 드롭다운 메뉴 토글
+        function toggleLanguageMenu() {
             const menu = document.getElementById('languageMenu');
             if (menu) {
-                const isVisible = menu.classList.contains('show');
-                
-                if (isVisible) {
+                if (menu.style.display === 'block' || menu.classList.contains('show')) {
                     menu.style.display = 'none';
                     menu.classList.remove('show');
                 } else {
@@ -1350,6 +1287,57 @@
             };
             
             addBotMessage(changeMessages[language] || changeMessages['ko']);
+            
+            // 모바일 기기에서 기본 답변 재생성 (카카오톡 브라우저 문제 해결)
+            const isKakaoTalk = navigator.userAgent.includes('KAKAO');
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isKakaoTalk || isMobile) {
+                console.log('모바일 기기 감지 - 기본 답변 재생성');
+                
+                // 기본 답변 재생성을 위한 강제 업데이트
+                setTimeout(() => {
+                    regenerateQuickButtons();
+                }, 1000);
+            }
+        }
+
+        // 기본 답변 버튼 재생성 (모바일 기기용)
+        function regenerateQuickButtons() {
+            const t = translations[currentLanguage] || translations['ko'];
+            
+            // 기존 환영 메시지 찾기
+            const messages = document.querySelectorAll('.message.bot');
+            let lastWelcomeMessage = null;
+            
+            messages.forEach(msg => {
+                if (msg.innerHTML.includes('quick-buttons')) {
+                    lastWelcomeMessage = msg;
+                }
+            });
+            
+            // 새로운 환영 메시지 추가
+            if (lastWelcomeMessage) {
+                const newWelcomeMessage = `
+                    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 15px; margin-bottom: 20px; color: white;">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+                            안녕하세요~ ${t.welcomeMessage}
+                        </div>
+                        <div style="font-size: 14px; opacity: 0.9;">
+                            궁금한 사항을 아래 버튼을 클릭하시거나 직접 메시지를 입력해주세요!
+                        </div>
+                        <div class="quick-buttons" style="display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap;">
+                            <button class="quick-button" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 10px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🕘 진료시간</button>
+                            <button class="quick-button" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); color: white; border: none; padding: 10px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);">💰 치료비용</button>
+                        </div>
+                    </div>
+                `;
+                
+                const messageContent = lastWelcomeMessage.querySelector('.message-content');
+                if (messageContent) {
+                    messageContent.innerHTML = newWelcomeMessage;
+                }
+            }
         }
 
         // 언어 UI 업데이트
@@ -1385,15 +1373,26 @@
             });
         }
 
-        // 빠른 메시지 전송
-        function sendQuickMessage(message) {
+        // 빠른 메시지 전송 (모바일 기기 최적화)
+        function handleQuickMessage(message) {
             console.log('빠른 메시지 전송:', message);
+            
+            // 이벤트 전파 방지
+            event.preventDefault();
+            event.stopPropagation();
             
             // 사용자 메시지 추가
             addUserMessage(message);
             
             // AI 답변 생성
-            generateResponse(message);
+            setTimeout(() => {
+                generateResponse(message);
+            }, 300);
+        }
+
+        // 빠른 메시지 전송 (호환성 유지)
+        function sendQuickMessage(message) {
+            handleQuickMessage(message);
         }
 
         // 메시지 전송
@@ -1449,20 +1448,30 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // AI 답변 생성
+        // AI 답변 생성 (강화된 모바일 기기 지원)
         function generateResponse(message) {
             const t = translations[currentLanguage] || translations['ko'];
             let response = '';
             
-            // 키워드 기반 답변
-            if (message.includes('진료시간') || message.includes('언제') || message.includes('몇시') || message.includes('시간') || 
-                message.includes('clinic hours') || message.includes('time') || message.includes('часы работы') || 
-                message.includes('診療時間')) {
+            console.log('AI 답변 생성:', message, '현재 언어:', currentLanguage);
+            
+            // 키워드 기반 답변 (다국어 지원 강화)
+            const isClinicHours = message.includes('진료시간') || message.includes('언제') || message.includes('몇시') || message.includes('시간') || 
+                                message.includes('clinic hours') || message.includes('time') || message.includes('hours') || 
+                                message.includes('часы работы') || message.includes('время') || 
+                                message.includes('診療時間') || message.includes('時間');
+            
+            const isTreatmentCost = message.includes('치료비용') || message.includes('비용') || message.includes('가격') || 
+                                  message.includes('cost') || message.includes('price') || message.includes('treatment') || 
+                                  message.includes('стоимость') || message.includes('цена') || 
+                                  message.includes('料金') || message.includes('費用');
+            
+            if (isClinicHours) {
                 response = t.clinicHours;
-            } else if (message.includes('치료비용') || message.includes('비용') || message.includes('가격') || 
-                      message.includes('cost') || message.includes('price') || message.includes('стоимость') || 
-                      message.includes('料金')) {
+                console.log('진료시간 답변 생성:', response);
+            } else if (isTreatmentCost) {
                 response = t.treatmentCost;
+                console.log('치료비용 답변 생성:', response);
             } else if (message.includes('AI관리자') || message.includes('AI 관리자') || message.includes('관리자')) {
                 // 관리자 기능 직접 호출
                 loginChatbotAdmin();
@@ -1485,7 +1494,7 @@
                 response += `<br><br>
                 <div style="background: #f0f8ff; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center;">
                     💝 <strong>좀더 자세한 사항은 직접 방문하시면 친절하게 상담 드리겠습니다!</strong><br><br>
-                    <button onclick="goToReservationPage()" style="
+                    <button onclick="goToReservationPage()" ontouchstart="goToReservationPage()" style="
                         background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
                         color: white;
                         border: none;
@@ -1502,6 +1511,41 @@
             }
             
             addBotMessage(response);
+            
+            // 모바일 기기에서 답변 표시 확인
+            const isKakaoTalk = navigator.userAgent.includes('KAKAO');
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isKakaoTalk || isMobile) {
+                console.log('모바일 기기에서 답변 표시 완료');
+                
+                // 스크롤 강제 업데이트
+                setTimeout(() => {
+                    scrollToBottom();
+                }, 500);
+            }
+        }
+
+        // 환영 메시지 추가 (초기 로드 시)
+        function addWelcomeMessage() {
+            const t = translations[currentLanguage] || translations['ko'];
+            
+            const welcomeMessage = `
+                <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 15px; margin-bottom: 20px; color: white;">
+                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+                        안녕하세요~ ${t.welcomeMessage}
+                    </div>
+                    <div style="font-size: 14px; opacity: 0.9;">
+                        궁금한 사항을 아래 버튼을 클릭하시거나 직접 메시지를 입력해주세요!
+                    </div>
+                    <div class="quick-buttons" style="display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap;">
+                        <button class="quick-button" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 10px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🕘 진료시간</button>
+                        <button class="quick-button" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); color: white; border: none; padding: 10px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);">💰 치료비용</button>
+                    </div>
+                </div>
+            `;
+            
+            addBotMessage(welcomeMessage);
         }
 
         // 예약 페이지로 이동
