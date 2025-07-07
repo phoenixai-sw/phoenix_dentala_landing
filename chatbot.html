@@ -1314,8 +1314,8 @@
                 </h2>
                 <div class="language-buttons" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                     <button class="language-btn korean" onclick="setLanguage2('ko')" id="langBtn-ko-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇰🇷 한국어</button>
-                    <button class="language-btn english" onclick="setLanguage2('en')" id="langBtn-en-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇺🇸 영어</button>
-                    <button class="language-btn russian" onclick="setLanguage2('ru')" id="langBtn-ru-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇷🇺 러시아어</button>
+                    <button class="language-btn english" onclick="setLanguage2('en')" id="langBtn-en-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">🇺🇸 영어</button>
+                    <button class="language-btn russian" onclick="setLanguage2('ru')" id="langBtn-ru-2" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);">🇷🇺 러시아어</button>
                 </div>
             </div>
 
@@ -1496,12 +1496,24 @@
         // 언어 설정 전역 변수
         let currentLanguage2 = 'ko'; // 기본 언어: 한국어
         
-        // 언어 버튼 색상 저장 (예약창과 동일)
+        // 언어 버튼 색상 저장 (언어별 다른 색상)
         const languageButtonColors2 = {
-            default: {
+            ko: {
                 background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
                 border: 'none',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.3)',
+                color: 'white'
+            },
+            en: {
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                border: 'none',
+                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+                color: 'white'
+            },
+            ru: {
+                background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                border: 'none',
+                boxShadow: '0 4px 15px rgba(245, 87, 108, 0.3)',
                 color: 'white'
             },
             selected: {
@@ -1877,12 +1889,12 @@
         function updateLanguageButtons2() {
             console.log('언어 버튼 시각적 업데이트 시작');
             
-            // 모든 언어 버튼을 푸른색(기본색)으로 설정
+            // 모든 언어 버튼을 각 언어별 기본색으로 설정
             const languages = ['ko', 'en', 'ru'];
             languages.forEach(lang => {
                 const button = document.getElementById(`langBtn-${lang}-2`);
                 if (button) {
-                    const defaultColors = languageButtonColors2.default;
+                    const defaultColors = languageButtonColors2[lang];
                     
                     // 카카오톡 브라우저 호환성을 위해 setProperty 사용
                     button.style.setProperty('opacity', '1', 'important');
@@ -1894,7 +1906,7 @@
                     button.style.setProperty('font-weight', 'bold', 'important');
                     button.style.setProperty('text-shadow', 'none', 'important');
                     
-                    console.log(`${lang} 버튼을 푸른색(기본색)으로 설정`);
+                    console.log(`${lang} 버튼을 ${lang === 'ko' ? '파란색' : lang === 'en' ? '보라색' : '분홍색'}(기본색)으로 설정`);
                 }
             });
             
