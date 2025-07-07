@@ -1955,8 +1955,8 @@
 
         <!-- 관리자 로그인 버튼 -->
         <div class="admin-buttons">
-            <button class="admin-btn" onclick="loginChatbotAdmin()">🤖 AI챗봇 관리 로그인</button>
-            <button class="admin-btn customer" onclick="loginCustomerAdmin()">👥 고객 관리 로그인</button>
+                            <button class="admin-btn" onclick="loginChatbotAdmin()" title="아이디: phoenix | 비밀번호: phoenix">🤖 AI챗봇 관리 로그인</button>
+                <button class="admin-btn customer" onclick="loginCustomerAdmin()" title="아이디: phoenix | 비밀번호: phoenix">👥 고객 관리 로그인</button>
         </div>
     </div>
 
@@ -2498,34 +2498,90 @@ https://phoenixai-agent.site/reservation.html
             enabled: false
         };
 
-        // 로그인 함수들
+        // 로그인 함수들 (개선된 버전)
         function loginChatbotAdmin() {
             console.log('AI 챗봇 관리 로그인 클릭됨');
-            const username = prompt("AI 챗봇 관리자 아이디를 입력하세요:");
-            if (username === "phoenix") {
-                const password = prompt("비밀번호를 입력하세요:");
-                if (password === "phoenix") {
-                    openChatbotAdmin();
-                } else {
-                    alert("비밀번호가 틀렸습니다.");
+            
+            try {
+                // 아이디 입력
+                const username = prompt("🔐 AI 챗봇 관리자 로그인\n\n아이디를 입력하세요:");
+                
+                // 취소 버튼 클릭 시
+                if (username === null) {
+                    console.log('로그인 취소됨');
+                    return;
                 }
-            } else if (username !== null) {
-                alert("아이디가 틀렸습니다.");
+                
+                // 아이디 검증
+                if (username.trim() === "phoenix") {
+                    // 비밀번호 입력
+                    const password = prompt("비밀번호를 입력하세요:");
+                    
+                    // 취소 버튼 클릭 시
+                    if (password === null) {
+                        console.log('비밀번호 입력 취소됨');
+                        return;
+                    }
+                    
+                    // 비밀번호 검증
+                    if (password.trim() === "phoenix") {
+                        console.log('✅ AI 챗봇 관리 로그인 성공');
+                        alert('✅ 로그인 성공!\n\nAI 챗봇 관리 페이지로 이동합니다.');
+                        openChatbotAdmin();
+                    } else {
+                        console.log('❌ 비밀번호 오류:', password);
+                        alert("❌ 비밀번호가 틀렸습니다.\n\n아이디: phoenix\n비밀번호: phoenix");
+                    }
+                } else {
+                    console.log('❌ 아이디 오류:', username);
+                    alert("❌ 아이디가 틀렸습니다.\n\n아이디: phoenix\n비밀번호: phoenix");
+                }
+            } catch (error) {
+                console.error('AI 챗봇 관리 로그인 오류:', error);
+                alert('❌ 로그인에 실패했습니다.\n\n다시 시도해주세요.');
             }
         }
 
         function loginCustomerAdmin() {
             console.log('고객 관리 로그인 클릭됨');
-            const username = prompt("고객 관리자 아이디를 입력하세요:");
-            if (username === "phoenix") {
-                const password = prompt("비밀번호를 입력하세요:");
-                if (password === "phoenix") {
-                    openCustomerAdmin();
-                } else {
-                    alert("비밀번호가 틀렸습니다.");
+            
+            try {
+                // 아이디 입력
+                const username = prompt("🔐 고객 관리자 로그인\n\n아이디를 입력하세요:");
+                
+                // 취소 버튼 클릭 시
+                if (username === null) {
+                    console.log('로그인 취소됨');
+                    return;
                 }
-            } else if (username !== null) {
-                alert("아이디가 틀렸습니다.");
+                
+                // 아이디 검증
+                if (username.trim() === "phoenix") {
+                    // 비밀번호 입력
+                    const password = prompt("비밀번호를 입력하세요:");
+                    
+                    // 취소 버튼 클릭 시
+                    if (password === null) {
+                        console.log('비밀번호 입력 취소됨');
+                        return;
+                    }
+                    
+                    // 비밀번호 검증
+                    if (password.trim() === "phoenix") {
+                        console.log('✅ 고객 관리 로그인 성공');
+                        alert('✅ 로그인 성공!\n\n고객 관리 페이지로 이동합니다.');
+                        openCustomerAdmin();
+                    } else {
+                        console.log('❌ 비밀번호 오류:', password);
+                        alert("❌ 비밀번호가 틀렸습니다.\n\n아이디: phoenix\n비밀번호: phoenix");
+                    }
+                } else {
+                    console.log('❌ 아이디 오류:', username);
+                    alert("❌ 아이디가 틀렸습니다.\n\n아이디: phoenix\n비밀번호: phoenix");
+                }
+            } catch (error) {
+                console.error('고객 관리 로그인 오류:', error);
+                alert('❌ 로그인에 실패했습니다.\n\n다시 시도해주세요.');
             }
         }
 
