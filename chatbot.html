@@ -1351,7 +1351,7 @@
                 sendButton: '전송',
                 currentLanguage: '🇰🇷 KR',
                 welcomeMessage: '피닉스 치과 AI상담사 입니다!',
-                welcomeSubMessage: '메뉴를 클릭하거나 직접 메시지를 입력해 주세요, 우측 상단에서 AI의 언어 변경이 가능 합니다',
+                welcomeSubMessage: '우측 상단 메뉴, AI의 언어 변경 가능',
                 clinicHours: `🕘 <strong>피닉스 치과 진료시간 안내</strong><br><br>
                     📅 <strong>평일:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>토요일:</strong> 09:00 ~ 15:00<br>
@@ -1391,7 +1391,7 @@
                 sendButton: 'Send',
                 currentLanguage: '🇺🇸 US',
                 welcomeMessage: 'I am Phoenix Dental AI consultant!',
-                welcomeSubMessage: 'Click the menu or enter a message directly. You can change the AI language in the top right corner.',
+                welcomeSubMessage: 'Top right menu, AI language change available',
                 clinicHours: `🕘 <strong>Phoenix Dental Clinic Hours</strong><br><br>
                     📅 <strong>Weekdays:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>Saturday:</strong> 09:00 ~ 15:00<br>
@@ -1431,7 +1431,7 @@
                 sendButton: 'Отправить',
                 currentLanguage: '🇷🇺 RU',
                 welcomeMessage: 'Я консультант ИИ стоматологии Phoenix!',
-                welcomeSubMessage: 'Нажмите на меню или введите сообщение напрямую. Вы можете изменить язык ИИ в правом верхнем углу.',
+                welcomeSubMessage: 'Меню в правом верхнем углу, изменение языка ИИ доступно',
                 clinicHours: `🕘 <strong>Часы работы стоматологии Phoenix</strong><br><br>
                     📅 <strong>Будни:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>Суббота:</strong> 09:00 ~ 15:00<br>
@@ -1471,7 +1471,7 @@
                 sendButton: '送信',
                 currentLanguage: '🇯🇵 JP',
                 welcomeMessage: 'フェニックス歯科AIコンサルタントです！',
-                welcomeSubMessage: 'メニューをクリックするか、直接メッセージを入力してください。右上でAIの言語変更が可能です。',
+                welcomeSubMessage: '右上メニュー、AI言語変更可能',
                 clinicHours: `🕘 <strong>フェニックス歯科診療時間案内</strong><br><br>
                     📅 <strong>平日:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>土曜日:</strong> 09:00 ~ 15:00<br>
@@ -1815,6 +1815,53 @@
                         document.documentElement.style.setProperty('--vh', `${vh}px`);
                     }, 100);
                 });
+                
+                // 특정 기기별 최적화 강화
+                function applyDeviceSpecificOptimizations() {
+                    const userAgent = navigator.userAgent;
+                    const isKakaoTalk = userAgent.includes('KAKAO');
+                    
+                    // 아이폰11 (414x896)
+                    if (userAgent.includes('iPhone') && 
+                        screen.width === 414 && screen.height === 896) {
+                        console.log('아이폰11 최적화 적용');
+                        document.body.classList.add('device-iphone11');
+                    }
+                    
+                    // 아이폰 미니 (375x812)
+                    if (userAgent.includes('iPhone') && 
+                        screen.width === 375 && screen.height === 812) {
+                        console.log('아이폰 미니 최적화 적용');
+                        document.body.classList.add('device-iphone-mini');
+                    }
+                    
+                    // Galaxy XCover 5 (432x900)
+                    if (userAgent.includes('Android') && 
+                        screen.width <= 432 && screen.height <= 900) {
+                        console.log('Galaxy XCover 5 최적화 적용');
+                        document.body.classList.add('device-galaxy-xcover5');
+                    }
+                    
+                    // 카카오톡 브라우저 강화 최적화
+                    if (isKakaoTalk) {
+                        console.log('카카오톡 브라우저 강화 최적화 적용');
+                        document.body.classList.add('kakao-browser-enhanced');
+                        
+                        // 터치 이벤트 완전 재구성
+                        const allButtons = document.querySelectorAll('button, .language-current, .language-option, .back-link');
+                        allButtons.forEach(element => {
+                            element.style.setProperty('-webkit-tap-highlight-color', 'transparent', 'important');
+                            element.style.setProperty('touch-action', 'manipulation', 'important');
+                            element.style.setProperty('-webkit-user-select', 'none', 'important');
+                            element.style.setProperty('user-select', 'none', 'important');
+                            element.style.setProperty('cursor', 'pointer', 'important');
+                            element.style.setProperty('pointer-events', 'auto', 'important');
+                        });
+                    }
+                }
+                
+                // 기기별 최적화 적용
+                applyDeviceSpecificOptimizations();
                 
                 // 페이지 포커스 복귀 시 이벤트 재적용
                 window.addEventListener('pageshow', function(e) {
