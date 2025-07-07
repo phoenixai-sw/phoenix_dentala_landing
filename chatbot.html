@@ -118,7 +118,7 @@
         .language-current {
             background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
             border: 2px solid #ffbf00;
-            color: #333;
+            color: black !important;
             padding: 10px 15px;
             border-radius: 20px;
             font-size: 14px;
@@ -135,6 +135,7 @@
 
         .language-current:hover {
             background: linear-gradient(135deg, #ffbf00 0%, #ffd700 100%);
+            color: black !important;
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(255, 215, 0, 0.6);
         }
@@ -163,7 +164,7 @@
             transition: all 0.2s;
             border-bottom: 1px solid #eee;
             font-size: 14px;
-            color: #333;
+            color: black !important;
         }
 
         .language-option:last-child {
@@ -172,12 +173,12 @@
 
         .language-option:hover {
             background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            color: #333;
+            color: black !important;
         }
 
         .language-option.active {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
+            color: black !important;
         }
 
         /* 메시지 영역 */
@@ -364,6 +365,11 @@
                 padding: 8px 12px;
                 font-size: 12px;
                 min-width: 100px;
+                color: black !important;
+            }
+            
+            .language-option {
+                color: black !important;
             }
             
             .chatbot-messages {
@@ -436,6 +442,11 @@
                 padding: 6px 10px;
                 font-size: 11px;
                 min-width: 85px;
+                color: black !important;
+            }
+            
+            .language-option {
+                color: black !important;
             }
             
             .chatbot-messages {
@@ -602,6 +613,11 @@
                 padding: 8px 12px;
                 font-size: 13px;
                 min-width: 110px;
+                color: black !important;
+            }
+            
+            .language-option {
+                color: black !important;
             }
             
             .chatbot-messages {
@@ -651,6 +667,11 @@
                 padding: 6px 10px;
                 font-size: 11px;
                 min-width: 85px;
+                color: black !important;
+            }
+            
+            .language-option {
+                color: black !important;
             }
             
             .chatbot-messages {
@@ -728,6 +749,7 @@
                 padding: 5px 8px;
                 font-size: 10px;
                 min-width: 80px;
+                color: black !important;
             }
             
             .language-menu {
@@ -738,6 +760,7 @@
             .language-option {
                 padding: 10px 16px;
                 font-size: 12px;
+                color: black !important;
             }
             
             .chatbot-messages {
@@ -817,6 +840,11 @@
                 padding: 4px 6px;
                 font-size: 9px;
                 min-width: 70px;
+                color: black !important;
+            }
+            
+            .language-option {
+                color: black !important;
             }
             
             .chatbot-messages {
@@ -899,14 +927,14 @@
             <div class="header-language-dropdown">
                 <div class="language-dropdown">
                     <button class="language-current">
-                        <span id="currentLanguageText">🇰🇷 한국어</span>
-                        <span>▼</span>
+                        <span id="currentLanguageText" style="color: black;">🇰🇷 KR</span>
+                        <span style="color: black;">▼</span>
                     </button>
                     <div class="language-menu" id="languageMenu">
-                        <div class="language-option active" data-lang="ko">🇰🇷 한국어</div>
-                        <div class="language-option" data-lang="en">🇺🇸 영어</div>
-                        <div class="language-option" data-lang="ru">🇷🇺 러시아어</div>
-                        <div class="language-option" data-lang="ja">🇯🇵 일본어</div>
+                        <div class="language-option active" data-lang="ko" style="color: black;">🇰🇷 KR</div>
+                        <div class="language-option" data-lang="en" style="color: black;">🇺🇸 US</div>
+                        <div class="language-option" data-lang="ru" style="color: black;">🇷🇺 RU</div>
+                        <div class="language-option" data-lang="ja" style="color: black;">🇯🇵 JP</div>
                     </div>
                 </div>
             </div>
@@ -942,7 +970,7 @@
                 title: '피닉스 치과 AI 상담사👩‍⚕️',
                 placeholder: '메시지를 입력하세요... (Shift+Enter: 전송)',
                 sendButton: '전송',
-                currentLanguage: '🇰🇷 한국어',
+                currentLanguage: '🇰🇷 KR',
                 welcomeMessage: '피닉스 치과 AI상담사 입니다.',
                 clinicHours: `🕘 <strong>피닉스 치과 진료시간 안내</strong><br><br>
                     📅 <strong>평일:</strong> 09:00 ~ 18:00<br>
@@ -961,7 +989,7 @@
                 title: 'Phoenix Dental AI Consultant👩‍⚕️',
                 placeholder: 'Enter your message... (Shift+Enter: Send)',
                 sendButton: 'Send',
-                currentLanguage: '🇺🇸 영어',
+                currentLanguage: '🇺🇸 US',
                 welcomeMessage: 'Hello~ I am Phoenix Dental AI consultant.',
                 clinicHours: `🕘 <strong>Phoenix Dental Clinic Hours</strong><br><br>
                     📅 <strong>Weekdays:</strong> 09:00 ~ 18:00<br>
@@ -980,7 +1008,7 @@
                 title: 'Консультант ИИ стоматологии Phoenix👩‍⚕️',
                 placeholder: 'Введите ваше сообщение... (Shift+Enter: Отправить)',
                 sendButton: 'Отправить',
-                currentLanguage: '🇷🇺 러시아어',
+                currentLanguage: '🇷🇺 RU',
                 welcomeMessage: 'Здравствуйте~ Я консультант ИИ стоматологии Phoenix.',
                 clinicHours: `🕘 <strong>Часы работы стоматологии Phoenix</strong><br><br>
                     📅 <strong>Будни:</strong> 09:00 ~ 18:00<br>
@@ -999,7 +1027,7 @@
                 title: 'フェニックス歯科AIコンサルタント👩‍⚕️',
                 placeholder: 'メッセージを入力してください... (Shift+Enter: 送信)',
                 sendButton: '送信',
-                currentLanguage: '🇯🇵 일본어',
+                currentLanguage: '🇯🇵 JP',
                 welcomeMessage: 'こんにちは〜フェニックス歯科AIコンサルタントです。',
                 clinicHours: `🕘 <strong>フェニックス歯科診療時間案内</strong><br><br>
                     📅 <strong>平日:</strong> 09:00 ~ 18:00<br>
@@ -1135,8 +1163,8 @@
                         ${t.welcomeMessage}
                     </div>
                     <div style="font-size: 14px; color: #666; margin-bottom: 15px; line-height: 1.5;">
-                        아래 버튼을 클릭하거나 직접 메시지를 입력해 주세요,<br>
-                        우측 상단에서 AI의 언어를 변경 가능 합니다
+                        아래 버튼 클릭 또는 직접 메시지를 입력해 주세요,<br>
+                        우측 상단 메뉴에서 AI상담사의 언어 변경 가능 합니다!
                     </div>
                 </div>
                 
@@ -1342,7 +1370,10 @@
             
             // 현재 언어 표시
             const currentLangText = document.getElementById('currentLanguageText');
-            if (currentLangText) currentLangText.textContent = t.currentLanguage;
+            if (currentLangText) {
+                currentLangText.textContent = t.currentLanguage;
+                currentLangText.style.color = 'black';
+            }
             
             // 드롭다운 옵션 업데이트
             const options = document.querySelectorAll('.language-option');
