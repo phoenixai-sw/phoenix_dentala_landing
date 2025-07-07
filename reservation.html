@@ -601,8 +601,12 @@
             box-shadow: 0 6px 20px rgba(245, 87, 108, 0.5) !important;
         }
         
-        .language-button.japanese:hover {
-            box-shadow: 0 6px 20px rgba(252, 182, 159, 0.5) !important;
+        /* 선택된 언어 버튼 스타일 */
+        .language-button.selected {
+            background: linear-gradient(135deg, #ffd700 0%, #ffeb3b 100%) !important;
+            color: #333 !important;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5) !important;
+            transform: scale(1.05) !important;
         }
 
         /* 언어 선택 섹션 모바일 최적화 */
@@ -683,9 +687,6 @@
                 </button>
                 <button class="language-button russian" onclick="selectLanguage('ru')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);">
                     🇷🇺 러시아어
-                </button>
-                <button class="language-button japanese" onclick="selectLanguage('ja')" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);">
-                    🇯🇵 일본어
                 </button>
             </div>
         </div>
@@ -884,18 +885,16 @@
         
         // 선택된 언어 버튼 하이라이트 함수
         function highlightSelectedLanguage(language) {
+            // 모든 버튼에서 선택 상태 제거
             const buttons = document.querySelectorAll('.language-button');
             buttons.forEach(button => {
-                button.style.opacity = '0.7';
-                button.style.transform = 'scale(0.95)';
+                button.classList.remove('selected');
             });
             
-            // 선택된 언어 버튼만 강조
+            // 선택된 언어 버튼만 노란색으로 강조
             const selectedButton = document.querySelector(`[onclick="selectLanguage('${language}')"]`);
             if (selectedButton) {
-                selectedButton.style.opacity = '1';
-                selectedButton.style.transform = 'scale(1)';
-                selectedButton.style.fontWeight = 'bold';
+                selectedButton.classList.add('selected');
             }
         }
 
@@ -983,8 +982,6 @@
                 title.textContent = `${t.monthNames[currentMonth]} ${currentYear}`;
             } else if (currentLanguage === 'ru') {
                 title.textContent = `${t.monthNames[currentMonth]} ${currentYear}`;
-            } else if (currentLanguage === 'ja') {
-                title.textContent = `${currentYear}年 ${t.monthNames[currentMonth]}`;
             } else {
                 title.textContent = `${currentYear}년 ${t.monthNames[currentMonth]}`;
             }
@@ -1396,51 +1393,6 @@
                 
                 // 월 이름
                 monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
-            },
-            ja: {
-                // 헤더
-                headerTitle: 'フェニックス歯科予約システム👩‍⚕️',
-                languageSelectTitle: '言語を選択してください！',
-                
-                // 진료 시간
-                clinicHoursTitle: '診療時間のご案内',
-                weekdays: '平日:',
-                weekdaysTime: '09:00 ~ 18:00',
-                saturday: '土曜日:',
-                saturdayTime: '09:00 ~ 15:00',
-                lunchTime: '昼休み:',
-                lunchTimeHours: '12:30 ~ 13:30',
-                closedDays: '休診:',
-                closedDaysInfo: '日曜日、祝日',
-                
-                // 시간 선택
-                timeSelectTitle: '時間を選択してください',
-                
-                // 예약자 정보
-                userInfoTitle: 'お客様情報をご入力ください',
-                nameLabel: 'お名前',
-                birthLabel: '生年月日',
-                phoneLabel: '電話番号',
-                consultLabel: '相談内容',
-                namePlaceholder: 'お名前を入力してください',
-                birthPlaceholder: '例: 850101',
-                phonePlaceholder: '例: 010-1234-5678',
-                consultPlaceholder: '相談内容を入力してください',
-                
-                // 개인정보 동의
-                privacyTitle: '個人情報収集・マーケティング活用同意（3年）',
-                privacyContent: '相談及び予約サービス提供、歯科ニュース・イベント・特典案内等マーケティング目的で個人情報を3年間活用することに同意します。',
-                privacyDetail: '詳細を見る',
-                
-                // 버튼
-                reserveButton: '予約する',
-                confirmMessage: '日本語で予約を進めさせていただきます！🇯🇵',
-                
-                // 요일
-                dayNames: ['日', '月', '火', '水', '木', '金', '土'],
-                
-                // 월 이름
-                monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
             }
         };
 
@@ -1548,24 +1500,16 @@
             const t = translations[language] || translations['ko'];
             alert(t.confirmMessage);
             
-            // 선택된 언어 버튼 하이라이트
+            // 모든 버튼에서 선택 상태 제거
             const buttons = document.querySelectorAll('.language-button');
             buttons.forEach(button => {
-                button.style.opacity = '0.6';
-                button.style.transform = 'scale(0.95)';
+                button.classList.remove('selected');
             });
             
-            // 선택된 버튼만 강조
+            // 선택된 버튼에 노란색 스타일 적용
             const selectedButton = document.querySelector(`[onclick="selectLanguage('${language}')"]`);
             if (selectedButton) {
-                selectedButton.style.opacity = '1';
-                selectedButton.style.transform = 'scale(1.05)';
-                selectedButton.style.boxShadow = '0 6px 20px rgba(79, 172, 254, 0.5)';
-                
-                // 2초 후 지속적인 하이라이트 상태로 복구
-                setTimeout(() => {
-                    highlightSelectedLanguage(language);
-                }, 2000);
+                selectedButton.classList.add('selected');
             }
             
             // 선택된 언어를 로컬 스토리지에 저장
