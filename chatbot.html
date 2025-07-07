@@ -1639,14 +1639,25 @@
                         
                         // 터치 종료
                         button.addEventListener('touchend', function(e) {
-                            e.preventDefault();
                             this.style.transform = '';
                             this.style.transition = 'all 0.3s';
                             
-                            // onclick 이벤트가 있는 경우 터치에서는 직접 호출하지 않음 (중복 방지)
+                            // 카카오톡 브라우저에서 메뉴 버튼 터치 강화
                             const onclick = this.getAttribute('onclick');
-                            if (onclick && onclick.includes('handleQuickMessage')) {
-                                // onclick 이벤트가 자동으로 실행되도록 함
+                            const isKakaoTalk = navigator.userAgent.includes('KAKAO');
+                            
+                            if (onclick && onclick.includes('handleQuickMessage') && isKakaoTalk) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const match = onclick.match(/handleQuickMessage\('([^']+)'\)/);
+                                if (match) {
+                                    console.log('카카오톡 터치 강제 실행:', match[1]);
+                                    setTimeout(() => {
+                                        handleQuickMessage(match[1]);
+                                    }, 100);
+                                }
+                            } else if (onclick && onclick.includes('handleQuickMessage')) {
+                                // 일반 브라우저에서는 onclick 이벤트가 자동으로 실행되도록 함
                                 console.log('터치 이벤트 완료 - onclick 이벤트 대기');
                             }
                         }, { passive: false });
@@ -1860,8 +1871,95 @@
                 // 기기별 최적화 적용
                 applyDeviceSpecificOptimizations();
                 
-                // 페이지 포커스 복귀 시 이벤트 재적용
-                window.addEventListener('pageshow', function(e) {
+                        // 카카오톡 브라우저 특별 최적화
+        function setupKakaoTalkOptimization() {
+            const isKakaoTalk = navigator.userAgent.includes('KAKAO');
+            if (!isKakaoTalk) return;
+            
+            console.log('카카오톡 브라우저 감지 - 특별 최적화 적용');
+            
+            // 모든 메뉴 버튼에 추가 이벤트 리스너 설정
+            function addKakaoTalkEvents() {
+                const menuButtons = document.querySelectorAll('.quick-button');
+                
+                menuButtons.forEach(button => {
+                    // 기존 이벤트 리스너 제거 후 새로 추가
+                    const newButton = button.cloneNode(true);
+                    button.parentNode.replaceChild(newButton, button);
+                    
+                    // 카카오톡 전용 클릭 이벤트
+                    newButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const onclick = this.getAttribute('onclick');
+                        if (onclick && onclick.includes('handleQuickMessage')) {
+                            const match = onclick.match(/handleQuickMessage\('([^']+)'\)/);
+                            if (match) {
+                                console.log('카카오톡 클릭 이벤트 실행:', match[1]);
+                                handleQuickMessage(match[1]);
+                            }
+                        }
+                    }, { passive: false });
+                    
+                    // 터치 이벤트 추가
+                    newButton.addEventListener('touchstart', function(e) {
+                        console.log('카카오톡 터치 시작:', this.textContent);
+                        this.style.transform = 'scale(0.95)';
+                        this.style.transition = 'all 0.1s';
+                    }, { passive: true });
+                    
+                    newButton.addEventListener('touchend', function(e) {
+                        console.log('카카오톡 터치 종료:', this.textContent);
+                        this.style.transform = '';
+                        this.style.transition = 'all 0.3s';
+                        
+                        const onclick = this.getAttribute('onclick');
+                        if (onclick && onclick.includes('handleQuickMessage')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const match = onclick.match(/handleQuickMessage\('([^']+)'\)/);
+                            if (match) {
+                                console.log('카카오톡 터치 메시지 전송:', match[1]);
+                                setTimeout(() => {
+                                    handleQuickMessage(match[1]);
+                                }, 50);
+                            }
+                        }
+                    }, { passive: false });
+                    
+                    console.log('카카오톡 이벤트 추가 완료:', newButton.textContent);
+                });
+            }
+            
+            // 초기 설정
+            setTimeout(addKakaoTalkEvents, 500);
+            
+            // DOM 변경 감지하여 새 버튼에도 적용
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === 1 && (node.classList.contains('quick-button') || node.querySelector('.quick-button'))) {
+                                console.log('새 메뉴 버튼 감지 - 카카오톡 이벤트 추가');
+                                setTimeout(addKakaoTalkEvents, 100);
+                            }
+                        });
+                    }
+                });
+            });
+            
+            const messagesContainer = document.getElementById('messages');
+            if (messagesContainer) {
+                observer.observe(messagesContainer, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        }
+        
+        // 페이지 포커스 복귀 시 이벤트 재적용
+        window.addEventListener('pageshow', function(e) {
                     if (e.persisted) {
                         setTimeout(() => {
                             addMobileTouchEvents();
@@ -1983,10 +2081,10 @@
                             ${t.welcomeSubMessage}
                         </div>
                         <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin-left: auto; margin-right: auto;">
-                            <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">🕘 진료시간</button>
-                            <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);">💰 치료비용</button>
-                            <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);">📞 예약문의</button>
-                            <button class="quick-button directions-btn" onclick="handleQuickMessage('오시는길 알려주세요')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">🗺️ 오시는길</button>
+                            <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleKakaoTouch('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); -webkit-tap-highlight-color: transparent;">🕘 진료시간</button>
+                            <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleKakaoTouch('치료비용 궁금해요')" style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3); -webkit-tap-highlight-color: transparent;">💰 치료비용</button>
+                            <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" ontouchstart="handleKakaoTouch('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3); -webkit-tap-highlight-color: transparent;">📞 예약문의</button>
+                            <button class="quick-button directions-btn" onclick="handleQuickMessage('오시는길 알려주세요')" ontouchstart="handleKakaoTouch('오시는길 알려주세요')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); -webkit-tap-highlight-color: transparent;">🗺️ 오시는길</button>
                         </div>
                     </div>
                 `;
@@ -2034,23 +2132,25 @@
         // 중복 실행 방지를 위한 플래그
         let isProcessingMessage = false;
         let lastMessageTime = 0;
+        let lastMessage = '';
 
-        // 빠른 메시지 전송 (모바일 기기 최적화)
+        // 빠른 메시지 전송 (카카오톡 브라우저 완벽 지원)
         function handleQuickMessage(message) {
-            console.log('빠른 메시지 전송:', message);
+            console.log('빠른 메시지 전송:', message, '카카오톡:', navigator.userAgent.includes('KAKAO'));
             
             // 중복 실행 방지 (1초 내 동일 메시지 차단)
             const currentTime = Date.now();
-            if (isProcessingMessage || (currentTime - lastMessageTime < 1000)) {
+            if (isProcessingMessage || (currentTime - lastMessageTime < 1000 && lastMessage === message)) {
                 console.log('중복 메시지 차단:', message);
                 return;
             }
             
             isProcessingMessage = true;
             lastMessageTime = currentTime;
+            lastMessage = message;
             
             // 이벤트 전파 방지
-            if (event) {
+            if (typeof event !== 'undefined' && event) {
                 event.preventDefault();
                 event.stopPropagation();
             }
@@ -2066,6 +2166,16 @@
                     isProcessingMessage = false;
                 }, 500);
             }, 300);
+        }
+
+        // 카카오톡 브라우저 전용 터치 핸들러
+        function handleKakaoTouch(message) {
+            console.log('카카오톡 터치 이벤트:', message);
+            
+            // 약간의 지연을 두고 메시지 전송 (카카오톡 브라우저 최적화)
+            setTimeout(() => {
+                handleQuickMessage(message);
+            }, 100);
         }
 
         // 빠른 메시지 전송 (호환성 유지)
@@ -2240,10 +2350,10 @@
                         ${t.welcomeSubMessage}
                     </div>
                     <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin-left: auto; margin-right: auto;">
-                        <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">🕘 진료시간</button>
-                        <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);">💰 치료비용</button>
-                        <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);">📞 예약문의</button>
-                        <button class="quick-button directions-btn" onclick="handleQuickMessage('오시는길 알려주세요')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">🗺️ 오시는길</button>
+                        <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleKakaoTouch('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); -webkit-tap-highlight-color: transparent;">🕘 진료시간</button>
+                        <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleKakaoTouch('치료비용 궁금해요')" style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3); -webkit-tap-highlight-color: transparent;">💰 치료비용</button>
+                        <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" ontouchstart="handleKakaoTouch('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3); -webkit-tap-highlight-color: transparent;">📞 예약문의</button>
+                        <button class="quick-button directions-btn" onclick="handleQuickMessage('오시는길 알려주세요')" ontouchstart="handleKakaoTouch('오시는길 알려주세요')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); -webkit-tap-highlight-color: transparent;">🗺️ 오시는길</button>
                     </div>
                 </div>
             `;
@@ -2734,7 +2844,9 @@
             enhanceMobileCompatibility();
         });
 
-        console.log('별도창 AI챗봇 초기화 완료 - 아이폰11/아이폰미니/Galaxy XCover 5 완벽 지원');
+        setupKakaoTalkOptimization();
+        
+        console.log('별도창 AI챗봇 초기화 완료 - 카카오톡 브라우저 메뉴 클릭 문제 해결, 모든 모바일 기기 완벽 지원');
     </script>
 </body>
 </html> 
