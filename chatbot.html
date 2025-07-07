@@ -25,6 +25,10 @@
             background: #f0f2f5;
             height: 100vh;
             overflow: hidden;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
         }
 
         .chatbot-main {
@@ -90,6 +94,81 @@
             margin-top: 3px;
         }
 
+        /* 우측 상단 언어 선택 드롭다운 */
+        .header-language-dropdown {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2000;
+        }
+
+        .language-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-current {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .language-current:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .language-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 3000;
+            display: none;
+            min-width: 140px;
+            margin-top: 5px;
+        }
+
+        .language-menu.show {
+            display: block;
+        }
+
+        .language-option {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .language-option:last-child {
+            border-bottom: none;
+        }
+
+        .language-option:hover {
+            background: #f8f9fa;
+        }
+
+        .language-option.active {
+            background: #4facfe;
+            color: white;
+        }
+
         /* 메시지 영역 */
         .chatbot-messages {
             flex: 1;
@@ -98,6 +177,7 @@
             background: #f8f9fa;
             -webkit-overflow-scrolling: touch;
             order: 2;
+            margin-bottom: 80px; /* 입력창 공간 확보 */
         }
 
         .message {
@@ -170,6 +250,7 @@
             font-size: 12px;
             cursor: pointer;
             transition: all 0.2s;
+            touch-action: manipulation;
         }
 
         .quick-button:hover {
@@ -177,84 +258,9 @@
             color: white;
         }
 
-        /* 언어 선택 드롭다운 */
-        .language-selector {
-            position: relative;
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            flex-shrink: 0;
-            order: 3;
-        }
-
-        .language-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .language-current {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .language-current:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.5);
-        }
-
-        .language-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            z-index: 1000;
-            display: none;
-        }
-
-        .language-menu.show {
-            display: block;
-        }
-
-        .language-option {
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-bottom: 1px solid #eee;
-        }
-
-        .language-option:last-child {
-            border-bottom: none;
-        }
-
-        .language-option:hover {
-            background: #f8f9fa;
-        }
-
-        .language-option.active {
-            background: #4facfe;
-            color: white;
-        }
-
-        /* 입력 영역 - 화면 하단 90% 위치 */
+        /* 입력 영역 - 화면 하단 고정 */
         .chatbot-input {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
@@ -265,7 +271,8 @@
             gap: 10px;
             align-items: flex-end;
             z-index: 1000;
-            order: 4;
+            order: 3;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         }
 
         .chatbot-input textarea {
@@ -279,6 +286,9 @@
             min-height: 45px;
             max-height: 120px;
             line-height: 1.4;
+            -webkit-user-select: text;
+            user-select: text;
+            touch-action: manipulation;
         }
 
         .chatbot-input textarea:focus {
@@ -298,6 +308,7 @@
             transition: all 0.3s;
             min-width: 108px;
             height: 45px;
+            touch-action: manipulation;
         }
 
         .chatbot-send:hover {
@@ -309,20 +320,21 @@
             transform: translateY(0);
         }
 
-        /* 반응형 디자인 */
+        /* 반응형 디자인 - 모바일 최적화 */
         @media (max-width: 768px) {
             .chatbot-header {
-                padding: 15px;
+                padding: 15px 8px;
             }
             
             .chatbot-title {
-                font-size: 20px;
+                font-size: 18px;
+                margin: 0 120px; /* 좌우 버튼 공간 확보 */
             }
             
             .back-link {
                 width: 52px;
                 height: 58px;
-                left: 10px;
+                left: 8px;
             }
             
             .home-icon {
@@ -333,25 +345,46 @@
                 font-size: 14px;
             }
             
-            .chatbot-messages {
-                padding: 15px;
+            .header-language-dropdown {
+                right: 8px;
             }
             
-            .language-selector {
-                padding: 10px;
-                margin: 8px;
+            .language-current {
+                padding: 8px 12px;
+                font-size: 12px;
+                min-width: 100px;
+            }
+            
+            .chatbot-messages {
+                padding: 15px;
+                margin-bottom: 75px;
             }
             
             .chatbot-input {
                 padding: 10px;
             }
+            
+            .chatbot-send {
+                min-width: 80px;
+                padding: 10px 20px;
+                font-size: 14px;
+            }
         }
 
         @media (max-width: 480px) {
+            .chatbot-header {
+                padding: 12px 5px;
+            }
+            
+            .chatbot-title {
+                font-size: 16px;
+                margin: 0 100px;
+            }
+            
             .back-link {
                 width: 45px;
                 height: 50px;
-                left: 8px;
+                left: 5px;
             }
             
             .home-icon {
@@ -362,8 +395,19 @@
                 font-size: 12px;
             }
             
+            .header-language-dropdown {
+                right: 5px;
+            }
+            
+            .language-current {
+                padding: 6px 10px;
+                font-size: 11px;
+                min-width: 85px;
+            }
+            
             .chatbot-messages {
                 padding: 10px;
+                margin-bottom: 70px;
             }
             
             .chatbot-input {
@@ -371,9 +415,101 @@
             }
             
             .chatbot-send {
-                min-width: 90px;
-                padding: 10px 20px;
+                min-width: 70px;
+                padding: 8px 16px;
+                font-size: 13px;
             }
+        }
+
+        /* Galaxy XCover 5 특별 최적화 */
+        @media screen and (max-width: 432px) and (max-height: 900px) {
+            .chatbot-header {
+                padding: 10px 5px;
+            }
+            
+            .chatbot-title {
+                font-size: 15px;
+                margin: 0 90px;
+            }
+            
+            .back-link {
+                width: 40px;
+                height: 45px;
+                left: 5px;
+            }
+            
+            .home-icon {
+                font-size: 18px;
+            }
+            
+            .home-arrow {
+                font-size: 10px;
+            }
+            
+            .header-language-dropdown {
+                right: 5px;
+            }
+            
+            .language-current {
+                padding: 5px 8px;
+                font-size: 10px;
+                min-width: 75px;
+            }
+            
+            .chatbot-messages {
+                padding: 8px;
+                margin-bottom: 65px;
+            }
+            
+            .chatbot-input {
+                padding: 6px;
+            }
+            
+            .chatbot-input textarea {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+            
+            .chatbot-send {
+                min-width: 60px;
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+
+        /* 아이폰 미니 특별 최적화 */
+        @media screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+            .chatbot-header {
+                padding: 12px 5px;
+            }
+            
+            .chatbot-title {
+                font-size: 16px;
+                margin: 0 95px;
+            }
+            
+            .header-language-dropdown {
+                right: 5px;
+            }
+            
+            .language-current {
+                padding: 6px 10px;
+                font-size: 11px;
+                min-width: 80px;
+            }
+            
+            .chatbot-messages {
+                margin-bottom: 70px;
+            }
+        }
+
+        /* 카카오톡 브라우저 특별 최적화 */
+        .kakao-optimized {
+            -webkit-overflow-scrolling: touch;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
         }
     </style>
 </head>
@@ -386,26 +522,27 @@
                 <span class="home-arrow">←</span>
             </a>
             <h1 class="chatbot-title">피닉스 치과 AI 상담사👩‍⚕️</h1>
+            
+            <!-- 우측 상단 언어 선택 드롭다운 -->
+            <div class="header-language-dropdown">
+                <div class="language-dropdown">
+                    <button class="language-current" onclick="toggleLanguageDropdown()">
+                        <span id="currentLanguageText">🇰🇷 한국어</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="language-menu" id="languageMenu">
+                        <div class="language-option active" onclick="selectLanguage('ko')">🇰🇷 한국어</div>
+                        <div class="language-option" onclick="selectLanguage('en')">🇺🇸 영어</div>
+                        <div class="language-option" onclick="selectLanguage('ru')">🇷🇺 러시아어</div>
+                        <div class="language-option" onclick="selectLanguage('ja')">🇯🇵 일본어</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 메시지 영역 -->
         <div class="chatbot-messages" id="chatbotMessages">
             <!-- 메시지들이 여기에 추가됩니다 -->
-        </div>
-
-        <!-- 언어 선택 드롭다운 -->
-        <div class="language-selector">
-            <div class="language-dropdown">
-                <button class="language-current" onclick="toggleLanguageDropdown()">
-                    <span id="currentLanguageText">🇰🇷 한국어</span>
-                    <span>▼</span>
-                </button>
-                <div class="language-menu" id="languageMenu">
-                    <div class="language-option active" onclick="selectLanguage('ko')">🇰🇷 한국어</div>
-                    <div class="language-option" onclick="selectLanguage('en')">🇺🇸 영어</div>
-                    <div class="language-option" onclick="selectLanguage('ru')">🇷🇺 러시아어</div>
-                </div>
-            </div>
         </div>
 
         <!-- 입력 영역 -->
@@ -434,7 +571,7 @@
                 placeholder: '메시지를 입력하세요... (Shift+Enter: 전송)',
                 sendButton: '전송',
                 currentLanguage: '🇰🇷 한국어',
-                welcomeMessage: '안녕하세요! 피닉스 치과 AI 상담사입니다. 무엇을 도와드릴까요?',
+                welcomeMessage: '안녕하세요~ 피닉스 치과 AI상담사 입니다.',
                 clinicHours: `🕘 <strong>피닉스 치과 진료시간 안내</strong><br><br>
                     📅 <strong>평일:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>토요일:</strong> 09:00 ~ 15:00<br>
@@ -446,25 +583,14 @@
                     🦷 <strong>스케일링:</strong> 30,000원 ~ 50,000원<br>
                     🦷 <strong>임플란트:</strong> 상담 후 개별 견적<br>
                     🦷 <strong>교정:</strong> 상담 후 개별 견적<br><br>
-                    💡 <strong>정확한 비용은 진료 후 안내드립니다!</strong>`,
-                directions: `🗺️ <strong>피닉스 치과 오시는길</strong><br><br>
-                    📍 <strong>주소:</strong> 서울시 강남구 테헤란로 123<br>
-                    🚇 <strong>지하철:</strong> 강남역 1번 출구 도보 5분<br>
-                    🚌 <strong>버스:</strong> 강남역 정류장 하차<br>
-                    🚗 <strong>주차:</strong> 건물 지하 주차장 이용<br><br>
-                    📞 <strong>문의:</strong> 070-1234-1234`,
-                reservation: `📅 <strong>예약 문의</strong><br><br>
-                    온라인 예약이나 전화 예약이 가능합니다.<br><br>
-                    📱 <strong>온라인 예약:</strong> 예약 페이지 이용<br>
-                    📞 <strong>전화 예약:</strong> 070-1234-1234<br><br>
-                    💝 <strong>편리한 시간에 연락주세요!</strong>`
+                    💡 <strong>정확한 비용은 진료 후 안내드립니다!</strong>`
             },
             en: {
                 title: 'Phoenix Dental AI Consultant👩‍⚕️',
                 placeholder: 'Enter your message... (Shift+Enter: Send)',
                 sendButton: 'Send',
                 currentLanguage: '🇺🇸 영어',
-                welcomeMessage: 'Hello! I am Phoenix Dental AI consultant. How can I help you?',
+                welcomeMessage: 'Hello~ I am Phoenix Dental AI consultant.',
                 clinicHours: `🕘 <strong>Phoenix Dental Clinic Hours</strong><br><br>
                     📅 <strong>Weekdays:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>Saturday:</strong> 09:00 ~ 15:00<br>
@@ -476,25 +602,14 @@
                     🦷 <strong>Scaling:</strong> 30,000 ~ 50,000 KRW<br>
                     🦷 <strong>Implant:</strong> Individual estimate after consultation<br>
                     🦷 <strong>Orthodontics:</strong> Individual estimate after consultation<br><br>
-                    💡 <strong>Exact costs will be provided after examination!</strong>`,
-                directions: `🗺️ <strong>Phoenix Dental Directions</strong><br><br>
-                    📍 <strong>Address:</strong> 123 Teheran-ro, Gangnam-gu, Seoul<br>
-                    🚇 <strong>Subway:</strong> 5 min walk from Gangnam Station Exit 1<br>
-                    🚌 <strong>Bus:</strong> Get off at Gangnam Station<br>
-                    🚗 <strong>Parking:</strong> Underground parking available<br><br>
-                    📞 <strong>Contact:</strong> 070-1234-1234`,
-                reservation: `📅 <strong>Reservation Inquiry</strong><br><br>
-                    Online or phone reservations are available.<br><br>
-                    📱 <strong>Online:</strong> Use reservation page<br>
-                    📞 <strong>Phone:</strong> 070-1234-1234<br><br>
-                    💝 <strong>Contact us at your convenience!</strong>`
+                    💡 <strong>Exact costs will be provided after examination!</strong>`
             },
             ru: {
                 title: 'Консультант ИИ стоматологии Phoenix👩‍⚕️',
                 placeholder: 'Введите ваше сообщение... (Shift+Enter: Отправить)',
                 sendButton: 'Отправить',
                 currentLanguage: '🇷🇺 러시아어',
-                welcomeMessage: 'Здравствуйте! Я консультант ИИ стоматологии Phoenix. Как я могу помочь вам?',
+                welcomeMessage: 'Здравствуйте~ Я консультант ИИ стоматологии Phoenix.',
                 clinicHours: `🕘 <strong>Часы работы стоматологии Phoenix</strong><br><br>
                     📅 <strong>Будни:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>Суббота:</strong> 09:00 ~ 15:00<br>
@@ -506,18 +621,26 @@
                     🦷 <strong>Чистка:</strong> 30,000 ~ 50,000 вон<br>
                     🦷 <strong>Имплант:</strong> Индивидуальная оценка после консультации<br>
                     🦷 <strong>Ортодонтия:</strong> Индивидуальная оценка после консультации<br><br>
-                    💡 <strong>Точная стоимость будет предоставлена после обследования!</strong>`,
-                directions: `🗺️ <strong>Как добраться до стоматологии Phoenix</strong><br><br>
-                    📍 <strong>Адрес:</strong> 123 Тэхеран-ро, Каннам-гу, Сеул<br>
-                    🚇 <strong>Метро:</strong> 5 мин пешком от станции Каннам, выход 1<br>
-                    🚌 <strong>Автобус:</strong> Остановка станция Каннам<br>
-                    🚗 <strong>Парковка:</strong> Подземная парковка<br><br>
-                    📞 <strong>Контакт:</strong> 070-1234-1234`,
-                reservation: `📅 <strong>Запись на прием</strong><br><br>
-                    Доступна онлайн или телефонная запись.<br><br>
-                    📱 <strong>Онлайн:</strong> Используйте страницу записи<br>
-                    📞 <strong>Телефон:</strong> 070-1234-1234<br><br>
-                    💝 <strong>Свяжитесь с нами в удобное время!</strong>`
+                    💡 <strong>Точная стоимость будет предоставлена после обследования!</strong>`
+            },
+            ja: {
+                title: 'フェニックス歯科AIコンサルタント👩‍⚕️',
+                placeholder: 'メッセージを入力してください... (Shift+Enter: 送信)',
+                sendButton: '送信',
+                currentLanguage: '🇯🇵 일본어',
+                welcomeMessage: 'こんにちは〜フェニックス歯科AIコンサルタントです。',
+                clinicHours: `🕘 <strong>フェニックス歯科診療時間案内</strong><br><br>
+                    📅 <strong>平日:</strong> 09:00 ~ 18:00<br>
+                    📅 <strong>土曜日:</strong> 09:00 ~ 15:00<br>
+                    🍽️ <strong>昼休み:</strong> 12:30 ~ 13:30<br>
+                    🚫 <strong>休診:</strong> 日曜日、祝日<br><br>
+                    📞 <strong>予約問い合わせ:</strong> 070-1234-1234`,
+                treatmentCost: `💰 <strong>フェニックス歯科治療費案内</strong><br><br>
+                    🦷 <strong>一般診療:</strong> 相談後ご案内<br>
+                    🦷 <strong>スケーリング:</strong> 30,000円 ~ 50,000円<br>
+                    🦷 <strong>インプラント:</strong> 相談後個別見積もり<br>
+                    🦷 <strong>矯正:</strong> 相談後個別見積もり<br><br>
+                    💡 <strong>正確な費用は診療後にご案内いたします！</strong>`
             }
         };
 
@@ -525,78 +648,65 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM 로드 완료');
             
+            // 카카오톡 브라우저 감지 및 최적화
+            optimizeForKakaoTalk();
+            
             // 환영 메시지 및 빠른 버튼 추가
             setTimeout(() => {
                 addWelcomeMessage();
                 setupEventListeners();
                 setupTextareaResize();
-            }, 100);
+            }, 200);
         });
+
+        // 카카오톡 브라우저 최적화
+        function optimizeForKakaoTalk() {
+            const userAgent = navigator.userAgent;
+            const isKakaoTalk = userAgent.includes('KAKAOTALK') || userAgent.includes('KAKAO');
+            const isGalaxyXCover5 = userAgent.includes('SM-G525N') || 
+                                   (window.screen.width <= 432 && window.screen.height <= 900);
+            const isIPhoneMini = /iPhone.*Mobile/.test(navigator.userAgent) && 
+                               (window.screen.width === 375 && window.screen.height === 812);
+            
+            if (isKakaoTalk || isGalaxyXCover5 || isIPhoneMini) {
+                document.body.classList.add('kakao-optimized');
+                
+                // 모든 요소에 터치 최적화 적용
+                const elements = document.querySelectorAll('*');
+                elements.forEach(el => {
+                    el.style.touchAction = 'manipulation';
+                    el.style.webkitTouchCallout = 'none';
+                });
+                
+                // 입력창만 텍스트 선택 허용
+                const textarea = document.getElementById('chatbotInput');
+                if (textarea) {
+                    textarea.style.webkitUserSelect = 'text';
+                    textarea.style.userSelect = 'text';
+                    textarea.style.touchAction = 'manipulation';
+                }
+                
+                console.log('카카오톡/모바일 브라우저 최적화 완료');
+            }
+        }
 
         // 환영 메시지 추가
         function addWelcomeMessage() {
+            const t = translations[currentLanguage] || translations['ko'];
+            
             const welcomeMessage = `
-                <div style="background: #f0f8ff; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                    <div style="text-align: center; font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px;">
-                        🌍 AI상담사의 언어를 선택하세요! (기본언어:한국어🇰🇷)
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px;">
+                        ${t.welcomeMessage}
                     </div>
-                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                        <button class="language-btn" onclick="setLanguage('ko')" style="
-                            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
-                            color: white; 
-                            border: none; 
-                            padding: 12px 20px; 
-                            border-radius: 25px; 
-                            font-size: 16px; 
-                            font-weight: bold; 
-                            cursor: pointer; 
-                            transition: all 0.3s; 
-                            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
-                        ">🇰🇷 한국어</button>
-                        <button class="language-btn" onclick="setLanguage('en')" style="
-                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                            color: white; 
-                            border: none; 
-                            padding: 12px 20px; 
-                            border-radius: 25px; 
-                            font-size: 16px; 
-                            font-weight: bold; 
-                            cursor: pointer; 
-                            transition: all 0.3s; 
-                            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-                        ">🇺🇸 영어</button>
-                        <button class="language-btn" onclick="setLanguage('ru')" style="
-                            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
-                            color: white; 
-                            border: none; 
-                            padding: 12px 20px; 
-                            border-radius: 25px; 
-                            font-size: 16px; 
-                            font-weight: bold; 
-                            cursor: pointer; 
-                            transition: all 0.3s; 
-                            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
-                        ">🇷🇺 러시아어</button>
-                        <button class="language-btn" onclick="setLanguage('ja')" style="
-                            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); 
-                            color: #333; 
-                            border: none; 
-                            padding: 12px 20px; 
-                            border-radius: 25px; 
-                            font-size: 16px; 
-                            font-weight: bold; 
-                            cursor: pointer; 
-                            transition: all 0.3s; 
-                            box-shadow: 0 4px 15px rgba(168, 237, 234, 0.3);
-                        ">🇯🇵 일본어</button>
+                    <div style="font-size: 14px; color: #666; margin-bottom: 15px;">
+                        무엇을 도와드릴까요? 아래 버튼을 클릭하거나 직접 메시지를 입력해주세요.
                     </div>
                 </div>
                 
                 <div class="quick-buttons">
-                    <button class="quick-button" onclick="sendQuickMessage('진료시간 알려주세요')">진료시간</button>
-                    <button class="quick-button" onclick="sendQuickMessage('예약문의')">예약문의</button>
-                    <button class="quick-button" onclick="sendQuickMessage('치료비용 궁금해요')">치료비용</button>
-                    <button class="quick-button" onclick="sendQuickMessage('오시는길')">오시는길</button>
+                    <button class="quick-button" onclick="sendQuickMessage('진료시간 알려주세요')">🕘 진료시간</button>
+                    <button class="quick-button" onclick="sendQuickMessage('치료비용 궁금해요')">💰 치료비용</button>
                 </div>
             `;
             
@@ -612,6 +722,7 @@
             if (sendButton) {
                 sendButton.addEventListener('click', function(e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     sendMessage();
                 });
             }
@@ -631,7 +742,7 @@
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.language-dropdown')) {
                     const menu = document.getElementById('languageMenu');
-                    if (menu) {
+                    if (menu && menu.classList.contains('show')) {
                         menu.style.display = 'none';
                         menu.classList.remove('show');
                     }
@@ -656,9 +767,15 @@
         function toggleLanguageDropdown() {
             const menu = document.getElementById('languageMenu');
             if (menu) {
-                const isVisible = menu.style.display === 'block';
-                menu.style.display = isVisible ? 'none' : 'block';
-                menu.classList.toggle('show', !isVisible);
+                const isVisible = menu.classList.contains('show');
+                
+                if (isVisible) {
+                    menu.style.display = 'none';
+                    menu.classList.remove('show');
+                } else {
+                    menu.style.display = 'block';
+                    menu.classList.add('show');
+                }
             }
         }
 
@@ -682,7 +799,8 @@
             const changeMessages = {
                 ko: '🇰🇷 한국어로 언어가 변경되었습니다!',
                 en: '🇺🇸 Language changed to English!',
-                ru: '🇷🇺 Язык изменен на русский!'
+                ru: '🇷🇺 Язык изменен на русский!',
+                ja: '🇯🇵 言語が日本語に変更されました！'
             };
             
             addBotMessage(changeMessages[language] || changeMessages['ko']);
@@ -788,14 +906,14 @@
             let response = '';
             
             // 키워드 기반 답변
-            if (message.includes('진료시간') || message.includes('언제') || message.includes('몇시') || message.includes('시간')) {
+            if (message.includes('진료시간') || message.includes('언제') || message.includes('몇시') || message.includes('시간') || 
+                message.includes('clinic hours') || message.includes('time') || message.includes('часы работы') || 
+                message.includes('診療時間')) {
                 response = t.clinicHours;
-            } else if (message.includes('치료비용') || message.includes('비용') || message.includes('가격') || message.includes('cost')) {
+            } else if (message.includes('치료비용') || message.includes('비용') || message.includes('가격') || 
+                      message.includes('cost') || message.includes('price') || message.includes('стоимость') || 
+                      message.includes('料金')) {
                 response = t.treatmentCost;
-            } else if (message.includes('오시는길') || message.includes('위치') || message.includes('주소') || message.includes('directions')) {
-                response = t.directions;
-            } else if (message.includes('예약') || message.includes('appointment') || message.includes('reservation')) {
-                response = t.reservation;
             } else if (message.includes('AI관리자') || message.includes('AI 관리자') || message.includes('관리자')) {
                 response = `
                     🔑 <strong>AI 관리자 기능을 요청하셨습니다.</strong><br><br>
@@ -816,13 +934,12 @@
             } else {
                 // 기본 답변
                 response = `
-                    안녕하세요! 피닉스 치과 AI 상담사입니다.<br><br>
+                    ${t.welcomeMessage}<br><br>
                     다음 중 궁금한 사항을 선택해주세요:<br><br>
-                    • 진료시간 및 예약 안내<br>
-                    • 치료비용 문의<br>
-                    • 오시는길 안내<br>
-                    • 기타 문의사항<br><br>
-                    더 자세한 상담을 원하시면 📞 070-1234-1234로 연락주세요!
+                    • 🕘 진료시간 안내<br>
+                    • 💰 치료비용 문의<br>
+                    • 📞 직접 상담 (070-1234-1234)<br><br>
+                    더 자세한 상담을 원하시면 언제든지 연락주세요!
                 `;
             }
             
@@ -865,7 +982,7 @@
             selectLanguage(language);
         }
 
-        console.log('별도창 AI챗봇 초기화 완료');
+        console.log('별도창 AI챗봇 초기화 완료 - 모든 모바일 기기 최적화 적용');
     </script>
 </body>
 </html> 
