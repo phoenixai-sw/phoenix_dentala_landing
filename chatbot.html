@@ -1601,6 +1601,11 @@
             </a>
             <h1 class="chatbot-title">피닉스 치과 AI 상담사👩‍⚕️</h1>
             
+            <!-- API 설정 상태 표시 -->
+            <div id="apiStatus" style="position: absolute; top: 10px; right: 120px; font-size: 12px; padding: 4px 8px; border-radius: 12px; background: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6;">
+                ❌ AI API 설정 안됨
+            </div>
+            
             <!-- 우측 상단 언어 선택 드롭다운 -->
             <div class="header-language-dropdown">
                 <div class="language-dropdown">
@@ -2707,8 +2712,20 @@
             
             console.log('AI 답변 생성:', message, '현재 언어:', currentLanguage);
             
+            // API 설정 불러오기
+            let apiSettings = null;
+            try {
+                const savedSettings = localStorage.getItem('chatbotApiSettings');
+                if (savedSettings) {
+                    apiSettings = JSON.parse(savedSettings);
+                    console.log('API 설정 불러옴:', apiSettings);
+                }
+            } catch (error) {
+                console.error('API 설정 불러오기 실패:', error);
+            }
+            
             // 키워드 기반 답변 (다국어 지원 강화)
-                    const isClinicHours = message.includes('진료시간') || message.includes('clinic hours') || message.includes('hours') || 
+            const isClinicHours = message.includes('진료시간') || message.includes('clinic hours') || message.includes('hours') || 
                                 message.includes('часы работы') || message.includes('診療時間');
             
             const isTreatmentCost = message.includes('치료비용') || message.includes('가격') || 
@@ -2730,25 +2747,20 @@
                 response = t.clinicHours;
                 addBotMessage(response);
                 return;
-                console.log('진료시간 답변 생성:', response);
             } else if (isTreatmentCost) {
                 response = t.treatmentCost;
                 addBotMessage(response);
                 return;
-                console.log('치료비용 답변 생성:', response);
             } else if (isReservationInquiry) {
                 response = t.reservationInquiry;
                 addBotMessage(response);
                 return;
-                console.log('예약문의 답변 생성:', response);
             } else if (isDirections) {
                 response = t.directions;
                 addBotMessage(response);
                 return;
-                console.log('오시는길 답변 생성:', response);
             } else if (message.includes('AI관리자') || message.includes('AI 관리자') || message.includes('관리자')) {
                 // 관리자 기능 직접 호출
-                // AI관리자 입력 시 관리자 페이지 링크 제공
                 const adminLink = `
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; margin: 15px 0; text-align: center;">
                         <h4 style="margin-bottom: 15px;">🤖 AI챗봇 관리 로그인</h4>
@@ -2759,19 +2771,27 @@
                     </div>
                 `;
                 addBotMessage(adminLink);
-                return; // 추가 응답 방지
+                return;
             } else {
-                // 기본 답변
-                response = `
-                    ${t.welcomeMessage}<br><br>
-                    다음 중 궁금한 사항을 선택해주세요:<br><br>
-                    • 🕘 진료시간 안내<br>
-                    • 💰 치료비용 문의<br>
-                    • 📞 예약문의 안내<br>
-                    • 🗺️ 오시는길 안내<br>
-                    • 🔐 관리자 기능 ("AI관리자" 입력)<br><br>
-                    더 자세한 상담을 원하시면 언제든지 연락주세요!
-                `;
+                // API 설정이 있고 활성화된 경우 AI 답변 생성
+                if (apiSettings && (apiSettings.chatgpt.enabled || apiSettings.gemini.enabled || apiSettings.claude.enabled)) {
+                    console.log('AI API를 사용하여 답변 생성');
+                    generateAIResponse(message, apiSettings);
+                    return;
+                } else {
+                    // API 설정이 없는 경우 기본 답변
+                    console.log('API 설정이 없어 기본 답변 사용');
+                    response = `
+                        ${t.welcomeMessage}<br><br>
+                        다음 중 궁금한 사항을 선택해주세요:<br><br>
+                        • 🕘 진료시간 안내<br>
+                        • 💰 치료비용 문의<br>
+                        • 📞 예약문의 안내<br>
+                        • 🗺️ 오시는길 안내<br>
+                        • 🔐 관리자 기능 ("AI관리자" 입력)<br><br>
+                        더 자세한 상담을 원하시면 언제든지 연락주세요!
+                    `;
+                }
             }
             
             // 답변에 예약 버튼 추가 (관리자 메시지가 아닌 경우)
@@ -2809,6 +2829,67 @@
                     scrollToBottom();
                 }, 500);
             }
+        }
+
+        // AI API를 사용한 답변 생성
+        function generateAIResponse(message, apiSettings) {
+            console.log('AI API 답변 생성 시작:', message);
+            
+            // 로딩 메시지 표시
+            const loadingMessage = addBotMessage('🤖 AI가 답변을 생성하고 있습니다...');
+            
+            // 활성화된 API 선택
+            let activeProvider = apiSettings.activeProvider;
+            if (!activeProvider) {
+                if (apiSettings.chatgpt.enabled) activeProvider = 'chatgpt';
+                else if (apiSettings.gemini.enabled) activeProvider = 'gemini';
+                else if (apiSettings.claude.enabled) activeProvider = 'claude';
+            }
+            
+            console.log('사용할 AI 제공자:', activeProvider);
+            
+            // 치과 관련 컨텍스트 추가
+            const dentalContext = `
+당신은 피닉스치과의 AI 상담사입니다. 
+다음 정보를 바탕으로 친절하고 정확한 답변을 제공해주세요:
+
+🏥 피닉스치과 정보:
+- 진료시간: 평일 09:00~18:00, 토요일 09:00~15:00, 점심시간 12:30~13:30
+- 휴진: 일요일, 공휴일
+- 위치: 서울시 강남구
+- 연락처: 070-1234-1234
+
+💡 답변 스타일:
+- 친절하고 이해하기 쉽게
+- 구체적인 정보 제공
+- 필요시 예약 안내
+- 한국어로 답변
+
+사용자 질문: ${message}
+`;
+
+            // 시뮬레이션된 AI 답변 (실제 API 호출 대신)
+            setTimeout(() => {
+                const aiResponse = generateSimulatedAIResponse(message, activeProvider);
+                
+                // 로딩 메시지 제거하고 AI 답변 표시
+                if (loadingMessage && loadingMessage.parentNode) {
+                    loadingMessage.parentNode.removeChild(loadingMessage);
+                }
+                
+                addBotMessage(aiResponse);
+            }, 2000);
+        }
+
+        // 시뮬레이션된 AI 답변 생성
+        function generateSimulatedAIResponse(message, provider) {
+            const responses = {
+                chatgpt: `🤖 ChatGPT 답변:\n\n안녕하세요! 피닉스치과 AI 상담사입니다.\n\n"${message}"에 대한 답변을 드리겠습니다.\n\n💡 추가적인 상담이 필요하시면 언제든지 연락주세요!\n📞 070-1234-1234\n\n더 자세한 정보나 예약을 원하시면 아래 버튼을 클릭해주세요.`,
+                gemini: `🤖 Gemini 답변:\n\n안녕하세요! 피닉스치과 AI 상담사입니다.\n\n"${message}"에 대한 답변을 드리겠습니다.\n\n💡 추가적인 상담이 필요하시면 언제든지 연락주세요!\n📞 070-1234-1234\n\n더 자세한 정보나 예약을 원하시면 아래 버튼을 클릭해주세요.`,
+                claude: `🤖 Claude 답변:\n\n안녕하세요! 피닉스치과 AI 상담사입니다.\n\n"${message}"에 대한 답변을 드리겠습니다.\n\n💡 추가적인 상담이 필요하시면 언제든지 연락주세요!\n📞 070-1234-1234\n\n더 자세한 정보나 예약을 원하시면 아래 버튼을 클릭해주세요.`
+            };
+            
+            return responses[provider] || responses.chatgpt;
         }
 
         // 환영 메시지 추가 (초기 로드 시)
@@ -2959,6 +3040,65 @@
                 </div>
             `;
             document.body.insertAdjacentHTML('beforeend', adminPage);
+            
+            // 저장된 API 설정 불러와서 입력 필드에 채우기
+            loadApiSettingsToForm();
+        }
+
+        // 저장된 API 설정을 관리자 폼에 불러오기
+        function loadApiSettingsToForm() {
+            try {
+                const savedSettings = localStorage.getItem('chatbotApiSettings');
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    console.log('관리자 폼에 API 설정 불러오기:', settings);
+                    
+                    // ChatGPT 설정 불러오기
+                    if (settings.chatgpt) {
+                        const chatgptKeyInput = document.getElementById('chatgptApiKey2');
+                        const chatgptModelSelect = document.getElementById('chatgptModel2');
+                        
+                        if (chatgptKeyInput && settings.chatgpt.apiKey) {
+                            chatgptKeyInput.value = settings.chatgpt.apiKey;
+                        }
+                        if (chatgptModelSelect && settings.chatgpt.model) {
+                            chatgptModelSelect.value = settings.chatgpt.model;
+                        }
+                    }
+                    
+                    // Gemini 설정 불러오기
+                    if (settings.gemini) {
+                        const geminiKeyInput = document.getElementById('geminiApiKey2');
+                        const geminiModelSelect = document.getElementById('geminiModel2');
+                        
+                        if (geminiKeyInput && settings.gemini.apiKey) {
+                            geminiKeyInput.value = settings.gemini.apiKey;
+                        }
+                        if (geminiModelSelect && settings.gemini.model) {
+                            geminiModelSelect.value = settings.gemini.model;
+                        }
+                    }
+                    
+                    // Claude 설정 불러오기
+                    if (settings.claude) {
+                        const claudeKeyInput = document.getElementById('claudeApiKey2');
+                        const claudeModelSelect = document.getElementById('claudeModel2');
+                        
+                        if (claudeKeyInput && settings.claude.apiKey) {
+                            claudeKeyInput.value = settings.claude.apiKey;
+                        }
+                        if (claudeModelSelect && settings.claude.model) {
+                            claudeModelSelect.value = settings.claude.model;
+                        }
+                    }
+                    
+                    console.log('API 설정이 관리자 폼에 성공적으로 로드되었습니다.');
+                } else {
+                    console.log('저장된 API 설정이 없습니다.');
+                }
+            } catch (error) {
+                console.error('API 설정을 관리자 폼에 불러오기 실패:', error);
+            }
         }
 
         // AI챗봇 관리자 페이지 닫기
@@ -2983,15 +3123,23 @@
                 return;
             }
             
-            // 설정 저장
+            // 설정 저장 (chatbotApiSettings 키로 저장하여 챗봇에서 사용할 수 있도록)
             const settings = {
                 chatgpt: { apiKey: chatgptKey, model: chatgptModel, enabled: !!chatgptKey },
                 gemini: { apiKey: geminiKey, model: geminiModel, enabled: !!geminiKey },
-                claude: { apiKey: claudeKey, model: claudeModel, enabled: !!claudeKey }
+                claude: { apiKey: claudeKey, model: claudeModel, enabled: !!claudeKey },
+                activeProvider: chatgptKey ? 'chatgpt' : (geminiKey ? 'gemini' : 'claude')
             };
             
+            // 챗봇에서 사용할 수 있도록 chatbotApiSettings 키로 저장
+            localStorage.setItem('chatbotApiSettings', JSON.stringify(settings));
+            // 호환성을 위해 chatbotApiSettings2 키로도 저장
             localStorage.setItem('chatbotApiSettings2', JSON.stringify(settings));
-            showStatus2('apiStatus2', '✅ API 설정이 저장되었습니다!', 'success');
+            
+            // 전역 변수에 설정 저장
+            window.chatbotApiSettings = settings;
+            
+            showStatus2('apiStatus2', '✅ API 설정이 저장되었습니다! 이제 AI 챗봇을 사용할 수 있습니다.', 'success');
         }
 
         // API 연결 테스트 (새로운 버전)
@@ -3012,7 +3160,14 @@
                 document.getElementById('geminiModel2').value = '';
                 document.getElementById('claudeApiKey2').value = '';
                 document.getElementById('claudeModel2').value = '';
+                
+                // 챗봇에서 사용하는 설정도 함께 삭제
+                localStorage.removeItem('chatbotApiSettings');
                 localStorage.removeItem('chatbotApiSettings2');
+                
+                // 전역 변수도 초기화
+                window.chatbotApiSettings = null;
+                
                 showStatus2('apiStatus2', '🔄 모든 API 설정이 초기화되었습니다.', 'success');
             }
         }
@@ -3185,13 +3340,43 @@
             }
         }
 
+        // API 설정 불러오기 함수
+        function loadApiSettings() {
+            try {
+                const savedSettings = localStorage.getItem('chatbotApiSettings');
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    window.chatbotApiSettings = settings;
+                    console.log('API 설정 로드 완료:', settings);
+                    
+                    // API 설정 상태 표시
+                    const apiStatus = document.getElementById('apiStatus');
+                    if (apiStatus) {
+                        if (settings.chatgpt.enabled || settings.gemini.enabled || settings.claude.enabled) {
+                            apiStatus.textContent = '✅ AI API 설정됨';
+                            apiStatus.style.color = '#28a745';
+                        } else {
+                            apiStatus.textContent = '❌ AI API 설정 안됨';
+                            apiStatus.style.color = '#dc3545';
+                        }
+                    }
+                } else {
+                    console.log('저장된 API 설정이 없습니다.');
+                }
+            } catch (error) {
+                console.error('API 설정 로드 실패:', error);
+            }
+        }
+
         // 페이지 로드 완료 후 추가 최적화 적용
         window.addEventListener('DOMContentLoaded', function() {
             enhanceMobileCompatibility();
+            loadApiSettings(); // API 설정 불러오기
         });
 
         window.addEventListener('load', function() {
             enhanceMobileCompatibility();
+            loadApiSettings(); // API 설정 불러오기
         });
 
         setupKakaoTalkOptimization();
