@@ -1322,6 +1322,49 @@
             z-index: 1000;
         }
 
+        /* PC 웹브라우저 최적화 */
+        @media (min-width: 1024px) {
+            .chatbot-main {
+                max-width: 800px !important;
+                margin: 0 auto !important;
+                height: 90vh !important;
+                border-radius: 20px !important;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.1) !important;
+                margin-top: 5vh !important;
+            }
+            
+            .chatbot-header {
+                border-radius: 20px 20px 0 0 !important;
+            }
+            
+            .chatbot-messages {
+                max-height: 60vh !important;
+            }
+            
+            .chatbot-input {
+                border-radius: 0 0 20px 20px !important;
+            }
+            
+            /* PC에서 API 상태 표시 위치 조정 */
+            #apiStatus {
+                right: 140px !important;
+                top: 12px !important;
+                font-size: 12px !important;
+                padding: 6px 10px !important;
+            }
+            
+            /* PC에서 언어 선택 드롭다운 위치 조정 */
+            .header-language-dropdown {
+                right: 20px !important;
+            }
+            
+            .language-current {
+                min-width: 140px !important;
+                font-size: 16px !important;
+                padding: 12px 18px !important;
+            }
+        }
+
         /* 모바일 기기별 특화 최적화 */
         
         /* 아이폰11 최적화 (414×896) */
@@ -1602,7 +1645,7 @@
             <h1 class="chatbot-title">피닉스 치과 AI 상담사👩‍⚕️</h1>
             
             <!-- API 설정 상태 표시 -->
-            <div id="apiStatus" style="position: absolute; top: 10px; right: 120px; font-size: 12px; padding: 4px 8px; border-radius: 12px; background: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6;">
+            <div id="apiStatus" style="position: absolute; top: 10px; right: 120px; font-size: 11px; padding: 4px 8px; border-radius: 12px; background: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6; font-weight: bold; z-index: 1001;">
                 ❌ AI API 설정 안됨
             </div>
             
@@ -2868,17 +2911,235 @@
 사용자 질문: ${message}
 `;
 
-            // 시뮬레이션된 AI 답변 (실제 API 호출 대신)
-            setTimeout(() => {
-                const aiResponse = generateSimulatedAIResponse(message, activeProvider);
-                
-                // 로딩 메시지 제거하고 AI 답변 표시
+            // 실제 API 호출 시도
+            if (activeProvider === 'chatgpt' && apiSettings.chatgpt.enabled) {
+                callChatGPTAPI(message, apiSettings.chatgpt, loadingMessage);
+            } else if (activeProvider === 'gemini' && apiSettings.gemini.enabled) {
+                callGeminiAPI(message, apiSettings.gemini, loadingMessage);
+            } else if (activeProvider === 'claude' && apiSettings.claude.enabled) {
+                callClaudeAPI(message, apiSettings.claude, loadingMessage);
+            } else {
+                // API 호출 실패 시 시뮬레이션된 답변 사용
+                setTimeout(() => {
+                    const aiResponse = generateSimulatedAIResponse(message, activeProvider);
+                    
+                    // 로딩 메시지 제거하고 AI 답변 표시
+                    if (loadingMessage && loadingMessage.parentNode) {
+                        loadingMessage.parentNode.removeChild(loadingMessage);
+                    }
+                    
+                    addBotMessage(aiResponse);
+                }, 2000);
+            }
+        }
+
+        // ChatGPT API 호출
+        function callChatGPTAPI(message, settings, loadingMessage) {
+            const apiKey = settings.apiKey;
+            const model = settings.model || 'gpt-4o-mini';
+            
+            const requestBody = {
+                model: model,
+                messages: [
+                    {
+                        role: "system",
+                        content: `당신은 피닉스치과의 AI 상담사입니다. 
+다음 정보를 바탕으로 친절하고 정확한 답변을 제공해주세요:
+
+🏥 피닉스치과 정보:
+- 진료시간: 평일 09:00~18:00, 토요일 09:00~15:00, 점심시간 12:30~13:30
+- 휴진: 일요일, 공휴일
+- 위치: 서울시 강남구
+- 연락처: 070-1234-1234
+
+💡 답변 스타일:
+- 친절하고 이해하기 쉽게
+- 구체적인 정보 제공
+- 필요시 예약 안내
+- 한국어로 답변`
+                    },
+                    {
+                        role: "user",
+                        content: message
+                    }
+                ],
+                max_tokens: 1000,
+                temperature: 0.7
+            };
+
+            fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 로딩 메시지 제거
                 if (loadingMessage && loadingMessage.parentNode) {
                     loadingMessage.parentNode.removeChild(loadingMessage);
                 }
                 
-                addBotMessage(aiResponse);
-            }, 2000);
+                const aiResponse = data.choices[0].message.content;
+                addBotMessage(`🤖 ChatGPT 답변:\n\n${aiResponse}`);
+            })
+            .catch(error => {
+                console.error('ChatGPT API 호출 실패:', error);
+                
+                // 로딩 메시지 제거
+                if (loadingMessage && loadingMessage.parentNode) {
+                    loadingMessage.parentNode.removeChild(loadingMessage);
+                }
+                
+                // 에러 메시지 표시
+                addBotMessage(`❌ ChatGPT API 호출에 실패했습니다. 기본 답변을 제공합니다.\n\n${generateSimulatedAIResponse(message, 'chatgpt')}`);
+            });
+        }
+
+        // Gemini API 호출
+        function callGeminiAPI(message, settings, loadingMessage) {
+            const apiKey = settings.apiKey;
+            const model = settings.model || 'gemini-1.5-flash';
+            
+            const requestBody = {
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: `당신은 피닉스치과의 AI 상담사입니다. 
+다음 정보를 바탕으로 친절하고 정확한 답변을 제공해주세요:
+
+🏥 피닉스치과 정보:
+- 진료시간: 평일 09:00~18:00, 토요일 09:00~15:00, 점심시간 12:30~13:30
+- 휴진: 일요일, 공휴일
+- 위치: 서울시 강남구
+- 연락처: 070-1234-1234
+
+💡 답변 스타일:
+- 친절하고 이해하기 쉽게
+- 구체적인 정보 제공
+- 필요시 예약 안내
+- 한국어로 답변
+
+사용자 질문: ${message}`
+                            }
+                        ]
+                    }
+                ],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 1000
+                }
+            };
+
+            fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 로딩 메시지 제거
+                if (loadingMessage && loadingMessage.parentNode) {
+                    loadingMessage.parentNode.removeChild(loadingMessage);
+                }
+                
+                const aiResponse = data.candidates[0].content.parts[0].text;
+                addBotMessage(`🤖 Gemini 답변:\n\n${aiResponse}`);
+            })
+            .catch(error => {
+                console.error('Gemini API 호출 실패:', error);
+                
+                // 로딩 메시지 제거
+                if (loadingMessage && loadingMessage.parentNode) {
+                    loadingMessage.parentNode.removeChild(loadingMessage);
+                }
+                
+                // 에러 메시지 표시
+                addBotMessage(`❌ Gemini API 호출에 실패했습니다. 기본 답변을 제공합니다.\n\n${generateSimulatedAIResponse(message, 'gemini')}`);
+            });
+        }
+
+        // Claude API 호출
+        function callClaudeAPI(message, settings, loadingMessage) {
+            const apiKey = settings.apiKey;
+            const model = settings.model || 'claude-3-haiku-20240307';
+            
+            const requestBody = {
+                model: model,
+                max_tokens: 1000,
+                messages: [
+                    {
+                        role: "user",
+                        content: `당신은 피닉스치과의 AI 상담사입니다. 
+다음 정보를 바탕으로 친절하고 정확한 답변을 제공해주세요:
+
+🏥 피닉스치과 정보:
+- 진료시간: 평일 09:00~18:00, 토요일 09:00~15:00, 점심시간 12:30~13:30
+- 휴진: 일요일, 공휴일
+- 위치: 서울시 강남구
+- 연락처: 070-1234-1234
+
+💡 답변 스타일:
+- 친절하고 이해하기 쉽게
+- 구체적인 정보 제공
+- 필요시 예약 안내
+- 한국어로 답변
+
+사용자 질문: ${message}`
+                    }
+                ]
+            };
+
+            fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey,
+                    'anthropic-version': '2023-06-01'
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 로딩 메시지 제거
+                if (loadingMessage && loadingMessage.parentNode) {
+                    loadingMessage.parentNode.removeChild(loadingMessage);
+                }
+                
+                const aiResponse = data.content[0].text;
+                addBotMessage(`🤖 Claude 답변:\n\n${aiResponse}`);
+            })
+            .catch(error => {
+                console.error('Claude API 호출 실패:', error);
+                
+                // 로딩 메시지 제거
+                if (loadingMessage && loadingMessage.parentNode) {
+                    loadingMessage.parentNode.removeChild(loadingMessage);
+                }
+                
+                // 에러 메시지 표시
+                addBotMessage(`❌ Claude API 호출에 실패했습니다. 기본 답변을 제공합니다.\n\n${generateSimulatedAIResponse(message, 'claude')}`);
+            });
         }
 
         // 시뮬레이션된 AI 답변 생성
@@ -3139,6 +3400,9 @@
             // 전역 변수에 설정 저장
             window.chatbotApiSettings = settings;
             
+            // API 상태 표시 업데이트
+            updateApiStatusDisplay(settings);
+            
             showStatus2('apiStatus2', '✅ API 설정이 저장되었습니다! 이제 AI 챗봇을 사용할 수 있습니다.', 'success');
         }
 
@@ -3146,9 +3410,197 @@
         function testApiConnection2() {
             showStatus2('apiStatus2', '🔄 API 연결을 테스트하고 있습니다...', 'info');
             
-            setTimeout(() => {
-                showStatus2('apiStatus2', '✅ API 연결 테스트 완료! 모든 설정이 정상 작동합니다.', 'success');
-            }, 2000);
+            // 저장된 설정 가져오기
+            const chatgptKey = document.getElementById('chatgptApiKey2').value.trim();
+            const chatgptModel = document.getElementById('chatgptModel2').value;
+            const geminiKey = document.getElementById('geminiApiKey2').value.trim();
+            const geminiModel = document.getElementById('geminiModel2').value;
+            const claudeKey = document.getElementById('claudeApiKey2').value.trim();
+            const claudeModel = document.getElementById('claudeModel2').value;
+            
+            let testResults = [];
+            let completedTests = 0;
+            const totalTests = [chatgptKey, geminiKey, claudeKey].filter(key => key).length;
+            
+            if (totalTests === 0) {
+                showStatus2('apiStatus2', '❌ 테스트할 API 키가 없습니다. API 키를 입력해주세요.', 'error');
+                return;
+            }
+            
+            // ChatGPT 테스트
+            if (chatgptKey) {
+                testChatGPTConnection(chatgptKey, chatgptModel || 'gpt-4o-mini')
+                    .then(result => {
+                        testResults.push(`ChatGPT: ${result}`);
+                        completedTests++;
+                        checkAllTestsComplete();
+                    })
+                    .catch(error => {
+                        testResults.push(`ChatGPT: ❌ 실패 - ${error.message}`);
+                        completedTests++;
+                        checkAllTestsComplete();
+                    });
+            }
+            
+            // Gemini 테스트
+            if (geminiKey) {
+                testGeminiConnection(geminiKey, geminiModel || 'gemini-1.5-flash')
+                    .then(result => {
+                        testResults.push(`Gemini: ${result}`);
+                        completedTests++;
+                        checkAllTestsComplete();
+                    })
+                    .catch(error => {
+                        testResults.push(`Gemini: ❌ 실패 - ${error.message}`);
+                        completedTests++;
+                        checkAllTestsComplete();
+                    });
+            }
+            
+            // Claude 테스트
+            if (claudeKey) {
+                testClaudeConnection(claudeKey, claudeModel || 'claude-3-haiku-20240307')
+                    .then(result => {
+                        testResults.push(`Claude: ${result}`);
+                        completedTests++;
+                        checkAllTestsComplete();
+                    })
+                    .catch(error => {
+                        testResults.push(`Claude: ❌ 실패 - ${error.message}`);
+                        completedTests++;
+                        checkAllTestsComplete();
+                    });
+            }
+            
+            function checkAllTestsComplete() {
+                if (completedTests === totalTests) {
+                    const successCount = testResults.filter(result => result.includes('✅')).length;
+                    const statusMessage = testResults.join('\n');
+                    
+                    if (successCount === totalTests) {
+                        showStatus2('apiStatus2', `✅ 모든 API 연결 테스트 완료!\n\n${statusMessage}`, 'success');
+                    } else if (successCount > 0) {
+                        showStatus2('apiStatus2', `⚠️ 일부 API 연결 테스트 완료\n\n${statusMessage}`, 'info');
+                    } else {
+                        showStatus2('apiStatus2', `❌ 모든 API 연결 테스트 실패\n\n${statusMessage}`, 'error');
+                    }
+                }
+            }
+        }
+
+        // ChatGPT 연결 테스트
+        function testChatGPTConnection(apiKey, model) {
+            return new Promise((resolve, reject) => {
+                const requestBody = {
+                    model: model,
+                    messages: [
+                        {
+                            role: "user",
+                            content: "안녕하세요. 연결 테스트입니다."
+                        }
+                    ],
+                    max_tokens: 50
+                };
+
+                fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    resolve('✅ 연결 성공');
+                })
+                .catch(error => {
+                    reject(error);
+                });
+            });
+        }
+
+        // Gemini 연결 테스트
+        function testGeminiConnection(apiKey, model) {
+            return new Promise((resolve, reject) => {
+                const requestBody = {
+                    contents: [
+                        {
+                            parts: [
+                                {
+                                    text: "안녕하세요. 연결 테스트입니다."
+                                }
+                            ]
+                        }
+                    ],
+                    generationConfig: {
+                        maxOutputTokens: 50
+                    }
+                };
+
+                fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    resolve('✅ 연결 성공');
+                })
+                .catch(error => {
+                    reject(error);
+                });
+            });
+        }
+
+        // Claude 연결 테스트
+        function testClaudeConnection(apiKey, model) {
+            return new Promise((resolve, reject) => {
+                const requestBody = {
+                    model: model,
+                    max_tokens: 50,
+                    messages: [
+                        {
+                            role: "user",
+                            content: "안녕하세요. 연결 테스트입니다."
+                        }
+                    ]
+                };
+
+                fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey,
+                        'anthropic-version': '2023-06-01'
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    resolve('✅ 연결 성공');
+                })
+                .catch(error => {
+                    reject(error);
+                });
+            });
         }
 
         // API 설정 초기화 (새로운 버전)
@@ -3167,6 +3619,9 @@
                 
                 // 전역 변수도 초기화
                 window.chatbotApiSettings = null;
+                
+                // API 상태 표시 업데이트
+                updateApiStatusDisplay(null);
                 
                 showStatus2('apiStatus2', '🔄 모든 API 설정이 초기화되었습니다.', 'success');
             }
@@ -3350,21 +3805,41 @@
                     console.log('API 설정 로드 완료:', settings);
                     
                     // API 설정 상태 표시
-                    const apiStatus = document.getElementById('apiStatus');
-                    if (apiStatus) {
-                        if (settings.chatgpt.enabled || settings.gemini.enabled || settings.claude.enabled) {
-                            apiStatus.textContent = '✅ AI API 설정됨';
-                            apiStatus.style.color = '#28a745';
-                        } else {
-                            apiStatus.textContent = '❌ AI API 설정 안됨';
-                            apiStatus.style.color = '#dc3545';
-                        }
-                    }
+                    updateApiStatusDisplay(settings);
                 } else {
                     console.log('저장된 API 설정이 없습니다.');
+                    updateApiStatusDisplay(null);
                 }
             } catch (error) {
                 console.error('API 설정 로드 실패:', error);
+                updateApiStatusDisplay(null);
+            }
+        }
+
+        // API 상태 표시 업데이트
+        function updateApiStatusDisplay(settings) {
+            const apiStatus = document.getElementById('apiStatus');
+            if (!apiStatus) return;
+            
+            if (settings && (settings.chatgpt?.enabled || settings.gemini?.enabled || settings.claude?.enabled)) {
+                // 활성화된 API 개수 계산
+                const activeApis = [
+                    settings.chatgpt?.enabled ? 'ChatGPT' : null,
+                    settings.gemini?.enabled ? 'Gemini' : null,
+                    settings.claude?.enabled ? 'Claude' : null
+                ].filter(Boolean);
+                
+                apiStatus.textContent = `✅ AI API (${activeApis.join(', ')})`;
+                apiStatus.style.background = '#d4edda';
+                apiStatus.style.color = '#155724';
+                apiStatus.style.border = '1px solid #c3e6cb';
+                apiStatus.title = `활성화된 AI 모델: ${activeApis.join(', ')}`;
+            } else {
+                apiStatus.textContent = '❌ AI API 설정 안됨';
+                apiStatus.style.background = '#f8f9fa';
+                apiStatus.style.color = '#6c757d';
+                apiStatus.style.border = '1px solid #dee2e6';
+                apiStatus.title = 'AI 관리자에서 API 키를 설정해주세요';
             }
         }
 
