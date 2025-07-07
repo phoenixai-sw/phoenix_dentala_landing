@@ -2823,26 +2823,34 @@
                         <h4 style="margin-bottom: 15px;">🤖 AI챗봇 관리 로그인</h4>
                         <p style="margin-bottom: 10px;">관리자 페이지에 접속하려면 아래 버튼을 클릭하세요.</p>
                         <p style="margin-bottom: 20px; font-size: 14px; opacity: 0.9;">💡 아이디: <strong>phoenix</strong> | 비밀번호: <strong>phoenix</strong></p>
-                        <button onclick="openChatbotAdmin2()" ontouchstart="openChatbotAdmin2()" style="background: white; color: #667eea; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 16px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                        <button id="adminLoginBtn" style="background: white; color: #667eea; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 16px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
                             🔐 관리자 페이지 열기
                         </button>
                     </div>
                 `;
                 addBotMessage(adminLink);
                 
-                // 모바일 기기에서 터치 이벤트 최적화
+                // 관리자 버튼 이벤트 리스너 설정 (중복 방지)
                 setTimeout(() => {
-                    const adminButton = document.querySelector('button[onclick="openChatbotAdmin2()"]');
+                    const adminButton = document.getElementById('adminLoginBtn');
                     if (adminButton) {
+                        // 클릭 이벤트 리스너 추가
                         adminButton.addEventListener('click', function(e) {
                             e.preventDefault();
+                            e.stopPropagation();
+                            console.log('관리자 버튼 클릭됨');
                             openChatbotAdmin2();
                         });
+                        
+                        // 터치 이벤트 리스너 추가 (모바일)
                         adminButton.addEventListener('touchstart', function(e) {
                             e.preventDefault();
+                            e.stopPropagation();
+                            console.log('관리자 버튼 터치됨');
                             openChatbotAdmin2();
                         });
-                        console.log('관리자 버튼 이벤트 리스너 추가 완료');
+                        
+                        console.log('관리자 버튼 이벤트 리스너 추가 완료 (중복 방지)');
                     }
                 }, 100);
                 
@@ -3890,6 +3898,13 @@ ${contextInfo}
 
         // AI챗봇 관리자 페이지 열기 함수 (개선된 버전)
         function openChatbotAdmin2() {
+            // 중복 실행 방지
+            if (window.isLoggingIn) {
+                console.log('로그인 진행 중 - 중복 실행 방지');
+                return;
+            }
+            
+            window.isLoggingIn = true;
             console.log('관리자 페이지 열기 함수 호출됨');
             
             try {
@@ -3899,6 +3914,7 @@ ${contextInfo}
                 // 취소 버튼 클릭 시
                 if (username === null) {
                     console.log('로그인 취소됨');
+                    window.isLoggingIn = false; // 취소 시 플래그 리셋
                     return;
                 }
                 
@@ -3910,6 +3926,7 @@ ${contextInfo}
                     // 취소 버튼 클릭 시
                     if (password === null) {
                         console.log('비밀번호 입력 취소됨');
+                        window.isLoggingIn = false; // 취소 시 플래그 리셋
                         return;
                     }
                     
@@ -3918,17 +3935,21 @@ ${contextInfo}
                         console.log('✅ 로그인 성공 - 관리자 페이지 표시');
                         alert('✅ 로그인 성공!\n\nAI 챗봇 관리 페이지로 이동합니다.');
                         showChatbotAdmin2();
+                        window.isLoggingIn = false; // 로그인 완료 후 플래그 리셋
                     } else {
                         console.log('❌ 비밀번호 오류:', password);
                         alert("❌ 비밀번호가 틀렸습니다.\n\n아이디: phoenix\n비밀번호: phoenix");
+                        window.isLoggingIn = false; // 로그인 실패 후 플래그 리셋
                     }
                 } else {
                     console.log('❌ 아이디 오류:', username);
                     alert("❌ 아이디가 틀렸습니다.\n\n아이디: phoenix\n비밀번호: phoenix");
+                    window.isLoggingIn = false; // 로그인 실패 후 플래그 리셋
                 }
             } catch (error) {
                 console.error('관리자 페이지 열기 오류:', error);
                 alert('❌ 관리자 페이지 열기에 실패했습니다.\n\n다시 시도해주세요.');
+                window.isLoggingIn = false; // 오류 발생 후 플래그 리셋
             }
         }
 
