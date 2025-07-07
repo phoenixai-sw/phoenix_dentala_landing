@@ -2519,8 +2519,43 @@
                 
                 // 지식베이스 설정 불러오기
                 loadKnowledgeBaseSettings();
+                
+                // API 설정 확인
+                checkApiSettings();
             }, 1000);
         });
+        
+        // API 설정 확인 함수
+        function checkApiSettings() {
+            try {
+                const savedSettings = localStorage.getItem('chatbotApiSettings');
+                if (savedSettings) {
+                    const apiSettings = JSON.parse(savedSettings);
+                    console.log('🔍 페이지 로드 시 API 설정 확인:');
+                    console.log('- ChatGPT:', apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey ? '활성' : '비활성');
+                    console.log('- Gemini:', apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey ? '활성' : '비활성');
+                    console.log('- Claude:', apiSettings.claude?.enabled && apiSettings.claude?.apiKey ? '활성' : '비활성');
+                    console.log('- 활성 제공자:', apiSettings.activeProvider);
+                    
+                    // 활성화된 API가 있는지 확인
+                    const hasActiveAPI = (
+                        (apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey) ||
+                        (apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey) ||
+                        (apiSettings.claude?.enabled && apiSettings.claude?.apiKey)
+                    );
+                    
+                    if (hasActiveAPI) {
+                        console.log('✅ 활성화된 AI API가 있습니다. AI 답변이 가능합니다.');
+                    } else {
+                        console.log('❌ 활성화된 AI API가 없습니다. 시뮬레이션된 답변을 사용합니다.');
+                    }
+                } else {
+                    console.log('❌ 저장된 API 설정이 없습니다.');
+                }
+            } catch (error) {
+                console.error('❌ API 설정 확인 실패:', error);
+            }
+        }
 
         // 지식베이스 설정 불러오기
         function loadKnowledgeBaseSettings() {
@@ -2857,16 +2892,25 @@
                 return;
             }
             
-            // API 설정 불러오기
+            // API 설정 불러오기 (개선된 버전)
             let apiSettings = null;
             try {
                 const savedSettings = localStorage.getItem('chatbotApiSettings');
                 if (savedSettings) {
                     apiSettings = JSON.parse(savedSettings);
-                    console.log('API 설정 불러옴:', apiSettings);
+                    console.log('✅ API 설정 불러옴:', apiSettings);
+                    
+                    // API 설정 상세 확인
+                    console.log('🔍 API 설정 상세 분석:');
+                    console.log('- ChatGPT 활성화:', apiSettings.chatgpt?.enabled, 'API 키:', apiSettings.chatgpt?.apiKey ? '있음' : '없음');
+                    console.log('- Gemini 활성화:', apiSettings.gemini?.enabled, 'API 키:', apiSettings.gemini?.apiKey ? '있음' : '없음');
+                    console.log('- Claude 활성화:', apiSettings.claude?.enabled, 'API 키:', apiSettings.claude?.apiKey ? '있음' : '없음');
+                    console.log('- 활성 제공자:', apiSettings.activeProvider);
+                } else {
+                    console.log('❌ 저장된 API 설정이 없습니다.');
                 }
             } catch (error) {
-                console.error('API 설정 불러오기 실패:', error);
+                console.error('❌ API 설정 불러오기 실패:', error);
             }
             
             // 2차: 📚 업로드된 지식 파일 검색
@@ -2877,25 +2921,40 @@
                 return;
             }
             
-            // 3차: 🤖 AI API 모델 활용
+            // 3차: 🤖 AI API 모델 활용 (개선된 버전)
             console.log('🔍 API 설정 확인:', apiSettings);
-            if (apiSettings && (apiSettings.chatgpt.enabled || apiSettings.gemini.enabled || apiSettings.claude.enabled)) {
+            
+            // API 설정이 있고 활성화된 API가 있는지 확인
+            const hasActiveAPI = apiSettings && (
+                (apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey) ||
+                (apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey) ||
+                (apiSettings.claude?.enabled && apiSettings.claude?.apiKey)
+            );
+            
+            if (hasActiveAPI) {
                 console.log('🤖 AI API를 사용하여 답변 생성');
                 console.log('활성화된 API:', {
-                    chatgpt: apiSettings.chatgpt?.enabled,
-                    gemini: apiSettings.gemini?.enabled,
-                    claude: apiSettings.claude?.enabled
+                    chatgpt: apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey ? '활성' : '비활성',
+                    gemini: apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey ? '활성' : '비활성',
+                    claude: apiSettings.claude?.enabled && apiSettings.claude?.apiKey ? '활성' : '비활성'
                 });
                 generateAIResponse(message, apiSettings);
                 return;
             } else {
-                console.log('❌ 활성화된 AI API가 없습니다. 기본 FAQ 답변으로 진행');
+                console.log('❌ 활성화된 AI API가 없습니다. 시뮬레이션된 AI 답변으로 진행');
                 console.log('API 설정 상태:', {
                     hasSettings: !!apiSettings,
-                    chatgpt: apiSettings?.chatgpt?.enabled,
-                    gemini: apiSettings?.gemini?.enabled,
-                    claude: apiSettings?.claude?.enabled
+                    chatgpt: apiSettings?.chatgpt?.enabled && apiSettings?.chatgpt?.apiKey ? '활성' : '비활성',
+                    gemini: apiSettings?.gemini?.enabled && apiSettings?.gemini?.apiKey ? '활성' : '비활성',
+                    claude: apiSettings?.claude?.enabled && apiSettings?.claude?.apiKey ? '활성' : '비활성'
                 });
+                
+                // 시뮬레이션된 AI 답변 사용
+                setTimeout(() => {
+                    const aiResponse = generateSimulatedAIResponse(message, 'chatgpt');
+                    addBotMessage(aiResponse);
+                }, 1000);
+                return;
             }
             
             // 4차: 기본 FAQ 응답 (키워드 기반 답변)
@@ -2985,23 +3044,32 @@
             }
         }
 
-        // AI API를 사용한 답변 생성
+        // AI API를 사용한 답변 생성 (개선된 버전)
         function generateAIResponse(message, apiSettings) {
-            console.log('AI API 답변 생성 시작:', message);
-            console.log('API 설정:', apiSettings);
+            console.log('🤖 AI API 답변 생성 시작:', message);
+            console.log('📋 API 설정:', apiSettings);
             
             // 로딩 메시지 표시
             const loadingMessage = addBotMessage('🤖 AI가 답변을 생성하고 있습니다...');
             
-            // 활성화된 API 선택
+            // 활성화된 API 선택 (API 키가 있는 것만)
             let activeProvider = apiSettings.activeProvider;
-            if (!activeProvider) {
-                if (apiSettings.chatgpt.enabled) activeProvider = 'chatgpt';
-                else if (apiSettings.gemini.enabled) activeProvider = 'gemini';
-                else if (apiSettings.claude.enabled) activeProvider = 'claude';
+            if (!activeProvider || !apiSettings[activeProvider]?.apiKey) {
+                if (apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey) {
+                    activeProvider = 'chatgpt';
+                } else if (apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey) {
+                    activeProvider = 'gemini';
+                } else if (apiSettings.claude?.enabled && apiSettings.claude?.apiKey) {
+                    activeProvider = 'claude';
+                }
             }
             
-            console.log('사용할 AI 제공자:', activeProvider);
+            console.log('🎯 선택된 AI 제공자:', activeProvider);
+            console.log('🔑 API 키 상태:', {
+                chatgpt: apiSettings.chatgpt?.apiKey ? '있음' : '없음',
+                gemini: apiSettings.gemini?.apiKey ? '있음' : '없음',
+                claude: apiSettings.claude?.apiKey ? '있음' : '없음'
+            });
             
             // 지식베이스 컨텍스트 추가
             let contextInfo = getContextFromKnowledgeBase();
@@ -3028,26 +3096,32 @@ ${contextInfo}
 사용자 질문: ${message}
 `;
 
-            // 실제 API 호출 시도
+            // 실제 API 호출 시도 (개선된 버전)
             let apiCallMade = false;
             
-            if (activeProvider === 'chatgpt' && apiSettings.chatgpt.enabled) {
-                console.log('ChatGPT API 호출 시도');
+            if (activeProvider === 'chatgpt' && apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey) {
+                console.log('🚀 ChatGPT API 호출 시도');
                 apiCallMade = true;
                 callChatGPTAPI(message, apiSettings.chatgpt, loadingMessage, contextInfo);
-            } else if (activeProvider === 'gemini' && apiSettings.gemini.enabled) {
-                console.log('Gemini API 호출 시도');
+            } else if (activeProvider === 'gemini' && apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey) {
+                console.log('🚀 Gemini API 호출 시도');
                 apiCallMade = true;
                 callGeminiAPI(message, apiSettings.gemini, loadingMessage, contextInfo);
-            } else if (activeProvider === 'claude' && apiSettings.claude.enabled) {
-                console.log('Claude API 호출 시도');
+            } else if (activeProvider === 'claude' && apiSettings.claude?.enabled && apiSettings.claude?.apiKey) {
+                console.log('🚀 Claude API 호출 시도');
                 apiCallMade = true;
                 callClaudeAPI(message, apiSettings.claude, loadingMessage, contextInfo);
             }
             
             // API 호출이 실패하거나 활성화된 API가 없는 경우 시뮬레이션된 답변 사용
             if (!apiCallMade) {
-                console.log('API 호출 실패 또는 활성화된 API 없음 - 시뮬레이션된 답변 사용');
+                console.log('❌ API 호출 실패 또는 활성화된 API 없음 - 시뮬레이션된 답변 사용');
+                console.log('🔍 API 호출 실패 원인 분석:');
+                console.log('- activeProvider:', activeProvider);
+                console.log('- ChatGPT 상태:', apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey ? '사용 가능' : '사용 불가');
+                console.log('- Gemini 상태:', apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey ? '사용 가능' : '사용 불가');
+                console.log('- Claude 상태:', apiSettings.claude?.enabled && apiSettings.claude?.apiKey ? '사용 가능' : '사용 불가');
+                
                 setTimeout(() => {
                     const aiResponse = generateSimulatedAIResponse(message, activeProvider || 'chatgpt');
                     
@@ -3057,7 +3131,7 @@ ${contextInfo}
                     }
                     
                     addBotMessage(aiResponse);
-                }, 1500); // 더 빠른 응답
+                }, 1000); // 더 빠른 응답
             }
         }
 
@@ -3078,10 +3152,15 @@ ${contextInfo}
             return context;
         }
 
-        // ChatGPT API 호출
+        // ChatGPT API 호출 (개선된 버전)
         function callChatGPTAPI(message, settings, loadingMessage, contextInfo = '') {
             const apiKey = settings.apiKey;
             const model = settings.model || 'gpt-4o-mini';
+            
+            console.log('🔑 ChatGPT API 호출 시작');
+            console.log('- API 키:', apiKey ? '있음' : '없음');
+            console.log('- 모델:', model);
+            console.log('- 메시지:', message);
             
             const systemPrompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
             매우 친절하고 전문적으로 답변해주세요.
@@ -3144,16 +3223,21 @@ ${contextInfo}
                 return response.json();
             })
             .then(data => {
+                console.log('✅ ChatGPT API 호출 성공');
+                console.log('- 응답 데이터:', data);
+                
                 // 로딩 메시지 제거
                 if (loadingMessage && loadingMessage.parentNode) {
                     loadingMessage.parentNode.removeChild(loadingMessage);
                 }
                 
                 const aiResponse = data.choices[0].message.content;
+                console.log('- AI 응답:', aiResponse);
                 addBotMessage(formatAIResponse(aiResponse, 'chatgpt'));
             })
             .catch(error => {
-                console.error('ChatGPT API 호출 실패:', error);
+                console.error('❌ ChatGPT API 호출 실패:', error);
+                console.log('🔍 실패 원인:', error.message);
                 
                 // 로딩 메시지 제거
                 if (loadingMessage && loadingMessage.parentNode) {
@@ -3161,7 +3245,7 @@ ${contextInfo}
                 }
                 
                 // 시뮬레이션된 답변으로 자연스럽게 대체
-                console.log('ChatGPT API 실패 - 시뮬레이션된 답변으로 대체');
+                console.log('🔄 ChatGPT API 실패 - 시뮬레이션된 답변으로 대체');
                 const aiResponse = generateSimulatedAIResponse(message, 'chatgpt');
                 addBotMessage(aiResponse);
             });
@@ -3736,7 +3820,27 @@ ${contextInfo}
             // 질문 유형에 따른 맞춤 답변 생성
             let response = '';
             
-            if (message.includes('진료시간') || message.includes('시간') || message.includes('언제')) {
+            // 키워드 기반 답변 (기존 FAQ 답변과 동일한 우선순위)
+            const isClinicHours = message.includes('진료시간') || message.includes('시간') || message.includes('언제') || 
+                                message.includes('clinic hours') || message.includes('hours') || 
+                                message.includes('часы работы') || message.includes('診療時間');
+            
+            const isTreatmentCost = message.includes('치료비용') || message.includes('가격') || message.includes('비용') || message.includes('얼마') || 
+                                  message.includes('cost') || message.includes('price') || message.includes('treatment') || 
+                                  message.includes('стоимость') || message.includes('цена') || 
+                                  message.includes('料金') || message.includes('費用');
+            
+            const isReservationInquiry = message.includes('예약') || message.includes('예약문의') || 
+                                       message.includes('reservation') || message.includes('booking') || message.includes('inquiry') || 
+                                       message.includes('запись') || message.includes('бронирование') || 
+                                       message.includes('予約') || message.includes('問い合わせ');
+            
+            const isDirections = message.includes('오시는길') || message.includes('주소') || message.includes('찾아가는') || message.includes('위치') || 
+                               message.includes('directions') || message.includes('location') || message.includes('address') || 
+                               message.includes('адрес') || message.includes('местоположение') || 
+                               message.includes('場所') || message.includes('住所') || message.includes('アクセス');
+            
+            if (isClinicHours) {
                 response = `🤖 피닉스 치과 AI상담원의 답변:
 
 안녕하세요! 피닉스치과 AI 상담사입니다. 😊
@@ -3757,7 +3861,7 @@ ${contextInfo}
 
 더 자세한 상담이 필요하시면 언제든지 연락주세요! 📞`;
                 
-            } else if (message.includes('치료비용') || message.includes('가격') || message.includes('비용') || message.includes('얼마')) {
+            } else if (isTreatmentCost) {
                 response = `🤖 피닉스 치과 AI상담원의 답변:
 
 안녕하세요! 피닉스치과 AI 상담사입니다. 😊
@@ -3780,7 +3884,7 @@ ${contextInfo}
 
 자세한 상담을 원하시면 예약해주세요! 📅`;
                 
-            } else if (message.includes('예약') || message.includes('예약문의')) {
+            } else if (isReservationInquiry) {
                 response = `🤖 피닉스 치과 AI상담원의 답변:
 
 안녕하세요! 피닉스치과 AI 상담사입니다. 😊
@@ -3808,7 +3912,7 @@ ${contextInfo}
 
 지금 바로 예약하시겠어요? 📅`;
                 
-            } else if (message.includes('오시는길') || message.includes('주소') || message.includes('찾아가는') || message.includes('위치')) {
+            } else if (isDirections) {
                 response = `🤖 피닉스 치과 AI상담원의 답변:
 
 안녕하세요! 피닉스치과 AI 상담사입니다. 😊
@@ -3839,7 +3943,7 @@ ${contextInfo}
 길찾기에 어려움이 있으시면 언제든 연락주세요! 📞`;
                 
             } else {
-                // 일반적인 질문에 대한 답변
+                // 일반적인 질문에 대한 자연스러운 AI 답변
                 response = `🤖 피닉스 치과 AI상담원의 답변:
 
 안녕하세요! 피닉스치과 AI 상담사입니다. 😊
@@ -4170,6 +4274,15 @@ ${contextInfo}
             
             // 전역 변수에 설정 저장
             window.chatbotApiSettings = settings;
+            
+            console.log('💾 API 설정 저장 완료:');
+            console.log('- 저장된 설정:', settings);
+            console.log('- 활성화된 API:', {
+                chatgpt: settings.chatgpt.enabled && settings.chatgpt.apiKey ? '활성' : '비활성',
+                gemini: settings.gemini.enabled && settings.gemini.apiKey ? '활성' : '비활성',
+                claude: settings.claude.enabled && settings.claude.apiKey ? '활성' : '비활성'
+            });
+            console.log('- 활성 제공자:', settings.activeProvider);
             
             // API 상태 표시 업데이트
             updateApiStatusDisplay(settings);
