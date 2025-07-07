@@ -13,6 +13,24 @@
     <meta name="format-detection" content="address=no">
     <meta name="format-detection" content="email=no">
     
+    <!-- 모바일 최적화 메타 태그 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="theme-color" content="#4facfe">
+    
+    <!-- iOS 13+ 동적 뷰포트 높이 지원 -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- 안드로이드 크롬 브라우저 최적화 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="피닉스 치과 AI챗봇">
+    
+    <!-- 카카오톡 브라우저 최적화 -->
+    <meta name="kakao-link-color" content="#4facfe">
+    <meta name="kakao-link-bgcolor" content="#ffffff">
+    
     <style>
         * {
             margin: 0;
@@ -20,8 +38,20 @@
             box-sizing: border-box;
         }
 
+        /* iOS Safari 뷰포트 높이 문제 해결 */
         :root {
             --vh: 1vh;
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-right: env(safe-area-inset-right);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --safe-area-inset-left: env(safe-area-inset-left);
+        }
+
+        /* 터치 스크롤 최적화 */
+        html, body {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            touch-action: manipulation;
         }
 
         body {
@@ -1290,6 +1320,181 @@
             right: 0;
             z-index: 1000;
         }
+
+        /* 모바일 기기별 특화 최적화 */
+        
+        /* 아이폰11 최적화 (414×896) */
+        .device-iphone11 .chatbot-main {
+            max-width: 414px !important;
+            margin: 0 auto !important;
+        }
+        
+        .device-iphone11 .chatbot-header {
+            padding: 20px 18px !important;
+            font-size: 20px !important;
+        }
+        
+        .device-iphone11 .chatbot-input {
+            padding: 15px 18px !important;
+        }
+        
+        /* 아이폰 미니 최적화 (375×812) */
+        .device-iphone-mini .chatbot-main {
+            max-width: 375px !important;
+            margin: 0 auto !important;
+        }
+        
+        .device-iphone-mini .chatbot-header {
+            padding: 18px 16px !important;
+            font-size: 19px !important;
+        }
+        
+        .device-iphone-mini .chatbot-input {
+            padding: 12px 16px !important;
+        }
+        
+        /* Galaxy XCover 5 최적화 (432×900) */
+        .device-galaxy-xcover5 .chatbot-main {
+            max-width: 432px !important;
+            margin: 0 auto !important;
+        }
+        
+        .device-galaxy-xcover5 .chatbot-header {
+            padding: 22px 20px !important;
+            font-size: 21px !important;
+        }
+        
+        .device-galaxy-xcover5 .chatbot-input {
+            padding: 18px 20px !important;
+        }
+        
+        /* 카카오톡 브라우저 최적화 */
+        .kakao-browser button {
+            -webkit-tap-highlight-color: transparent !important;
+            touch-action: manipulation !important;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+        }
+        
+        .kakao-browser .back-link {
+            -webkit-tap-highlight-color: transparent !important;
+            touch-action: manipulation !important;
+        }
+        
+        .kakao-browser .chatbot-input textarea {
+            min-height: 50px !important;
+            font-size: 16px !important;
+        }
+        
+        .kakao-browser .chatbot-send {
+            min-width: 50px !important;
+            min-height: 50px !important;
+        }
+        
+        /* 모든 아이폰 기기 공통 최적화 */
+        .device-iphone .chatbot-main {
+            min-height: calc(100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)) !important;
+        }
+        
+        .device-iphone .chatbot-input textarea:focus {
+            transform: none !important;
+            zoom: 1 !important;
+        }
+        
+        /* 카카오톡 브라우저에서 입력 필드 줌 방지 */
+        .kakao-browser textarea {
+            font-size: 16px !important;
+        }
+        
+        .kakao-browser .chatbot-input textarea {
+            font-size: 16px !important;
+        }
+        
+        /* iOS Safe Area 지원 */
+        .device-ios body {
+            padding-top: var(--safe-area-inset-top);
+            padding-bottom: var(--safe-area-inset-bottom);
+            padding-left: var(--safe-area-inset-left);
+            padding-right: var(--safe-area-inset-right);
+        }
+        
+        /* 안드로이드 키보드 열림 상태 최적화 */
+        .keyboard-open .chatbot-messages {
+            max-height: 60vh !important;
+            overflow-y: auto !important;
+        }
+        
+        .keyboard-open .chatbot-input {
+            position: fixed !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+        }
+        
+        /* 터치 성능 개선 */
+        .device-ios *, .device-android * {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+        }
+        
+        /* 스크롤 바운스 효과 제거 (iOS) */
+        .device-ios .chatbot-messages {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+        
+        /* 안드로이드 스크롤 최적화 */
+        .device-android .chatbot-messages {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .device-android .chatbot-messages::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 예약하기 버튼 스타일 */
+        .reservation-button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%) !important;
+            color: white !important;
+            border: none !important;
+            padding: 12px 24px !important;
+            border-radius: 25px !important;
+            font-size: 14px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+            margin: 10px 0 !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3) !important;
+        }
+        
+        .reservation-button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5) !important;
+        }
+        
+        .reservation-button:active {
+            transform: translateY(0) !important;
+        }
+        
+        /* 예약 문의 메시지 스타일 */
+        .reservation-message {
+            margin-top: 15px !important;
+            padding: 15px !important;
+            background: #f8f9fa !important;
+            border-radius: 10px !important;
+            border-left: 4px solid #4facfe !important;
+            text-align: center !important;
+        }
+        
+        .reservation-message-text {
+            font-size: 14px !important;
+            color: #666 !important;
+            margin-bottom: 10px !important;
+        }
     </style>
 </head>
 <body>
@@ -1357,13 +1562,21 @@
                     📅 <strong>토요일:</strong> 09:00 ~ 15:00<br>
                     🍽️ <strong>점심시간:</strong> 12:30 ~ 13:30<br>
                     🚫 <strong>휴진:</strong> 일요일, 공휴일<br><br>
-                    📞 <strong>예약 문의:</strong> 070-1234-1234`,
+                    📞 <strong>예약 문의:</strong> 070-1234-1234<br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">자세한 문의는 방문 상담 해주세요</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 예약하기</button>
+                    </div>`,
                 treatmentCost: `💰 <strong>피닉스 치과 치료비용 안내</strong><br><br>
                     🦷 <strong>일반 진료:</strong> 상담 후 안내<br>
                     🦷 <strong>스케일링:</strong> 30,000원 ~ 50,000원<br>
                     🦷 <strong>임플란트:</strong> 상담 후 개별 견적<br>
                     🦷 <strong>교정:</strong> 상담 후 개별 견적<br><br>
-                    💡 <strong>정확한 비용은 진료 후 안내드립니다!</strong>`,
+                    💡 <strong>정확한 비용은 진료 후 안내드립니다!</strong><br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">자세한 문의는 방문 상담 해주세요</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 예약하기</button>
+                    </div>`,
                 reservationInquiry: `📞 <strong>피닉스 치과 예약 문의</strong><br><br>
                     🏥 <strong>병원명:</strong> 피닉스 치과<br>
                     📞 <strong>전화번호:</strong> 070-1234-1234<br>
@@ -1373,7 +1586,11 @@
                     • 평일: 09:00 ~ 17:30<br>
                     • 토요일: 09:00 ~ 14:30<br>
                     • 일요일/공휴일: 휴무<br><br>
-                    💡 <strong>온라인 예약이 가장 편리합니다!</strong>`,
+                    💡 <strong>온라인 예약이 가장 편리합니다!</strong><br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">자세한 문의는 방문 상담 해주세요</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 예약하기</button>
+                    </div>`,
                 directions: `🗺️ <strong>피닉스 치과 오시는길</strong><br><br>
                     📍 <strong>주소:</strong> 서울특별시 강남구 테헤란로 123<br>
                     🚇 <strong>지하철:</strong> 2호선 강남역 3번 출구 도보 5분<br>
@@ -1383,7 +1600,11 @@
                     • 피닉스 빌딩 3층<br>
                     • 엘리베이터 이용<br>
                     • 1층 안내데스크에서 문의 가능<br><br>
-                    📞 <strong>길찾기 문의:</strong> 070-1234-1234`
+                    📞 <strong>길찾기 문의:</strong> 070-1234-1234<br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">자세한 문의는 방문 상담 해주세요</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 예약하기</button>
+                    </div>`
             },
             en: {
                 title: 'Phoenix Dental AI Consultant👩‍⚕️',
@@ -1397,13 +1618,21 @@
                     📅 <strong>Saturday:</strong> 09:00 ~ 15:00<br>
                     🍽️ <strong>Lunch Break:</strong> 12:30 ~ 13:30<br>
                     🚫 <strong>Closed:</strong> Sunday, Holidays<br><br>
-                    📞 <strong>Reservation:</strong> 070-1234-1234`,
+                    📞 <strong>Reservation:</strong> 070-1234-1234<br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">For detailed consultation, please visit us for consultation</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 Make Reservation</button>
+                    </div>`,
                 treatmentCost: `💰 <strong>Phoenix Dental Treatment Costs</strong><br><br>
                     🦷 <strong>General Treatment:</strong> Consultation required<br>
                     🦷 <strong>Scaling:</strong> 30,000 ~ 50,000 KRW<br>
                     🦷 <strong>Implant:</strong> Individual estimate after consultation<br>
                     🦷 <strong>Orthodontics:</strong> Individual estimate after consultation<br><br>
-                    💡 <strong>Exact costs will be provided after examination!</strong>`,
+                    💡 <strong>Exact costs will be provided after examination!</strong><br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">For detailed consultation, please visit us for consultation</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 Make Reservation</button>
+                    </div>`,
                 reservationInquiry: `📞 <strong>Phoenix Dental Reservation Inquiry</strong><br><br>
                     🏥 <strong>Clinic Name:</strong> Phoenix Dental<br>
                     📞 <strong>Phone:</strong> 070-1234-1234<br>
@@ -1413,7 +1642,11 @@
                     • Weekdays: 09:00 ~ 17:30<br>
                     • Saturday: 09:00 ~ 14:30<br>
                     • Sunday/Holidays: Closed<br><br>
-                    💡 <strong>Online booking is most convenient!</strong>`,
+                    💡 <strong>Online booking is most convenient!</strong><br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">For detailed consultation, please visit us for consultation</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 Make Reservation</button>
+                    </div>`,
                 directions: `🗺️ <strong>Directions to Phoenix Dental</strong><br><br>
                     📍 <strong>Address:</strong> 123 Teheran-ro, Gangnam-gu, Seoul<br>
                     🚇 <strong>Subway:</strong> Line 2 Gangnam Station Exit 3, 5 min walk<br>
@@ -1423,7 +1656,11 @@
                     • Phoenix Building 3rd Floor<br>
                     • Use elevator<br>
                     • Information desk available on 1st floor<br><br>
-                    📞 <strong>Direction Inquiry:</strong> 070-1234-1234`
+                    📞 <strong>Direction Inquiry:</strong> 070-1234-1234<br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">For detailed consultation, please visit us for consultation</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 Make Reservation</button>
+                    </div>`
             },
             ru: {
                 title: 'Консультант ИИ стоматологии Phoenix👩‍⚕️',
@@ -1437,13 +1674,21 @@
                     📅 <strong>Суббота:</strong> 09:00 ~ 15:00<br>
                     🍽️ <strong>Обед:</strong> 12:30 ~ 13:30<br>
                     🚫 <strong>Выходные:</strong> Воскресенье, праздники<br><br>
-                    📞 <strong>Запись:</strong> 070-1234-1234`,
+                    📞 <strong>Запись:</strong> 070-1234-1234<br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">Для подробной консультации, пожалуйста, посетите нас для консультации</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 Записаться на прием</button>
+                    </div>`,
                 treatmentCost: `💰 <strong>Стоимость лечения в стоматологии Phoenix</strong><br><br>
                     🦷 <strong>Общее лечение:</strong> Требуется консультация<br>
                     🦷 <strong>Чистка:</strong> 30,000 ~ 50,000 вон<br>
                     🦷 <strong>Имплант:</strong> Индивидуальная оценка после консультации<br>
                     🦷 <strong>Ортодонтия:</strong> Индивидуальная оценка после консультации<br><br>
-                    💡 <strong>Точная стоимость будет предоставлена после обследования!</strong>`,
+                    💡 <strong>Точная стоимость будет предоставлена после обследования!</strong><br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">Для подробной консультации, пожалуйста, посетите нас для консультации</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 Записаться на прием</button>
+                    </div>`,
                 reservationInquiry: `📞 <strong>Запись в стоматологию Phoenix</strong><br><br>
                     🏥 <strong>Название клиники:</strong> Phoenix Dental<br>
                     📞 <strong>Телефон:</strong> 070-1234-1234<br>
@@ -1453,7 +1698,11 @@
                     • Будни: 09:00 ~ 17:30<br>
                     • Суббота: 09:00 ~ 14:30<br>
                     • Воскресенье/праздники: Закрыто<br><br>
-                    💡 <strong>Онлайн запись наиболее удобна!</strong>`,
+                    💡 <strong>Онлайн запись наиболее удобна!</strong><br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">Для подробной консультации, пожалуйста, посетите нас для консультации</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 Записаться на прием</button>
+                    </div>`,
                 directions: `🗺️ <strong>Как добраться до стоматологии Phoenix</strong><br><br>
                     📍 <strong>Адрес:</strong> Сеул, Каннам-гу, Техеран-ро 123<br>
                     🚇 <strong>Метро:</strong> Линия 2, станция Каннам, выход 3, 5 мин пешком<br>
@@ -1463,7 +1712,11 @@
                     • Здание Phoenix, 3-й этаж<br>
                     • Используйте лифт<br>
                     • Информационная стойка на 1-м этаже<br><br>
-                    📞 <strong>Справки о маршруте:</strong> 070-1234-1234`
+                    📞 <strong>Справки о маршруте:</strong> 070-1234-1234<br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">Для подробной консультации, пожалуйста, посетите нас для консультации</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 Записаться на прием</button>
+                    </div>`
             },
             ja: {
                 title: 'フェニックス歯科AIコンサルタント👩‍⚕️',
@@ -1477,13 +1730,21 @@
                     📅 <strong>土曜日:</strong> 09:00 ~ 15:00<br>
                     🍽️ <strong>昼休み:</strong> 12:30 ~ 13:30<br>
                     🚫 <strong>休診:</strong> 日曜日、祝日<br><br>
-                    📞 <strong>予約問い合わせ:</strong> 070-1234-1234`,
+                    📞 <strong>予約問い合わせ:</strong> 070-1234-1234<br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">詳しいご相談は来院相談をお願いします</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 予約する</button>
+                    </div>`,
                 treatmentCost: `💰 <strong>フェニックス歯科治療費案内</strong><br><br>
                     🦷 <strong>一般診療:</strong> 相談後ご案内<br>
                     🦷 <strong>スケーリング:</strong> 30,000円 ~ 50,000円<br>
                     🦷 <strong>インプラント:</strong> 相談後個別見積もり<br>
                     🦷 <strong>矯正:</strong> 相談後個別見積もり<br><br>
-                    💡 <strong>正確な費用は診療後にご案内いたします！</strong>`,
+                    💡 <strong>正確な費用は診療後にご案内いたします！</strong><br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">詳しいご相談は来院相談をお願いします</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 予約する</button>
+                    </div>`,
                 reservationInquiry: `📞 <strong>フェニックス歯科予約問い合わせ</strong><br><br>
                     🏥 <strong>病院名:</strong> フェニックス歯科<br>
                     📞 <strong>電話番号:</strong> 070-1234-1234<br>
@@ -1492,8 +1753,12 @@
                     ⏰ <strong>電話相談時間:</strong><br>
                     • 平日: 09:00 ~ 17:30<br>
                     • 土曜日: 09:00 ~ 14:30<br>
-                    • 日曜日/祝日: 休業<br><br>
-                    💡 <strong>オンライン予約が最も便利です！</strong>`,
+                    • 日曜일/祝日: 休業<br><br>
+                    💡 <strong>オンライン予約が最も便利です！</strong><br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">詳しいご相談は来院相談をお願いします</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 予約する</button>
+                    </div>`,
                 directions: `🗺️ <strong>フェニックス歯科へのアクセス</strong><br><br>
                     📍 <strong>住所:</strong> ソウル特別市江南区テヘラン路123<br>
                     🚇 <strong>地下鉄:</strong> 2号線江南駅3番出口徒歩5分<br>
@@ -1503,13 +1768,126 @@
                     • フェニックスビル3階<br>
                     • エレベーター利用<br>
                     • 1階案内デスクでお問い合わせ可能<br><br>
-                    📞 <strong>道案内問い合わせ:</strong> 070-1234-1234`
+                    📞 <strong>道案内問い合わせ:</strong> 070-1234-1234<br><br>
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">詳しいご相談は来院相談をお願いします</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">📅 予約する</button>
+                    </div>`
             }
         };
+
+        // iOS Safari 뷰포트 높이 계산 함수
+        function setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+
+        // 안드로이드 키보드 감지 함수
+        function handleAndroidKeyboard() {
+            const initialHeight = window.innerHeight;
+            
+            window.addEventListener('resize', function() {
+                const currentHeight = window.innerHeight;
+                const heightDiff = initialHeight - currentHeight;
+                
+                // 키보드가 올라왔을 때 (높이가 150px 이상 감소)
+                if (heightDiff > 150) {
+                    document.body.classList.add('keyboard-open');
+                    console.log('안드로이드 키보드 열림 감지');
+                } else {
+                    document.body.classList.remove('keyboard-open');
+                    console.log('안드로이드 키보드 닫힘 감지');
+                }
+            });
+        }
+
+        // 모바일 기기별 특화 최적화 (아이폰11, 아이폰 미니, Galaxy XCover 5)
+        function applyMobileDeviceOptimizations() {
+            const userAgent = navigator.userAgent;
+            const isKakaoTalk = userAgent.includes('KAKAO');
+            const screenWidth = screen.width;
+            const screenHeight = screen.height;
+            const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+            const isAndroid = userAgent.includes('Android');
+            
+            console.log('기기 정보:', {
+                userAgent: userAgent,
+                isKakaoTalk: isKakaoTalk,
+                screenWidth: screenWidth,
+                screenHeight: screenHeight,
+                isIOS: isIOS,
+                isAndroid: isAndroid
+            });
+            
+            // iOS 기기일 때 뷰포트 높이 설정
+            if (isIOS) {
+                setViewportHeight();
+                window.addEventListener('resize', setViewportHeight);
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(setViewportHeight, 100);
+                });
+                document.body.classList.add('device-ios');
+                document.body.classList.add('device-iphone');
+            }
+            
+            // 안드로이드 기기일 때 키보드 감지
+            if (isAndroid) {
+                handleAndroidKeyboard();
+                document.body.classList.add('device-android');
+            }
+            
+            // 기기별 최적화 적용
+            if (userAgent.includes('iPhone')) {
+                // 아이폰11 (414×896)
+                if (screenWidth === 414 && screenHeight === 896) {
+                    document.body.classList.add('device-iphone11');
+                    console.log('아이폰11 최적화 적용');
+                }
+                // 아이폰 미니 (375×812)
+                else if (screenWidth === 375 && screenHeight === 812) {
+                    document.body.classList.add('device-iphone-mini');
+                    console.log('아이폰 미니 최적화 적용');
+                }
+            }
+            
+            // Galaxy XCover 5 (432×900)
+            if (userAgent.includes('Android') && screenWidth === 432 && screenHeight === 900) {
+                document.body.classList.add('device-galaxy-xcover5');
+                console.log('Galaxy XCover 5 최적화 적용');
+            }
+            
+            // 카카오톡 브라우저 특별 최적화
+            if (isKakaoTalk) {
+                document.body.classList.add('kakao-browser');
+                
+                // 카카오톡 브라우저에서 터치 이벤트 최적화
+                const allButtons = document.querySelectorAll('button, .back-link, .reservation-button');
+                allButtons.forEach(button => {
+                    button.style.setProperty('-webkit-tap-highlight-color', 'transparent', 'important');
+                    button.style.setProperty('touch-action', 'manipulation', 'important');
+                    
+                    // 터치 이벤트 추가
+                    button.addEventListener('touchstart', function(e) {
+                        this.style.transform = 'scale(0.95)';
+                        this.style.transition = 'all 0.1s';
+                    }, { passive: true });
+                    
+                    button.addEventListener('touchend', function(e) {
+                        this.style.transform = '';
+                        this.style.transition = 'all 0.3s';
+                    }, { passive: true });
+                });
+                
+                console.log('카카오톡 브라우저 최적화 적용');
+            }
+        }
 
         // 초기화
         window.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 별도창 AI챗봇 페이지 로드 시작');
+            
+            // 모바일 기기별 최적화 적용
+            applyMobileDeviceOptimizations();
             
             // 카카오톡 브라우저 감지
             const isKakaoTalk = navigator.userAgent.includes('KAKAO');
@@ -1518,17 +1896,9 @@
             if (isKakaoTalk || isMobile) {
                 console.log('카카오톡 브라우저 또는 모바일 기기 감지됨');
                 document.body.classList.add('kakao-optimized');
-                
-                // 모바일 기기 최적화 강화
-                optimizeForMobile();
             }
             
             // 뷰포트 높이 설정
-            function setViewportHeight() {
-                const vh = window.innerHeight * 0.01;
-                document.documentElement.style.setProperty('--vh', `${vh}px`);
-            }
-            
             setViewportHeight();
             window.addEventListener('resize', setViewportHeight);
             
@@ -2847,6 +3217,24 @@
         setupKakaoTalkOptimization();
         
         console.log('별도창 AI챗봇 초기화 완료 - 카카오톡 브라우저 메뉴 클릭 문제 해결, 모든 모바일 기기 완벽 지원');
+        // 페이지 포커스 복귀 시 최적화 재적용 (카카오톡 브라우저 대응)
+        window.addEventListener('pageshow', function(e) {
+            if (e.persisted) {
+                setTimeout(() => {
+                    applyMobileDeviceOptimizations();
+                }, 100);
+            }
+        });
+
+        // 뷰포트 변경 감지 (모바일 브라우저 대응)
+        window.addEventListener('orientationchange', function() {
+            setTimeout(() => {
+                setViewportHeight();
+                applyMobileDeviceOptimizations();
+            }, 300);
+        });
+
+        console.log('🚀 별도창 AI챗봇 페이지 로드 완료 - 모든 모바일 기기 및 카카오톡 브라우저 완벽 지원');
     </script>
 </body>
 </html> 
