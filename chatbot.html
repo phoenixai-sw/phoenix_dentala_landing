@@ -1643,14 +1643,11 @@
                             this.style.transform = '';
                             this.style.transition = 'all 0.3s';
                             
-                            // 클릭 이벤트 강제 트리거
+                            // onclick 이벤트가 있는 경우 터치에서는 직접 호출하지 않음 (중복 방지)
                             const onclick = this.getAttribute('onclick');
                             if (onclick && onclick.includes('handleQuickMessage')) {
-                                // onclick 속성에서 메시지 추출
-                                const match = onclick.match(/handleQuickMessage\('([^']+)'\)/);
-                                if (match) {
-                                    handleQuickMessage(match[1]);
-                                }
+                                // onclick 이벤트가 자동으로 실행되도록 함
+                                console.log('터치 이벤트 완료 - onclick 이벤트 대기');
                             }
                         }, { passive: false });
                         
@@ -1986,10 +1983,10 @@
                             ${t.welcomeSubMessage}
                         </div>
                         <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin-left: auto; margin-right: auto;">
-                            <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">🕘 진료시간</button>
-                            <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);">💰 치료비용</button>
-                            <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" ontouchstart="handleQuickMessage('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);">📞 예약문의</button>
-                            <button class="quick-button directions-btn" onclick="handleQuickMessage('오시는길 알려주세요')" ontouchstart="handleQuickMessage('오시는길 알려주세요')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">🗺️ 오시는길</button>
+                            <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">🕘 진료시간</button>
+                            <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);">💰 치료비용</button>
+                            <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);">📞 예약문의</button>
+                            <button class="quick-button directions-btn" onclick="handleQuickMessage('오시는길 알려주세요')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">🗺️ 오시는길</button>
                         </div>
                     </div>
                 `;
@@ -2034,13 +2031,29 @@
             });
         }
 
+        // 중복 실행 방지를 위한 플래그
+        let isProcessingMessage = false;
+        let lastMessageTime = 0;
+
         // 빠른 메시지 전송 (모바일 기기 최적화)
         function handleQuickMessage(message) {
             console.log('빠른 메시지 전송:', message);
             
+            // 중복 실행 방지 (1초 내 동일 메시지 차단)
+            const currentTime = Date.now();
+            if (isProcessingMessage || (currentTime - lastMessageTime < 1000)) {
+                console.log('중복 메시지 차단:', message);
+                return;
+            }
+            
+            isProcessingMessage = true;
+            lastMessageTime = currentTime;
+            
             // 이벤트 전파 방지
-            event.preventDefault();
-            event.stopPropagation();
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
             
             // 사용자 메시지 추가
             addUserMessage(message);
@@ -2048,6 +2061,10 @@
             // AI 답변 생성
             setTimeout(() => {
                 generateResponse(message);
+                // 플래그 해제
+                setTimeout(() => {
+                    isProcessingMessage = false;
+                }, 500);
             }, 300);
         }
 
@@ -2117,37 +2134,43 @@
             console.log('AI 답변 생성:', message, '현재 언어:', currentLanguage);
             
             // 키워드 기반 답변 (다국어 지원 강화)
-            const isClinicHours = message.includes('진료시간') || message.includes('언제') || message.includes('몇시') || message.includes('시간') || 
-                                message.includes('clinic hours') || message.includes('time') || message.includes('hours') || 
-                                message.includes('часы работы') || message.includes('время') || 
-                                message.includes('診療時間') || message.includes('時間');
+                    const isClinicHours = message.includes('진료시간') || message.includes('clinic hours') || message.includes('hours') || 
+                                message.includes('часы работы') || message.includes('診療時間');
             
-            const isTreatmentCost = message.includes('치료비용') || message.includes('비용') || message.includes('가격') || 
+            const isTreatmentCost = message.includes('치료비용') || message.includes('가격') || 
                                   message.includes('cost') || message.includes('price') || message.includes('treatment') || 
                                   message.includes('стоимость') || message.includes('цена') || 
                                   message.includes('料金') || message.includes('費用');
             
-            const isReservationInquiry = message.includes('예약문의') || message.includes('예약') || message.includes('문의') || 
+            const isReservationInquiry = message.includes('예약문의') || message.includes('예약') || 
                                        message.includes('reservation') || message.includes('booking') || message.includes('inquiry') || 
                                        message.includes('запись') || message.includes('бронирование') || 
                                        message.includes('予約') || message.includes('問い合わせ');
             
-            const isDirections = message.includes('오시는길') || message.includes('위치') || message.includes('주소') || message.includes('찾아가는') || 
+            const isDirections = message.includes('오시는길') || message.includes('주소') || message.includes('찾아가는') || 
                                message.includes('directions') || message.includes('location') || message.includes('address') || 
                                message.includes('адрес') || message.includes('местоположение') || 
                                message.includes('場所') || message.includes('住所') || message.includes('アクセス');
             
             if (isClinicHours) {
                 response = t.clinicHours;
+                addBotMessage(response);
+                return;
                 console.log('진료시간 답변 생성:', response);
             } else if (isTreatmentCost) {
                 response = t.treatmentCost;
+                addBotMessage(response);
+                return;
                 console.log('치료비용 답변 생성:', response);
             } else if (isReservationInquiry) {
                 response = t.reservationInquiry;
+                addBotMessage(response);
+                return;
                 console.log('예약문의 답변 생성:', response);
             } else if (isDirections) {
                 response = t.directions;
+                addBotMessage(response);
+                return;
                 console.log('오시는길 답변 생성:', response);
             } else if (message.includes('AI관리자') || message.includes('AI 관리자') || message.includes('관리자')) {
                 // 관리자 기능 직접 호출
@@ -2217,10 +2240,10 @@
                         ${t.welcomeSubMessage}
                     </div>
                     <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin-left: auto; margin-right: auto;">
-                        <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">🕘 진료시간</button>
-                        <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);">💰 치료비용</button>
-                        <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" ontouchstart="handleQuickMessage('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);">📞 예약문의</button>
-                        <button class="quick-button directions-btn" onclick="handleQuickMessage('오시는길 알려주세요')" ontouchstart="handleQuickMessage('오시는길 알려주세요')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">🗺️ 오시는길</button>
+                        <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">🕘 진료시간</button>
+                        <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);">💰 치료비용</button>
+                        <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);">📞 예약문의</button>
+                        <button class="quick-button directions-btn" onclick="handleQuickMessage('오시는길 알려주세요')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">🗺️ 오시는길</button>
                     </div>
                 </div>
             `;
