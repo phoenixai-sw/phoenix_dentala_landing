@@ -273,7 +273,7 @@
             background: white !important;
             border-radius: 10px !important;
             padding: 20px !important;
-            margin-bottom: 20px !important;
+            margin: 0 10px 10px 10px !important;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
             text-align: center !important;
             min-height: auto !important;
@@ -287,8 +287,6 @@
             /* 잘림 방지 */
             z-index: 10 !important;
             flex-shrink: 0 !important;
-            /* 하단 안전 영역 확보 */
-            padding-bottom: env(safe-area-inset-bottom, 20px) !important;
         }
 
         .language-selector div:first-child {
@@ -1259,7 +1257,7 @@
             </div>
             
             <!-- 챗봇 메시지 영역 -->
-            <div class="chatbot-messages" id="chatbotMessages2" style="max-height: calc(100vh - 320px) !important; max-height: calc(100dvh - 320px) !important;">
+            <div class="chatbot-messages" id="chatbotMessages2" style="max-height: calc(100vh - 420px) !important; max-height: calc(100dvh - 420px) !important; margin: 10px 10px 10px 10px !important;">
                 <!-- 초기 환영 메시지 -->
                 <div class="message bot">
                     <div class="message-avatar">👩‍⚕️</div>
@@ -1275,13 +1273,7 @@
                 </div>
             </div>
 
-            <!-- 챗봇 입력 영역 -->
-            <div class="chatbot-input" style="padding: 18px !important; margin-top: -10px !important;">
-                <textarea id="chatbotInput2" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress2(event)" rows="1" style="padding: 18px 24px !important; font-size: 22px !important; min-height: 65px !important; border-radius: 25px !important;"></textarea>
-                <button class="chatbot-send" onclick="sendMessage2()" style="padding: 18px 26px !important; font-size: 21px !important; min-width: 108px !important; border-radius: 25px !important;">전송</button>
-            </div>
-            
-            <!-- 언어 선택 버튼 섹션 -->
+            <!-- 언어 선택 버튼 섹션 - 입력창 위로 이동 -->
             <div class="language-selector">
                 <div style="font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px; display: flex; align-items: center; justify-content: center;">
                     <span style="margin-right: 8px;">🌍</span>
@@ -1293,6 +1285,12 @@
                     <button class="language-btn" onclick="setLanguage2('ru')" id="langBtn-ru-2" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);">🇷🇺 러시아어</button>
                     <button class="language-btn" onclick="setLanguage2('ja')" id="langBtn-ja-2" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);">🇯🇵 일본어</button>
                 </div>
+            </div>
+
+            <!-- 챗봇 입력 영역 -->
+            <div class="chatbot-input" style="padding: 18px !important; margin: 0 10px 10px 10px !important;">
+                <textarea id="chatbotInput2" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress2(event)" rows="1" style="padding: 18px 24px !important; font-size: 22px !important; min-height: 65px !important; border-radius: 25px !important;"></textarea>
+                <button class="chatbot-send" onclick="sendMessage2()" style="padding: 18px 26px !important; font-size: 21px !important; min-width: 108px !important; border-radius: 25px !important;">전송</button>
             </div>
         </div>
     </div>
