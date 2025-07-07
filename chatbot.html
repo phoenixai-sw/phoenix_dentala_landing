@@ -917,12 +917,333 @@
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .quick-button:active {
+            transform: translateY(0);
+        }
+
+        /* 진료시간 버튼 호버 효과 */
+        .clinic-hours-btn:hover {
+            background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4) !important;
+        }
+
+        /* 치료비용 버튼 호버 효과 */
+        .treatment-cost-btn:hover {
+            background: linear-gradient(135deg, #e91e63 0%, #9c27b0 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(156, 39, 176, 0.4) !important;
+        }
+
+        /* 예약문의 버튼 호버 효과 */
+        .reservation-btn:hover {
+            background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4) !important;
+        }
+
+        /* 오시는길 버튼 호버 효과 */
+        .directions-btn:hover {
+            background: linear-gradient(135deg, #8bc34a 0%, #4caf50 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4) !important;
+        }
+
+        /* 카카오톡 브라우저 최적화 */
+        .kakao-optimized .quick-button {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            outline: none;
+        }
+
+        /* 아이폰 11 최적화 (414×896) */
+        @media screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) {
+            .quick-buttons {
+                gap: 8px !important;
+                padding: 5px !important;
+            }
+            
+            .quick-button {
+                padding: 10px 6px !important;
+                font-size: 12px !important;
+                font-weight: bold !important;
+                border-radius: 18px !important;
+                min-height: 36px !important;
+            }
+        }
+
+        /* 아이폰 미니 최적화 (375×812) */
+        @media screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+            .quick-buttons {
+                gap: 6px !important;
+                padding: 3px !important;
+            }
+            
+            .quick-button {
+                padding: 8px 5px !important;
+                font-size: 11px !important;
+                font-weight: bold !important;
+                border-radius: 16px !important;
+                min-height: 34px !important;
+            }
+        }
+
+        /* Galaxy XCover 5 최적화 */
+        @media screen and (max-width: 432px) and (max-height: 900px) and (orientation: portrait) {
+            .quick-buttons {
+                gap: 6px !important;
+                padding: 3px !important;
+                max-width: 280px !important;
+            }
+            
+            .quick-button {
+                padding: 8px 4px !important;
+                font-size: 10px !important;
+                font-weight: bold !important;
+                border-radius: 15px !important;
+                min-height: 32px !important;
+            }
+        }
+
+        /* 극도로 작은 화면 최적화 */
+        @media (max-width: 320px) {
+            .quick-buttons {
+                gap: 4px !important;
+                padding: 2px !important;
+                max-width: 260px !important;
+            }
+            
+            .quick-button {
+                padding: 6px 3px !important;
+                font-size: 9px !important;
+                font-weight: bold !important;
+                border-radius: 12px !important;
+                min-height: 28px !important;
+            }
+        }
+
+        /* 터치 이벤트 강화 */
+        .quick-button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow;
+        }
+
+        .quick-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.3);
+        }
+
+        /* 카카오톡 브라우저 캐시 방지 */
+        .kakao-optimized * {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+
+        /* 메시지 영역 터치 최적화 */
+        .chatbot-messages {
+            -webkit-overflow-scrolling: touch;
+            overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+
+        /* 입력 영역 터치 최적화 */
+        .chatbot-input textarea {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chatbot-send {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            outline: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* 드롭다운 메뉴 터치 최적화 */
+        .language-dropdown {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
             user-select: none;
             touch-action: manipulation;
         }
 
-        .quick-button:active {
-            transform: scale(0.95);
+        .language-current {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            cursor: pointer;
+            outline: none;
+            border: none;
+        }
+
+        .language-option {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .language-option:hover {
+            background: rgba(79, 172, 254, 0.1);
+        }
+
+        .language-option:active {
+            background: rgba(79, 172, 254, 0.2);
+        }
+
+        /* 백 버튼 터치 최적화 */
+        .back-link {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            outline: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-link:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        /* 특정 모바일 기기 최적화 */
+        @media screen and (max-width: 600px) {
+            .chatbot-main {
+                font-size: 14px;
+            }
+            
+            .quick-button {
+                font-size: 12px;
+                padding: 10px 8px;
+            }
+            
+            .chatbot-messages {
+                padding: 15px;
+            }
+        }
+
+        /* 추가 모바일 기기 최적화 */
+        @media screen and (max-width: 480px) {
+            .quick-button {
+                font-size: 11px;
+                padding: 8px 6px;
+                min-height: 32px;
+            }
+            
+            .quick-buttons {
+                gap: 6px;
+                max-width: 280px;
+            }
+        }
+
+        /* 뷰포트 높이 설정 */
+        @media screen and (max-height: 600px) {
+            .chatbot-messages {
+                max-height: 350px;
+            }
+        }
+
+        /* 뷰포트 폰트 크기 조정 */
+        @media screen and (max-width: 360px) {
+            .quick-button {
+                font-size: 10px;
+                padding: 6px 4px;
+                min-height: 28px;
+            }
+            
+            .quick-buttons {
+                gap: 4px;
+                max-width: 250px;
+            }
+        }
+
+        /* 로딩 애니메이션 최적화 */
+        .quick-button {
+            animation: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .quick-button:hover {
+            animation: none;
+        }
+
+        /* 성능 최적화 */
+        .quick-button {
+            will-change: transform, box-shadow;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        /* 터치 디바이스 감지 */
+        @media (hover: none) and (pointer: coarse) {
+            .quick-button:hover {
+                transform: none;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        /* 추가 터치 이벤트 처리 */
+        .quick-button {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        /* 카카오톡 브라우저 특별 처리 */
+        @media screen and (max-width: 500px) {
+            .kakao-optimized .quick-button {
+                position: relative;
+                z-index: 1;
+                pointer-events: auto;
+            }
         }
 
         .language-current, .language-option {
@@ -1029,7 +1350,8 @@
                 placeholder: '메시지를 입력하세요... (Shift+Enter: 전송)',
                 sendButton: '전송',
                 currentLanguage: '🇰🇷 KR',
-                welcomeMessage: '피닉스 치과 AI상담사 입니다.',
+                welcomeMessage: '피닉스 치과 AI상담사 입니다!',
+                welcomeSubMessage: '메뉴를 클릭하거나 직접 메시지를 입력해 주세요, 우측 상단에서 AI의 언어 변경이 가능 합니다',
                 clinicHours: `🕘 <strong>피닉스 치과 진료시간 안내</strong><br><br>
                     📅 <strong>평일:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>토요일:</strong> 09:00 ~ 15:00<br>
@@ -1041,14 +1363,35 @@
                     🦷 <strong>스케일링:</strong> 30,000원 ~ 50,000원<br>
                     🦷 <strong>임플란트:</strong> 상담 후 개별 견적<br>
                     🦷 <strong>교정:</strong> 상담 후 개별 견적<br><br>
-                    💡 <strong>정확한 비용은 진료 후 안내드립니다!</strong>`
+                    💡 <strong>정확한 비용은 진료 후 안내드립니다!</strong>`,
+                reservationInquiry: `📞 <strong>피닉스 치과 예약 문의</strong><br><br>
+                    🏥 <strong>병원명:</strong> 피닉스 치과<br>
+                    📞 <strong>전화번호:</strong> 070-1234-1234<br>
+                    💬 <strong>카카오톡:</strong> 피닉스치과<br>
+                    🌐 <strong>온라인 예약:</strong> 홈페이지 예약 시스템 이용<br><br>
+                    ⏰ <strong>전화 상담 시간:</strong><br>
+                    • 평일: 09:00 ~ 17:30<br>
+                    • 토요일: 09:00 ~ 14:30<br>
+                    • 일요일/공휴일: 휴무<br><br>
+                    💡 <strong>온라인 예약이 가장 편리합니다!</strong>`,
+                directions: `🗺️ <strong>피닉스 치과 오시는길</strong><br><br>
+                    📍 <strong>주소:</strong> 서울특별시 강남구 테헤란로 123<br>
+                    🚇 <strong>지하철:</strong> 2호선 강남역 3번 출구 도보 5분<br>
+                    🚌 <strong>버스:</strong> 강남역 정류장 하차<br>
+                    🚗 <strong>주차:</strong> 건물 지하 1층 (2시간 무료)<br><br>
+                    🏢 <strong>건물 안내:</strong><br>
+                    • 피닉스 빌딩 3층<br>
+                    • 엘리베이터 이용<br>
+                    • 1층 안내데스크에서 문의 가능<br><br>
+                    📞 <strong>길찾기 문의:</strong> 070-1234-1234`
             },
             en: {
                 title: 'Phoenix Dental AI Consultant👩‍⚕️',
                 placeholder: 'Enter your message... (Shift+Enter: Send)',
                 sendButton: 'Send',
                 currentLanguage: '🇺🇸 US',
-                welcomeMessage: 'Hello~ I am Phoenix Dental AI consultant.',
+                welcomeMessage: 'I am Phoenix Dental AI consultant!',
+                welcomeSubMessage: 'Click the menu or enter a message directly. You can change the AI language in the top right corner.',
                 clinicHours: `🕘 <strong>Phoenix Dental Clinic Hours</strong><br><br>
                     📅 <strong>Weekdays:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>Saturday:</strong> 09:00 ~ 15:00<br>
@@ -1060,14 +1403,35 @@
                     🦷 <strong>Scaling:</strong> 30,000 ~ 50,000 KRW<br>
                     🦷 <strong>Implant:</strong> Individual estimate after consultation<br>
                     🦷 <strong>Orthodontics:</strong> Individual estimate after consultation<br><br>
-                    💡 <strong>Exact costs will be provided after examination!</strong>`
+                    💡 <strong>Exact costs will be provided after examination!</strong>`,
+                reservationInquiry: `📞 <strong>Phoenix Dental Reservation Inquiry</strong><br><br>
+                    🏥 <strong>Clinic Name:</strong> Phoenix Dental<br>
+                    📞 <strong>Phone:</strong> 070-1234-1234<br>
+                    💬 <strong>KakaoTalk:</strong> Phoenix Dental<br>
+                    🌐 <strong>Online Booking:</strong> Use website reservation system<br><br>
+                    ⏰ <strong>Phone Consultation Hours:</strong><br>
+                    • Weekdays: 09:00 ~ 17:30<br>
+                    • Saturday: 09:00 ~ 14:30<br>
+                    • Sunday/Holidays: Closed<br><br>
+                    💡 <strong>Online booking is most convenient!</strong>`,
+                directions: `🗺️ <strong>Directions to Phoenix Dental</strong><br><br>
+                    📍 <strong>Address:</strong> 123 Teheran-ro, Gangnam-gu, Seoul<br>
+                    🚇 <strong>Subway:</strong> Line 2 Gangnam Station Exit 3, 5 min walk<br>
+                    🚌 <strong>Bus:</strong> Get off at Gangnam Station<br>
+                    🚗 <strong>Parking:</strong> Building B1 (2 hours free)<br><br>
+                    🏢 <strong>Building Guide:</strong><br>
+                    • Phoenix Building 3rd Floor<br>
+                    • Use elevator<br>
+                    • Information desk available on 1st floor<br><br>
+                    📞 <strong>Direction Inquiry:</strong> 070-1234-1234`
             },
             ru: {
                 title: 'Консультант ИИ стоматологии Phoenix👩‍⚕️',
                 placeholder: 'Введите ваше сообщение... (Shift+Enter: Отправить)',
                 sendButton: 'Отправить',
                 currentLanguage: '🇷🇺 RU',
-                welcomeMessage: 'Здравствуйте~ Я консультант ИИ стоматологии Phoenix.',
+                welcomeMessage: 'Я консультант ИИ стоматологии Phoenix!',
+                welcomeSubMessage: 'Нажмите на меню или введите сообщение напрямую. Вы можете изменить язык ИИ в правом верхнем углу.',
                 clinicHours: `🕘 <strong>Часы работы стоматологии Phoenix</strong><br><br>
                     📅 <strong>Будни:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>Суббота:</strong> 09:00 ~ 15:00<br>
@@ -1079,14 +1443,35 @@
                     🦷 <strong>Чистка:</strong> 30,000 ~ 50,000 вон<br>
                     🦷 <strong>Имплант:</strong> Индивидуальная оценка после консультации<br>
                     🦷 <strong>Ортодонтия:</strong> Индивидуальная оценка после консультации<br><br>
-                    💡 <strong>Точная стоимость будет предоставлена после обследования!</strong>`
+                    💡 <strong>Точная стоимость будет предоставлена после обследования!</strong>`,
+                reservationInquiry: `📞 <strong>Запись в стоматологию Phoenix</strong><br><br>
+                    🏥 <strong>Название клиники:</strong> Phoenix Dental<br>
+                    📞 <strong>Телефон:</strong> 070-1234-1234<br>
+                    💬 <strong>KakaoTalk:</strong> Phoenix Dental<br>
+                    🌐 <strong>Онлайн запись:</strong> Используйте систему записи на сайте<br><br>
+                    ⏰ <strong>Часы телефонных консультаций:</strong><br>
+                    • Будни: 09:00 ~ 17:30<br>
+                    • Суббота: 09:00 ~ 14:30<br>
+                    • Воскресенье/праздники: Закрыто<br><br>
+                    💡 <strong>Онлайн запись наиболее удобна!</strong>`,
+                directions: `🗺️ <strong>Как добраться до стоматологии Phoenix</strong><br><br>
+                    📍 <strong>Адрес:</strong> Сеул, Каннам-гу, Техеран-ро 123<br>
+                    🚇 <strong>Метро:</strong> Линия 2, станция Каннам, выход 3, 5 мин пешком<br>
+                    🚌 <strong>Автобус:</strong> Остановка станция Каннам<br>
+                    🚗 <strong>Парковка:</strong> Подземный этаж здания (2 часа бесплатно)<br><br>
+                    🏢 <strong>Описание здания:</strong><br>
+                    • Здание Phoenix, 3-й этаж<br>
+                    • Используйте лифт<br>
+                    • Информационная стойка на 1-м этаже<br><br>
+                    📞 <strong>Справки о маршруте:</strong> 070-1234-1234`
             },
             ja: {
                 title: 'フェニックス歯科AIコンサルタント👩‍⚕️',
                 placeholder: 'メッセージを入力してください... (Shift+Enter: 送信)',
                 sendButton: '送信',
                 currentLanguage: '🇯🇵 JP',
-                welcomeMessage: 'こんにちは〜フェニックス歯科AIコンサルタントです。',
+                welcomeMessage: 'フェニックス歯科AIコンサルタントです！',
+                welcomeSubMessage: 'メニューをクリックするか、直接メッセージを入力してください。右上でAIの言語変更が可能です。',
                 clinicHours: `🕘 <strong>フェニックス歯科診療時間案内</strong><br><br>
                     📅 <strong>平日:</strong> 09:00 ~ 18:00<br>
                     📅 <strong>土曜日:</strong> 09:00 ~ 15:00<br>
@@ -1098,7 +1483,27 @@
                     🦷 <strong>スケーリング:</strong> 30,000円 ~ 50,000円<br>
                     🦷 <strong>インプラント:</strong> 相談後個別見積もり<br>
                     🦷 <strong>矯正:</strong> 相談後個別見積もり<br><br>
-                    💡 <strong>正確な費用は診療後にご案内いたします！</strong>`
+                    💡 <strong>正確な費用は診療後にご案内いたします！</strong>`,
+                reservationInquiry: `📞 <strong>フェニックス歯科予約問い合わせ</strong><br><br>
+                    🏥 <strong>病院名:</strong> フェニックス歯科<br>
+                    📞 <strong>電話番号:</strong> 070-1234-1234<br>
+                    💬 <strong>カカオトーク:</strong> フェニックス歯科<br>
+                    🌐 <strong>オンライン予約:</strong> ホームページ予約システム利用<br><br>
+                    ⏰ <strong>電話相談時間:</strong><br>
+                    • 平日: 09:00 ~ 17:30<br>
+                    • 土曜日: 09:00 ~ 14:30<br>
+                    • 日曜日/祝日: 休業<br><br>
+                    💡 <strong>オンライン予約が最も便利です！</strong>`,
+                directions: `🗺️ <strong>フェニックス歯科へのアクセス</strong><br><br>
+                    📍 <strong>住所:</strong> ソウル特別市江南区テヘラン路123<br>
+                    🚇 <strong>地下鉄:</strong> 2号線江南駅3番出口徒歩5分<br>
+                    🚌 <strong>バス:</strong> 江南駅停留所下車<br>
+                    🚗 <strong>駐車場:</strong> 建物地下1階（2時間無料）<br><br>
+                    🏢 <strong>建物案内:</strong><br>
+                    • フェニックスビル3階<br>
+                    • エレベーター利用<br>
+                    • 1階案内デスクでお問い合わせ可能<br><br>
+                    📞 <strong>道案内問い合わせ:</strong> 070-1234-1234`
             }
         };
 
@@ -1213,40 +1618,247 @@
             updateLanguageUI(currentLanguage);
         });
 
-        // 모바일 기기 최적화
+        // 모바일 기기 최적화 함수
         function optimizeForMobile() {
-            // 터치 이벤트 최적화
-            const chatbotMain = document.querySelector('.chatbot-main');
-            if (chatbotMain) {
-                chatbotMain.style.touchAction = 'manipulation';
-                chatbotMain.style.webkitTouchCallout = 'none';
-                chatbotMain.style.webkitUserSelect = 'none';
-                chatbotMain.style.userSelect = 'none';
-            }
+            const isKakaoTalk = navigator.userAgent.includes('KAKAO');
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            // 키보드 감지 및 대응
-            const originalHeight = window.innerHeight;
-            window.addEventListener('resize', function() {
-                const currentHeight = window.innerHeight;
-                const keyboardHeight = originalHeight - currentHeight;
+            if (isKakaoTalk || isMobile) {
+                console.log('모바일 기기 최적화 적용');
                 
-                if (keyboardHeight > 100) {
-                    // 키보드가 열렸을 때
-                    document.body.classList.add('keyboard-open');
-                    const messagesContainer = document.getElementById('chatbotMessages');
-                    if (messagesContainer) {
-                        messagesContainer.style.marginBottom = (keyboardHeight + 20) + 'px';
+                // 모든 버튼에 터치 이벤트 추가
+                function addMobileTouchEvents() {
+                    const quickButtons = document.querySelectorAll('.quick-button');
+                    quickButtons.forEach(button => {
+                        // 터치 시작
+                        button.addEventListener('touchstart', function(e) {
+                            e.preventDefault();
+                            this.style.transform = 'scale(0.95)';
+                            this.style.transition = 'all 0.1s';
+                        }, { passive: false });
+                        
+                        // 터치 종료
+                        button.addEventListener('touchend', function(e) {
+                            e.preventDefault();
+                            this.style.transform = '';
+                            this.style.transition = 'all 0.3s';
+                            
+                            // 클릭 이벤트 강제 트리거
+                            const onclick = this.getAttribute('onclick');
+                            if (onclick && onclick.includes('handleQuickMessage')) {
+                                // onclick 속성에서 메시지 추출
+                                const match = onclick.match(/handleQuickMessage\('([^']+)'\)/);
+                                if (match) {
+                                    handleQuickMessage(match[1]);
+                                }
+                            }
+                        }, { passive: false });
+                        
+                        // 터치 취소
+                        button.addEventListener('touchcancel', function(e) {
+                            e.preventDefault();
+                            this.style.transform = '';
+                            this.style.transition = 'all 0.3s';
+                        }, { passive: false });
+                    });
+                }
+                
+                // 초기 적용
+                addMobileTouchEvents();
+                
+                // 새로운 버튼이 추가될 때마다 이벤트 재적용
+                const chatMessagesContainer = document.getElementById('chatbotMessages');
+                if (chatMessagesContainer) {
+                    const observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.type === 'childList') {
+                                addMobileTouchEvents();
+                            }
+                        });
+                    });
+                    
+                    observer.observe(chatMessagesContainer, { 
+                        childList: true, 
+                        subtree: true 
+                    });
+                }
+                
+                // 키보드 높이 감지 및 조정
+                let initialViewportHeight = window.innerHeight;
+                
+                window.addEventListener('resize', function() {
+                    const currentHeight = window.innerHeight;
+                    const isKeyboardOpen = currentHeight < initialViewportHeight * 0.75;
+                    
+                    if (isKeyboardOpen) {
+                        document.body.classList.add('keyboard-open');
+                        const messagesEl = document.querySelector('.chatbot-messages');
+                        if (messagesEl) {
+                            messagesEl.style.maxHeight = (currentHeight - 200) + 'px';
+                        }
+                    } else {
+                        document.body.classList.remove('keyboard-open');
+                        const messagesEl = document.querySelector('.chatbot-messages');
+                        if (messagesEl) {
+                            messagesEl.style.maxHeight = '';
+                        }
                     }
-                } else {
-                    // 키보드가 닫혔을 때
-                    document.body.classList.remove('keyboard-open');
-                    const messagesContainer = document.getElementById('chatbotMessages');
-                    if (messagesContainer) {
-                        messagesContainer.style.marginBottom = '80px';
+                });
+                
+                // iOS 뷰포트 높이 문제 해결
+                if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                    function setViewportHeight() {
+                        const vh = window.innerHeight * 0.01;
+                        document.documentElement.style.setProperty('--vh', `${vh}px`);
+                    }
+                    
+                    setViewportHeight();
+                    window.addEventListener('resize', setViewportHeight);
+                    window.addEventListener('orientationchange', setViewportHeight);
+                }
+                
+                // 안드로이드 키보드 감지
+                if (/Android/.test(navigator.userAgent)) {
+                    let lastViewportHeight = window.innerHeight;
+                    
+                    window.addEventListener('resize', function() {
+                        const currentHeight = window.innerHeight;
+                        const heightDifference = lastViewportHeight - currentHeight;
+                        
+                        if (heightDifference > 150) {
+                            // 키보드가 열림
+                            document.body.classList.add('android-keyboard-open');
+                        } else if (heightDifference < -150) {
+                            // 키보드가 닫힘
+                            document.body.classList.remove('android-keyboard-open');
+                        }
+                        
+                        lastViewportHeight = currentHeight;
+                    });
+                }
+                
+                // 터치 스크롤 개선
+                const touchMessagesContainer = document.querySelector('.chatbot-messages');
+                if (touchMessagesContainer) {
+                    touchMessagesContainer.addEventListener('touchmove', function(e) {
+                        e.stopPropagation();
+                    }, { passive: true });
+                }
+                
+                // 더블 탭 확대 방지
+                document.addEventListener('touchstart', function(e) {
+                    if (e.touches.length > 1) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                let lastTouchEnd = 0;
+                document.addEventListener('touchend', function(e) {
+                    const now = (new Date()).getTime();
+                    if (now - lastTouchEnd <= 300) {
+                        e.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                }, { passive: false });
+                
+                // 카카오톡 브라우저 특별 처리
+                if (isKakaoTalk) {
+                    console.log('카카오톡 브라우저 최적화 적용');
+                    
+                    // 페이지 로드 완료 후 스타일 강제 재적용
+                    setTimeout(() => {
+                        const buttons = document.querySelectorAll('.quick-button');
+                        buttons.forEach(button => {
+                            button.style.pointerEvents = 'auto';
+                            button.style.touchAction = 'manipulation';
+                            button.style.webkitTapHighlightColor = 'transparent';
+                            button.style.cursor = 'pointer';
+                        });
+                        
+                        // 모든 클릭 가능한 요소에 터치 이벤트 추가
+                        const clickableElements = document.querySelectorAll('button, .language-current, .language-option, .back-link');
+                        clickableElements.forEach(element => {
+                            element.style.touchAction = 'manipulation';
+                            element.style.webkitTapHighlightColor = 'transparent';
+                        });
+                        
+                        console.log('카카오톡 브라우저 버튼 스타일 강제 재적용 완료');
+                    }, 1000);
+                    
+                    // 페이지 새로고침 시에도 재적용
+                    document.addEventListener('visibilitychange', function() {
+                        if (!document.hidden) {
+                            setTimeout(() => {
+                                const buttons = document.querySelectorAll('.quick-button');
+                                buttons.forEach(button => {
+                                    button.style.pointerEvents = 'auto';
+                                    button.style.touchAction = 'manipulation';
+                                });
+                                addMobileTouchEvents();
+                            }, 500);
+                        }
+                    });
+                    
+                    // 카카오톡 브라우저에서 캐시 방지
+                    const timestamp = new Date().getTime();
+                    if (window.history && window.history.replaceState) {
+                        window.history.replaceState({}, '', window.location.pathname + '?t=' + timestamp);
                     }
                 }
-            });
+                
+                // 화면 회전 감지
+                window.addEventListener('orientationchange', function() {
+                    setTimeout(() => {
+                        addMobileTouchEvents();
+                        // 뷰포트 재계산
+                        const vh = window.innerHeight * 0.01;
+                        document.documentElement.style.setProperty('--vh', `${vh}px`);
+                    }, 100);
+                });
+                
+                // 페이지 포커스 복귀 시 이벤트 재적용
+                window.addEventListener('pageshow', function(e) {
+                    if (e.persisted) {
+                        setTimeout(() => {
+                            addMobileTouchEvents();
+                        }, 100);
+                    }
+                });
+            }
         }
+
+        // 강제 터치 이벤트 초기화 (카카오톡 브라우저용)
+        function forceInitializeTouchEvents() {
+            setTimeout(() => {
+                const allButtons = document.querySelectorAll('button, .clickable');
+                allButtons.forEach(button => {
+                    button.style.touchAction = 'manipulation';
+                    button.style.webkitTapHighlightColor = 'transparent';
+                    button.style.outline = 'none';
+                    button.style.border = 'none';
+                    button.addEventListener('touchstart', function(e) {
+                        e.stopPropagation();
+                    }, { passive: true });
+                });
+                console.log('강제 터치 이벤트 초기화 완료');
+            }, 500);
+        }
+
+        // 페이지 로드 시 모바일 최적화 적용
+        document.addEventListener('DOMContentLoaded', function() {
+            optimizeForMobile();
+            forceInitializeTouchEvents();
+        });
+
+        // 윈도우 로드 시에도 한 번 더 적용
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                optimizeForMobile();
+                forceInitializeTouchEvents();
+            }, 1000);
+        });
+
+        console.log('별도창 AI챗봇 모바일 최적화 스크립트 로드 완료');
 
         // 드롭다운 메뉴 토글
         function toggleLanguageMenu() {
@@ -1319,16 +1931,18 @@
             // 새로운 환영 메시지 추가
             if (lastWelcomeMessage) {
                 const newWelcomeMessage = `
-                    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 15px; margin-bottom: 20px; color: white;">
-                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
-                            안녕하세요~ ${t.welcomeMessage}
+                    <div style="text-align: center; padding: 20px; background: white; border-radius: 15px; margin-bottom: 20px; color: #333; border: 2px solid #e9ecef; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #2c3e50;">
+                            ${t.welcomeMessage}
                         </div>
-                        <div style="font-size: 14px; opacity: 0.9;">
-                            궁금한 사항을 아래 버튼을 클릭하시거나 직접 메시지를 입력해주세요!
+                        <div style="font-size: 14px; color: #666; line-height: 1.5;">
+                            ${t.welcomeSubMessage}
                         </div>
-                        <div class="quick-buttons" style="display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap;">
-                            <button class="quick-button" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 10px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🕘 진료시간</button>
-                            <button class="quick-button" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); color: white; border: none; padding: 10px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);">💰 치료비용</button>
+                        <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                            <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">🕘 진료시간</button>
+                            <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);">💰 치료비용</button>
+                            <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" ontouchstart="handleQuickMessage('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);">📞 예약문의</button>
+                            <button class="quick-button directions-btn" onclick="handleQuickMessage('오시는길 알려주세요')" ontouchstart="handleQuickMessage('오시는길 알려주세요')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">🗺️ 오시는길</button>
                         </div>
                     </div>
                 `;
@@ -1466,12 +2080,28 @@
                                   message.includes('стоимость') || message.includes('цена') || 
                                   message.includes('料金') || message.includes('費用');
             
+            const isReservationInquiry = message.includes('예약문의') || message.includes('예약') || message.includes('문의') || 
+                                       message.includes('reservation') || message.includes('booking') || message.includes('inquiry') || 
+                                       message.includes('запись') || message.includes('бронирование') || 
+                                       message.includes('予約') || message.includes('問い合わせ');
+            
+            const isDirections = message.includes('오시는길') || message.includes('위치') || message.includes('주소') || message.includes('찾아가는') || 
+                               message.includes('directions') || message.includes('location') || message.includes('address') || 
+                               message.includes('адрес') || message.includes('местоположение') || 
+                               message.includes('場所') || message.includes('住所') || message.includes('アクセス');
+            
             if (isClinicHours) {
                 response = t.clinicHours;
                 console.log('진료시간 답변 생성:', response);
             } else if (isTreatmentCost) {
                 response = t.treatmentCost;
                 console.log('치료비용 답변 생성:', response);
+            } else if (isReservationInquiry) {
+                response = t.reservationInquiry;
+                console.log('예약문의 답변 생성:', response);
+            } else if (isDirections) {
+                response = t.directions;
+                console.log('오시는길 답변 생성:', response);
             } else if (message.includes('AI관리자') || message.includes('AI 관리자') || message.includes('관리자')) {
                 // 관리자 기능 직접 호출
                 loginChatbotAdmin();
@@ -1483,7 +2113,8 @@
                     다음 중 궁금한 사항을 선택해주세요:<br><br>
                     • 🕘 진료시간 안내<br>
                     • 💰 치료비용 문의<br>
-                    • 📞 직접 상담 (070-1234-1234)<br>
+                    • 📞 예약문의 안내<br>
+                    • 🗺️ 오시는길 안내<br>
                     • 🔐 관리자 기능 ("AI관리자" 입력)<br><br>
                     더 자세한 상담을 원하시면 언제든지 연락주세요!
                 `;
@@ -1531,16 +2162,18 @@
             const t = translations[currentLanguage] || translations['ko'];
             
             const welcomeMessage = `
-                <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 15px; margin-bottom: 20px; color: white;">
-                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
-                        안녕하세요~ ${t.welcomeMessage}
+                <div style="text-align: center; padding: 20px; background: white; border-radius: 15px; margin-bottom: 20px; color: #333; border: 2px solid #e9ecef; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #2c3e50;">
+                        ${t.welcomeMessage}
                     </div>
-                    <div style="font-size: 14px; opacity: 0.9;">
-                        궁금한 사항을 아래 버튼을 클릭하시거나 직접 메시지를 입력해주세요!
+                    <div style="font-size: 14px; color: #666; line-height: 1.5;">
+                        ${t.welcomeSubMessage}
                     </div>
-                    <div class="quick-buttons" style="display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap;">
-                        <button class="quick-button" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 10px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🕘 진료시간</button>
-                        <button class="quick-button" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); color: white; border: none; padding: 10px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);">💰 치료비용</button>
+                    <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                        <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleQuickMessage('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">🕘 진료시간</button>
+                        <button class="quick-button treatment-cost-btn" onclick="handleQuickMessage('치료비용 궁금해요')" ontouchstart="handleQuickMessage('치료비용 궁금해요')" style="background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);">💰 치료비용</button>
+                        <button class="quick-button reservation-btn" onclick="handleQuickMessage('예약문의 하고싶어요')" ontouchstart="handleQuickMessage('예약문의 하고싶어요')" style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);">📞 예약문의</button>
+                        <button class="quick-button directions-btn" onclick="handleQuickMessage('오시는길 알려주세요')" ontouchstart="handleQuickMessage('오시는길 알려주세요')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">🗺️ 오시는길</button>
                     </div>
                 </div>
             `;
