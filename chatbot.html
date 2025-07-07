@@ -28,21 +28,23 @@
              document.addEventListener('DOMContentLoaded', function() {
                  setTimeout(() => {
                      const languageSelector = document.querySelector('.language-selector');
+                     const messagesContainer = document.querySelector('.chatbot-messages');
                      const inputContainer = document.querySelector('.chatbot-input');
                      const chatbotMain = document.querySelector('.chatbot-main');
                      
-                     if (languageSelector && inputContainer && chatbotMain) {
+                     if (languageSelector && messagesContainer && chatbotMain) {
                          console.log('카카오톡 브라우저 - DOM 재구성 강제 적용');
                          
-                         // 강제 DOM 재배치 - 언어 선택을 입력창 위에 배치
+                         // 강제 DOM 재배치 - 언어 선택을 메시지 위에 배치
                          const parentContainer = languageSelector.parentNode;
                          if (parentContainer) {
-                             parentContainer.insertBefore(languageSelector, inputContainer);
-                             console.log('언어 선택 영역을 입력창 위로 이동 완료');
+                             parentContainer.insertBefore(languageSelector, messagesContainer);
+                             console.log('언어 선택 영역을 메시지 위로 이동 완료');
                          }
                          
                          // 강제 스타일 적용
-                         languageSelector.style.cssText = 'position: relative !important; background: white !important; border-radius: 10px !important; padding: 15px !important; margin: 10px !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; text-align: center !important; z-index: 99999 !important; order: 2 !important;';
+                         languageSelector.style.cssText = 'position: relative !important; background: white !important; border-radius: 10px !important; padding: 20px !important; margin: 10px !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; text-align: center !important; z-index: 99999 !important; order: 1 !important;';
+                         messagesContainer.style.cssText += 'order: 2 !important;';
                          inputContainer.style.cssText += 'order: 3 !important;';
                          
                          // 메인 컨테이너를 flexbox로 설정
@@ -297,11 +299,15 @@
 
         .language-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.5) !important;
         }
 
         .language-btn.selected {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%) !important;
+            border: 2px solid #ffcc00 !important;
+            box-shadow: 0 6px 20px rgba(255, 204, 0, 0.6) !important;
+            color: #333 !important;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3) !important;
             transform: scale(1.05);
         }
 
@@ -1133,8 +1139,8 @@
             }
 
             .chatbot-messages {
-                max-height: calc(100vh - 200px) !important;
-                max-height: calc(100dvh - 200px) !important;
+                max-height: calc(100vh - 300px) !important;
+                max-height: calc(100dvh - 300px) !important;
                 min-height: 150px !important;
             }
 
@@ -1148,19 +1154,21 @@
                 z-index: 50 !important;
             }
 
-            .language-selector div:first-child {
-                font-size: 16px !important;
-                margin-bottom: 12px !important;
+            .language-selector h2 {
+                font-size: 14px !important;
+                margin-bottom: 10px !important;
             }
 
             .language-buttons {
-                gap: 8px !important;
+                gap: 6px !important;
+                flex-wrap: wrap !important;
             }
 
             .language-btn {
-                padding: 10px 16px !important;
-                font-size: 14px !important;
-                border-radius: 20px !important;
+                padding: 8px 12px !important;
+                font-size: 12px !important;
+                border-radius: 15px !important;
+                min-height: 30px !important;
             }
         }
 
@@ -1184,9 +1192,9 @@
                 flex: 1 !important;
                 overflow-y: auto !important;
                 -webkit-overflow-scrolling: touch !important;
-                max-height: calc(100vh - 220px) !important;
-                max-height: calc(100dvh - 220px) !important;
-                min-height: 180px !important;
+                max-height: calc(100vh - 320px) !important;
+                max-height: calc(100dvh - 320px) !important;
+                min-height: 150px !important;
             }
 
             .chatbot-input {
@@ -1209,7 +1217,7 @@
                 flex-shrink: 0 !important;
             }
 
-            .language-selector div:first-child {
+            .language-selector h2 {
                 font-size: 16px !important;
                 margin-bottom: 12px !important;
             }
@@ -1221,14 +1229,14 @@
             }
 
             .language-btn {
-                padding: 20px 32px !important;
-                font-size: 26px !important;
+                padding: 10px 16px !important;
+                font-size: 14px !important;
                 border-radius: 20px !important;
                 touch-action: manipulation !important;
                 -webkit-touch-callout: none !important;
                 -webkit-user-select: none !important;
                 user-select: none !important;
-                min-height: 60px !important;
+                min-height: 40px !important;
             }
         }
 
@@ -1247,9 +1255,9 @@
             }
 
             .chatbot-messages {
-                max-height: calc(100vh - 190px) !important;
-                max-height: calc(100dvh - 190px) !important;
-                min-height: 180px !important;
+                max-height: calc(100vh - 280px) !important;
+                max-height: calc(100dvh - 280px) !important;
+                min-height: 150px !important;
                 padding: 6px !important;
             }
 
@@ -1257,25 +1265,25 @@
                 position: relative !important;
                 background: white !important;
                 padding: 8px !important;
-                min-height: 60px !important;
-                max-height: 80px !important;
+                min-height: 80px !important;
+                max-height: 100px !important;
                 z-index: 9999 !important;
                 border-radius: 10px !important;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
                 margin: 5px !important;
             }
 
-            .language-selector div:first-child {
-                font-size: 14px !important;
+            .language-selector h2 {
+                font-size: 12px !important;
                 margin-bottom: 5px !important;
             }
 
             .language-btn {
-                padding: 8px 12px !important;
-                font-size: 18px !important;
-                min-width: 80px !important;
-                min-height: 35px !important;
-                border-radius: 15px !important;
+                padding: 6px 10px !important;
+                font-size: 11px !important;
+                min-width: 70px !important;
+                min-height: 30px !important;
+                border-radius: 12px !important;
                 margin: 2px !important;
             }
         }
@@ -1298,8 +1306,22 @@
                 </div>
             </div>
             
+            <!-- 언어 선택 버튼 섹션 - 메시지 위로 이동 -->
+            <div class="language-selector" style="background: white; border-radius: 10px; padding: 20px; margin: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+                <h2 style="font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px; display: flex; align-items: center; justify-content: center;">
+                    <span style="margin-right: 8px;">🌍</span>
+                    <span>예약창의 언어를 선택하세요!</span>
+                </h2>
+                <div class="language-buttons" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button class="language-btn korean" onclick="setLanguage2('ko')" id="langBtn-ko-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇰🇷 한국어</button>
+                    <button class="language-btn english" onclick="setLanguage2('en')" id="langBtn-en-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇺🇸 영어</button>
+                    <button class="language-btn russian" onclick="setLanguage2('ru')" id="langBtn-ru-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇷🇺 러시아어</button>
+                    <button class="language-btn japanese" onclick="setLanguage2('ja')" id="langBtn-ja-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);">🇯🇵 일본어</button>
+                </div>
+            </div>
+
             <!-- 챗봇 메시지 영역 -->
-            <div class="chatbot-messages" id="chatbotMessages2" style="max-height: calc(100vh - 420px) !important; max-height: calc(100dvh - 420px) !important; margin: 10px 10px 10px 10px !important;">
+            <div class="chatbot-messages" id="chatbotMessages2" style="max-height: calc(100vh - 520px) !important; max-height: calc(100dvh - 520px) !important; margin: 10px 10px 10px 10px !important;">
                 <!-- 초기 환영 메시지 -->
                 <div class="message bot">
                     <div class="message-avatar">👩‍⚕️</div>
@@ -1312,20 +1334,6 @@
                             <button class="quick-button" onclick="sendQuickMessage2('위치 알려주세요')">오시는길</button>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- 언어 선택 버튼 섹션 - 입력창 위로 이동 -->
-            <div class="language-selector">
-                <div style="font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px; display: flex; align-items: center; justify-content: center;">
-                    <span style="margin-right: 8px;">🌍</span>
-                    <span>AI상담사의 언어를 선택하세요!</span>
-                </div>
-                <div class="language-buttons">
-                    <button class="language-btn" onclick="setLanguage2('ko')" id="langBtn-ko-2" style="background: linear-gradient(135deg, #0066cc 0%, #004499 100%); color: white; border: 2px solid #0066cc; padding: 24px 40px; border-radius: 25px; font-size: 32px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);">🇰🇷 한국어</button>
-                    <button class="language-btn" onclick="setLanguage2('en')" id="langBtn-en-2" style="background: linear-gradient(135deg, #cc3300 0%, #990000 100%); color: white; border: 2px solid #cc3300; padding: 24px 40px; border-radius: 25px; font-size: 32px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(204, 51, 0, 0.4);">🇺🇸 영어</button>
-                    <button class="language-btn" onclick="setLanguage2('ru')" id="langBtn-ru-2" style="background: linear-gradient(135deg, #9900cc 0%, #660099 100%); color: white; border: 2px solid #9900cc; padding: 24px 40px; border-radius: 25px; font-size: 32px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(153, 0, 204, 0.4);">🇷🇺 러시아어</button>
-                    <button class="language-btn" onclick="setLanguage2('ja')" id="langBtn-ja-2" style="background: linear-gradient(135deg, #cc6600 0%, #994400 100%); color: white; border: 2px solid #cc6600; padding: 24px 40px; border-radius: 25px; font-size: 32px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(204, 102, 0, 0.4);">🇯🇵 일본어</button>
                 </div>
             </div>
 
@@ -1489,27 +1497,20 @@
         // 언어 설정 전역 변수
         let currentLanguage2 = 'ko'; // 기본 언어: 한국어
         
-        // 언어 버튼 원래 색상 저장
+        // 언어 버튼 색상 저장 (예약창과 동일)
         const languageButtonColors2 = {
-            ko: {
-                background: 'linear-gradient(135deg, #0066cc 0%, #004499 100%)',
-                border: '2px solid #0066cc',
-                boxShadow: '0 6px 20px rgba(0, 102, 204, 0.4)'
+            default: {
+                background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                border: 'none',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.3)',
+                color: 'white'
             },
-            en: {
-                background: 'linear-gradient(135deg, #cc3300 0%, #990000 100%)',
-                border: '2px solid #cc3300',
-                boxShadow: '0 6px 20px rgba(204, 51, 0, 0.4)'
-            },
-            ru: {
-                background: 'linear-gradient(135deg, #9900cc 0%, #660099 100%)',
-                border: '2px solid #9900cc',
-                boxShadow: '0 6px 20px rgba(153, 0, 204, 0.4)'
-            },
-            ja: {
-                background: 'linear-gradient(135deg, #cc6600 0%, #994400 100%)',
-                border: '2px solid #cc6600',
-                boxShadow: '0 6px 20px rgba(204, 102, 0, 0.4)'
+            selected: {
+                background: 'linear-gradient(135deg, #ffcc00 0%, #ff9900 100%)',
+                border: '2px solid #ffcc00',
+                boxShadow: '0 6px 20px rgba(255, 204, 0, 0.6)',
+                color: '#333',
+                textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
             }
         };
         
@@ -1921,38 +1922,41 @@
         function updateLanguageButtons2() {
             console.log('언어 버튼 시각적 업데이트 시작');
             
-            // 모든 언어 버튼을 원래 색상으로 복원
+            // 모든 언어 버튼을 푸른색(기본색)으로 설정
             const languages = ['ko', 'en', 'ru', 'ja'];
             languages.forEach(lang => {
                 const button = document.getElementById(`langBtn-${lang}-2`);
                 if (button) {
-                    const colors = languageButtonColors2[lang];
+                    const defaultColors = languageButtonColors2.default;
                     
                     // 카카오톡 브라우저 호환성을 위해 setProperty 사용
-                    button.style.setProperty('opacity', '0.7', 'important');
+                    button.style.setProperty('opacity', '1', 'important');
                     button.style.setProperty('transform', 'scale(1)', 'important');
-                    button.style.setProperty('background', colors.background, 'important');
-                    button.style.setProperty('border', colors.border, 'important');
-                    button.style.setProperty('box-shadow', colors.boxShadow, 'important');
-                    button.style.setProperty('color', 'white', 'important');
+                    button.style.setProperty('background', defaultColors.background, 'important');
+                    button.style.setProperty('border', defaultColors.border, 'important');
+                    button.style.setProperty('box-shadow', defaultColors.boxShadow, 'important');
+                    button.style.setProperty('color', defaultColors.color, 'important');
                     button.style.setProperty('font-weight', 'bold', 'important');
+                    button.style.setProperty('text-shadow', 'none', 'important');
                     
-                    console.log(`${lang} 버튼 원래 색상으로 복원`);
+                    console.log(`${lang} 버튼을 푸른색(기본색)으로 설정`);
                 }
             });
             
             // 선택된 언어 버튼을 노란색으로 강조
             const selectedButton = document.getElementById(`langBtn-${currentLanguage2}-2`);
             if (selectedButton) {
+                const selectedColors = languageButtonColors2.selected;
+                
                 // 카카오톡 브라우저 호환성을 위해 setProperty 사용
                 selectedButton.style.setProperty('opacity', '1', 'important');
-                selectedButton.style.setProperty('transform', 'scale(1.1)', 'important');
-                selectedButton.style.setProperty('background', 'linear-gradient(135deg, #ffcc00 0%, #ff9900 100%)', 'important');
-                selectedButton.style.setProperty('border', '3px solid #ffcc00', 'important');
-                selectedButton.style.setProperty('box-shadow', '0 8px 25px rgba(255, 204, 0, 0.6)', 'important');
-                selectedButton.style.setProperty('color', '#333', 'important');
+                selectedButton.style.setProperty('transform', 'scale(1.05)', 'important');
+                selectedButton.style.setProperty('background', selectedColors.background, 'important');
+                selectedButton.style.setProperty('border', selectedColors.border, 'important');
+                selectedButton.style.setProperty('box-shadow', selectedColors.boxShadow, 'important');
+                selectedButton.style.setProperty('color', selectedColors.color, 'important');
                 selectedButton.style.setProperty('font-weight', 'bold', 'important');
-                selectedButton.style.setProperty('text-shadow', '1px 1px 2px rgba(0,0,0,0.3)', 'important');
+                selectedButton.style.setProperty('text-shadow', selectedColors.textShadow, 'important');
                 
                 console.log(`${currentLanguage2} 버튼을 노란색으로 강조 완료`);
             }
