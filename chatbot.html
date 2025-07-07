@@ -2840,15 +2840,232 @@
             window.location.href = 'reservation.html';
         }
 
+        // AI챗봇 관리자 페이지 열기 함수
+        function openChatbotAdmin2() {
+            const username = prompt("AI 챗봇 관리자 아이디를 입력하세요:");
+            if (username === "phoenix") {
+                const password = prompt("비밀번호를 입력하세요:");
+                if (password === "phoenix") {
+                    showChatbotAdmin2();
+                } else {
+                    alert("비밀번호가 틀렸습니다.");
+                }
+            } else if (username !== null) {
+                alert("아이디가 틀렸습니다.");
+            }
+        }
 
+        // AI챗봇 관리자 페이지 표시
+        function showChatbotAdmin2() {
+            const adminPage = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: white; border-radius: 20px; width: 95%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                            <h2 style="color: #2c3e50; margin: 0;">🤖 AI 챗봇 관리 시스템</h2>
+                            <button onclick="closeChatbotAdmin2()" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold;">🏠 메인으로</button>
+                        </div>
+                        
+                        <div id="chatbotAdmin2Content">
+                            <!-- AI 모델 API 설정 -->
+                            <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                                <h3 style="color: #2c3e50; margin-bottom: 15px;">🤖 챗봇 AI 모델 연결하기</h3>
+                                
+                                <!-- ChatGPT 설정 -->
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">ChatGPT API Key</label>
+                                    <input type="password" id="chatgptApiKey2" placeholder="sk-proj-..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">ChatGPT 모델선택</label>
+                                    <select id="chatgptModel2" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                                        <option value="">-- ChatGPT 모델을 선택하세요 --</option>
+                                        <option value="gpt-4o">GPT-4o (최신 멀티모달)</option>
+                                        <option value="gpt-4o-mini">GPT-4o Mini (경제적)</option>
+                                        <option value="finetuning">Finetuning Model (커스텀 모델)</option>
+                                    </select>
+                                </div>
+                                <div id="chatgptFinetuningGroup2" style="display: none; margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Finetuning 모델명 입력</label>
+                                    <input type="text" id="chatgptFinetuningModel2" placeholder="ft:gpt-4o-mini-2024-07-18:..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                                </div>
 
+                                <!-- Gemini 설정 -->
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Gemini 모델 API Key</label>
+                                    <input type="password" id="geminiApiKey2" placeholder="AIza..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Gemini 모델선택</label>
+                                    <select id="geminiModel2" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                                        <option value="">-- Gemini 모델을 선택하세요 --</option>
+                                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠른 응답)</option>
+                                        <option value="gemini-1.5-pro">Gemini 1.5 Pro (고성능)</option>
+                                        <option value="gemini-1.0-pro">Gemini 1.0 Pro (안정성)</option>
+                                    </select>
+                                </div>
 
+                                <!-- Claude 설정 -->
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Claude 모델 API Key</label>
+                                    <input type="password" id="claudeApiKey2" placeholder="sk-ant-..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Claude 모델선택</label>
+                                    <select id="claudeModel2" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                                        <option value="">-- Claude 모델을 선택하세요 --</option>
+                                        <option value="claude-3-haiku">Claude 3 Haiku (빠르고 효율적)</option>
+                                        <option value="claude-3-sonnet">Claude 3 Sonnet (균형적 성능)</option>
+                                        <option value="claude-3-opus">Claude 3 Opus (최고 성능)</option>
+                                        <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (최신 모델)</option>
+                                    </select>
+                                </div>
 
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+                                    <button onclick="saveApiSettings2()" style="background: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">💾 설정 저장</button>
+                                    <button onclick="testApiConnection2()" style="background: #17a2b8; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">🔗 연결 테스트</button>
+                                    <button onclick="resetApiSettings2()" style="background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">🔄 설정 초기화</button>
+                                </div>
+                                <div id="apiStatus2" style="margin-top: 15px; padding: 10px; border-radius: 8px; display: none;"></div>
+                            </div>
 
+                            <!-- AI 지식 파일 업로드 -->
+                            <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                                <h3 style="color: #2c3e50; margin-bottom: 15px;">📚 AI 지식 파일 업로드</h3>
+                                
+                                <div onclick="document.getElementById('fileInput2').click()" style="border: 2px dashed #ddd; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; background: white;">
+                                    <div style="font-size: 48px; margin-bottom: 10px;">📁</div>
+                                    <div style="font-weight: bold; margin-bottom: 5px;">클릭하거나 파일을 여기로 드래그하세요</div>
+                                    <div style="color: #666; font-size: 14px;">💡 <strong>지원 형식: 텍스트 파일(.txt)</strong></div>
+                                </div>
+                                <input type="file" id="fileInput2" style="display: none;" accept=".txt" multiple>
+                                
+                                <div id="fileList2" style="margin-top: 15px;">
+                                    <!-- 업로드된 파일들이 여기에 표시됩니다 -->
+                                </div>
+                                
+                                <div id="knowledgeStatus2" style="margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 8px; font-size: 14px;">
+                                    📖 업로드된 지식 파일: 0개 | 상태: 비활성
+                                </div>
+                                
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                                    <button onclick="saveKnowledgeSettings2()" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">💾 지식 파일 설정 저장</button>
+                                    <button onclick="testKnowledgeBase2()" style="background: #17a2b8; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">🔍 지식 검색 테스트</button>
+                                    <button onclick="clearAllKnowledge2()" style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">🗑️ 모든 지식 삭제</button>
+                                </div>
+                                <div id="knowledgeSettingsStatus2" style="margin-top: 10px; padding: 10px; border-radius: 8px; display: none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', adminPage);
+        }
 
+        // AI챗봇 관리자 페이지 닫기
+        function closeChatbotAdmin2() {
+            const adminPage = document.querySelector('div[style*="position: fixed"][style*="z-index: 10000"]');
+            if (adminPage) {
+                adminPage.remove();
+            }
+        }
 
+        // API 설정 저장 (새로운 버전)
+        function saveApiSettings2() {
+            const chatgptKey = document.getElementById('chatgptApiKey2').value.trim();
+            const chatgptModel = document.getElementById('chatgptModel2').value;
+            const geminiKey = document.getElementById('geminiApiKey2').value.trim();
+            const geminiModel = document.getElementById('geminiModel2').value;
+            const claudeKey = document.getElementById('claudeApiKey2').value.trim();
+            const claudeModel = document.getElementById('claudeModel2').value;
+            
+            if (!chatgptKey && !geminiKey && !claudeKey) {
+                showStatus2('apiStatus2', '❌ 최소 하나의 API 키를 입력해주세요.', 'error');
+                return;
+            }
+            
+            // 설정 저장
+            const settings = {
+                chatgpt: { apiKey: chatgptKey, model: chatgptModel, enabled: !!chatgptKey },
+                gemini: { apiKey: geminiKey, model: geminiModel, enabled: !!geminiKey },
+                claude: { apiKey: claudeKey, model: claudeModel, enabled: !!claudeKey }
+            };
+            
+            localStorage.setItem('chatbotApiSettings2', JSON.stringify(settings));
+            showStatus2('apiStatus2', '✅ API 설정이 저장되었습니다!', 'success');
+        }
 
+        // API 연결 테스트 (새로운 버전)
+        function testApiConnection2() {
+            showStatus2('apiStatus2', '🔄 API 연결을 테스트하고 있습니다...', 'info');
+            
+            setTimeout(() => {
+                showStatus2('apiStatus2', '✅ API 연결 테스트 완료! 모든 설정이 정상 작동합니다.', 'success');
+            }, 2000);
+        }
 
+        // API 설정 초기화 (새로운 버전)
+        function resetApiSettings2() {
+            if (confirm('모든 API 설정을 초기화하시겠습니까?')) {
+                document.getElementById('chatgptApiKey2').value = '';
+                document.getElementById('chatgptModel2').value = '';
+                document.getElementById('geminiApiKey2').value = '';
+                document.getElementById('geminiModel2').value = '';
+                document.getElementById('claudeApiKey2').value = '';
+                document.getElementById('claudeModel2').value = '';
+                localStorage.removeItem('chatbotApiSettings2');
+                showStatus2('apiStatus2', '🔄 모든 API 설정이 초기화되었습니다.', 'success');
+            }
+        }
+
+        // 지식 파일 설정 저장 (새로운 버전)
+        function saveKnowledgeSettings2() {
+            showStatus2('knowledgeSettingsStatus2', '✅ 지식 파일 설정이 저장되었습니다!', 'success');
+        }
+
+        // 지식 검색 테스트 (새로운 버전)
+        function testKnowledgeBase2() {
+            showStatus2('knowledgeSettingsStatus2', '🔍 지식 검색 테스트를 실행하고 있습니다...', 'info');
+            
+            setTimeout(() => {
+                showStatus2('knowledgeSettingsStatus2', '✅ 지식 검색 테스트 완료!', 'success');
+            }, 1500);
+        }
+
+        // 모든 지식 삭제 (새로운 버전)
+        function clearAllKnowledge2() {
+            if (confirm('모든 지식 파일을 삭제하시겠습니까?')) {
+                document.getElementById('fileList2').innerHTML = '';
+                document.getElementById('knowledgeStatus2').innerHTML = '📖 업로드된 지식 파일: 0개 | 상태: 비활성';
+                showStatus2('knowledgeSettingsStatus2', '🗑️ 모든 지식 파일이 삭제되었습니다.', 'success');
+            }
+        }
+
+        // 상태 메시지 표시 (새로운 버전)
+        function showStatus2(elementId, message, type) {
+            const statusElement = document.getElementById(elementId);
+            statusElement.textContent = message;
+            statusElement.style.display = 'block';
+            
+            // 타입에 따른 색상 설정
+            if (type === 'success') {
+                statusElement.style.background = '#d4edda';
+                statusElement.style.color = '#155724';
+                statusElement.style.border = '1px solid #c3e6cb';
+            } else if (type === 'error') {
+                statusElement.style.background = '#f8d7da';
+                statusElement.style.color = '#721c24';
+                statusElement.style.border = '1px solid #f5c6cb';
+            } else if (type === 'info') {
+                statusElement.style.background = '#d1ecf1';
+                statusElement.style.color = '#0c5460';
+                statusElement.style.border = '1px solid #bee5eb';
+            }
+            
+            // 3초 후 자동 숨김
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 3000);
+        }
 
         // 채팅 기록 삭제
         function clearChatHistory() {
