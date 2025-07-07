@@ -1795,224 +1795,193 @@
                         console.log('아이폰 미니 - 입력창 최적화 적용');
                     }
                     
-                    // Galaxy XCover 5 & Android 카카오톡 브라우저 키보드 문제 강력 해결
+                    // Galaxy XCover 5 & Android 카카오톡 브라우저 스마트 키보드 해결
                     if (isGalaxyXCover5 && isAndroid && isKakaoTalk) {
-                        console.log('🔥 Galaxy XCover 5 Android 카카오톡 브라우저 키보드 강력 최적화 시작');
+                        console.log('🎯 Galaxy XCover 5 Android 카카오톡 브라우저 스마트 키보드 최적화 시작');
                         
                         const textArea = inputContainer.querySelector('textarea');
                         if (textArea) {
-                            console.log('🎯 텍스트 영역 발견 - 강력한 키보드 유지 모드 활성화');
+                            console.log('📱 Galaxy XCover 5 전용 스마트 터치 시스템 활성화');
                             
-                            // ==================== 1. 키보드 방해 요소 완전 제거 ====================
+                            // ==================== 1. 기본 터치 반응성 확보 ====================
                             
-                            // 모든 기존 이벤트 리스너 제거
-                            const newTextArea = textArea.cloneNode(true);
-                            textArea.parentNode.replaceChild(newTextArea, textArea);
-                            console.log('✅ 기존 이벤트 리스너 완전 제거');
+                            let isInputActive = false;
+                            let keyboardVisible = false;
+                            let userInteractionTime = 0;
+                            let touchStartY = 0;
                             
-                            // ==================== 2. 키보드 강제 유지 시스템 ====================
+                            // 입력창 터치 감지 개선
+                            textArea.style.setProperty('touch-action', 'manipulation', 'important');
+                            textArea.style.setProperty('pointer-events', 'auto', 'important');
+                            textArea.style.setProperty('cursor', 'text', 'important');
                             
-                            let keyboardLockMode = false;
-                            let focusInterval = null;
-                            let touchStartTime = 0;
+                            // ==================== 2. 스마트 터치 이벤트 처리 ====================
                             
-                            // 키보드 잠금 모드 활성화
-                            function enableKeyboardLock() {
-                                keyboardLockMode = true;
-                                console.log('🔒 키보드 잠금 모드 활성화');
+                            // 터치 시작 - 반응성 최우선
+                            textArea.addEventListener('touchstart', function(e) {
+                                console.log('👆 입력창 터치 시작 - 일반 터치 허용');
                                 
-                                // 포커스 강제 유지 (매 100ms마다 확인)
-                                if (focusInterval) clearInterval(focusInterval);
-                                focusInterval = setInterval(() => {
-                                    if (keyboardLockMode && document.activeElement !== newTextArea) {
-                                        console.log('🔄 포커스 강제 복원');
-                                        newTextArea.focus();
+                                touchStartY = e.touches[0].clientY;
+                                userInteractionTime = Date.now();
+                                isInputActive = true;
+                                
+                                // 기본 터치 동작 허용 (클릭 가능하게)
+                                // e.preventDefault() 제거 - 클릭이 안 되던 원인!
+                                
+                                // 입력창 스타일 강화
+                                textArea.style.setProperty('background', '#fff', 'important');
+                                textArea.style.setProperty('border', '2px solid #4facfe', 'important');
+                                textArea.style.setProperty('outline', 'none', 'important');
+                                
+                            }, { passive: true }); // passive: true로 성능 개선
+                            
+                            // 터치 종료 - 스마트 포커스
+                            textArea.addEventListener('touchend', function(e) {
+                                console.log('👆 입력창 터치 종료 - 스마트 포커스 시도');
+                                
+                                const touchDuration = Date.now() - userInteractionTime;
+                                console.log(`터치 시간: ${touchDuration}ms`);
+                                
+                                // 짧은 터치면 클릭으로 인식하고 포커스
+                                if (touchDuration < 500) {
+                                    console.log('🎯 짧은 터치 - 포커스 시도');
+                                    
+                                    // 지연 없이 즉시 포커스
+                                    textArea.focus();
+                                    
+                                    // 키보드 표시 대기
+                                    setTimeout(() => {
+                                        if (document.activeElement === textArea) {
+                                            keyboardVisible = true;
+                                            console.log('⌨️ 키보드 활성화 확인');
+                                        }
+                                    }, 300);
+                                }
+                                
+                            }, { passive: true });
+                            
+                            // ==================== 3. 포커스 이벤트 최적화 ====================
+                            
+                            textArea.addEventListener('focus', function(e) {
+                                console.log('🎯 입력창 포커스 획득');
+                                isInputActive = true;
+                                keyboardVisible = true;
+                                
+                                // 키보드 표시 중에만 레이아웃 조정
+                                setTimeout(() => {
+                                    if (keyboardVisible) {
+                                        console.log('🔧 키보드 표시 중 레이아웃 조정');
+                                        
+                                        // 입력창을 화면 하단에 고정 (부드럽게)
+                                        inputContainer.style.setProperty('position', 'fixed', 'important');
+                                        inputContainer.style.setProperty('bottom', '0', 'important');
+                                        inputContainer.style.setProperty('left', '0', 'important');
+                                        inputContainer.style.setProperty('right', '0', 'important');
+                                        inputContainer.style.setProperty('z-index', '1000', 'important');
+                                        inputContainer.style.setProperty('background', 'white', 'important');
+                                        inputContainer.style.setProperty('box-shadow', '0 -2px 10px rgba(0,0,0,0.1)', 'important');
                                     }
                                 }, 100);
                                 
-                                // viewport 고정
-                                document.documentElement.style.setProperty('height', '100vh', 'important');
-                                document.body.style.setProperty('height', '100vh', 'important');
-                                document.body.style.setProperty('overflow', 'hidden', 'important');
-                                
-                                // 입력창 최상위로 고정
-                                inputContainer.style.setProperty('position', 'fixed', 'important');
-                                inputContainer.style.setProperty('bottom', '0', 'important');
-                                inputContainer.style.setProperty('left', '0', 'important');
-                                inputContainer.style.setProperty('right', '0', 'important');
-                                inputContainer.style.setProperty('z-index', '999999', 'important');
-                                inputContainer.style.setProperty('background', 'white', 'important');
-                                inputContainer.style.setProperty('border-top', '2px solid #4facfe', 'important');
-                                
-                                console.log('🛡️ 키보드 보호 레이아웃 적용 완료');
-                            }
-                            
-                            // 키보드 잠금 모드 해제
-                            function disableKeyboardLock() {
-                                keyboardLockMode = false;
-                                console.log('🔓 키보드 잠금 모드 해제');
-                                
-                                // 포커스 강제 유지 중단
-                                if (focusInterval) {
-                                    clearInterval(focusInterval);
-                                    focusInterval = null;
-                                }
-                                
-                                // 스타일 복원
-                                document.documentElement.style.removeProperty('height');
-                                document.body.style.removeProperty('height');
-                                document.body.style.removeProperty('overflow');
-                                inputContainer.style.removeProperty('position');
-                                inputContainer.style.removeProperty('bottom');
-                                inputContainer.style.removeProperty('left');
-                                inputContainer.style.removeProperty('right');
-                                inputContainer.style.removeProperty('z-index');
-                                inputContainer.style.removeProperty('background');
-                                inputContainer.style.removeProperty('border-top');
-                                
-                                console.log('🔄 레이아웃 복원 완료');
-                            }
-                            
-                            // ==================== 3. 터치 이벤트 완전 제어 ====================
-                            
-                            // 터치 시작 - 키보드 잠금 모드 준비
-                            newTextArea.addEventListener('touchstart', function(e) {
-                                e.stopPropagation();
-                                e.stopImmediatePropagation();
-                                touchStartTime = Date.now();
-                                console.log('👆 입력창 터치 시작 - 키보드 준비');
-                                
-                                // 다른 모든 터치 이벤트 차단
-                                document.body.style.setProperty('-webkit-touch-callout', 'none', 'important');
-                                document.body.style.setProperty('-webkit-user-select', 'none', 'important');
-                                document.body.style.setProperty('user-select', 'none', 'important');
-                                
-                                // 입력창만 터치 가능하게 설정
-                                newTextArea.style.setProperty('-webkit-touch-callout', 'default', 'important');
-                                newTextArea.style.setProperty('-webkit-user-select', 'text', 'important');
-                                newTextArea.style.setProperty('user-select', 'text', 'important');
-                                
-                            }, { passive: false, capture: true });
-                            
-                            // 터치 종료 - 포커스 및 키보드 강제 활성화
-                            newTextArea.addEventListener('touchend', function(e) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                e.stopImmediatePropagation();
-                                
-                                const touchDuration = Date.now() - touchStartTime;
-                                console.log(`👆 입력창 터치 종료 (${touchDuration}ms) - 키보드 강제 활성화`);
-                                
-                                // 즉시 포커스
-                                newTextArea.focus();
-                                
-                                // 키보드 잠금 모드 활성화 (지연 없이)
-                                setTimeout(() => {
-                                    enableKeyboardLock();
-                                }, 50);
-                                
-                                // 키보드가 나타날 시간을 충분히 기다린 후 확인
-                                setTimeout(() => {
-                                    if (document.activeElement !== newTextArea) {
-                                        console.log('🔄 포커스 재시도');
-                                        newTextArea.focus();
-                                        newTextArea.click();
-                                    }
-                                }, 200);
-                                
-                            }, { passive: false, capture: true });
-                            
-                            // ==================== 4. 포커스 이벤트 강화 ====================
-                            
-                            newTextArea.addEventListener('focus', function(e) {
-                                console.log('🎯 입력창 포커스 획득 - 키보드 잠금 활성화');
-                                enableKeyboardLock();
                             }, { passive: true });
                             
-                            newTextArea.addEventListener('blur', function(e) {
-                                console.log('😴 입력창 포커스 해제 감지');
+                            textArea.addEventListener('blur', function(e) {
+                                console.log('😴 입력창 포커스 해제');
                                 
-                                // 의도적인 블러가 아닌 경우 즉시 포커스 복원
-                                if (keyboardLockMode) {
-                                    console.log('🔄 의도하지 않은 블러 - 포커스 즉시 복원');
-                                    setTimeout(() => {
-                                        newTextArea.focus();
-                                    }, 10);
-                                } else {
-                                    disableKeyboardLock();
+                                // 사용자가 의도적으로 다른 곳을 터치한 경우에만 비활성화
+                                const timeSinceInteraction = Date.now() - userInteractionTime;
+                                
+                                if (timeSinceInteraction > 1000) { // 1초 후에만 비활성화
+                                    isInputActive = false;
+                                    keyboardVisible = false;
+                                    
+                                    // 레이아웃 복원
+                                    inputContainer.style.removeProperty('position');
+                                    inputContainer.style.removeProperty('bottom');
+                                    inputContainer.style.removeProperty('left');
+                                    inputContainer.style.removeProperty('right');
+                                    inputContainer.style.removeProperty('z-index');
+                                    inputContainer.style.removeProperty('background');
+                                    inputContainer.style.removeProperty('box-shadow');
+                                    
+                                    console.log('🔄 레이아웃 복원 완료');
                                 }
+                                
                             }, { passive: true });
                             
-                            // ==================== 5. 전역 이벤트 차단 ====================
-                            
-                            // 다른 모든 터치 이벤트 차단 (입력창 제외)
-                            document.addEventListener('touchstart', function(e) {
-                                if (!e.target.closest('.chatbot-input')) {
-                                    if (keyboardLockMode) {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        console.log('🚫 키보드 잠금 모드 중 외부 터치 차단');
-                                    }
-                                }
-                            }, { passive: false, capture: true });
-                            
-                            // 스크롤 차단 (키보드 잠금 모드 중)
-                            document.addEventListener('touchmove', function(e) {
-                                if (keyboardLockMode && !e.target.closest('.chatbot-messages')) {
-                                    e.preventDefault();
-                                }
-                            }, { passive: false });
-                            
-                            // ==================== 6. 키보드 감지 및 자동 복구 ====================
+                            // ==================== 4. 키보드 감지 및 자동 복구 ====================
                             
                             let keyboardCheckInterval = null;
                             
-                            function startKeyboardMonitoring() {
+                            function startSmartKeyboardMonitoring() {
                                 if (keyboardCheckInterval) clearInterval(keyboardCheckInterval);
                                 
                                 keyboardCheckInterval = setInterval(() => {
-                                    if (keyboardLockMode) {
-                                        // 키보드가 사라졌는지 확인 (viewport 높이로 판단)
-                                        const isKeyboardGone = window.innerHeight >= window.screen.height * 0.9;
+                                    if (isInputActive && keyboardVisible) {
+                                        // 키보드가 예상치 못하게 사라진 경우 감지
+                                        const currentHeight = window.innerHeight;
+                                        const screenHeight = window.screen.height;
+                                        const keyboardGone = currentHeight >= screenHeight * 0.85;
                                         
-                                        if (isKeyboardGone && document.activeElement !== newTextArea) {
-                                            console.log('🚨 키보드 사라짐 감지 - 즉시 복구 시도');
-                                            newTextArea.focus();
+                                        if (keyboardGone && document.activeElement !== textArea) {
+                                            console.log('🚨 키보드 예상치 못한 사라짐 감지');
                                             
-                                            // 강제 클릭으로 키보드 재활성화
-                                            const event = new Event('click', { bubbles: true });
-                                            newTextArea.dispatchEvent(event);
+                                            // 부드러운 포커스 복원 시도
+                                            textArea.focus();
                                         }
                                     }
-                                }, 200);
+                                }, 500); // 500ms 간격으로 체크 (덜 자주)
                             }
                             
-                            // ==================== 7. 전송 버튼 특별 처리 ====================
+                            // ==================== 5. 전송 버튼 처리 ====================
                             
                             const sendButton = inputContainer.querySelector('.chatbot-send');
                             if (sendButton) {
+                                // 전송 버튼 터치 개선
+                                sendButton.style.setProperty('touch-action', 'manipulation', 'important');
+                                sendButton.style.setProperty('pointer-events', 'auto', 'important');
+                                
                                 sendButton.addEventListener('click', function(e) {
-                                    console.log('📤 전송 버튼 클릭 - 잠시 키보드 잠금 해제');
-                                    disableKeyboardLock();
+                                    console.log('📤 전송 버튼 클릭');
                                     
-                                    // 전송 후 다시 포커스 준비
+                                    // 전송 후 입력창 상태 유지
                                     setTimeout(() => {
-                                        newTextArea.focus();
-                                    }, 100);
+                                        if (textArea.value.trim() === '') {
+                                            textArea.focus();
+                                        }
+                                    }, 200);
+                                    
                                 }, { passive: true });
                             }
                             
-                            // ==================== 8. 모니터링 시작 ====================
+                            // ==================== 6. 화면 회전 및 크기 변경 처리 ====================
                             
-                            startKeyboardMonitoring();
+                            window.addEventListener('resize', function() {
+                                if (isInputActive) {
+                                    console.log('📱 화면 크기 변경 감지');
+                                    
+                                    // 화면 크기 변경 시 레이아웃 재조정
+                                    setTimeout(() => {
+                                        if (keyboardVisible && document.activeElement === textArea) {
+                                            textArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        }
+                                    }, 300);
+                                }
+                            }, { passive: true });
+                            
+                            // ==================== 7. 시스템 시작 ====================
+                            
+                            startSmartKeyboardMonitoring();
                             
                             // 페이지 언로드 시 정리
                             window.addEventListener('beforeunload', function() {
-                                disableKeyboardLock();
-                                if (keyboardCheckInterval) clearInterval(keyboardCheckInterval);
+                                if (keyboardCheckInterval) {
+                                    clearInterval(keyboardCheckInterval);
+                                }
+                                console.log('🧹 Galaxy XCover 5 시스템 정리 완료');
                             });
                             
-                            console.log('🎉 Galaxy XCover 5 키보드 강력 최적화 완료 - 모든 시스템 활성화');
+                            console.log('✅ Galaxy XCover 5 스마트 키보드 시스템 활성화 완료');
                         }
                     }
                 }
