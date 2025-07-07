@@ -602,7 +602,7 @@
         }
         
         .language-button.japanese:hover {
-            box-shadow: 0 6px 20px rgba(255, 154, 158, 0.5) !important;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5) !important;
         }
         
         /* 선택된 언어 버튼 스타일 */
@@ -630,6 +630,16 @@
                 font-size: 14px !important;
                 min-width: 100px !important;
             }
+            
+            /* 일본어 버튼 모바일 최적화 */
+            .language-button.japanese {
+                background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%) !important;
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+            }
+            
+            .language-button.japanese:hover {
+                box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5) !important;
+            }
         }
         
         @media (max-width: 480px) {
@@ -647,6 +657,12 @@
                 padding: 8px 10px !important;
                 font-size: 12px !important;
                 min-width: 85px !important;
+            }
+            
+            /* 일본어 버튼 480px 이하 최적화 */
+            .language-button.japanese {
+                background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%) !important;
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
             }
         }
         
@@ -668,6 +684,12 @@
                 font-size: 10px !important;
                 min-width: 60px !important;
             }
+            
+            /* 일본어 버튼 360px 이하 최적화 */
+            .language-button.japanese {
+                background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%) !important;
+                box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3) !important;
+            }
         }
         
         /* 아이폰11 특별 최적화 (414×896) */
@@ -681,6 +703,17 @@
                 padding: 10px 12px !important;
                 font-size: 13px !important;
                 min-width: 85px !important;
+            }
+            
+            /* 일본어 버튼 카카오톡 브라우저 최적화 */
+            .language-button.japanese {
+                background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%) !important;
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+            }
+            
+            .language-button.japanese:hover {
+                box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5) !important;
+                transform: translateY(-2px) !important;
             }
         }
         
@@ -696,6 +729,17 @@
                 font-size: 12px !important;
                 min-width: 80px !important;
             }
+            
+            /* 일본어 버튼 아이폰 미니 최적화 */
+            .language-button.japanese {
+                background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%) !important;
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+            }
+            
+            .language-button.japanese:hover {
+                box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5) !important;
+                transform: translateY(-2px) !important;
+            }
         }
         
         /* Galaxy XCover 5 및 유사 안드로이드 기기 최적화 */
@@ -709,6 +753,17 @@
                 padding: 7px 10px !important;
                 font-size: 11px !important;
                 min-width: 75px !important;
+            }
+            
+            /* 일본어 버튼 Galaxy XCover 5 최적화 */
+            .language-button.japanese {
+                background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%) !important;
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+            }
+            
+            .language-button.japanese:hover {
+                box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5) !important;
+                transform: translateY(-2px) !important;
             }
         }
         
@@ -730,6 +785,12 @@
                 padding: 4px 5px !important;
                 font-size: 9px !important;
                 min-width: 55px !important;
+            }
+            
+            /* 일본어 버튼 320px 이하 최적화 */
+            .language-button.japanese {
+                background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%) !important;
+                box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3) !important;
             }
         }
         
@@ -763,7 +824,7 @@
                 <button class="language-button russian" onclick="selectLanguage('ru')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);">
                     🇷🇺 러시아어RU
                 </button>
-                <button class="language-button japanese" onclick="selectLanguage('ja')" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 154, 158, 0.3);">
+                <button class="language-button japanese" onclick="selectLanguage('ja')" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">
                     🇯🇵 일본어JP
                 </button>
             </div>
@@ -976,7 +1037,7 @@
             }
         }
 
-        // 카카오톡 인앱 브라우저에서 진료 시간 안내 스타일 강제 적용
+        // 카카오톡 인앱 브라우저에서 스타일 강제 적용
         function forceInfoSectionStyles() {
             const isMobile = window.innerWidth <= 768;
             const isKakaoTalk = navigator.userAgent.includes('KAKAO');
@@ -1028,7 +1089,14 @@
                     }
                 });
                 
-                console.log('카카오톡 인앱 브라우저 진료 시간 안내 스타일 강제 재적용 완료');
+                // 일본어 버튼 녹색 스타일 강제 적용
+                const japaneseButton = document.querySelector('.language-button.japanese');
+                if (japaneseButton) {
+                    japaneseButton.style.setProperty('background', 'linear-gradient(135deg, #4caf50 0%, #8bc34a 100%)', 'important');
+                    japaneseButton.style.setProperty('box-shadow', '0 4px 15px rgba(76, 175, 80, 0.3)', 'important');
+                }
+                
+                console.log('카카오톡 인앱 브라우저 스타일 강제 재적용 완료 (일본어 버튼 녹색 포함)');
             }
         }
 
