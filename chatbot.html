@@ -14,13 +14,44 @@
     <meta name="format-detection" content="email=no">
     <!-- 강력한 캐시 버스터 -->
     <meta name="cache-buster" content="<?= time() ?>">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="stylesheet" href="data:text/css;base64,LyogRm9yY2UgcmVmcmVzaCAqLw==">
     <script>
-        // 카카오톡 브라우저 강제 새로고침
+        // 카카오톡 브라우저 강제 새로고침 및 DOM 재구성
         if (navigator.userAgent.includes('KAKAO')) {
-            if (performance.navigation.type !== 1) {
-                setTimeout(() => window.location.reload(), 100);
-            }
+            console.log('카카오톡 브라우저 감지 - 강제 새로고침 모드');
+            
+                         // 페이지 로드 시 DOM 재구성 강제 적용
+             document.addEventListener('DOMContentLoaded', function() {
+                 setTimeout(() => {
+                     const languageSelector = document.querySelector('.language-selector');
+                     const inputContainer = document.querySelector('.chatbot-input');
+                     const chatbotMain = document.querySelector('.chatbot-main');
+                     
+                     if (languageSelector && inputContainer && chatbotMain) {
+                         console.log('카카오톡 브라우저 - DOM 재구성 강제 적용');
+                         
+                         // 강제 DOM 재배치 - 언어 선택을 입력창 위에 배치
+                         const parentContainer = languageSelector.parentNode;
+                         if (parentContainer) {
+                             parentContainer.insertBefore(languageSelector, inputContainer);
+                             console.log('언어 선택 영역을 입력창 위로 이동 완료');
+                         }
+                         
+                         // 강제 스타일 적용
+                         languageSelector.style.cssText = 'position: relative !important; background: white !important; border-radius: 10px !important; padding: 15px !important; margin: 10px !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; text-align: center !important; z-index: 99999 !important; order: 2 !important;';
+                         inputContainer.style.cssText += 'order: 3 !important;';
+                         
+                         // 메인 컨테이너를 flexbox로 설정
+                         chatbotMain.style.cssText += 'display: flex !important; flex-direction: column !important;';
+                         
+                         console.log('카카오톡 브라우저 - DOM 재구성 완료');
+                     }
+                 }, 200);
+             });
         }
     </script>
     <style>
@@ -1483,34 +1514,32 @@
                     messagesContainer.style.maxHeight = 'none';
                 }
                 
-                // 언어 선택 영역 최적화
+                // 언어 선택 영역 최적화 - 입력창 위에 올바르게 표시
                 const languageSelector = document.querySelector('.language-selector');
                 if (languageSelector) {
-                    // 언어 선택 영역은 CSS에서 설정된 예약창 스타일 사용
-                    languageSelector.style.background = 'white';
-                    languageSelector.style.borderRadius = '10px';
-                    languageSelector.style.padding = '20px';
-                    languageSelector.style.marginBottom = '20px';
-                    languageSelector.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-                    languageSelector.style.textAlign = 'center';
+                    // 언어 선택 영역은 입력창 위에 위치하도록 강제 설정
+                    languageSelector.style.setProperty('position', 'relative', 'important');
+                    languageSelector.style.setProperty('background', 'white', 'important');
+                    languageSelector.style.setProperty('border-radius', '10px', 'important');
+                    languageSelector.style.setProperty('padding', '20px', 'important');
+                    languageSelector.style.setProperty('margin', '10px', 'important');
+                    languageSelector.style.setProperty('box-shadow', '0 2px 10px rgba(0,0,0,0.1)', 'important');
+                    languageSelector.style.setProperty('text-align', 'center', 'important');
+                    languageSelector.style.setProperty('flex-shrink', '0', 'important');
+                    languageSelector.style.setProperty('box-sizing', 'border-box', 'important');
+                    languageSelector.style.setProperty('width', '100%', 'important');
+                    languageSelector.style.setProperty('z-index', '100', 'important');
                     
-                    languageSelector.style.flexShrink = '0';
-                    languageSelector.style.background = '#f8f9fa';
-                    languageSelector.style.borderTop = '2px solid #e9ecef';
-                    languageSelector.style.boxSizing = 'border-box';
-                    languageSelector.style.width = '100%';
-                    languageSelector.style.left = '0';
-                    
-                    // 언어 버튼들은 인라인 스타일과 CSS에서 이미 예약창과 동일하게 설정됨
+                    // 언어 버튼들 터치 최적화
                     const languageButtons = languageSelector.querySelectorAll('.language-btn');
                     languageButtons.forEach(button => {
-                        button.style.touchAction = 'manipulation';
-                        button.style.webkitTouchCallout = 'none';
-                        button.style.webkitUserSelect = 'none';
-                        button.style.userSelect = 'none';
+                        button.style.setProperty('touch-action', 'manipulation', 'important');
+                        button.style.setProperty('-webkit-touch-callout', 'none', 'important');
+                        button.style.setProperty('-webkit-user-select', 'none', 'important');
+                        button.style.setProperty('user-select', 'none', 'important');
                     });
                     
-                    // 제목 텍스트는 인라인 스타일에서 이미 예약창과 동일하게 설정됨
+                    console.log('언어 선택 영역 최적화 완료 - 입력창 위에 위치');
                 }
                 
                 // 입력 영역 최적화
@@ -1546,41 +1575,90 @@
                 document.documentElement.style.overflow = 'hidden';
             }
             
-            // 추가 안전 조치: 언어 선택 영역이 보이지 않으면 강제 표시
+            // 추가 안전 조치: 언어 선택 영역이 입력창 위에 올바르게 표시되도록 강제 적용
             setTimeout(() => {
                 const languageSelector = document.querySelector('.language-selector');
-                const languageButtons = document.querySelectorAll('.language-btn');
+                const inputContainer = document.querySelector('.chatbot-input');
+                const messagesContainer = document.querySelector('.chatbot-messages');
+                const chatbotMain = document.querySelector('.chatbot-main');
                 
-                if (languageSelector && languageButtons.length > 0) {
-                    const rect = languageSelector.getBoundingClientRect();
-                    const buttonsVisible = Array.from(languageButtons).every(btn => {
-                        const btnRect = btn.getBoundingClientRect();
-                        return btnRect.top >= 0 && btnRect.bottom <= window.innerHeight;
-                    });
+                if (languageSelector && inputContainer && chatbotMain) {
+                    console.log('언어 선택 영역 위치 강제 수정 시작');
                     
-                    if (!buttonsVisible || rect.bottom > window.innerHeight) {
-                        console.log('언어 선택 영역이 잘림 감지 - 강제 수정 적용');
-                        
-                        // 예약창과 동일한 스타일 강제 적용
-                        languageSelector.style.background = 'white';
-                        languageSelector.style.borderRadius = '10px';
-                        languageSelector.style.padding = '15px';
-                        languageSelector.style.margin = '10px';
-                        languageSelector.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-                        languageSelector.style.textAlign = 'center';
-                        languageSelector.style.zIndex = '99999';
-                        
-                        // 메시지 영역 높이 재조정
-                        const messagesContainer = document.querySelector('.chatbot-messages');
+                    // DOM 요소 순서 강제 재배치
+                    const parentContainer = languageSelector.parentNode;
+                    if (parentContainer) {
+                        // 1. 메시지 영역 먼저 배치
                         if (messagesContainer) {
-                            messagesContainer.style.maxHeight = 'calc(100vh - 200px)';
-                            messagesContainer.style.paddingBottom = '10px';
+                            parentContainer.insertBefore(messagesContainer, parentContainer.firstChild);
                         }
                         
-                        console.log('언어 선택 영역 강제 수정 완료');
+                        // 2. 언어 선택 영역을 입력창 앞에 배치
+                        parentContainer.insertBefore(languageSelector, inputContainer);
+                        
+                        // 3. 입력창을 마지막에 배치
+                        parentContainer.appendChild(inputContainer);
                     }
+                    
+                    // 언어 선택 영역 스타일 강제 설정
+                    languageSelector.style.setProperty('position', 'relative', 'important');
+                    languageSelector.style.setProperty('background', 'white', 'important');
+                    languageSelector.style.setProperty('border-radius', '10px', 'important');
+                    languageSelector.style.setProperty('padding', '15px', 'important');
+                    languageSelector.style.setProperty('margin', '10px', 'important');
+                    languageSelector.style.setProperty('box-shadow', '0 2px 10px rgba(0,0,0,0.1)', 'important');
+                    languageSelector.style.setProperty('text-align', 'center', 'important');
+                    languageSelector.style.setProperty('z-index', '99999', 'important');
+                    languageSelector.style.setProperty('order', '2', 'important');
+                    
+                    // 입력창 스타일 설정
+                    inputContainer.style.setProperty('order', '3', 'important');
+                    
+                    // 메시지 영역 스타일 설정
+                    if (messagesContainer) {
+                        messagesContainer.style.setProperty('order', '1', 'important');
+                        messagesContainer.style.setProperty('max-height', 'calc(100vh - 300px)', 'important');
+                        messagesContainer.style.setProperty('padding-bottom', '10px', 'important');
+                    }
+                    
+                                         // 메인 컨테이너 flexbox 설정
+                     chatbotMain.style.setProperty('display', 'flex', 'important');
+                     chatbotMain.style.setProperty('flex-direction', 'column', 'important');
+                    
+                    console.log('언어 선택 영역 위치 강제 수정 완료 - DOM 요소 순서 재배치됨');
                 }
             }, 500);
+            
+            // 추가 안전 조치 2: 페이지 로드 완료 후 다시 한 번 확인
+            setTimeout(() => {
+                console.log('최종 안전 조치 실행');
+                const languageSelector = document.querySelector('.language-selector');
+                const inputContainer = document.querySelector('.chatbot-input');
+                
+                if (languageSelector && inputContainer) {
+                    // 언어 선택 영역이 입력창 위에 있는지 확인
+                    const langRect = languageSelector.getBoundingClientRect();
+                    const inputRect = inputContainer.getBoundingClientRect();
+                    
+                    console.log('언어 선택 영역 위치:', langRect.top, '입력창 위치:', inputRect.top);
+                    
+                    // 언어 선택 영역이 입력창 아래에 있다면 강제 이동
+                    if (langRect.top > inputRect.top) {
+                        console.log('언어 선택 영역 위치 이상 감지 - 강제 이동');
+                        const parentContainer = languageSelector.parentNode;
+                        if (parentContainer) {
+                            parentContainer.insertBefore(languageSelector, inputContainer);
+                        }
+                    }
+                    
+                    // 카카오톡 브라우저에서 캐시 방지 및 강제 새로고침
+                    if (navigator.userAgent.includes('KAKAOTALK') || navigator.userAgent.includes('KAKAO')) {
+                        console.log('카카오톡 브라우저 최적화 추가 적용');
+                        document.body.style.setProperty('height', '100vh', 'important');
+                        document.body.style.setProperty('overflow', 'hidden', 'important');
+                    }
+                }
+            }, 1000);
         }
         
         // 언어별 시스템 프롬프트
