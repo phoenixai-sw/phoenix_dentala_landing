@@ -901,12 +901,23 @@
             // 인사/감사 응답 생성
             generateGreetingResponse(message) {
                 const lower = message.toLowerCase();
+                const reservationText = this.getReservationText();
                 
                 if (lower.includes('감사') || lower.includes('고마워') || lower.includes('thank')) {
-                    return '천만에요! 피닉스치과를 이용해주셔서 감사합니다. 더 궁금한 점이 있으시면 언제든 문의해주세요 😊';
+                    return `천만에요! 피닉스치과를 이용해주셔서 감사합니다. 더 궁금한 점이 있으시면 언제든 문의해주세요 😊
+                    
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">${reservationText.message}</div>
+                        <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
+                    </div>`;
                 }
                 
-                return '안녕하세요! 피닉스치과 AI 상담사입니다. 궁금한 점이 있으시면 언제든 말씀해 주세요 😊';
+                return `안녕하세요! 피닉스치과 AI 상담사입니다. 궁금한 점이 있으시면 언제든 말씀해 주세요 😊
+                
+                <div class="reservation-message">
+                    <div class="reservation-message-text">${reservationText.message}</div>
+                    <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
+                </div>`;
             }
             
             // FAQ 답변 처리 (개선된 키워드 매칭)
@@ -1268,6 +1279,8 @@
                     '🤖 AI API가 연결되어 있어 더 정확한 답변을 제공할 수 있습니다.' : 
                     '❌ AI API가 설정되지 않아 기본 답변을 제공합니다. (관리자 메뉴에서 AI API 설정 가능)';
                 
+                const reservationText = this.getReservationText();
+                
                 return responses[Math.floor(Math.random() * responses.length)] + `
                 
 💡 **빠른 문의 메뉴:**
@@ -1278,7 +1291,12 @@
 
 ${apiStatus}
 
-📞 **직접 문의:** 070-1234-1234`;
+📞 **직접 문의:** 070-1234-1234
+
+<div class="reservation-message">
+    <div class="reservation-message-text">${reservationText.message}</div>
+    <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
+</div>`;
             }
             
             // 사용자 메시지 추가
@@ -1531,10 +1549,16 @@ ${apiStatus}
                 }
                 
                 if (bestScore >= 50) {
+                    const reservationText = this.getReservationText();
                     return `📚 <strong>피닉스 치과 전문 지식 답변</strong><br><br>
                             <strong>Q:</strong> ${bestMatch.question}<br><br>
                             <strong>A:</strong> ${bestMatch.answer}<br><br>
-                            <small>💡 전문 지식 데이터베이스에서 제공된 답변입니다.</small>`;
+                            <small>💡 전문 지식 데이터베이스에서 제공된 답변입니다.</small>
+                            
+                            <div class="reservation-message">
+                                <div class="reservation-message-text">${reservationText.message}</div>
+                                <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
+                            </div>`;
                 }
                 
                 return null;
