@@ -967,16 +967,264 @@
                 );
             }
             
+            // 활성화된 API 제공자 가져오기
+            getActiveProvider() {
+                if (this.apiSettings?.chatgpt?.enabled && this.apiSettings.chatgpt?.apiKey) {
+                    return 'chatgpt';
+                } else if (this.apiSettings?.gemini?.enabled && this.apiSettings.gemini?.apiKey) {
+                    return 'gemini';
+                } else if (this.apiSettings?.claude?.enabled && this.apiSettings.claude?.apiKey) {
+                    return 'claude';
+                }
+                return null;
+            }
+            
+            // 지식베이스에서 컨텍스트 정보 추출
+            getContextFromKnowledgeBase() {
+                if (!this.knowledgeBase.enabled || this.knowledgeBase.parsedData.length === 0) {
+                    return '';
+                }
+                
+                // 모든 Q&A를 컨텍스트로 정리
+                let context = '\n\n=== 병원 전문 지식 정보 ===\n';
+                this.knowledgeBase.parsedData.forEach((qa, index) => {
+                    context += `${index + 1}. Q: ${qa.question}\n   A: ${qa.answer}\n`;
+                });
+                
+                return context;
+            }
+            
+            // API 호출 함수
+            async callAPI(provider, message, contextInfo) {
+                const settings = this.apiSettings[provider];
+                
+                switch (provider) {
+                    case 'chatgpt':
+                        return await this.callChatGPTAPI(message, settings, contextInfo);
+                    case 'gemini':
+                        return await this.callGeminiAPI(message, settings, contextInfo);
+                    case 'claude':
+                        return await this.callClaudeAPI(message, settings, contextInfo);
+                    default:
+                        throw new Error('지원하지 않는 API 제공자입니다.');
+                }
+            }
+            
+            // ChatGPT API 호출
+            async callChatGPTAPI(message, settings, contextInfo) {
+                const systemPrompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
+                매우 친절하고 전문적으로 답변해주세요.
+
+                === 병원 기본 정보 ===
+                • 병원명: 피닉스 치과 병원
+                • 원장: 홍길동 (25년 경력 치주질환 전문의)
+                • 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00, 점심시간 12:30-13:30
+                • 휴진: 일요일, 공휴일
+                • 전화: 070-1234-1234 (24시간 응급상담 가능)
+                • 주소: 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호
+                • 교통: 지하철 2호선 강남역 3번 출구 도보 5분
+                • 주차: 건물 지하 1-3층 무료 주차 (3시간)
+                • 진료과목: 일반진료, 미백치료, 교정치료, 임플란트, 보철치료, 소아치과
+
+                === 치료비 안내 ===
+                • 일반진료: 초진 15,000원, 재진 10,000원
+                • 스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)
+                • 미백치료: 200,000-300,000원
+                • 교정치료: 1,500,000-6,000,000원
+                • 임플란트: 1,200,000-1,500,000원
+
+                ${contextInfo}
+
+                답변 가이드라인:
+                1. 매우 친절하고 따뜻한 말투를 사용하세요
+                2. 전문적이면서도 이해하기 쉽게 설명하세요
+                3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
+                4. 예약이나 상담이 필요한 경우 적극 안내하세요
+                5. 답변을 구조화하여 읽기 쉽게 정리해주세요
+                6. 진료시간, 치료비용, 예약문의, 오시는길 등 주요 질문에 대해서는 자연스럽고 상세한 설명을 제공하세요
+                7. 사용자의 편의를 고려한 실용적인 조언을 포함해주세요`;
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${settings.apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: settings.model,
+                        messages: [
+                            {
+                                role: "system",
+                                content: systemPrompt
+                            },
+                            {
+                                role: "user",
+                                content: message
+                            }
+                        ],
+                        max_tokens: 800,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            }
+            
+            // Gemini API 호출
+            async callGeminiAPI(message, settings, contextInfo) {
+                const prompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
+                매우 친절하고 전문적으로 답변해주세요.
+
+                === 병원 기본 정보 ===
+                • 병원명: 피닉스 치과 병원
+                • 원장: 홍길동 (25년 경력 치주질환 전문의)
+                • 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00, 점심시간 12:30-13:30
+                • 휴진: 일요일, 공휴일
+                • 전화: 070-1234-1234 (24시간 응급상담 가능)
+                • 주소: 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호
+                • 교통: 지하철 2호선 강남역 3번 출구 도보 5분
+                • 주차: 건물 지하 1-3층 무료 주차 (3시간)
+                • 진료과목: 일반진료, 미백치료, 교정치료, 임플란트, 보철치료, 소아치과
+
+                === 치료비 안내 ===
+                • 일반진료: 초진 15,000원, 재진 10,000원
+                • 스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)
+                • 미백치료: 200,000-300,000원
+                • 교정치료: 1,500,000-6,000,000원
+                • 임플란트: 1,200,000-1,500,000원
+
+                ${contextInfo}
+
+                답변 가이드라인:
+                1. 매우 친절하고 따뜻한 말투를 사용하세요
+                2. 전문적이면서도 이해하기 쉽게 설명하세요
+                3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
+                4. 예약이나 상담이 필요한 경우 적극 안내하세요
+                5. 답변을 구조화하여 읽기 쉽게 정리해주세요
+
+                질문: ${message}`;
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${settings.model}:generateContent?key=${settings.apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        generationConfig: {
+                            maxOutputTokens: 800,
+                            temperature: 0.7
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            }
+            
+            // Claude API 호출
+            async callClaudeAPI(message, settings, contextInfo) {
+                const prompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
+                매우 친절하고 전문적으로 답변해주세요.
+
+                === 병원 기본 정보 ===
+                • 병원명: 피닉스 치과 병원
+                • 원장: 홍길동 (25년 경력 치주질환 전문의)
+                • 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00, 점심시간 12:30-13:30
+                • 휴진: 일요일, 공휴일
+                • 전화: 070-1234-1234 (24시간 응급상담 가능)
+                • 주소: 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호
+                • 교통: 지하철 2호선 강남역 3번 출구 도보 5분
+                • 주차: 건물 지하 1-3층 무료 주차 (3시간)
+                • 진료과목: 일반진료, 미백치료, 교정치료, 임플란트, 보철치료, 소아치과
+
+                === 치료비 안내 ===
+                • 일반진료: 초진 15,000원, 재진 10,000원
+                • 스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)
+                • 미백치료: 200,000-300,000원
+                • 교정치료: 1,500,000-6,000,000원
+                • 임플란트: 1,200,000-1,500,000원
+
+                ${contextInfo}
+
+                답변 가이드라인:
+                1. 매우 친절하고 따뜻한 말투를 사용하세요
+                2. 전문적이면서도 이해하기 쉽게 설명하세요
+                3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
+                4. 예약이나 상담이 필요한 경우 적극 안내하세요
+                5. 답변을 구조화하여 읽기 쉽게 정리해주세요
+
+                질문: ${message}`;
+
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': settings.apiKey,
+                        'anthropic-version': '2023-06-01'
+                    },
+                    body: JSON.stringify({
+                        model: settings.model,
+                        max_tokens: 800,
+                        messages: [{
+                            role: "user",
+                            content: prompt
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                return data.content[0].text;
+            }
+            
+            // AI 응답 포맷팅
+            formatAIResponse(response, provider) {
+                const providerIcon = {
+                    'chatgpt': '🧠',
+                    'gemini': '💎', 
+                    'claude': '🤖'
+                };
+                
+                const providerName = {
+                    'chatgpt': 'ChatGPT',
+                    'gemini': 'Gemini',
+                    'claude': 'Claude'
+                };
+                
+                return `${providerIcon[provider]} <strong>피닉스 치과 AI 상담사 (${providerName[provider]})</strong><br><br>
+                ${response}<br><br>
+                <small>💡 추가 궁금한 점이 있으시면 언제든 문의해주세요!</small>`;
+            }
+            
             // AI 응답 생성
             async generateAIResponse(message) {
                 const loadingMessage = this.addBotMessage('🤖 AI가 답변을 생성하고 있습니다<span class="loading-dots"></span>');
                 
                 try {
-                    // API 호출 로직 (기존과 동일하지만 더 간결함)
+                    // API 호출 로직
                     const activeProvider = this.getActiveProvider();
                     const contextInfo = this.getContextFromKnowledgeBase();
                     
-                    await this.callAPI(activeProvider, message, contextInfo, loadingMessage);
+                    const response = await this.callAPI(activeProvider, message, contextInfo);
+                    this.removeMessage(loadingMessage);
+                    this.addBotMessage(this.formatAIResponse(response, activeProvider));
                 } catch (error) {
                     console.error('AI API 호출 실패:', error);
                     this.removeMessage(loadingMessage);
@@ -993,6 +1241,10 @@
                     '궁금한 점이 있으시면 진료시간, 치료비용, 예약, 오시는길 등을 입력해보세요.'
                 ];
                 
+                const apiStatus = this.hasActiveAPI() ? 
+                    '🤖 AI API가 연결되어 있어 더 정확한 답변을 제공할 수 있습니다.' : 
+                    '❌ AI API가 설정되지 않아 기본 답변을 제공합니다. (관리자 메뉴에서 AI API 설정 가능)';
+                
                 return responses[Math.floor(Math.random() * responses.length)] + `
                 
 💡 **빠른 문의 메뉴:**
@@ -1000,6 +1252,8 @@
 • "치료비용" - 치료비 정보
 • "예약" - 예약 및 상담 문의  
 • "오시는길" - 병원 위치 안내
+
+${apiStatus}
 
 📞 **직접 문의:** 070-1234-1234`;
             }
@@ -1064,7 +1318,8 @@
                             ${t.welcomeSubMessage}
                         </div>
                         <div style="font-size: 11px; color: #888; margin-bottom: 15px; padding: 8px; background: #f0f8ff; border-radius: 6px;">
-                            🎯 <strong>답변 우선순위:</strong> 1차 관리자 → 2차 지식베이스 → 3차 FAQ → 4차 AI API → 5차 시뮬레이션
+                            🎯 <strong>답변 우선순위:</strong> 1차 관리자 → 2차 지식베이스 → 3차 FAQ → 4차 AI API → 5차 시뮬레이션<br>
+                            ${this.hasActiveAPI() ? '🤖 AI API 연결됨' : '❌ AI API 설정 필요 (관리자 메뉴에서 설정)'}
                         </div>
                         <div class="quick-buttons">
                             <button class="quick-button clinic-hours-btn" onclick="chatbot.handleQuickMessage('진료시간 알려주세요')">
@@ -1161,10 +1416,22 @@
                     const saved = localStorage.getItem('chatbotApiSettings');
                     if (saved) {
                         this.apiSettings = JSON.parse(saved);
-                        console.log('✅ API 설정 로드 완료');
+                        console.log('✅ API 설정 로드 완료:', this.apiSettings);
+                    } else {
+                        this.apiSettings = {
+                            chatgpt: { enabled: false, apiKey: '', model: '' },
+                            gemini: { enabled: false, apiKey: '', model: '' },
+                            claude: { enabled: false, apiKey: '', model: '' }
+                        };
+                        console.log('✅ 기본 API 설정 초기화 완료');
                     }
                 } catch (error) {
                     console.error('❌ API 설정 로드 실패:', error);
+                    this.apiSettings = {
+                        chatgpt: { enabled: false, apiKey: '', model: '' },
+                        gemini: { enabled: false, apiKey: '', model: '' },
+                        claude: { enabled: false, apiKey: '', model: '' }
+                    };
                 }
             }
             
@@ -1196,9 +1463,9 @@
                 }
                 
                 const activeApis = [];
-                if (this.apiSettings.chatgpt?.enabled) activeApis.push('ChatGPT');
-                if (this.apiSettings.gemini?.enabled) activeApis.push('Gemini');
-                if (this.apiSettings.claude?.enabled) activeApis.push('Claude');
+                if (this.apiSettings?.chatgpt?.enabled && this.apiSettings.chatgpt?.apiKey) activeApis.push('ChatGPT');
+                if (this.apiSettings?.gemini?.enabled && this.apiSettings.gemini?.apiKey) activeApis.push('Gemini');
+                if (this.apiSettings?.claude?.enabled && this.apiSettings.claude?.apiKey) activeApis.push('Claude');
                 
                 apiStatus.textContent = `✅ AI API (${activeApis.join(', ')})`;
                 apiStatus.style.background = '#d4edda';
@@ -1475,6 +1742,7 @@
                         if (window.chatbot) {
                             window.chatbot.loadApiSettings();
                             window.chatbot.updateApiStatusDisplay();
+                            console.log('✅ 챗봇 API 설정 업데이트 완료');
                         }
                         
                         // 성공 알림
@@ -1517,6 +1785,12 @@
                                         statusDiv.innerHTML = `<div style="color: green; padding: 10px; background: #d4edda; border-radius: 5px; margin-top: 10px;">${successMessage}</div>`;
                                     }
                                     alert(successMessage);
+                                    
+                                    // 챗봇 인스턴스 업데이트
+                                    if (window.chatbot) {
+                                        window.chatbot.loadApiSettings();
+                                        window.chatbot.updateApiStatusDisplay();
+                                    }
                                 } else {
                                     const errorMessage = '❌ 활성화된 API가 없습니다. API 키를 입력해주세요.';
                                     if (statusDiv) {
@@ -1584,6 +1858,7 @@
                             if (window.chatbot) {
                                 window.chatbot.loadApiSettings();
                                 window.chatbot.updateApiStatusDisplay();
+                                console.log('✅ 챗봇 API 설정 초기화 완료');
                             }
                             
                             alert('✅ API 설정이 성공적으로 초기화되었습니다!');
