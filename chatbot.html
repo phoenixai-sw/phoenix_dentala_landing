@@ -2908,75 +2908,32 @@
 
             // 3차: 기본 FAQ 답변 - 키워드 기반 답변 (진료시간, 치료비용, 예약, 오시는길)
             console.log('❓ 3차: 기본 FAQ 키워드 검색');
-            
-            // FAQ 키워드 매칭 - 더 정확한 매칭을 위해 단어 경계와 문맥 고려
-            const clinicHoursKeywords = /\b(진료시간|운영시간|문여는|열어|clinic hours|hours|часы работы|診療時間)\b/i;
-            const treatmentCostKeywords = /\b(치료비용|진료비|비용|가격|cost|price|treatment|стоимость|цена|料金|費用)\b/i;
-            const reservationKeywords = /\b(예약|예약문의|reservation|booking|inquiry|запись|бронирование|予約|問い合わせ)\b/i;
-            const directionsKeywords = /\b(오시는길|주소|위치|directions|location|address|адрес|местоположение|場所|住所|アクセス)\b/i;
-            
-            // 특정 치료 관련 키워드 (치료비용으로 분류) - 더 구체적으로
-            const specificTreatmentKeywords = /\b(스케일링|임플란트|교정|미백|충치|치아|이빨|치과|치료|비용|가격|얼마)\b/i;
-            
-            // 의미없는 입력 방지를 위한 최소 길이 체크
-            if (message.trim().length < 2) {
-                console.log('❌ 메시지가 너무 짧음 - FAQ 매칭 건너뜀');
-                // 4차 우선순위로 이동
-            } else {
-                // 메시지에서 키워드 검색
-                const hasClinicHours = clinicHoursKeywords.test(message);
-                const hasTreatmentCost = treatmentCostKeywords.test(message) || specificTreatmentKeywords.test(message);
-                const hasReservation = reservationKeywords.test(message);
-                const hasDirections = directionsKeywords.test(message);
-                
-                console.log('🔍 FAQ 키워드 검색 결과:', {
-                    진료시간: hasClinicHours,
-                    치료비용: hasTreatmentCost,
-                    예약: hasReservation,
-                    오시는길: hasDirections
-                });
+            // FAQ 키워드는 2글자 이상, 명확한 단어만 사용, 정규표현식 단어경계로 매칭
+            const isClinicHours = /\b(진료시간|clinic hours|hours|часы работы|診療時間|운영시간|문여는|열어)\b/i.test(message);
+            const isTreatmentCost = /\b(치료비용|비용|진료비|가격|cost|price|treatment|стоимость|цена|料金|費用|스케일링|임플란트|교정|미백)\b/i.test(message);
+            const isReservationInquiry = /\b(예약|예약문의|reservation|booking|inquiry|запись|бронирование|予約|問い合わせ|신청|접수)\b/i.test(message);
+            const isDirections = /\b(오시는길|주소|위치|directions|location|address|адрес|местоположение|場所|住所|アクセス|어디|찾아)\b/i.test(message);
 
-                if (hasClinicHours) {
-                    console.log('✅ 진료시간 FAQ 답변 - 즉시 제공');
-                    const faqAnswer = getClinicHoursFAQAnswer();
-                    addBotMessage(faqAnswer);
-                    return;
-                } else if (hasTreatmentCost) {
-                    console.log('✅ 치료비용 FAQ 답변 - 즉시 제공');
-                    const faqAnswer = getTreatmentCostFAQAnswer();
-                    addBotMessage(faqAnswer);
-                    return;
-                } else if (hasReservation) {
-                    console.log('✅ 예약 FAQ 답변 - 즉시 제공');
-                    const faqAnswer = getReservationFAQAnswer();
-                    addBotMessage(faqAnswer);
-                    return;
-                } else if (hasDirections) {
-                    console.log('✅ 오시는길 FAQ 답변 - 즉시 제공');
-                    const faqAnswer = getDirectionsFAQAnswer();
-                    addBotMessage(faqAnswer);
-                    return;
-                }
-
-
-            // 4차: AI API 호출 - FAQ 답변이 아닌 경우에만 AI API 사용
-            console.log('🤖 4차: AI API 호출 시도');
-            
-            // FAQ 답변이 이미 처리되었는지 확인 (변수 스코프 문제 해결)
-            let isFAQProcessed = false;
-            if (message.trim().length >= 2) {
-                const hasClinicHours = clinicHoursKeywords.test(message);
-                const hasTreatmentCost = treatmentCostKeywords.test(message) || specificTreatmentKeywords.test(message);
-                const hasReservation = reservationKeywords.test(message);
-                const hasDirections = directionsKeywords.test(message);
-                isFAQProcessed = hasClinicHours || hasTreatmentCost || hasReservation || hasDirections;
-            }
-            
-            if (isFAQProcessed) {
-                console.log('✅ FAQ 답변이 이미 처리됨 - AI API 호출 건너뜀');
+            if (isClinicHours) {
+                console.log('✅ 진료시간 FAQ 답변');
+                addBotMessage(t.clinicHours);
+                return;
+            } else if (isTreatmentCost) {
+                console.log('✅ 치료비용 FAQ 답변');
+                addBotMessage(t.treatmentCost);
+                return;
+            } else if (isReservationInquiry) {
+                console.log('✅ 예약 FAQ 답변');
+                addBotMessage(t.reservationInquiry);
+                return;
+            } else if (isDirections) {
+                console.log('✅ 오시는길 FAQ 답변');
+                addBotMessage(t.directions);
                 return;
             }
-            
+
+            // 4차: AI API 호출 - 키워드가 매칭되지 않을 때 AI API 사용
+            console.log('🤖 4차: AI API 호출 시도');
             let apiSettings = null;
             try {
                 const savedSettings = localStorage.getItem('chatbotApiSettings');
@@ -3097,142 +3054,6 @@ ${contextInfo}
                     addBotMessage(aiResponse);
                 }, 1000); // 더 빠른 응답
             }
-        }
-
-        // FAQ 답변 함수들 - 즉시 스타일된 HTML 카드 반환
-        function getClinicHoursFAQAnswer() {
-            return `
-                <div style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); border-radius: 15px; padding: 20px; margin: 10px 0; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); border-left: 5px solid #ff8c00;">
-                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                        <span style="font-size: 24px; margin-right: 10px;">🕘</span>
-                        <h3 style="margin: 0; color: #333; font-size: 18px; font-weight: bold;">진료시간 안내</h3>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.9); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                        <div style="margin-bottom: 10px;">
-                            <strong style="color: #2c3e50;">📅 평일 (월~금)</strong><br>
-                            <span style="color: #34495e;">09:00 ~ 18:00</span>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <strong style="color: #2c3e50;">📅 토요일</strong><br>
-                            <span style="color: #34495e;">09:00 ~ 15:00</span>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <strong style="color: #e74c3c;">🍽️ 점심시간</strong><br>
-                            <span style="color: #34495e;">12:30 ~ 13:30</span>
-                        </div>
-                        <div>
-                            <strong style="color: #e74c3c;">🚫 휴진일</strong><br>
-                            <span style="color: #34495e;">일요일, 공휴일</span>
-                        </div>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.8); border-radius: 8px; padding: 10px; text-align: center;">
-                        <span style="color: #2c3e50; font-weight: bold;">💡 24시간 응급상담 가능</span><br>
-                        <span style="color: #34495e; font-size: 14px;">전화: 070-1234-1234</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        function getTreatmentCostFAQAnswer() {
-            return `
-                <div style="background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%); border-radius: 15px; padding: 20px; margin: 10px 0; box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3); border-left: 5px solid #1565c0;">
-                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                        <span style="font-size: 24px; margin-right: 10px;">💰</span>
-                        <h3 style="margin: 0; color: white; font-size: 18px; font-weight: bold;">치료비용 안내</h3>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.95); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                        <div style="margin-bottom: 12px; padding: 8px; border-left: 3px solid #4caf50;">
-                            <strong style="color: #2c3e50;">🦷 일반진료</strong><br>
-                            <span style="color: #34495e;">초진: 15,000원 | 재진: 10,000원</span>
-                        </div>
-                        <div style="margin-bottom: 12px; padding: 8px; border-left: 3px solid #2196f3;">
-                            <strong style="color: #2c3e50;">🧹 스케일링</strong><br>
-                            <span style="color: #34495e;">50,000원 (건강보험 적용 시 연 1회 무료)</span>
-                        </div>
-                        <div style="margin-bottom: 12px; padding: 8px; border-left: 3px solid #ff9800;">
-                            <strong style="color: #2c3e50;">✨ 미백치료</strong><br>
-                            <span style="color: #34495e;">200,000원 ~ 300,000원</span>
-                        </div>
-                        <div style="margin-bottom: 12px; padding: 8px; border-left: 3px solid #9c27b0;">
-                            <strong style="color: #2c3e50;">🦿 교정치료</strong><br>
-                            <span style="color: #34495e;">1,500,000원 ~ 6,000,000원</span>
-                        </div>
-                        <div style="padding: 8px; border-left: 3px solid #f44336;">
-                            <strong style="color: #2c3e50;">🦷 임플란트</strong><br>
-                            <span style="color: #34495e;">1,200,000원 ~ 1,500,000원</span>
-                        </div>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.9); border-radius: 8px; padding: 10px; text-align: center;">
-                        <span style="color: #2c3e50; font-weight: bold;">💡 정확한 비용은 개인별 상담 후 결정됩니다</span><br>
-                        <span style="color: #34495e; font-size: 14px;">상담 예약: 070-1234-1234</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        function getReservationFAQAnswer() {
-            return `
-                <div style="background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); border-radius: 15px; padding: 20px; margin: 10px 0; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3); border-left: 5px solid #c71585;">
-                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                        <span style="font-size: 24px; margin-right: 10px;">📞</span>
-                        <h3 style="margin: 0; color: white; font-size: 18px; font-weight: bold;">예약 문의 안내</h3>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.95); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                        <div style="margin-bottom: 15px; text-align: center;">
-                            <span style="font-size: 20px; color: #2c3e50; font-weight: bold;">📱 예약 방법</span>
-                        </div>
-                        <div style="margin-bottom: 12px; padding: 10px; background: rgba(255, 182, 193, 0.2); border-radius: 8px;">
-                            <strong style="color: #2c3e50;">☎️ 전화 예약</strong><br>
-                            <span style="color: #34495e; font-size: 16px; font-weight: bold;">070-1234-1234</span>
-                        </div>
-                        <div style="margin-bottom: 12px; padding: 10px; background: rgba(255, 182, 193, 0.2); border-radius: 8px;">
-                            <strong style="color: #2c3e50;">🌐 온라인 예약</strong><br>
-                            <span style="color: #34495e;">홈페이지에서 24시간 예약 가능</span>
-                        </div>
-                        <div style="padding: 10px; background: rgba(255, 182, 193, 0.2); border-radius: 8px;">
-                            <strong style="color: #2c3e50;">💬 카카오톡</strong><br>
-                            <span style="color: #34495e;">@피닉스치과 채널에서 예약</span>
-                        </div>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.9); border-radius: 8px; padding: 12px; text-align: center;">
-                        <span style="color: #2c3e50; font-weight: bold;">💡 예약 시 준비사항</span><br>
-                        <span style="color: #34495e; font-size: 14px;">신분증, 이전 진료기록 (있는 경우)</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        function getDirectionsFAQAnswer() {
-            return `
-                <div style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); border-radius: 15px; padding: 20px; margin: 10px 0; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); border-left: 5px solid #2e7d32;">
-                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                        <span style="font-size: 24px; margin-right: 10px;">🗺️</span>
-                        <h3 style="margin: 0; color: white; font-size: 18px; font-weight: bold;">오시는 길 안내</h3>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.95); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                        <div style="margin-bottom: 15px;">
-                            <strong style="color: #2c3e50; font-size: 16px;">📍 주소</strong><br>
-                            <span style="color: #34495e; font-size: 15px;">피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호</span>
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong style="color: #2c3e50; font-size: 16px;">🚇 지하철</strong><br>
-                            <span style="color: #34495e; font-size: 15px;">지하철 2호선 강남역 3번 출구 도보 5분</span>
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong style="color: #2c3e50; font-size: 16px;">🚌 버스</strong><br>
-                            <span style="color: #34495e; font-size: 15px;">강남역 정류장 하차 (간선 146, 360, 740)</span>
-                        </div>
-                        <div>
-                            <strong style="color: #2c3e50; font-size: 16px;">🚗 주차</strong><br>
-                            <span style="color: #34495e; font-size: 15px;">건물 지하 1-3층 무료 주차 (3시간)</span>
-                        </div>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.9); border-radius: 8px; padding: 10px; text-align: center;">
-                        <span style="color: #2c3e50; font-weight: bold;">💡 네비게이션 검색어</span><br>
-                        <span style="color: #34495e; font-size: 14px;">"피닉스치과" 또는 "피닉스타워"</span>
-                    </div>
-                </div>
-            `;
         }
 
         // 지식베이스에서 컨텍스트 정보 추출 (2차 우선순위 활용)
