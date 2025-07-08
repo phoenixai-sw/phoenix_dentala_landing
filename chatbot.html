@@ -1246,16 +1246,19 @@
                 5. 답변을 구조화하여 읽기 쉽게 정리해주세요
                 6. 진료시간, 치료비용, 예약문의, 오시는길 등 주요 질문에 대해서는 자연스럽고 상세한 설명을 제공하세요
                 7. 사용자의 편의를 고려한 실용적인 조언을 포함해주세요
+                8. 고객이 보기 편하게 정리되어서 나가야 합니다
+                9. 단어와 문장에 적합한 이모티콘도 적절히 사용하세요
 
                 답변 형식 가이드라인:
                 - 제목은 이모티콘과 함께 자연스럽게 작성 (예: 🏥 병원 안내, 💡 치료 정보)
-                - 중요 정보는 **굵게** 표시하여 강조
+                - 중요 정보는 <strong>굵게</strong> 표시하여 강조
                 - 리스트는 • 또는 번호로 정리
                 - 섹션 구분은 큰 괄호 () 사용하여 구분
                 - 인용구는 큰 괄호 () 안에 작성
                 - =, #, ---, ### 등의 특수문자는 사용하지 않음
                 - 문장의 시작과 끝을 의미하는 구분선 대신 자연스러운 줄바꿈 사용
-                - 제목 강조는 글자를 진하게 표시하거나 이모티콘을 붙여서 표현
+                - 제목 강조는 글자를 진하게 표시하거나 제목에 적합한 이모티콘을 제목앞에 붙여서 표현
+                - 강조나 구분이 필요한 항목은 큰 괄호 ()를 해서 구분
                 - 전체적으로 고객이 보기 편하고 읽기 쉬운 형식으로 구성`;
 
                 const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -1320,16 +1323,19 @@
                 3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
                 4. 예약이나 상담이 필요한 경우 적극 안내하세요
                 5. 답변을 구조화하여 읽기 쉽게 정리해주세요
+                6. 고객이 보기 편하게 정리되어서 나가야 합니다
+                7. 단어와 문장에 적합한 이모티콘도 적절히 사용하세요
 
                 답변 형식 가이드라인:
                 - 제목은 이모티콘과 함께 자연스럽게 작성 (예: 🏥 병원 안내, 💡 치료 정보)
-                - 중요 정보는 **굵게** 표시하여 강조
+                - 중요 정보는 <strong>굵게</strong> 표시하여 강조
                 - 리스트는 • 또는 번호로 정리
                 - 섹션 구분은 큰 괄호 () 사용하여 구분
                 - 인용구는 큰 괄호 () 안에 작성
                 - =, #, ---, ### 등의 특수문자는 사용하지 않음
                 - 문장의 시작과 끝을 의미하는 구분선 대신 자연스러운 줄바꿈 사용
-                - 제목 강조는 글자를 진하게 표시하거나 이모티콘을 붙여서 표현
+                - 제목 강조는 글자를 진하게 표시하거나 제목에 적합한 이모티콘을 제목앞에 붙여서 표현
+                - 강조나 구분이 필요한 항목은 큰 괄호 ()를 해서 구분
                 - 전체적으로 고객이 보기 편하고 읽기 쉬운 형식으로 구성
 
                 질문: ${message}`;
@@ -1391,16 +1397,19 @@
                 3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
                 4. 예약이나 상담이 필요한 경우 적극 안내하세요
                 5. 답변을 구조화하여 읽기 쉽게 정리해주세요
+                6. 고객이 보기 편하게 정리되어서 나가야 합니다
+                7. 단어와 문장에 적합한 이모티콘도 적절히 사용하세요
 
                 답변 형식 가이드라인:
                 - 제목은 이모티콘과 함께 자연스럽게 작성 (예: 🏥 병원 안내, 💡 치료 정보)
-                - 중요 정보는 **굵게** 표시하여 강조
+                - 중요 정보는 <strong>굵게</strong> 표시하여 강조
                 - 리스트는 • 또는 번호로 정리
                 - 섹션 구분은 큰 괄호 () 사용하여 구분
                 - 인용구는 큰 괄호 () 안에 작성
                 - =, #, ---, ### 등의 특수문자는 사용하지 않음
                 - 문장의 시작과 끝을 의미하는 구분선 대신 자연스러운 줄바꿈 사용
-                - 제목 강조는 글자를 진하게 표시하거나 이모티콘을 붙여서 표현
+                - 제목 강조는 글자를 진하게 표시하거나 제목에 적합한 이모티콘을 제목앞에 붙여서 표현
+                - 강조나 구분이 필요한 항목은 큰 괄호 ()를 해서 구분
                 - 전체적으로 고객이 보기 편하고 읽기 쉬운 형식으로 구성
 
                 질문: ${message}`;
@@ -1555,36 +1564,36 @@
                 
                 const quickMenu = {
                     ko: {
-                        title: '💡 **빠른 문의 메뉴:**',
+                        title: '💡 <strong>빠른 문의 메뉴</strong>',
                         clinicHours: '• "진료시간" - 병원 운영시간 안내',
                         treatmentCost: '• "치료비용" - 치료비 정보',
                         reservation: '• "예약" - 예약 및 상담 문의',
                         directions: '• "오시는길" - 병원 위치 안내',
-                        directInquiry: '📞 **직접 문의:** 070-1234-1234'
+                        directInquiry: '📞 <strong>직접 문의:</strong> 070-1234-1234'
                     },
                     en: {
-                        title: '💡 **Quick Inquiry Menu:**',
+                        title: '💡 <strong>Quick Inquiry Menu</strong>',
                         clinicHours: '• "Clinic Hours" - Hospital operating hours',
                         treatmentCost: '• "Treatment Cost" - Treatment cost information',
                         reservation: '• "Reservation" - Reservation and consultation inquiry',
                         directions: '• "Directions" - Hospital location guide',
-                        directInquiry: '📞 **Direct Inquiry:** 070-1234-1234'
+                        directInquiry: '📞 <strong>Direct Inquiry:</strong> 070-1234-1234'
                     },
                     ru: {
-                        title: '💡 **Быстрое меню запросов:**',
+                        title: '💡 <strong>Быстрое меню запросов</strong>',
                         clinicHours: '• "Часы работы" - Часы работы больницы',
                         treatmentCost: '• "Стоимость лечения" - Информация о стоимости лечения',
                         reservation: '• "Запись" - Запись и консультация',
                         directions: '• "Как добраться" - Как найти больницу',
-                        directInquiry: '📞 **Прямой запрос:** 070-1234-1234'
+                        directInquiry: '📞 <strong>Прямой запрос:</strong> 070-1234-1234'
                     },
                     ja: {
-                        title: '💡 **クイック問い合わせメニュー:**',
+                        title: '💡 <strong>クイック問い合わせメニュー</strong>',
                         clinicHours: '• "診療時間" - 病院営業時間案内',
                         treatmentCost: '• "治療費" - 治療費情報',
                         reservation: '• "予約" - 予約・相談問い合わせ',
                         directions: '• "アクセス" - 病院所在地案内',
-                        directInquiry: '📞 **直接問い合わせ:** 070-1234-1234'
+                        directInquiry: '📞 <strong>直接問い合わせ:</strong> 070-1234-1234'
                     }
                 };
                 
@@ -1610,15 +1619,24 @@
                 
                 return currentResponses[Math.floor(Math.random() * currentResponses.length)] + `
                 
+<div style="margin: 15px 0;">
 ${currentQuickMenu.title}
+</div>
+
+<div style="margin: 10px 0;">
 ${currentQuickMenu.clinicHours}
 ${currentQuickMenu.treatmentCost}
 ${currentQuickMenu.reservation}
 ${currentQuickMenu.directions}
+</div>
 
+<div style="margin: 15px 0; padding: 10px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #4facfe;">
 ${currentApiStatus}
+</div>
 
+<div style="margin: 15px 0;">
 ${currentQuickMenu.directInquiry}
+</div>
 
 <div class="reservation-message">
     <div class="reservation-message-text">${reservationText.message}</div>
