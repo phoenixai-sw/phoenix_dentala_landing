@@ -1330,6 +1330,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 페이지 로드 완료 - 챗봇 초기화');
             chatbot = new PhoenixChatbot();
+            window.chatbot = chatbot; // 전역으로 설정
         });
 
         // 🎯 전역 함수들 (기존 코드와의 호환성)
@@ -1413,46 +1414,56 @@
             document.getElementById('chatbotAdminPage').style.display = 'none';
         }
 
-        // API 설정 저장
-        function saveApiSettings() {
+        // API 설정 저장 - 전역 함수로 정의
+        window.saveApiSettings = function() {
             try {
                 console.log('💾 API 설정 저장 시작');
                 
+                // 입력 필드에서 값 가져오기
+                const chatgptApiKey = document.getElementById('chatgptApiKey');
+                const chatgptModel = document.getElementById('chatgptModel');
+                const chatgptFinetuningModel = document.getElementById('chatgptFinetuningModel');
+                const geminiApiKey = document.getElementById('geminiApiKey');
+                const geminiModel = document.getElementById('geminiModel');
+                const claudeApiKey = document.getElementById('claudeApiKey');
+                const claudeModel = document.getElementById('claudeModel');
+                
+                if (!chatgptApiKey || !chatgptModel || !geminiApiKey || !geminiModel || !claudeApiKey || !claudeModel) {
+                    throw new Error('필수 입력 필드를 찾을 수 없습니다.');
+                }
+                
                 const settings = {
                     chatgpt: {
-                        enabled: document.getElementById('chatgptApiKey').value.trim() !== '',
-                        apiKey: document.getElementById('chatgptApiKey').value.trim(),
-                        model: document.getElementById('chatgptModel').value,
-                        finetuningModel: document.getElementById('chatgptFinetuningModel').value
+                        enabled: chatgptApiKey.value.trim() !== '',
+                        apiKey: chatgptApiKey.value.trim(),
+                        model: chatgptModel.value,
+                        finetuningModel: chatgptFinetuningModel ? chatgptFinetuningModel.value : ''
                     },
                     gemini: {
-                        enabled: document.getElementById('geminiApiKey').value.trim() !== '',
-                        apiKey: document.getElementById('geminiApiKey').value.trim(),
-                        model: document.getElementById('geminiModel').value
+                        enabled: geminiApiKey.value.trim() !== '',
+                        apiKey: geminiApiKey.value.trim(),
+                        model: geminiModel.value
                     },
                     claude: {
-                        enabled: document.getElementById('claudeApiKey').value.trim() !== '',
-                        apiKey: document.getElementById('claudeApiKey').value.trim(),
-                        model: document.getElementById('claudeModel').value
+                        enabled: claudeApiKey.value.trim() !== '',
+                        apiKey: claudeApiKey.value.trim(),
+                        model: claudeModel.value
                     }
                 };
                 
                 localStorage.setItem('chatbotApiSettings', JSON.stringify(settings));
                 console.log('✅ API 설정 저장 완료:', settings);
                 
+                // 상태 메시지 업데이트
                 const statusDiv = document.getElementById('apiStatus');
                 if (statusDiv) {
                     statusDiv.innerHTML = '<div style="color: green; padding: 10px; background: #d4edda; border-radius: 5px; margin-top: 10px;">✅ API 설정이 저장되었습니다!</div>';
-                    
-                    setTimeout(() => {
-                        statusDiv.innerHTML = '';
-                    }, 3000);
                 }
                 
                 // 챗봇 인스턴스 업데이트
-                if (chatbot) {
-                    chatbot.loadApiSettings();
-                    chatbot.updateApiStatusDisplay();
+                if (window.chatbot) {
+                    window.chatbot.loadApiSettings();
+                    window.chatbot.updateApiStatusDisplay();
                 }
                 
                 // 성공 알림
@@ -1460,12 +1471,12 @@
                 
             } catch (error) {
                 console.error('❌ API 설정 저장 실패:', error);
-                alert('❌ API 설정 저장에 실패했습니다. 다시 시도해주세요.');
+                alert('❌ API 설정 저장에 실패했습니다: ' + error.message);
             }
-        }
+        };
 
-        // API 연결 테스트
-        function testApiConnection() {
+        // API 연결 테스트 - 전역 함수로 정의
+        window.testApiConnection = function() {
             try {
                 console.log('🔗 API 연결 테스트 시작');
                 
@@ -1512,10 +1523,10 @@
                 console.error('❌ API 연결 테스트 실패:', error);
                 alert('❌ API 연결 테스트에 실패했습니다. 다시 시도해주세요.');
             }
-        }
+        };
 
-        // API 설정 초기화
-        function resetApiSettings() {
+        // API 설정 초기화 - 전역 함수로 정의
+        window.resetApiSettings = function() {
             try {
                 if (confirm('정말로 모든 API 설정을 초기화하시겠습니까?')) {
                     console.log('🔄 API 설정 초기화 시작');
@@ -1551,9 +1562,9 @@
                     }
                     
                     // 챗봇 인스턴스 업데이트
-                    if (chatbot) {
-                        chatbot.loadApiSettings();
-                        chatbot.updateApiStatusDisplay();
+                    if (window.chatbot) {
+                        window.chatbot.loadApiSettings();
+                        window.chatbot.updateApiStatusDisplay();
                     }
                     
                     alert('✅ API 설정이 성공적으로 초기화되었습니다!');
@@ -1562,22 +1573,24 @@
                 console.error('❌ API 설정 초기화 실패:', error);
                 alert('❌ API 설정 초기화에 실패했습니다. 다시 시도해주세요.');
             }
-        }
+        };
 
-        // Finetuning 입력 토글
-        function toggleFinetuningInput(provider) {
+        // Finetuning 입력 토글 - 전역 함수로 정의
+        window.toggleFinetuningInput = function(provider) {
             const finetuningGroup = document.getElementById(provider + 'FinetuningGroup');
             const modelSelect = document.getElementById(provider + 'Model');
             
-            if (modelSelect.value === 'finetuning') {
-                finetuningGroup.style.display = 'block';
-            } else {
-                finetuningGroup.style.display = 'none';
+            if (modelSelect && finetuningGroup) {
+                if (modelSelect.value === 'finetuning') {
+                    finetuningGroup.style.display = 'block';
+                } else {
+                    finetuningGroup.style.display = 'none';
+                }
             }
-        }
+        };
 
-        // 파일 업로드 처리
-        function handleFileUpload(event) {
+        // 파일 업로드 처리 - 전역 함수로 정의
+        window.handleFileUpload = function(event) {
             const files = event.target.files;
             const fileList = document.getElementById('fileList');
             
@@ -1586,24 +1599,24 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const content = e.target.result;
-                        processKnowledgeFile(file.name, content);
+                        window.processKnowledgeFile(file.name, content);
                     };
                     reader.readAsText(file);
                 }
             }
-        }
+        };
 
-        // 파일 드래그 앤 드롭 처리
-        function handleDragOver(event) {
+        // 파일 드래그 앤 드롭 처리 - 전역 함수로 정의
+        window.handleDragOver = function(event) {
             event.preventDefault();
             event.currentTarget.style.borderColor = '#4facfe';
-        }
+        };
 
-        function handleDragLeave(event) {
+        window.handleDragLeave = function(event) {
             event.currentTarget.style.borderColor = '#ddd';
-        }
+        };
 
-        function handleFileDrop(event) {
+        window.handleFileDrop = function(event) {
             event.preventDefault();
             event.currentTarget.style.borderColor = '#ddd';
             
@@ -1615,15 +1628,15 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const content = e.target.result;
-                        processKnowledgeFile(file.name, content);
+                        window.processKnowledgeFile(file.name, content);
                     };
                     reader.readAsText(file);
                 }
             }
-        }
+        };
 
-        // 지식 파일 처리
-        function processKnowledgeFile(filename, content) {
+        // 지식 파일 처리 - 전역 함수로 정의
+        window.processKnowledgeFile = function(filename, content) {
             const fileList = document.getElementById('fileList');
             const fileDiv = document.createElement('div');
             fileDiv.className = 'file-item';
@@ -1633,24 +1646,24 @@
                         <strong>📄 ${filename}</strong>
                         <div style="font-size: 12px; color: #666;">크기: ${(content.length / 1024).toFixed(2)} KB</div>
                     </div>
-                    <button onclick="this.parentElement.remove(); updateKnowledgeStatus();" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">삭제</button>
+                    <button onclick="this.parentElement.remove(); window.updateKnowledgeStatus();" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">삭제</button>
                 </div>
             `;
             fileList.appendChild(fileDiv);
             
             // Q&A 파싱
-            const qaList = parseQAFromContent(content);
+            const qaList = window.parseQAFromContent(content);
             if (qaList.length > 0) {
                 const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
                 knowledgeData.parsedData = knowledgeData.parsedData.concat(qaList);
                 localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
             }
             
-            updateKnowledgeStatus();
-        }
+            window.updateKnowledgeStatus();
+        };
 
-        // Q&A 파싱
-        function parseQAFromContent(content) {
+        // Q&A 파싱 - 전역 함수로 정의
+        window.parseQAFromContent = function(content) {
             const lines = content.split('\n');
             const qaList = [];
             let currentQ = '';
@@ -1678,19 +1691,21 @@
             }
             
             return qaList;
-        }
+        };
 
-        // 지식 상태 업데이트
-        function updateKnowledgeStatus() {
+        // 지식 상태 업데이트 - 전역 함수로 정의
+        window.updateKnowledgeStatus = function() {
             const fileItems = document.querySelectorAll('.file-item');
             const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
             
             const statusDiv = document.getElementById('knowledgeStatus');
-            statusDiv.innerHTML = `📖 업로드된 지식 파일: ${fileItems.length}개 | 파싱된 Q&A: ${knowledgeData.parsedData.length}개 | 상태: ${knowledgeData.enabled ? '활성' : '비활성'}`;
-        }
+            if (statusDiv) {
+                statusDiv.innerHTML = `📖 업로드된 지식 파일: ${fileItems.length}개 | 파싱된 Q&A: ${knowledgeData.parsedData.length}개 | 상태: ${knowledgeData.enabled ? '활성' : '비활성'}`;
+            }
+        };
 
-        // 지식 설정 저장
-        function saveKnowledgeSettings() {
+        // 지식 설정 저장 - 전역 함수로 정의
+        window.saveKnowledgeSettings = function() {
             const fileItems = document.querySelectorAll('.file-item');
             const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
             
@@ -1700,19 +1715,19 @@
             localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
             
             const statusDiv = document.getElementById('knowledgeSettingsStatus');
-            statusDiv.innerHTML = '<div style="color: green; padding: 10px; background: #d4edda; border-radius: 5px; margin-top: 10px;">✅ 지식 설정이 저장되었습니다!</div>';
-            
-            if (chatbot) {
-                chatbot.loadKnowledgeBaseSettings();
+            if (statusDiv) {
+                statusDiv.innerHTML = '<div style="color: green; padding: 10px; background: #d4edda; border-radius: 5px; margin-top: 10px;">✅ 지식 설정이 저장되었습니다!</div>';
             }
             
-            setTimeout(() => {
-                statusDiv.innerHTML = '';
-            }, 3000);
-        }
+            if (window.chatbot) {
+                window.chatbot.loadKnowledgeBaseSettings();
+            }
+            
+            alert('✅ 지식 설정이 성공적으로 저장되었습니다!');
+        };
 
-        // 지식 검색 테스트
-        function testKnowledgeBase() {
+        // 지식 검색 테스트 - 전역 함수로 정의
+        window.testKnowledgeBase = function() {
             const testQuery = prompt('검색할 질문을 입력하세요:');
             if (!testQuery) return;
             
@@ -1723,16 +1738,16 @@
                 return;
             }
             
-            const result = searchInKnowledgeBase(testQuery, knowledgeData.parsedData);
+            const result = window.searchInKnowledgeBase(testQuery, knowledgeData.parsedData);
             if (result) {
                 alert(`검색 결과:\n\nQ: ${result.question}\n\nA: ${result.answer}`);
             } else {
                 alert('관련 답변을 찾을 수 없습니다.');
             }
-        }
+        };
 
-        // 지식베이스 검색
-        function searchInKnowledgeBase(query, parsedData) {
+        // 지식베이스 검색 - 전역 함수로 정의
+        window.searchInKnowledgeBase = function(query, parsedData) {
             const normalizedQuery = query.toLowerCase().trim();
             let bestMatch = null;
             let bestScore = 0;
@@ -1759,47 +1774,56 @@
             }
             
             return bestScore >= 50 ? bestMatch : null;
-        }
+        };
 
-        // 파싱된 데이터 보기
-        function showParsedData() {
+        // 파싱된 데이터 보기 - 전역 함수로 정의
+        window.showParsedData = function() {
             const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
             const viewDiv = document.getElementById('parsedDataView');
             const contentDiv = document.getElementById('parsedDataContent');
             
-            if (knowledgeData.parsedData.length === 0) {
-                contentDiv.innerHTML = '<p style="color: #666;">파싱된 Q&A 데이터가 없습니다.</p>';
-            } else {
-                let html = '';
-                knowledgeData.parsedData.forEach((qa, index) => {
-                    html += `
-                        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
-                            <div style="font-weight: bold; color: #2c3e50; margin-bottom: 8px;">Q${index + 1}: ${qa.question}</div>
-                            <div style="color: #666;">A: ${qa.answer}</div>
-                        </div>
-                    `;
-                });
-                contentDiv.innerHTML = html;
+            if (viewDiv && contentDiv) {
+                if (knowledgeData.parsedData.length === 0) {
+                    contentDiv.innerHTML = '<p style="color: #666;">파싱된 Q&A 데이터가 없습니다.</p>';
+                } else {
+                    let html = '';
+                    knowledgeData.parsedData.forEach((qa, index) => {
+                        html += `
+                            <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                                <div style="font-weight: bold; color: #2c3e50; margin-bottom: 8px;">Q${index + 1}: ${qa.question}</div>
+                                <div style="color: #666;">A: ${qa.answer}</div>
+                            </div>
+                        `;
+                    });
+                    contentDiv.innerHTML = html;
+                }
+                
+                viewDiv.style.display = viewDiv.style.display === 'none' ? 'block' : 'none';
             }
-            
-            viewDiv.style.display = viewDiv.style.display === 'none' ? 'block' : 'none';
-        }
+        };
 
-        // 모든 지식 삭제
-        function clearAllKnowledge() {
+        // 모든 지식 삭제 - 전역 함수로 정의
+        window.clearAllKnowledge = function() {
             if (confirm('정말로 모든 지식 데이터를 삭제하시겠습니까?')) {
-                document.getElementById('fileList').innerHTML = '';
+                const fileList = document.getElementById('fileList');
+                if (fileList) {
+                    fileList.innerHTML = '';
+                }
                 localStorage.removeItem('chatbotKnowledgeBase');
-                updateKnowledgeStatus();
+                window.updateKnowledgeStatus();
                 
                 const statusDiv = document.getElementById('knowledgeSettingsStatus');
-                statusDiv.innerHTML = '<div style="color: #856404; padding: 10px; background: #fff3cd; border-radius: 5px; margin-top: 10px;">🔄 모든 지식 데이터가 삭제되었습니다.</div>';
-                
-                if (chatbot) {
-                    chatbot.loadKnowledgeBaseSettings();
+                if (statusDiv) {
+                    statusDiv.innerHTML = '<div style="color: #856404; padding: 10px; background: #fff3cd; border-radius: 5px; margin-top: 10px;">🔄 모든 지식 데이터가 삭제되었습니다.</div>';
                 }
+                
+                if (window.chatbot) {
+                    window.chatbot.loadKnowledgeBaseSettings();
+                }
+                
+                alert('✅ 모든 지식 데이터가 성공적으로 삭제되었습니다!');
             }
-        }
+        };
 
         // 페이지 로드 시 설정 로드
         document.addEventListener('DOMContentLoaded', function() {
@@ -1846,7 +1870,9 @@
                     if (claudeModel) claudeModel.value = apiSettings.claude.model || '';
                 }
                 
-                updateKnowledgeStatus();
+                if (window.updateKnowledgeStatus) {
+                    window.updateKnowledgeStatus();
+                }
                 console.log('✅ 관리자 페이지 설정 로드 완료');
                 
             } catch (error) {
