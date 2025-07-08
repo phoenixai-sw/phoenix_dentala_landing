@@ -2845,6 +2845,7 @@
         function generateResponse(message) {
             console.log('🎯 답변 우선순위 처리 시작:', message);
             const t = translations[currentLanguage] || translations['ko'];
+            const lowerMsg = message.toLowerCase();
 
             // 1차: 관리자 기능 - "AI관리자" 입력 시 관리자 페이지 표시
             if (message.includes('AI관리자') || message.includes('AI 관리자') || message.includes('관리자')) {
@@ -2878,6 +2879,24 @@
                 return;
             }
 
+            // 1.5차: 인사/감사/의미 없는 입력은 FAQ보다 먼저 시뮬레이션 답변으로 처리
+            const greetingWords = [
+                '안녕', 'hello', 'hi', 'ㅎㅇ', '하이', '반가워', 'greetings', 'hello!', '안녕하세요', '헬로', '여보세요',
+                '고마워', '감사', 'thanks', 'thank you', '땡큐', '수고', '수고하세요', '수고하셨습니다', '고맙습니다', '감사합니다'
+            ];
+            const meaninglessPattern = /^(떼|데|테|때|뗘|뗴|데데|떼떼|데데데|떼떼떼)+$/i;
+            if (
+                greetingWords.some(word => lowerMsg.includes(word)) ||
+                meaninglessPattern.test(lowerMsg)
+            ) {
+                console.log('😊 1.5차: 인사/감사/의미 없는 입력 - 시뮬레이션 답변');
+                setTimeout(() => {
+                    const aiResponse = generateSimulatedAIResponse(message, 'chatgpt');
+                    addBotMessage(aiResponse);
+                }, 300);
+                return;
+            }
+
             // 2차: 지식베이스 검색 - 업로드된 지식 파일에서 답변 검색
             console.log('📚 2차: 지식베이스 검색 시도');
             const knowledgeAnswer = searchInKnowledgeBase(message);
@@ -2889,24 +2908,11 @@
 
             // 3차: 기본 FAQ 답변 - 키워드 기반 답변 (진료시간, 치료비용, 예약, 오시는길)
             console.log('❓ 3차: 기본 FAQ 키워드 검색');
-            const isClinicHours = message.includes('진료시간') || message.includes('clinic hours') || message.includes('hours') ||
-                                  message.includes('часы работы') || message.includes('診療時間') ||
-                                  message.includes('운영시간') || message.includes('문여는') || message.includes('열어');
-            const isTreatmentCost = message.includes('치료비용') || message.includes('가격') || message.includes('비용') ||
-                                    message.includes('cost') || message.includes('price') || message.includes('treatment') ||
-                                    message.includes('стоимость') || message.includes('цена') ||
-                                    message.includes('料金') || message.includes('費用') ||
-                                    message.includes('얼마') || message.includes('돈') || message.includes('료');
-            const isReservationInquiry = message.includes('예약') || message.includes('예약문의') ||
-                                        message.includes('reservation') || message.includes('booking') || message.includes('inquiry') ||
-                                        message.includes('запись') || message.includes('бронирование') ||
-                                        message.includes('予約') || message.includes('問い合わせ') ||
-                                        message.includes('신청') || message.includes('접수');
-            const isDirections = message.includes('오시는길') || message.includes('주소') || message.includes('위치') ||
-                                  message.includes('directions') || message.includes('location') || message.includes('address') ||
-                                  message.includes('адрес') || message.includes('местоположение') ||
-                                  message.includes('場所') || message.includes('住所') || message.includes('アクセス') ||
-                                  message.includes('어디') || message.includes('찾아');
+            // FAQ 키워드는 2글자 이상, 명확한 단어만 사용, 정규표현식 단어경계로 매칭
+            const isClinicHours = /\b(진료시간|clinic hours|hours|часы работы|診療時間|운영시간|문여는|열어)\b/i.test(message);
+            const isTreatmentCost = /\b(치료비용|비용|진료비|가격|cost|price|treatment|стоимость|цена|料金|費用|스케일링|임플란트|교정|미백)\b/i.test(message);
+            const isReservationInquiry = /\b(예약|예약문의|reservation|booking|inquiry|запись|бронирование|予約|問い合わせ|신청|접수)\b/i.test(message);
+            const isDirections = /\b(오시는길|주소|위치|directions|location|address|адрес|местоположение|場所|住所|アクセス|어디|찾아)\b/i.test(message);
 
             if (isClinicHours) {
                 console.log('✅ 진료시간 FAQ 답변');
