@@ -188,6 +188,9 @@
             box-shadow: 0 3px 10px rgba(255, 215, 0, 0.4);
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .language-current:hover {
@@ -223,6 +226,9 @@
             color: black !important;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .language-option:last-child {
@@ -681,6 +687,40 @@
                 font-size: 14px;
                 padding: 10px 15px;
             }
+        }
+        
+        /* 안드로이드 카카오톡 브라우저 언어 드롭다운 최적화 */
+        .device-android.kakao-browser .language-current {
+            -webkit-tap-highlight-color: transparent !important;
+            touch-action: manipulation !important;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            min-height: 44px !important;
+            padding: 12px 16px !important;
+        }
+        
+        .device-android.kakao-browser .language-option {
+            -webkit-tap-highlight-color: transparent !important;
+            touch-action: manipulation !important;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            min-height: 44px !important;
+            padding: 12px 16px !important;
+        }
+        
+        .device-android.kakao-browser .language-menu {
+            z-index: 10000 !important;
+            position: absolute !important;
+            top: 100% !important;
+            right: 0 !important;
+            background: white !important;
+            border: 1px solid #ddd !important;
+            border-radius: 10px !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+            min-width: 120px !important;
+            margin-top: 5px !important;
         }
     </style>
 </head>
@@ -1533,8 +1573,23 @@ ${apiStatus}
                 document.addEventListener('click', (e) => {
                     if (!e.target.closest('.language-dropdown')) {
                         document.getElementById('languageMenu').classList.remove('show');
+                        
+                        // 안드로이드 카카오톡 브라우저 최적화
+                        if (navigator.userAgent.includes('Android') && navigator.userAgent.includes('KAKAO')) {
+                            setTimeout(() => {
+                                const menu = document.getElementById('languageMenu');
+                                menu.style.display = 'none';
+                                menu.style.opacity = '0';
+                                menu.style.visibility = 'hidden';
+                            }, 100);
+                        }
                     }
                 });
+                
+                // 안드로이드 카카오톡 브라우저 터치 이벤트 최적화
+                if (navigator.userAgent.includes('Android') && navigator.userAgent.includes('KAKAO')) {
+                    this.setupAndroidKakaoLanguageOptimization();
+                }
             }
             
             // 모바일 최적화 설정
@@ -1547,6 +1602,9 @@ ${apiStatus}
                 
                 // 키보드 감지
                 this.setupKeyboardDetection();
+                
+                // 안드로이드 카카오톡 브라우저 언어 드롭다운 최적화
+                this.setupAndroidKakaoLanguageOptimization();
             }
             
             // 뷰포트 높이 설정
@@ -1569,6 +1627,68 @@ ${apiStatus}
                         document.body.classList.remove('keyboard-open');
                     }
                 });
+            }
+            
+            // 안드로이드 카카오톡 브라우저 언어 드롭다운 최적화
+            setupAndroidKakaoLanguageOptimization() {
+                const userAgent = navigator.userAgent;
+                const isAndroid = userAgent.includes('Android');
+                const isKakaoTalk = userAgent.includes('KAKAO');
+                
+                if (isAndroid && isKakaoTalk) {
+                    console.log('안드로이드 카카오톡 브라우저 언어 드롭다운 최적화 적용');
+                    document.body.classList.add('device-android', 'kakao-browser');
+                    
+                    // 언어 드롭다운 터치 이벤트 최적화
+                    setTimeout(() => {
+                        const languageCurrent = document.querySelector('.language-current');
+                        const languageOptions = document.querySelectorAll('.language-option');
+                        
+                        if (languageCurrent) {
+                            // 기존 이벤트 리스너 제거
+                            languageCurrent.removeEventListener('touchstart', null);
+                            languageCurrent.removeEventListener('click', null);
+                            
+                            // 새로운 터치 이벤트 리스너 추가
+                            languageCurrent.addEventListener('touchstart', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                console.log('안드로이드 카카오톡: 언어 드롭다운 터치 감지');
+                                toggleLanguageMenu();
+                            }, { passive: false });
+                            
+                            languageCurrent.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                console.log('안드로이드 카카오톡: 언어 드롭다운 클릭 감지');
+                                toggleLanguageMenu();
+                            });
+                        }
+                        
+                        languageOptions.forEach(option => {
+                            // 기존 이벤트 리스너 제거
+                            option.removeEventListener('touchstart', null);
+                            option.removeEventListener('click', null);
+                            
+                            // 새로운 터치 이벤트 리스너 추가
+                            option.addEventListener('touchstart', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const lang = this.getAttribute('data-lang');
+                                console.log('안드로이드 카카오톡: 언어 선택 터치 감지 -', lang);
+                                selectLanguage(lang);
+                            }, { passive: false });
+                            
+                            option.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const lang = this.getAttribute('data-lang');
+                                console.log('안드로이드 카카오톡: 언어 선택 클릭 감지 -', lang);
+                                selectLanguage(lang);
+                            });
+                        });
+                    }, 500);
+                }
             }
             
             // API 설정 로딩
@@ -1790,6 +1910,22 @@ ${apiStatus}
         function toggleLanguageMenu() {
             const menu = document.getElementById('languageMenu');
             menu.classList.toggle('show');
+            
+            // 안드로이드 카카오톡 브라우저 최적화
+            if (navigator.userAgent.includes('Android') && navigator.userAgent.includes('KAKAO')) {
+                // 터치 이벤트 지연 방지 및 메뉴 유지
+                setTimeout(() => {
+                    if (menu.classList.contains('show')) {
+                        menu.style.display = 'block';
+                        menu.style.opacity = '1';
+                        menu.style.visibility = 'visible';
+                    } else {
+                        menu.style.display = 'none';
+                        menu.style.opacity = '0';
+                        menu.style.visibility = 'hidden';
+                    }
+                }, 50);
+            }
         }
 
         function selectLanguage(language) {
@@ -1806,6 +1942,16 @@ ${apiStatus}
                 
                 chatbot.addBotMessage(changeMessages[language] || changeMessages['ko']);
                 document.getElementById('languageMenu').classList.remove('show');
+                
+                // 안드로이드 카카오톡 브라우저 최적화
+                if (navigator.userAgent.includes('Android') && navigator.userAgent.includes('KAKAO')) {
+                    setTimeout(() => {
+                        const menu = document.getElementById('languageMenu');
+                        menu.style.display = 'none';
+                        menu.style.opacity = '0';
+                        menu.style.visibility = 'hidden';
+                    }, 100);
+                }
             }
         }
 
