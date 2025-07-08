@@ -698,7 +698,7 @@
 
         <!-- 입력 영역 -->
         <div class="chatbot-input">
-            <textarea id="chatbotInput" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" rows="1" oninput="adjustTextareaHeight(this)" onkeydown="handleInputKeyDown(event)"></textarea>
+            <textarea id="chatbotInput" placeholder="메시지를 입력하세요..." rows="1" oninput="adjustTextareaHeight(this)" onkeydown="handleInputKeyDown(event)"></textarea>
             <button class="chatbot-send" onclick="sendMessage()">전송</button>
         </div>
     </div>
@@ -725,7 +725,7 @@
                 this.translations = {
                     ko: {
                         title: '피닉스 치과 AI 상담사👩‍⚕️',
-                        placeholder: '메시지를 입력하세요... (Shift+Enter: 전송)',
+                        placeholder: '메시지를 입력하세요...',
                         sendButton: '전송',
                         currentLanguage: '🇰🇷 KR',
                         welcomeMessage: '피닉스 치과 AI상담사 입니다!',
@@ -737,7 +737,7 @@
                     },
                     en: {
                         title: 'Phoenix Dental AI Consultant👩‍⚕️',
-                        placeholder: 'Enter your message... (Shift+Enter: Send)',
+                        placeholder: 'Enter your message...',
                         sendButton: 'Send',
                         currentLanguage: '🇺🇸 US',
                         welcomeMessage: 'I am Phoenix Dental AI consultant!',
@@ -749,7 +749,7 @@
                     },
                     ru: {
                         title: 'Консультант ИИ стоматологии Phoenix👩‍⚕️',
-                        placeholder: 'Введите ваше сообщение... (Shift+Enter: Отправить)',
+                        placeholder: 'Введите ваше сообщение...',
                         sendButton: 'Отправить',
                         currentLanguage: '🇷🇺 RU',
                         welcomeMessage: 'Я консультант ИИ стоматологии Phoenix!',
@@ -761,7 +761,7 @@
                     },
                     ja: {
                         title: 'フェニックス歯科AIコンサルタント👩‍⚕️',
-                        placeholder: 'メッセージを入力してください... (Shift+Enter: 送信)',
+                        placeholder: 'メッセージを入力してください...',
                         sendButton: '送信',
                         currentLanguage: '🇯🇵 JP',
                         welcomeMessage: 'フェニックス歯科AIコンサルタントです！',
@@ -1202,13 +1202,7 @@
                     'claude': '🤖'
                 };
                 
-                const providerName = {
-                    'chatgpt': 'ChatGPT',
-                    'gemini': 'Gemini',
-                    'claude': 'Claude'
-                };
-                
-                return `${providerIcon[provider]} <strong>피닉스 치과 AI 상담사 (${providerName[provider]})</strong><br><br>
+                return `${providerIcon[provider]} <strong>피닉스 치과 AI 상담사</strong><br><br>
                 ${response}<br><br>
                 <small>💡 추가 궁금한 점이 있으시면 언제든 문의해주세요!</small>`;
             }
