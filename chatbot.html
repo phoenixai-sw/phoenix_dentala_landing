@@ -841,11 +841,7 @@
                         sendButton: '전송',
                         currentLanguage: '🇰🇷 KR',
                         welcomeMessage: '피닉스 치과 AI상담사 입니다!',
-                        welcomeSubMessage: '우측 상단에서 언어 변경 가능합니다',
-                        clinicHours: this.createClinicHoursContent('ko'),
-                        treatmentCost: this.createTreatmentCostContent('ko'),
-                        reservationInquiry: this.createReservationContent('ko'),
-                        directions: this.createDirectionsContent('ko')
+                        welcomeSubMessage: '우측 상단에서 언어 변경 가능합니다'
                     },
                     en: {
                         title: 'Phoenix Dental AI Consultant👩‍⚕️',
@@ -853,11 +849,7 @@
                         sendButton: 'Send',
                         currentLanguage: '🇺🇸 US',
                         welcomeMessage: 'I am Phoenix Dental AI consultant!',
-                        welcomeSubMessage: 'Language change available in top right menu',
-                        clinicHours: this.createClinicHoursContent('en'),
-                        treatmentCost: this.createTreatmentCostContent('en'),
-                        reservationInquiry: this.createReservationContent('en'),
-                        directions: this.createDirectionsContent('en')
+                        welcomeSubMessage: 'Language change available in top right menu'
                     },
                     ru: {
                         title: 'Консультант ИИ стоматологии Phoenix👩‍⚕️',
@@ -865,11 +857,7 @@
                         sendButton: 'Отправить',
                         currentLanguage: '🇷🇺 RU',
                         welcomeMessage: 'Я консультант ИИ стоматологии Phoenix!',
-                        welcomeSubMessage: 'Изменение языка доступно в меню справа вверху',
-                        clinicHours: this.createClinicHoursContent('ru'),
-                        treatmentCost: this.createTreatmentCostContent('ru'),
-                        reservationInquiry: this.createReservationContent('ru'),
-                        directions: this.createDirectionsContent('ru')
+                        welcomeSubMessage: 'Изменение языка доступно в меню справа вверху'
                     },
                     ja: {
                         title: 'フェニックス歯科AIコンサルタント👩‍⚕️',
@@ -877,11 +865,7 @@
                         sendButton: '送信',
                         currentLanguage: '🇯🇵 JP',
                         welcomeMessage: 'フェニックス歯科AIコンサルタントです！',
-                        welcomeSubMessage: '右上メニューで言語変更が可能です',
-                        clinicHours: this.createClinicHoursContent('ja'),
-                        treatmentCost: this.createTreatmentCostContent('ja'),
-                        reservationInquiry: this.createReservationContent('ja'),
-                        directions: this.createDirectionsContent('ja')
+                        welcomeSubMessage: '右上メニューで言語変更が可能です'
                     }
                 };
             }
@@ -1069,10 +1053,28 @@
                 
                 for (const [groupName, group] of Object.entries(keywordGroups)) {
                     if (this.matchesKeywords(normalized, group.keywords)) {
-                        const translations = this.translations[this.currentLanguage];
+                        // 동적으로 콘텐츠 생성
+                        let content;
+                        switch (group.type) {
+                            case 'clinicHours':
+                                content = this.createClinicHoursContent(this.currentLanguage);
+                                break;
+                            case 'treatmentCost':
+                                content = this.createTreatmentCostContent(this.currentLanguage);
+                                break;
+                            case 'reservationInquiry':
+                                content = this.createReservationContent(this.currentLanguage);
+                                break;
+                            case 'directions':
+                                content = this.createDirectionsContent(this.currentLanguage);
+                                break;
+                            default:
+                                content = '';
+                        }
+                        
                         return {
                             type: group.type,
-                            content: translations[group.type]
+                            content: content
                         };
                     }
                 }
@@ -2228,9 +2230,11 @@ ${currentQuickMenu.directInquiry}
                     ja: '🕘 <strong>フェニックス歯科診療時間案内</strong><br><br>📅 <strong>平日:</strong> 09:00 ~ 18:00<br>📅 <strong>土曜日:</strong> 09:00 ~ 15:00<br>🍽️ <strong>昼休み:</strong> 12:30 ~ 13:30<br>🚫 <strong>休診:</strong> 日曜日、祝日<br><br>📞 <strong>予約問い合わせ:</strong> 070-1234-1234'
                 };
                 
+                // 현재 언어를 사용하여 예약 텍스트 가져오기
+                const currentLang = lang || this.currentLanguage;
                 const reservationText = this.getReservationText();
                 
-                return content[lang] + `<br><br><div class="reservation-message">
+                return content[currentLang] + `<br><br><div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
@@ -2244,9 +2248,11 @@ ${currentQuickMenu.directInquiry}
                     ja: '💰 <strong>フェニックス歯科治療費案内</strong><br><br>🦷 <strong>一般診療:</strong> 相談後ご案内<br>🦷 <strong>スケーリング:</strong> 30,000円 ~ 50,000円<br>🦷 <strong>インプラント:</strong> 相談後個別見積もり<br>🦷 <strong>矯正:</strong> 相談後個別見積もり<br><br>💡 <strong>正確な費用は診療後にご案内！</strong>'
                 };
                 
+                // 현재 언어를 사용하여 예약 텍스트 가져오기
+                const currentLang = lang || this.currentLanguage;
                 const reservationText = this.getReservationText();
                 
-                return content[lang] + `<br><br><div class="reservation-message">
+                return content[currentLang] + `<br><br><div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
@@ -2257,12 +2263,14 @@ ${currentQuickMenu.directInquiry}
                     ko: '📞 <strong>피닉스 치과 예약 문의</strong><br><br>🏥 <strong>병원명:</strong> 피닉스 치과<br>📞 <strong>전화번호:</strong> 070-1234-1234<br>💬 <strong>카카오톡:</strong> 피닉스치과<br>🌐 <strong>온라인 예약:</strong> 홈페이지 예약 시스템<br><br>💡 <strong>온라인 예약이 가장 편리합니다!</strong>',
                     en: '📞 <strong>Phoenix Dental Reservation</strong><br><br>🏥 <strong>Clinic:</strong> Phoenix Dental<br>📞 <strong>Phone:</strong> 070-1234-1234<br>💬 <strong>KakaoTalk:</strong> Phoenix Dental<br>🌐 <strong>Online:</strong> Website reservation system<br><br>💡 <strong>Online booking is most convenient!</strong>',
                     ru: '📞 <strong>Запись Phoenix Dental</strong><br><br>🏥 <strong>Клиника:</strong> Phoenix Dental<br>📞 <strong>Телефон:</strong> 070-1234-1234<br>💬 <strong>KakaoTalk:</strong> Phoenix Dental<br>🌐 <strong>Онлайн:</strong> Система записи на сайте<br><br>💡 <strong>Онлайн запись наиболее удобна!</strong>',
-                    ja: '📞 <strong>フェニックス歯科予約</strong><br><br>🏥 <strong>病院名:</strong> フェニックス歯科<br>📞 <strong>電話番号:</strong> 070-1234-1234<br>💬 <strong>カカオトーク:</strong> フェニックス歯科<br>🌐 <strong>オンライン:</strong> ホームページ予約システム<br><br>💡 <strong>オンライン予約が最も便利です!</strong>'
+                    ja: '📞 <strong>フェニックス歯科予約</strong><br><br>🏥 <strong>病院名:</strong> フェニックス歯科<br>📞 <strong>電話番号:</strong> 070-1234-1234<br>💬 <strong>カカオトーク:</strong> フェニックス歯科<br>🌐 <strong>オンライン:</strong> ホーム페이지予約システム<br><br>💡 <strong>オンライン予約が最も便利です!</strong>'
                 };
                 
+                // 현재 언어를 사용하여 예약 텍스트 가져오기
+                const currentLang = lang || this.currentLanguage;
                 const reservationText = this.getReservationText();
                 
-                return content[lang] + `<br><br><div class="reservation-message">
+                return content[currentLang] + `<br><br><div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
@@ -2276,9 +2284,11 @@ ${currentQuickMenu.directInquiry}
                     ja: '🗺️ <strong>フェニックス歯科へのアクセス</strong><br><br>📍 <strong>住所:</strong> ソウル特別市江南区テヘラン路123<br>🚇 <strong>地下鉄:</strong> 2号線江南駅3番出口徒歩5分<br>🚌 <strong>バス:</strong> 江南駅停留所下車<br>🚗 <strong>駐車場:</strong> 建物地下1階（2時間無料）'
                 };
                 
+                // 현재 언어를 사용하여 예약 텍스트 가져오기
+                const currentLang = lang || this.currentLanguage;
                 const reservationText = this.getReservationText();
                 
-                return content[lang] + `<br><br><div class="reservation-message">
+                return content[currentLang] + `<br><br><div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
