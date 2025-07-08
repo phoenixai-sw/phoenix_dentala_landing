@@ -2844,15 +2844,10 @@
         // AI 답변 생성 (개선된 우선순위 적용)
         function generateResponse(message) {
             const t = translations[currentLanguage] || translations['ko'];
-            let response = '';
-            
-            console.log('🤖 AI 답변 생성 시작:', message, '현재 언어:', currentLanguage);
-            
-            // 🎯 답변 우선순위 적용
-            // 1차: 🔐 관리자 기능 체크 (최우선)
+
+            // 1. 관리자 기능
             if (message.includes('AI관리자') || message.includes('AI 관리자') || message.includes('관리자')) {
-                console.log('🔐 관리자 기능 감지 - 관리자 페이지 표시');
-                // 관리자 기능 직접 호출
+                // ... 기존 관리자 코드 ...
                 const adminLink = `
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; margin: 15px 0; text-align: center;">
                         <h4 style="margin-bottom: 15px;">🤖 AI챗봇 관리 로그인</h4>
@@ -2864,148 +2859,87 @@
                     </div>
                 `;
                 addBotMessage(adminLink);
-                
-                // 관리자 버튼 이벤트 리스너 설정 (중복 방지)
                 setTimeout(() => {
                     const adminButton = document.getElementById('adminLoginBtn');
                     if (adminButton) {
-                        // 클릭 이벤트 리스너 추가
                         adminButton.addEventListener('click', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('관리자 버튼 클릭됨');
                             openChatbotAdmin2();
                         });
-                        
-                        // 터치 이벤트 리스너 추가 (모바일)
                         adminButton.addEventListener('touchstart', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('관리자 버튼 터치됨');
                             openChatbotAdmin2();
                         });
-                        
-                        console.log('관리자 버튼 이벤트 리스너 추가 완료 (중복 방지)');
                     }
                 }, 100);
-                
                 return;
             }
-            
-            // 2차: 📚 업로드된 지식 파일 검색
+
+            // 2. 지식베이스
             const knowledgeAnswer = searchInKnowledgeBase(message);
             if (knowledgeAnswer) {
-                console.log('📚 지식베이스에서 답변 발견');
                 addBotMessage(knowledgeAnswer);
                 return;
             }
-            
-            // ⭐ 3차: FAQ 키워드 체크 (API 체크보다 먼저!)
-            console.log('🔍 FAQ 키워드 체크');
-            const isClinicHours = message.includes('진료시간') || message.includes('시간') || message.includes('언제') || 
-                                message.includes('clinic hours') || message.includes('hours') || 
-                                message.includes('часы работы') || message.includes('診療時間');
-            
-            const isTreatmentCost = message.includes('치료비용') || message.includes('가격') || message.includes('비용') || 
-                                  message.includes('cost') || message.includes('price') || message.includes('treatment') || 
-                                  message.includes('стоимость') || message.includes('цена') || 
-                                  message.includes('料金') || message.includes('費用');
-            
-            const isReservationInquiry = message.includes('예약') || message.includes('예약문의') || 
-                                       message.includes('reservation') || message.includes('booking') || message.includes('inquiry') || 
-                                       message.includes('запись') || message.includes('бронирование') || 
-                                       message.includes('予約') || message.includes('問い合わせ');
-            
-            const isDirections = message.includes('오시는길') || message.includes('주소') || message.includes('위치') || 
-                               message.includes('directions') || message.includes('location') || message.includes('address') || 
-                               message.includes('адрес') || message.includes('местоположение') || 
-                               message.includes('場所') || message.includes('住所') || message.includes('アクセス');
-            
-            // FAQ 답변 처리
+
+            // 3. FAQ 4개만 고정 답변
+            const isClinicHours = message.includes('진료시간') || message.includes('clinic hours') || message.includes('hours') ||
+                                  message.includes('часы работы') || message.includes('診療時間');
+            const isTreatmentCost = message.includes('치료비용') || message.includes('가격') || message.includes('비용') ||
+                                    message.includes('cost') || message.includes('price') || message.includes('treatment') ||
+                                    message.includes('стоимость') || message.includes('цена') ||
+                                    message.includes('料金') || message.includes('費用');
+            const isReservationInquiry = message.includes('예약') || message.includes('예약문의') ||
+                                        message.includes('reservation') || message.includes('booking') || message.includes('inquiry') ||
+                                        message.includes('запись') || message.includes('бронирование') ||
+                                        message.includes('予約') || message.includes('問い合わせ');
+            const isDirections = message.includes('오시는길') || message.includes('주소') || message.includes('위치') ||
+                                  message.includes('directions') || message.includes('location') || message.includes('address') ||
+                                  message.includes('адрес') || message.includes('местоположение') ||
+                                  message.includes('場所') || message.includes('住所') || message.includes('アクセス');
+
             if (isClinicHours) {
-                console.log('🕘 진료시간 FAQ 답변');
                 addBotMessage(t.clinicHours);
                 return;
             } else if (isTreatmentCost) {
-                console.log('💰 치료비용 FAQ 답변');
                 addBotMessage(t.treatmentCost);
                 return;
             } else if (isReservationInquiry) {
-                console.log('📞 예약문의 FAQ 답변');
                 addBotMessage(t.reservationInquiry);
                 return;
             } else if (isDirections) {
-                console.log('🗺️ 오시는길 FAQ 답변');
                 addBotMessage(t.directions);
                 return;
             }
-            
-            // 4차: 🤖 AI API 모델 활용 (FAQ에 없는 경우만)
-            console.log('🔍 API 설정 확인');
+
+            // 4. FAQ에 해당하지 않는 질문은 AI API로!
             let apiSettings = null;
             try {
                 const savedSettings = localStorage.getItem('chatbotApiSettings');
                 if (savedSettings) {
                     apiSettings = JSON.parse(savedSettings);
-                    console.log('✅ API 설정 불러옴:', apiSettings);
                 }
             } catch (error) {
                 console.error('❌ API 설정 불러오기 실패:', error);
             }
-            
+
             const hasActiveAPI = apiSettings && (
                 (apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey) ||
                 (apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey) ||
                 (apiSettings.claude?.enabled && apiSettings.claude?.apiKey)
             );
-            
+
             if (hasActiveAPI) {
-                console.log('🤖 AI API를 사용하여 답변 생성');
                 generateAIResponse(message, apiSettings);
                 return;
             } else {
-                console.log('🎭 시뮬레이션된 AI 답변 사용');
                 setTimeout(() => {
                     const aiResponse = generateSimulatedAIResponse(message, 'chatgpt');
                     addBotMessage(aiResponse);
                 }, 1000);
                 return;
-            }
-            
-            // 답변에 예약 버튼 추가 (관리자 메시지가 아닌 경우)
-            if (!message.includes('AI관리자')) {
-                response += `<br><br>
-                <div style="background: #f0f8ff; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center;">
-                    💝 <strong>좀더 자세한 사항은 직접 방문하시면 친절하게 상담 드리겠습니다!</strong><br><br>
-                    <button onclick="goToReservationPage()" ontouchstart="goToReservationPage()" style="
-                        background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
-                        color: white;
-                        border: none;
-                        padding: 10px 20px;
-                        border-radius: 25px;
-                        font-size: 14px;
-                        font-weight: bold;
-                        cursor: pointer;
-                        transition: all 0.3s;
-                        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-                        margin-top: 5px;
-                    ">📅 예약하기</button>
-                </div>`;
-            }
-            
-            addBotMessage(response);
-            
-            // 모바일 기기에서 답변 표시 확인
-            const isKakaoTalk = navigator.userAgent.includes('KAKAO');
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (isKakaoTalk || isMobile) {
-                console.log('모바일 기기에서 답변 표시 완료');
-                
-                // 스크롤 강제 업데이트
-                setTimeout(() => {
-                    scrollToBottom();
-                }, 500);
             }
         }
 
