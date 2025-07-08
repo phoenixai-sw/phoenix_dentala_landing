@@ -2843,11 +2843,12 @@
 
         // AI 답변 생성 (개선된 우선순위 적용)
         function generateResponse(message) {
+            console.log('🎯 답변 우선순위 처리 시작:', message);
             const t = translations[currentLanguage] || translations['ko'];
 
-            // 1. 관리자 기능
+            // 1차: 관리자 기능 - "AI관리자" 입력 시 관리자 페이지 표시
             if (message.includes('AI관리자') || message.includes('AI 관리자') || message.includes('관리자')) {
-                // ... 기존 관리자 코드 ...
+                console.log('🔐 1차: 관리자 기능 처리');
                 const adminLink = `
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; margin: 15px 0; text-align: center;">
                         <h4 style="margin-bottom: 15px;">🤖 AI챗봇 관리 로그인</h4>
@@ -2877,44 +2878,56 @@
                 return;
             }
 
-            // 2. 지식베이스
+            // 2차: 지식베이스 검색 - 업로드된 지식 파일에서 답변 검색
+            console.log('📚 2차: 지식베이스 검색 시도');
             const knowledgeAnswer = searchInKnowledgeBase(message);
             if (knowledgeAnswer) {
+                console.log('✅ 지식베이스에서 답변 찾음');
                 addBotMessage(knowledgeAnswer);
                 return;
             }
 
-            // 3. FAQ (치료비용 포함)
+            // 3차: 기본 FAQ 답변 - 키워드 기반 답변 (진료시간, 치료비용, 예약, 오시는길)
+            console.log('❓ 3차: 기본 FAQ 키워드 검색');
             const isClinicHours = message.includes('진료시간') || message.includes('clinic hours') || message.includes('hours') ||
-                                  message.includes('часы работы') || message.includes('診療時間');
+                                  message.includes('часы работы') || message.includes('診療時間') ||
+                                  message.includes('운영시간') || message.includes('문여는') || message.includes('열어');
             const isTreatmentCost = message.includes('치료비용') || message.includes('가격') || message.includes('비용') ||
                                     message.includes('cost') || message.includes('price') || message.includes('treatment') ||
                                     message.includes('стоимость') || message.includes('цена') ||
-                                    message.includes('料金') || message.includes('費用');
+                                    message.includes('料金') || message.includes('費用') ||
+                                    message.includes('얼마') || message.includes('돈') || message.includes('료');
             const isReservationInquiry = message.includes('예약') || message.includes('예약문의') ||
                                         message.includes('reservation') || message.includes('booking') || message.includes('inquiry') ||
                                         message.includes('запись') || message.includes('бронирование') ||
-                                        message.includes('予約') || message.includes('問い合わせ');
+                                        message.includes('予約') || message.includes('問い合わせ') ||
+                                        message.includes('신청') || message.includes('접수');
             const isDirections = message.includes('오시는길') || message.includes('주소') || message.includes('위치') ||
                                   message.includes('directions') || message.includes('location') || message.includes('address') ||
                                   message.includes('адрес') || message.includes('местоположение') ||
-                                  message.includes('場所') || message.includes('住所') || message.includes('アクセス');
+                                  message.includes('場所') || message.includes('住所') || message.includes('アクセス') ||
+                                  message.includes('어디') || message.includes('찾아');
 
             if (isClinicHours) {
+                console.log('✅ 진료시간 FAQ 답변');
                 addBotMessage(t.clinicHours);
                 return;
             } else if (isTreatmentCost) {
+                console.log('✅ 치료비용 FAQ 답변');
                 addBotMessage(t.treatmentCost);
                 return;
             } else if (isReservationInquiry) {
+                console.log('✅ 예약 FAQ 답변');
                 addBotMessage(t.reservationInquiry);
                 return;
             } else if (isDirections) {
+                console.log('✅ 오시는길 FAQ 답변');
                 addBotMessage(t.directions);
                 return;
             }
 
-            // 4. FAQ에 해당하지 않는 질문은 AI API로!
+            // 4차: AI API 호출 - 키워드가 매칭되지 않을 때 AI API 사용
+            console.log('🤖 4차: AI API 호출 시도');
             let apiSettings = null;
             try {
                 const savedSettings = localStorage.getItem('chatbotApiSettings');
@@ -2932,9 +2945,12 @@
             );
 
             if (hasActiveAPI) {
+                console.log('✅ 활성화된 AI API 발견 - API 호출 진행');
                 generateAIResponse(message, apiSettings);
                 return;
             } else {
+                // 5차: 시뮬레이션된 AI 답변 - API가 없을 때 자연스러운 답변 제공
+                console.log('🔄 5차: 시뮬레이션된 AI 답변 사용 (API 없음)');
                 setTimeout(() => {
                     const aiResponse = generateSimulatedAIResponse(message, 'chatgpt');
                     addBotMessage(aiResponse);
@@ -2943,9 +2959,9 @@
             }
         }
 
-        // AI API를 사용한 답변 생성 (개선된 버전)
+        // AI API를 사용한 답변 생성 (4차 우선순위)
         function generateAIResponse(message, apiSettings) {
-            console.log('🤖 AI API 답변 생성 시작:', message);
+            console.log('🤖 4차: AI API 답변 생성 시작:', message);
             console.log('📋 API 설정:', apiSettings);
             
             // 로딩 메시지 표시
@@ -2970,7 +2986,7 @@
                 claude: apiSettings.claude?.apiKey ? '있음' : '없음'
             });
             
-            // 지식베이스 컨텍스트 추가
+            // 지식베이스 컨텍스트 추가 (2차 우선순위에서 사용된 정보 활용)
             let contextInfo = getContextFromKnowledgeBase();
             
             // 치과 관련 기본 컨텍스트
@@ -2995,26 +3011,26 @@ ${contextInfo}
 사용자 질문: ${message}
 `;
 
-            // 실제 API 호출 시도 (개선된 버전)
+            // 실제 API 호출 시도 (4차 우선순위)
             let apiCallMade = false;
             
             if (activeProvider === 'chatgpt' && apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey) {
-                console.log('🚀 ChatGPT API 호출 시도');
+                console.log('🚀 4차: ChatGPT API 호출 시도');
                 apiCallMade = true;
                 callChatGPTAPI(message, apiSettings.chatgpt, loadingMessage, contextInfo);
             } else if (activeProvider === 'gemini' && apiSettings.gemini?.enabled && apiSettings.gemini?.apiKey) {
-                console.log('🚀 Gemini API 호출 시도');
+                console.log('🚀 4차: Gemini API 호출 시도');
                 apiCallMade = true;
                 callGeminiAPI(message, apiSettings.gemini, loadingMessage, contextInfo);
             } else if (activeProvider === 'claude' && apiSettings.claude?.enabled && apiSettings.claude?.apiKey) {
-                console.log('🚀 Claude API 호출 시도');
+                console.log('🚀 4차: Claude API 호출 시도');
                 apiCallMade = true;
                 callClaudeAPI(message, apiSettings.claude, loadingMessage, contextInfo);
             }
             
-            // API 호출이 실패하거나 활성화된 API가 없는 경우 시뮬레이션된 답변 사용
+            // API 호출이 실패하거나 활성화된 API가 없는 경우 5차 우선순위로 이동
             if (!apiCallMade) {
-                console.log('❌ API 호출 실패 또는 활성화된 API 없음 - 시뮬레이션된 답변 사용');
+                console.log('❌ 4차: API 호출 실패 - 5차 우선순위(시뮬레이션)로 이동');
                 console.log('🔍 API 호출 실패 원인 분석:');
                 console.log('- activeProvider:', activeProvider);
                 console.log('- ChatGPT 상태:', apiSettings.chatgpt?.enabled && apiSettings.chatgpt?.apiKey ? '사용 가능' : '사용 불가');
@@ -3034,20 +3050,20 @@ ${contextInfo}
             }
         }
 
-        // 지식베이스에서 컨텍스트 정보 추출
+        // 지식베이스에서 컨텍스트 정보 추출 (2차 우선순위 활용)
         function getContextFromKnowledgeBase() {
             if (!knowledgeBase.enabled || knowledgeBase.parsedData.length === 0) {
-                console.log('❌ 지식베이스 컨텍스트 추출 실패: 비활성 또는 데이터 없음');
+                console.log('❌ 2차: 지식베이스 컨텍스트 추출 실패: 비활성 또는 데이터 없음');
                 return '';
             }
             
             // 모든 Q&A를 컨텍스트로 정리
-            let context = '\n\n=== 병원 전문 지식 정보 ===\n';
+            let context = '\n\n=== 병원 전문 지식 정보 (2차 우선순위) ===\n';
             knowledgeBase.parsedData.forEach((qa, index) => {
                 context += `${index + 1}. Q: ${qa.question}\n   A: ${qa.answer}\n`;
             });
             
-            console.log('✅ 지식베이스 컨텍스트 추출 완료:', knowledgeBase.parsedData.length, '개 Q&A');
+            console.log('✅ 2차: 지식베이스 컨텍스트 추출 완료:', knowledgeBase.parsedData.length, '개 Q&A');
             return context;
         }
 
@@ -3329,15 +3345,15 @@ ${contextInfo}
             });
         }
 
-        // 지식베이스에서 답변 검색 (랜딩페이지와 동일한 로직)
+        // 지식베이스에서 답변 검색 (2차 우선순위)
         function searchInKnowledgeBase(userMessage) {
             if (!knowledgeBase.enabled || knowledgeBase.parsedData.length === 0) {
-                console.log('❌ 지식베이스 비활성 또는 데이터 없음 (활성:', knowledgeBase.enabled, ', 데이터:', knowledgeBase.parsedData.length, '개)');
+                console.log('❌ 2차: 지식베이스 비활성 또는 데이터 없음 (활성:', knowledgeBase.enabled, ', 데이터:', knowledgeBase.parsedData.length, '개)');
                 return null;
             }
             
             const message = userMessage.toLowerCase().trim();
-            console.log('🔍 지식베이스 검색 시작:', message, '| 총 데이터:', knowledgeBase.parsedData.length);
+            console.log('📚 2차: 지식베이스 검색 시작:', message, '| 총 데이터:', knowledgeBase.parsedData.length);
             
             // 검색 결과를 점수별로 저장
             let searchResults = [];
@@ -3430,19 +3446,19 @@ ${contextInfo}
             // 점수별 정렬
             searchResults.sort((a, b) => b.score - a.score);
             
-            console.log(`📊 총 검색 결과: ${searchResults.length}개`);
+            console.log(`📊 2차: 총 검색 결과: ${searchResults.length}개`);
             if (searchResults.length > 0) {
-                console.log(`🏆 최고 점수: ${searchResults[0].score} | 질문: "${searchResults[0].qa.question}"`);
+                console.log(`🏆 2차: 최고 점수: ${searchResults[0].score} | 질문: "${searchResults[0].qa.question}"`);
             }
             
             // 점수 기준을 30점으로 설정 (랜딩페이지와 동일)
             if (searchResults.length > 0 && searchResults[0].score >= 30) {
                 const bestMatch = searchResults[0].qa;
-                console.log('✅ 지식베이스 답변 선택:', bestMatch.question);
+                console.log('✅ 2차: 지식베이스 답변 선택:', bestMatch.question);
                 return formatKnowledgeBaseAnswer(bestMatch, userMessage);
             }
             
-            console.log('❌ 지식베이스에서 적절한 답변을 찾지 못함');
+            console.log('❌ 2차: 지식베이스에서 적절한 답변을 찾지 못함');
             return null;
         }
 
@@ -3712,15 +3728,36 @@ ${contextInfo}
             `;
         }
 
-        // 시뮬레이션된 AI 답변 생성 (개선된 버전)
+        // 시뮬레이션된 AI 답변 생성 (5차 우선순위)
         function generateSimulatedAIResponse(message, provider) {
-            // FAQ 표 반환 로직 없이 자연스러운 텍스트 답변만!
+            console.log('🔄 5차: 시뮬레이션된 AI 답변 생성:', message);
+            
+            // 자연스러운 텍스트 답변 생성
             let response = '';
-            if (message.includes('안녕하세요') || message.toLowerCase().includes('hello')) {
+            
+            // 인사말 처리
+            if (message.includes('안녕하세요') || message.toLowerCase().includes('hello') || 
+                message.includes('안녕') || message.includes('hi') || message.includes('hello')) {
                 response = '안녕하세요! 피닉스치과 AI 상담사입니다. 궁금한 점이 있으시면 언제든 말씀해 주세요 😊';
-            } else {
-                response = `피닉스치과 AI 상담사입니다. "${message}"에 대한 답변을 준비 중입니다. 진료, 예약, 비용, 위치 등 궁금한 점이 있으시면 언제든 문의주세요!`;
+            } 
+            // 감사 표현 처리
+            else if (message.includes('감사') || message.includes('고마워') || message.includes('thank')) {
+                response = '천만에요! 피닉스치과를 이용해주셔서 감사합니다. 더 궁금한 점이 있으시면 언제든 문의해주세요 😊';
             }
+            // 일반적인 질문에 대한 자연스러운 답변
+            else {
+                response = `피닉스치과 AI 상담사입니다. "${message}"에 대한 답변을 준비 중입니다. 
+                
+진료, 예약, 비용, 위치 등 궁금한 점이 있으시면 언제든 문의주세요!
+
+💡 빠른 문의:
+• 진료시간: "진료시간" 입력
+• 치료비용: "치료비용" 입력  
+• 예약문의: "예약" 입력
+• 오시는길: "오시는길" 입력`;
+            }
+            
+            console.log('✅ 5차: 시뮬레이션된 답변 생성 완료');
             return response;
         }
 
@@ -3735,6 +3772,10 @@ ${contextInfo}
                     </div>
                     <div style="font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 20px;">
                         ${t.welcomeSubMessage}
+                    </div>
+                    <div style="font-size: 12px; color: #888; line-height: 1.4; margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                        🎯 <strong>답변 우선순위:</strong><br>
+                        1차: 관리자 기능 | 2차: 지식베이스 | 3차: 기본 FAQ | 4차: AI API | 5차: 시뮬레이션
                     </div>
                     <div class="quick-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin-left: auto; margin-right: auto;">
                         <button class="quick-button clinic-hours-btn" onclick="handleQuickMessage('진료시간 알려주세요')" ontouchstart="handleKakaoTouch('진료시간 알려주세요')" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; border: none; padding: 12px 8px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); -webkit-tap-highlight-color: transparent;">🕘 진료시간</button>
