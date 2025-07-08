@@ -902,15 +902,10 @@
             generateGreetingResponse(message) {
                 const lower = message.toLowerCase();
                 const reservationText = this.getReservationText();
-                const consultantText = this.getConsultantText();
                 
                 if (lower.includes('감사') || lower.includes('고마워') || lower.includes('thank')) {
                     return `천만에요! 피닉스치과를 이용해주셔서 감사합니다. 더 궁금한 점이 있으시면 언제든 문의해주세요 😊
                     
-                    <div class="reservation-message">
-                        <div class="reservation-message-text">${consultantText.message}</div>
-                        <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
-                    </div>
                     <div class="reservation-message">
                         <div class="reservation-message-text">${reservationText.message}</div>
                         <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
@@ -919,10 +914,6 @@
                 
                 return `안녕하세요! 피닉스치과 AI 상담사입니다. 궁금한 점이 있으시면 언제든 말씀해 주세요 😊
                 
-                <div class="reservation-message">
-                    <div class="reservation-message-text">${consultantText.message}</div>
-                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
-                </div>
                 <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
@@ -1042,19 +1033,19 @@
             getConsultantText() {
                 const texts = {
                     ko: {
-                        message: '필요하다면 전문상담원에게 1:1 상담 받아보세요!',
+                        message: '필요하다면 전문상담원에게 1:1 상담 받아보세요! (운영시간 오전9-오후9시, 점심시간 12시-13시)',
                         button: '💬 전문상담원 1:1'
                     },
                     en: {
-                        message: 'If needed, get 1:1 consultation with a specialist!',
+                        message: 'If needed, get 1:1 consultation with a specialist! (Operating hours 9AM-9PM, Lunch break 12PM-1PM)',
                         button: '💬 Specialist 1:1'
                     },
                     ru: {
-                        message: 'При необходимости получите индивидуальную консультацию специалиста!',
+                        message: 'При необходимости получите индивидуальную консультацию специалиста! (Часы работы 9:00-21:00, Обед 12:00-13:00)',
                         button: '💬 Специалист 1:1'
                     },
                     ja: {
-                        message: '必要に応じて専門相談員に1対1相談を受けてください！',
+                        message: '必要に応じて専門相談員に1対1相談を受けてください！（営業時間 午前9時-午後9時、昼休み 12時-13時）',
                         button: '💬 専門相談員 1:1'
                     }
                 };
@@ -1318,7 +1309,6 @@
                     '❌ AI API가 설정되지 않아 기본 답변을 제공합니다. (관리자 메뉴에서 AI API 설정 가능)';
                 
                 const reservationText = this.getReservationText();
-                const consultantText = this.getConsultantText();
                 
                 return responses[Math.floor(Math.random() * responses.length)] + `
                 
@@ -1332,10 +1322,6 @@ ${apiStatus}
 
 📞 **직접 문의:** 070-1234-1234
 
-<div class="reservation-message">
-    <div class="reservation-message-text">${consultantText.message}</div>
-    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
-</div>
 <div class="reservation-message">
     <div class="reservation-message-text">${reservationText.message}</div>
     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
@@ -1593,16 +1579,11 @@ ${apiStatus}
                 
                 if (bestScore >= 50) {
                     const reservationText = this.getReservationText();
-                    const consultantText = this.getConsultantText();
                     return `📚 <strong>피닉스 치과 전문 지식 답변</strong><br><br>
                             <strong>Q:</strong> ${bestMatch.question}<br><br>
                             <strong>A:</strong> ${bestMatch.answer}<br><br>
                             <small>💡 전문 지식 데이터베이스에서 제공된 답변입니다.</small>
                             
-                            <div class="reservation-message">
-                                <div class="reservation-message-text">${consultantText.message}</div>
-                                <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
-                            </div>
                             <div class="reservation-message">
                                 <div class="reservation-message-text">${reservationText.message}</div>
                                 <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
@@ -1622,13 +1603,8 @@ ${apiStatus}
                 };
                 
                 const reservationText = this.getReservationText();
-                const consultantText = this.getConsultantText();
                 
                 return content[lang] + `<br><br><div class="reservation-message">
-                    <div class="reservation-message-text">${consultantText.message}</div>
-                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
-                </div>
-                <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
@@ -1643,13 +1619,8 @@ ${apiStatus}
                 };
                 
                 const reservationText = this.getReservationText();
-                const consultantText = this.getConsultantText();
                 
                 return content[lang] + `<br><br><div class="reservation-message">
-                    <div class="reservation-message-text">${consultantText.message}</div>
-                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
-                </div>
-                <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
@@ -1664,13 +1635,8 @@ ${apiStatus}
                 };
                 
                 const reservationText = this.getReservationText();
-                const consultantText = this.getConsultantText();
                 
                 return content[lang] + `<br><br><div class="reservation-message">
-                    <div class="reservation-message-text">${consultantText.message}</div>
-                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
-                </div>
-                <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
@@ -1685,13 +1651,8 @@ ${apiStatus}
                 };
                 
                 const reservationText = this.getReservationText();
-                const consultantText = this.getConsultantText();
                 
                 return content[lang] + `<br><br><div class="reservation-message">
-                    <div class="reservation-message-text">${consultantText.message}</div>
-                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
-                </div>
-                <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
