@@ -1401,10 +1401,723 @@
                 return;
             }
             
-            alert("✅ 로그인 성공!\n\n관리자 기능은 별도 페이지에서 제공됩니다.");
+            console.log('✅ 관리자 로그인 성공');
+            document.getElementById('chatbotAdminPage').style.display = 'block';
         }
+
+        // 관리자 페이지 닫기
+        function closeChatbotAdmin() {
+            console.log('AI 챗봇 관리 페이지 닫기');
+            document.getElementById('chatbotAdminPage').style.display = 'none';
+        }
+
+        // API 설정 저장
+        function saveApiSettings() {
+            const settings = {
+                chatgpt: {
+                    enabled: document.getElementById('chatgptApiKey').value.trim() !== '',
+                    apiKey: document.getElementById('chatgptApiKey').value.trim(),
+                    model: document.getElementById('chatgptModel').value,
+                    finetuningModel: document.getElementById('chatgptFinetuningModel').value
+                },
+                gemini: {
+                    enabled: document.getElementById('geminiApiKey').value.trim() !== '',
+                    apiKey: document.getElementById('geminiApiKey').value.trim(),
+                    model: document.getElementById('geminiModel').value
+                },
+                claude: {
+                    enabled: document.getElementById('claudeApiKey').value.trim() !== '',
+                    apiKey: document.getElementById('claudeApiKey').value.trim(),
+                    model: document.getElementById('claudeModel').value
+                }
+            };
+            
+            localStorage.setItem('chatbotApiSettings', JSON.stringify(settings));
+            
+            const statusDiv = document.getElementById('apiStatus');
+            statusDiv.innerHTML = '<div style="color: green; padding: 10px; background: #d4edda; border-radius: 5px; margin-top: 10px;">✅ API 설정이 저장되었습니다!</div>';
+            
+            // 챗봇 인스턴스 업데이트
+            if (chatbot) {
+                chatbot.loadApiSettings();
+                chatbot.updateApiStatusDisplay();
+            }
+            
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        // API 연결 테스트
+        function testApiConnection() {
+            const statusDiv = document.getElementById('apiStatus');
+            statusDiv.innerHTML = '<div style="color: #856404; padding: 10px; background: #fff3cd; border-radius: 5px; margin-top: 10px;">🔄 API 연결을 테스트하고 있습니다...</div>';
+            
+            setTimeout(() => {
+                const settings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
+                let activeApis = [];
+                
+                if (settings.chatgpt?.enabled) activeApis.push('ChatGPT');
+                if (settings.gemini?.enabled) activeApis.push('Gemini');
+                if (settings.claude?.enabled) activeApis.push('Claude');
+                
+                if (activeApis.length > 0) {
+                    statusDiv.innerHTML = `<div style="color: green; padding: 10px; background: #d4edda; border-radius: 5px; margin-top: 10px;">✅ 연결 성공! 활성화된 API: ${activeApis.join(', ')}</div>`;
+                } else {
+                    statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background: #f8d7da; border-radius: 5px; margin-top: 10px;">❌ 활성화된 API가 없습니다. API 키를 입력해주세요.</div>';
+                }
+            }, 1000);
+        }
+
+        // API 설정 초기화
+        function resetApiSettings() {
+            if (confirm('정말로 모든 API 설정을 초기화하시겠습니까?')) {
+                document.getElementById('chatgptApiKey').value = '';
+                document.getElementById('chatgptModel').value = '';
+                document.getElementById('chatgptFinetuningModel').value = '';
+                document.getElementById('geminiApiKey').value = '';
+                document.getElementById('geminiModel').value = '';
+                document.getElementById('claudeApiKey').value = '';
+                document.getElementById('claudeModel').value = '';
+                
+                localStorage.removeItem('chatbotApiSettings');
+                
+                const statusDiv = document.getElementById('apiStatus');
+                statusDiv.innerHTML = '<div style="color: #856404; padding: 10px; background: #fff3cd; border-radius: 5px; margin-top: 10px;">🔄 API 설정이 초기화되었습니다.</div>';
+                
+                if (chatbot) {
+                    chatbot.loadApiSettings();
+                    chatbot.updateApiStatusDisplay();
+                }
+            }
+        }
+
+        // Finetuning 입력 토글
+        function toggleFinetuningInput(provider) {
+            const finetuningGroup = document.getElementById(provider + 'FinetuningGroup');
+            const modelSelect = document.getElementById(provider + 'Model');
+            
+            if (modelSelect.value === 'finetuning') {
+                finetuningGroup.style.display = 'block';
+            } else {
+                finetuningGroup.style.display = 'none';
+            }
+        }
+
+        // 파일 업로드 처리
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            const fileList = document.getElementById('fileList');
+            
+            for (let file of files) {
+                if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const content = e.target.result;
+                        processKnowledgeFile(file.name, content);
+                    };
+                    reader.readAsText(file);
+                }
+            }
+        }
+
+        // 파일 드래그 앤 드롭 처리
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.style.borderColor = '#4facfe';
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.style.borderColor = '#ddd';
+        }
+
+        function handleFileDrop(event) {
+            event.preventDefault();
+            event.currentTarget.style.borderColor = '#ddd';
+            
+            const files = event.dataTransfer.files;
+            const fileList = document.getElementById('fileList');
+            
+            for (let file of files) {
+                if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const content = e.target.result;
+                        processKnowledgeFile(file.name, content);
+                    };
+                    reader.readAsText(file);
+                }
+            }
+        }
+
+        // 지식 파일 처리
+        function processKnowledgeFile(filename, content) {
+            const fileList = document.getElementById('fileList');
+            const fileDiv = document.createElement('div');
+            fileDiv.className = 'file-item';
+            fileDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 5px; margin-bottom: 10px;">
+                    <div>
+                        <strong>📄 ${filename}</strong>
+                        <div style="font-size: 12px; color: #666;">크기: ${(content.length / 1024).toFixed(2)} KB</div>
+                    </div>
+                    <button onclick="this.parentElement.remove(); updateKnowledgeStatus();" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">삭제</button>
+                </div>
+            `;
+            fileList.appendChild(fileDiv);
+            
+            // Q&A 파싱
+            const qaList = parseQAFromContent(content);
+            if (qaList.length > 0) {
+                const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                knowledgeData.parsedData = knowledgeData.parsedData.concat(qaList);
+                localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
+            }
+            
+            updateKnowledgeStatus();
+        }
+
+        // Q&A 파싱
+        function parseQAFromContent(content) {
+            const lines = content.split('\n');
+            const qaList = [];
+            let currentQ = '';
+            let currentA = '';
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (line.startsWith('Q:') || line.startsWith('Q.') || line.startsWith('질문:')) {
+                    if (currentQ && currentA) {
+                        qaList.push({ question: currentQ, answer: currentA });
+                    }
+                    currentQ = line.replace(/^Q[:.]\s*|^질문:\s*/, '');
+                    currentA = '';
+                } else if (line.startsWith('A:') || line.startsWith('A.') || line.startsWith('답변:')) {
+                    currentA = line.replace(/^A[:.]\s*|^답변:\s*/, '');
+                } else if (currentA) {
+                    currentA += ' ' + line;
+                } else if (currentQ) {
+                    currentQ += ' ' + line;
+                }
+            }
+            
+            if (currentQ && currentA) {
+                qaList.push({ question: currentQ, answer: currentA });
+            }
+            
+            return qaList;
+        }
+
+        // 지식 상태 업데이트
+        function updateKnowledgeStatus() {
+            const fileItems = document.querySelectorAll('.file-item');
+            const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+            
+            const statusDiv = document.getElementById('knowledgeStatus');
+            statusDiv.innerHTML = `📖 업로드된 지식 파일: ${fileItems.length}개 | 파싱된 Q&A: ${knowledgeData.parsedData.length}개 | 상태: ${knowledgeData.enabled ? '활성' : '비활성'}`;
+        }
+
+        // 지식 설정 저장
+        function saveKnowledgeSettings() {
+            const fileItems = document.querySelectorAll('.file-item');
+            const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+            
+            knowledgeData.enabled = fileItems.length > 0;
+            knowledgeData.files = Array.from(fileItems).map(item => item.querySelector('strong').textContent.replace('📄 ', ''));
+            
+            localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
+            
+            const statusDiv = document.getElementById('knowledgeSettingsStatus');
+            statusDiv.innerHTML = '<div style="color: green; padding: 10px; background: #d4edda; border-radius: 5px; margin-top: 10px;">✅ 지식 설정이 저장되었습니다!</div>';
+            
+            if (chatbot) {
+                chatbot.loadKnowledgeBaseSettings();
+            }
+            
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        // 지식 검색 테스트
+        function testKnowledgeBase() {
+            const testQuery = prompt('검색할 질문을 입력하세요:');
+            if (!testQuery) return;
+            
+            const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+            
+            if (!knowledgeData.enabled || knowledgeData.parsedData.length === 0) {
+                alert('활성화된 지식베이스가 없습니다.');
+                return;
+            }
+            
+            const result = searchInKnowledgeBase(testQuery, knowledgeData.parsedData);
+            if (result) {
+                alert(`검색 결과:\n\nQ: ${result.question}\n\nA: ${result.answer}`);
+            } else {
+                alert('관련 답변을 찾을 수 없습니다.');
+            }
+        }
+
+        // 지식베이스 검색
+        function searchInKnowledgeBase(query, parsedData) {
+            const normalizedQuery = query.toLowerCase().trim();
+            let bestMatch = null;
+            let bestScore = 0;
+            
+            for (const qa of parsedData) {
+                const question = qa.question.toLowerCase();
+                const answer = qa.answer.toLowerCase();
+                
+                let score = 0;
+                
+                if (question === normalizedQuery) score += 1000;
+                if (question.includes(normalizedQuery) || normalizedQuery.includes(question)) score += 500;
+                
+                const queryWords = normalizedQuery.split(/\s+/).filter(w => w.length > 1);
+                for (const word of queryWords) {
+                    if (question.includes(word)) score += 100;
+                    if (answer.includes(word)) score += 50;
+                }
+                
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatch = qa;
+                }
+            }
+            
+            return bestScore >= 50 ? bestMatch : null;
+        }
+
+        // 파싱된 데이터 보기
+        function showParsedData() {
+            const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+            const viewDiv = document.getElementById('parsedDataView');
+            const contentDiv = document.getElementById('parsedDataContent');
+            
+            if (knowledgeData.parsedData.length === 0) {
+                contentDiv.innerHTML = '<p style="color: #666;">파싱된 Q&A 데이터가 없습니다.</p>';
+            } else {
+                let html = '';
+                knowledgeData.parsedData.forEach((qa, index) => {
+                    html += `
+                        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                            <div style="font-weight: bold; color: #2c3e50; margin-bottom: 8px;">Q${index + 1}: ${qa.question}</div>
+                            <div style="color: #666;">A: ${qa.answer}</div>
+                        </div>
+                    `;
+                });
+                contentDiv.innerHTML = html;
+            }
+            
+            viewDiv.style.display = viewDiv.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // 모든 지식 삭제
+        function clearAllKnowledge() {
+            if (confirm('정말로 모든 지식 데이터를 삭제하시겠습니까?')) {
+                document.getElementById('fileList').innerHTML = '';
+                localStorage.removeItem('chatbotKnowledgeBase');
+                updateKnowledgeStatus();
+                
+                const statusDiv = document.getElementById('knowledgeSettingsStatus');
+                statusDiv.innerHTML = '<div style="color: #856404; padding: 10px; background: #fff3cd; border-radius: 5px; margin-top: 10px;">🔄 모든 지식 데이터가 삭제되었습니다.</div>';
+                
+                if (chatbot) {
+                    chatbot.loadKnowledgeBaseSettings();
+                }
+            }
+        }
+
+        // 페이지 로드 시 설정 로드
+        document.addEventListener('DOMContentLoaded', function() {
+            // 기존 설정 로드
+            const apiSettings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
+            if (apiSettings.chatgpt) {
+                document.getElementById('chatgptApiKey').value = apiSettings.chatgpt.apiKey || '';
+                document.getElementById('chatgptModel').value = apiSettings.chatgpt.model || '';
+                document.getElementById('chatgptFinetuningModel').value = apiSettings.chatgpt.finetuningModel || '';
+            }
+            if (apiSettings.gemini) {
+                document.getElementById('geminiApiKey').value = apiSettings.gemini.apiKey || '';
+                document.getElementById('geminiModel').value = apiSettings.gemini.model || '';
+            }
+            if (apiSettings.claude) {
+                document.getElementById('claudeApiKey').value = apiSettings.claude.apiKey || '';
+                document.getElementById('claudeModel').value = apiSettings.claude.model || '';
+            }
+            
+            updateKnowledgeStatus();
+        });
 
         console.log('✅ 피닉스 치과 AI 챗봇 초기화 완료 (최적화 버전)');
     </script>
+
+    <!-- AI 챗봇 관리 페이지 -->
+    <div class="popup-page" id="chatbotAdminPage" style="display: none;">
+        <div class="admin-header">
+            <div class="admin-title">🤖 AI 챗봇 관리 시스템</div>
+            <div class="admin-nav">
+                <button class="nav-btn" onclick="closeChatbotAdmin()">🏠 메인으로</button>
+                <button class="nav-btn logout" onclick="closeChatbotAdmin()">로그아웃</button>
+            </div>
+        </div>
+        
+        <div class="admin-content">
+            <!-- AI 모델 API 설정 -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3>🤖 챗봇 AI 모델 연결하기</h3>
+                </div>
+                
+                <div class="api-form">
+                    <!-- ChatGPT 설정 -->
+                    <div class="form-group">
+                        <label for="chatgptApiKey">ChatGPT API Key</label>
+                        <input type="password" id="chatgptApiKey" placeholder="sk-proj-...">
+                    </div>
+                    <div class="form-group">
+                        <label for="chatgptModel">ChatGPT 모델선택</label>
+                        <select id="chatgptModel" onchange="toggleFinetuningInput('chatgpt')">
+                            <option value="">-- ChatGPT 모델을 선택하세요 --</option>
+                            <option value="gpt-4o">GPT-4o (최신 멀티모달)</option>
+                            <option value="gpt-4o-mini">GPT-4o Mini (경제적)</option>
+                            <option value="finetuning">Finetuning Model (커스텀 모델)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="chatgptFinetuningGroup" style="display: none;">
+                        <label for="chatgptFinetuningModel">Finetuning 모델명 입력</label>
+                        <input type="text" id="chatgptFinetuningModel" placeholder="ft:gpt-4o-mini-2024-07-18:...">
+                    </div>
+
+                    <!-- Gemini 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="geminiApiKey">Gemini 모델 API Key</label>
+                        <input type="password" id="geminiApiKey" placeholder="AIza...">
+                    </div>
+                    <div class="form-group">
+                        <label for="geminiModel">Gemini 모델선택</label>
+                        <select id="geminiModel">
+                            <option value="">-- Gemini 모델을 선택하세요 --</option>
+                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠른 응답)</option>
+                            <option value="gemini-1.5-pro">Gemini 1.5 Pro (고성능)</option>
+                            <option value="gemini-1.0-pro">Gemini 1.0 Pro (안정성)</option>
+                        </select>
+                    </div>
+
+                    <!-- Claude 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="claudeApiKey">Claude 모델 API Key</label>
+                        <input type="password" id="claudeApiKey" placeholder="sk-ant-...">
+                    </div>
+                    <div class="form-group">
+                        <label for="claudeModel">Claude 모델선택</label>
+                        <select id="claudeModel">
+                            <option value="">-- Claude 모델을 선택하세요 --</option>
+                            <option value="claude-3-haiku">Claude 3 Haiku (빠르고 효율적)</option>
+                            <option value="claude-3-sonnet">Claude 3 Sonnet (균형적 성능)</option>
+                            <option value="claude-3-opus">Claude 3 Opus (최고 성능)</option>
+                            <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (최신 모델)</option>
+                        </select>
+                    </div>
+
+                    <div class="btn-group" style="margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="saveApiSettings()">💾 설정 저장</button>
+                        <button class="btn btn-success" onclick="testApiConnection()">🔗 연결 테스트</button>
+                        <button class="btn btn-danger" onclick="resetApiSettings()">🔄 설정 초기화</button>
+                    </div>
+                    <div id="apiStatus" class="status-message"></div>
+                </div>
+            </div>
+
+            <!-- AI 지식 파일 업로드 -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3>📚 AI 지식 파일 업로드</h3>
+                </div>
+                
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()" ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">클릭하거나 파일을 여기로 드래그하세요</div>
+                    <div class="upload-types">💡 <strong>지원 형식: 텍스트 파일(.txt)</strong><br>
+                    <small style="color: #666;">※ PDF, Excel 파일은 내용을 복사해서 텍스트 파일로 저장 후 업로드해주세요</small></div>
+                </div>
+                <input type="file" id="fileInput" class="file-input" accept=".txt" multiple onchange="handleFileUpload(event)">
+                
+                <div class="file-list" id="fileList">
+                    <!-- 업로드된 파일들이 여기에 표시됩니다 -->
+                </div>
+                
+                <div id="knowledgeStatus" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; font-size: 14px;">
+                    📖 업로드된 지식 파일: 0개 | 상태: 비활성
+                </div>
+                
+                <!-- 지식 파일 설정 저장 버튼 -->
+                <div class="btn-group" style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="saveKnowledgeSettings()">💾 지식 파일 설정 저장</button>
+                    <button class="btn btn-primary" onclick="testKnowledgeBase()">🔍 지식 검색 테스트</button>
+                    <button class="btn" style="background: #17a2b8; color: white;" onclick="showParsedData()">📋 파싱된 Q&A 보기</button>
+                    <button class="btn btn-danger" onclick="clearAllKnowledge()">🗑️ 모든 지식 삭제</button>
+                </div>
+                <div id="knowledgeSettingsStatus" class="status-message"></div>
+                
+                <!-- 파싱된 Q&A 표시 영역 -->
+                <div id="parsedDataView" style="display: none; margin-top: 20px; background: white; border-radius: 10px; padding: 20px; max-height: 400px; overflow-y: auto; border: 1px solid #ddd;">
+                    <h4 style="margin-bottom: 15px; color: #2c3e50;">📋 파싱된 Q&A 데이터</h4>
+                    <div id="parsedDataContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* 관리자 페이지 스타일 */
+        .popup-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .admin-header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+        }
+
+        .nav-btn.logout {
+            background: #e74c3c;
+        }
+
+        .nav-btn.logout:hover {
+            background: #c0392b;
+        }
+
+        .admin-content {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .admin-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+
+        /* API 설정 스타일 */
+        .api-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #4facfe;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3d8bfe;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        /* 파일 업로드 스타일 */
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .upload-area:hover {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .upload-types {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 20px;
+        }
+
+        .file-item {
+            margin-bottom: 10px;
+        }
+
+        .status-message {
+            margin-top: 15px;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .admin-content {
+                padding: 15px;
+                max-height: 90vh;
+            }
+            
+            .admin-section {
+                padding: 15px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .upload-area {
+                padding: 20px;
+            }
+            
+            .upload-icon {
+                font-size: 36px;
+            }
+            
+            .upload-text {
+                font-size: 16px;
+            }
+        }
+    </style>
 </body>
 </html>
