@@ -283,6 +283,31 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
 
+        /* 윈도우 브라우저 최적화 */
+        .windows-browser .language-current {
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .windows-browser .language-current:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5) !important;
+        }
+
+        .windows-browser .language-option {
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .windows-browser .language-option:hover {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
+            transform: translateX(2px) !important;
+        }
+
+        .windows-browser .language-menu {
+            animation: menuSlideDown 0.3s ease-out !important;
+        }
+
         /* 메시지 영역 */
         .chatbot-messages {
             flex: 1;
@@ -1618,8 +1643,22 @@ ${apiStatus}
             
             if (!languageButton || !languageMenu) return;
             
-            // 안드로이드 카카오톡 브라우저 감지
-            const isAndroidKakao = /Android/.test(navigator.userAgent) && /KAKAO/.test(navigator.userAgent);
+            // 브라우저 감지
+            const userAgent = navigator.userAgent;
+            const isAndroidKakao = /Android/.test(userAgent) && /KAKAO/.test(userAgent);
+            const isWindows = /Windows/.test(userAgent);
+            const isChrome = /Chrome/.test(userAgent) && !/Edge/.test(userAgent);
+            const isEdge = /Edge/.test(userAgent);
+            const isFirefox = /Firefox/.test(userAgent);
+            
+            console.log('브라우저 감지:', {
+                userAgent: userAgent,
+                isAndroidKakao: isAndroidKakao,
+                isWindows: isWindows,
+                isChrome: isChrome,
+                isEdge: isEdge,
+                isFirefox: isFirefox
+            });
             
             if (isAndroidKakao) {
                 // 안드로이드 카카오톡 브라우저용 터치 이벤트 처리
@@ -1686,10 +1725,52 @@ ${apiStatus}
                 });
                 
             } else {
-                // 일반 브라우저용 처리
+                // 윈도우 브라우저 및 일반 브라우저용 처리
+                let isMenuOpen = false;
+                
+                // 클릭 이벤트 처리
                 languageButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    this.toggleLanguageMenu();
+                    e.stopPropagation();
+                    console.log('윈도우/일반 브라우저: 클릭 이벤트');
+                    
+                    if (isMenuOpen) {
+                        this.closeLanguageMenu();
+                        isMenuOpen = false;
+                    } else {
+                        this.openLanguageMenu();
+                        isMenuOpen = true;
+                    }
+                });
+                
+                // 마우스 이벤트 처리 (윈도우 브라우저 최적화)
+                if (isWindows) {
+                    languageButton.addEventListener('mouseenter', (e) => {
+                        console.log('윈도우 브라우저: 마우스 진입');
+                    });
+                    
+                    languageButton.addEventListener('mouseleave', (e) => {
+                        console.log('윈도우 브라우저: 마우스 이탈');
+                    });
+                }
+                
+                // 언어 옵션 선택 시 메뉴 닫기
+                document.querySelectorAll('.language-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('윈도우/일반 브라우저: 언어 옵션 클릭');
+                        isMenuOpen = false;
+                    });
+                    
+                    // 마우스 이벤트도 추가
+                    option.addEventListener('mouseenter', (e) => {
+                        console.log('언어 옵션 마우스 진입');
+                    });
+                    
+                    option.addEventListener('mouseleave', (e) => {
+                        console.log('언어 옵션 마우스 이탈');
+                    });
                 });
             }
         }
@@ -1736,11 +1817,24 @@ ${apiStatus}
             this.detectAndroidKakaoBrowser();
         }
         
-        // 안드로이드 카카오톡 브라우저 감지
+        // 브라우저 감지 (안드로이드 카카오톡 + 윈도우 브라우저)
         detectAndroidKakaoBrowser() {
             const userAgent = navigator.userAgent;
             const isAndroid = /Android/.test(userAgent);
             const isKakao = /KAKAO/.test(userAgent);
+            const isWindows = /Windows/.test(userAgent);
+            const isChrome = /Chrome/.test(userAgent) && !/Edge/.test(userAgent);
+            const isEdge = /Edge/.test(userAgent);
+            const isFirefox = /Firefox/.test(userAgent);
+            
+            console.log('브라우저 감지 결과:', {
+                isAndroid: isAndroid,
+                isKakao: isKakao,
+                isWindows: isWindows,
+                isChrome: isChrome,
+                isEdge: isEdge,
+                isFirefox: isFirefox
+            });
             
             if (isAndroid && isKakao) {
                 console.log('안드로이드 카카오톡 브라우저 감지됨');
@@ -1748,6 +1842,12 @@ ${apiStatus}
                 
                 // 안드로이드 카카오톡 브라우저 특별 최적화
                 this.setupAndroidKakaoOptimizations();
+            } else if (isWindows) {
+                console.log('윈도우 브라우저 감지됨');
+                document.body.classList.add('windows-browser');
+                
+                // 윈도우 브라우저 특별 최적화
+                this.setupWindowsBrowserOptimizations();
             }
         }
         
@@ -1771,6 +1871,56 @@ ${apiStatus}
             }
             
             console.log('안드로이드 카카오톡 브라우저 최적화 적용 완료');
+        }
+        
+        // 윈도우 브라우저 최적화
+        setupWindowsBrowserOptimizations() {
+            // 마우스 이벤트 최적화
+            const allButtons = document.querySelectorAll('button, .language-current, .language-option');
+            allButtons.forEach(button => {
+                button.style.setProperty('cursor', 'pointer', 'important');
+                button.style.setProperty('user-select', 'none', 'important');
+                button.style.setProperty('-webkit-user-select', 'none', 'important');
+            });
+            
+            // 언어 드롭다운 버튼 특별 최적화
+            const languageButton = document.querySelector('.language-current');
+            if (languageButton) {
+                languageButton.style.setProperty('transition', 'all 0.2s ease', 'important');
+                languageButton.style.setProperty('cursor', 'pointer', 'important');
+                
+                // 호버 효과 강화
+                languageButton.addEventListener('mouseenter', () => {
+                    languageButton.style.setProperty('transform', 'translateY(-1px)', 'important');
+                    languageButton.style.setProperty('box-shadow', '0 4px 12px rgba(255, 215, 0, 0.5)', 'important');
+                });
+                
+                languageButton.addEventListener('mouseleave', () => {
+                    languageButton.style.setProperty('transform', 'translateY(0)', 'important');
+                    languageButton.style.setProperty('box-shadow', '0 3px 10px rgba(255, 215, 0, 0.4)', 'important');
+                });
+            }
+            
+            // 언어 옵션 호버 효과
+            const languageOptions = document.querySelectorAll('.language-option');
+            languageOptions.forEach(option => {
+                option.style.setProperty('transition', 'all 0.2s ease', 'important');
+                option.style.setProperty('cursor', 'pointer', 'important');
+                
+                option.addEventListener('mouseenter', () => {
+                    option.style.setProperty('background', 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)', 'important');
+                    option.style.setProperty('transform', 'translateX(2px)', 'important');
+                });
+                
+                option.addEventListener('mouseleave', () => {
+                    if (!option.classList.contains('active')) {
+                        option.style.setProperty('background', 'transparent', 'important');
+                    }
+                    option.style.setProperty('transform', 'translateX(0)', 'important');
+                });
+            });
+            
+            console.log('윈도우 브라우저 최적화 적용 완료');
         }
             
             // 뷰포트 높이 설정
@@ -2016,7 +2166,10 @@ ${apiStatus}
                 chatbot.toggleLanguageMenu();
             } else {
                 const menu = document.getElementById('languageMenu');
-                menu.classList.toggle('show');
+                if (menu) {
+                    menu.classList.toggle('show');
+                    console.log('전역 함수: 언어 메뉴 토글');
+                }
             }
         }
 
