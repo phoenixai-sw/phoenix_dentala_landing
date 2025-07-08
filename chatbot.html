@@ -135,6 +135,29 @@
             z-index: 1001;
         }
 
+        /* AI ON 상태 애니메이션 */
+        .ai-on {
+            background: #d4edda !important;
+            color: #155724 !important;
+            border-color: #c3e6cb !important;
+        }
+
+        .ai-on .blink {
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        /* AI OFF 상태 */
+        .ai-off {
+            background: #f8d7da !important;
+            color: #721c24 !important;
+            border-color: #f5c6cb !important;
+        }
+
         /* 언어 선택 드롭다운 */
         .header-language-dropdown {
             position: absolute;
@@ -1387,10 +1410,6 @@ ${apiStatus}
                         <div style="font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 15px;">
                             ${t.welcomeSubMessage}
                         </div>
-                        <div style="font-size: 11px; color: #888; margin-bottom: 15px; padding: 8px; background: #f0f8ff; border-radius: 6px;">
-                            🎯 <strong>답변 우선순위:</strong> 1차 관리자 → 2차 지식베이스 → 3차 FAQ → 4차 AI API → 5차 시뮬레이션<br>
-                            ${this.hasActiveAPI() ? '🤖 AI API 연결됨' : '❌ AI API 설정 필요 (관리자 메뉴에서 설정)'}
-                        </div>
                         <div class="quick-buttons">
                             <button class="quick-button clinic-hours-btn" onclick="chatbot.handleQuickMessage('진료시간 알려주세요')">
                                 🕘 진료시간
@@ -1526,9 +1545,8 @@ ${apiStatus}
                 if (!apiStatus) return; // 요소가 없으면 리턴
                 
                 if (!this.hasActiveAPI()) {
-                    apiStatus.textContent = '❌ AI API 설정 안됨';
-                    apiStatus.style.background = '#f8f9fa';
-                    apiStatus.style.color = '#6c757d';
+                    apiStatus.innerHTML = '🔴 AI OFF';
+                    apiStatus.className = 'ai-off';
                     return;
                 }
                 
@@ -1537,9 +1555,8 @@ ${apiStatus}
                 if (this.apiSettings?.gemini?.enabled && this.apiSettings.gemini?.apiKey) activeApis.push('Gemini');
                 if (this.apiSettings?.claude?.enabled && this.apiSettings.claude?.apiKey) activeApis.push('Claude');
                 
-                apiStatus.textContent = `✅ AI API (${activeApis.join(', ')})`;
-                apiStatus.style.background = '#d4edda';
-                apiStatus.style.color = '#155724';
+                apiStatus.innerHTML = `<span class="blink">🟢</span> AI ON`;
+                apiStatus.className = 'ai-on';
             }
             
             // 지식베이스 검색 (간소화된 버전)
@@ -1758,6 +1775,11 @@ ${apiStatus}
             console.log('✅ 관리자 로그인 성공');
             document.getElementById('chatbotAdminPage').style.display = 'block';
             
+            // 관리자 페이지 API 상태 업데이트
+            setTimeout(() => {
+                updateAdminApiStatus();
+            }, 100);
+            
             // 관리자 페이지 이벤트 리스너 설정
             setTimeout(() => {
                 setupAdminEventListeners();
@@ -1768,6 +1790,14 @@ ${apiStatus}
         function closeChatbotAdmin() {
             console.log('AI 챗봇 관리 페이지 닫기');
             document.getElementById('chatbotAdminPage').style.display = 'none';
+        }
+
+        // 관리자 페이지 API 상태 업데이트
+        function updateAdminApiStatus() {
+            const adminApiStatus = document.getElementById('adminApiStatus');
+            if (adminApiStatus && window.chatbot) {
+                adminApiStatus.innerHTML = window.chatbot.hasActiveAPI() ? '🟢 AI API 연결됨' : '🔴 AI API 설정 필요';
+            }
         }
 
         // 관리자 페이지 이벤트 리스너 설정
@@ -1829,6 +1859,9 @@ ${apiStatus}
                             console.log('✅ 챗봇 API 설정 업데이트 완료');
                         }
                         
+                        // 관리자 페이지 상태 업데이트
+                        updateAdminApiStatus();
+                        
                         // 성공 알림
                         alert('✅ API 설정이 성공적으로 저장되었습니다!');
                         
@@ -1875,6 +1908,9 @@ ${apiStatus}
                                         window.chatbot.loadApiSettings();
                                         window.chatbot.updateApiStatusDisplay();
                                     }
+                                    
+                                    // 관리자 페이지 상태 업데이트
+                                    updateAdminApiStatus();
                                 } else {
                                     const errorMessage = '❌ 활성화된 API가 없습니다. API 키를 입력해주세요.';
                                     if (statusDiv) {
@@ -1944,6 +1980,9 @@ ${apiStatus}
                                 window.chatbot.updateApiStatusDisplay();
                                 console.log('✅ 챗봇 API 설정 초기화 완료');
                             }
+                            
+                            // 관리자 페이지 상태 업데이트
+                            updateAdminApiStatus();
                             
                             alert('✅ API 설정이 성공적으로 초기화되었습니다!');
                         }
@@ -2312,6 +2351,45 @@ ${apiStatus}
         </div>
         
         <div class="admin-content">
+            <!-- 답변 우선순위 정보 -->
+            <div class="admin-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="section-header">
+                    <h3>🎯 AI 챗봇 답변 우선순위</h3>
+                </div>
+                <div style="padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 15px;">
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 15px; text-align: center;">
+                        답변 처리 순서
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 14px;">
+                        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">1차</div>
+                            <div>🔐 관리자 기능</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">2차</div>
+                            <div>📚 지식베이스 검색</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">3차</div>
+                            <div>❓ 기본 FAQ 답변</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">4차</div>
+                            <div>🤖 AI API 호출</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">5차</div>
+                            <div>🎭 시뮬레이션 답변</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 8px; text-align: center; font-size: 13px;">
+                        <span id="adminApiStatus">
+                            ${this.hasActiveAPI() ? '🟢 AI API 연결됨' : '🔴 AI API 설정 필요'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             <!-- AI 모델 API 설정 -->
             <div class="admin-section">
                 <div class="section-header">
