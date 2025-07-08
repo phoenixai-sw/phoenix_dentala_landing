@@ -198,6 +198,8 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(255, 215, 0, 0.6);
         }
+        
+
 
         .language-menu {
             position: absolute;
@@ -705,6 +707,11 @@
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
+        }
+        
+        /* 안드로이드 카카오톡 브라우저에서 hover 효과 비활성화 */
+        .device-android.kakao-browser .language-current:hover {
+            transform: none !important;
         }
         
         .device-android.kakao-browser .language-option {
@@ -1655,56 +1662,6 @@ ${apiStatus}
                 if (isAndroid && isKakaoTalk) {
                     console.log('안드로이드 카카오톡 브라우저 언어 드롭다운 최적화 적용');
                     document.body.classList.add('device-android', 'kakao-browser');
-                    
-                    // 언어 드롭다운 터치 이벤트 최적화
-                    setTimeout(() => {
-                        const languageCurrent = document.querySelector('.language-current');
-                        const languageOptions = document.querySelectorAll('.language-option');
-                        
-                        if (languageCurrent) {
-                            // 기존 이벤트 리스너 제거
-                            languageCurrent.removeEventListener('touchstart', null);
-                            languageCurrent.removeEventListener('click', null);
-                            
-                            // 새로운 터치 이벤트 리스너 추가 (중복 방지 제거)
-                            languageCurrent.addEventListener('touchstart', function(e) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                console.log('안드로이드 카카오톡: 언어 드롭다운 터치 감지');
-                                toggleLanguageMenu();
-                            }, { passive: false });
-                            
-                            languageCurrent.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                console.log('안드로이드 카카오톡: 언어 드롭다운 클릭 감지');
-                                toggleLanguageMenu();
-                            });
-                        }
-                        
-                        languageOptions.forEach(option => {
-                            // 기존 이벤트 리스너 제거
-                            option.removeEventListener('touchstart', null);
-                            option.removeEventListener('click', null);
-                            
-                            // 새로운 터치 이벤트 리스너 추가 (중복 방지 제거)
-                            option.addEventListener('touchstart', function(e) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                const lang = this.getAttribute('data-lang');
-                                console.log('안드로이드 카카오톡: 언어 선택 터치 감지 -', lang);
-                                selectLanguage(lang);
-                            }, { passive: false });
-                            
-                            option.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                const lang = this.getAttribute('data-lang');
-                                console.log('안드로이드 카카오톡: 언어 선택 클릭 감지 -', lang);
-                                selectLanguage(lang);
-                            });
-                        });
-                    }, 500);
                 }
             }
             
