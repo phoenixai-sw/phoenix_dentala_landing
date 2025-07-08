@@ -902,10 +902,15 @@
             generateGreetingResponse(message) {
                 const lower = message.toLowerCase();
                 const reservationText = this.getReservationText();
+                const consultantText = this.getConsultantText();
                 
                 if (lower.includes('감사') || lower.includes('고마워') || lower.includes('thank')) {
                     return `천만에요! 피닉스치과를 이용해주셔서 감사합니다. 더 궁금한 점이 있으시면 언제든 문의해주세요 😊
                     
+                    <div class="reservation-message">
+                        <div class="reservation-message-text">${consultantText.message}</div>
+                        <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
+                    </div>
                     <div class="reservation-message">
                         <div class="reservation-message-text">${reservationText.message}</div>
                         <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
@@ -914,6 +919,10 @@
                 
                 return `안녕하세요! 피닉스치과 AI 상담사입니다. 궁금한 점이 있으시면 언제든 말씀해 주세요 😊
                 
+                <div class="reservation-message">
+                    <div class="reservation-message-text">${consultantText.message}</div>
+                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
+                </div>
                 <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
@@ -1009,20 +1018,44 @@
             getReservationText() {
                 const texts = {
                     ko: {
-                        message: '자세한 문의는 방문 상담을 받아보세요',
+                        message: '자세한 문의는 방문 상담을 받아보세요!',
                         button: '📅 예약하기'
                     },
                     en: {
-                        message: 'For detailed inquiries, please visit for consultation',
+                        message: 'For detailed inquiries, please visit for consultation!',
                         button: '📅 Make Reservation'
                     },
                     ru: {
-                        message: 'Для подробных консультаций, пожалуйста, посетите нас',
+                        message: 'Для подробных консультаций, пожалуйста, посетите нас!',
                         button: '📅 Записаться'
                     },
                     ja: {
-                        message: '詳細なお問い合わせは来院相談をお受けください',
+                        message: '詳細なお問い合わせは来院相談をお受けください！',
                         button: '📅 予約する'
+                    }
+                };
+                
+                return texts[this.currentLanguage] || texts['ko'];
+            }
+            
+            // 언어별 전문상담원 텍스트 반환
+            getConsultantText() {
+                const texts = {
+                    ko: {
+                        message: '필요하다면 전문상담원에게 1:1 상담 받아보세요!',
+                        button: '💬 전문상담원 1:1'
+                    },
+                    en: {
+                        message: 'If needed, get 1:1 consultation with a specialist!',
+                        button: '💬 Specialist 1:1'
+                    },
+                    ru: {
+                        message: 'При необходимости получите индивидуальную консультацию специалиста!',
+                        button: '💬 Специалист 1:1'
+                    },
+                    ja: {
+                        message: '必要に応じて専門相談員に1対1相談を受けてください！',
+                        button: '💬 専門相談員 1:1'
                     }
                 };
                 
@@ -1238,9 +1271,14 @@
                 };
                 
                 const reservationText = this.getReservationText();
+                const consultantText = this.getConsultantText();
                 
                 return `${providerIcon[provider]} <strong>피닉스 치과 AI 상담사</strong><br><br>
                 ${response}<br><br>
+                <div class="reservation-message">
+                    <div class="reservation-message-text">${consultantText.message}</div>
+                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
+                </div>
                 <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
@@ -1280,6 +1318,7 @@
                     '❌ AI API가 설정되지 않아 기본 답변을 제공합니다. (관리자 메뉴에서 AI API 설정 가능)';
                 
                 const reservationText = this.getReservationText();
+                const consultantText = this.getConsultantText();
                 
                 return responses[Math.floor(Math.random() * responses.length)] + `
                 
@@ -1293,6 +1332,10 @@ ${apiStatus}
 
 📞 **직접 문의:** 070-1234-1234
 
+<div class="reservation-message">
+    <div class="reservation-message-text">${consultantText.message}</div>
+    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
+</div>
 <div class="reservation-message">
     <div class="reservation-message-text">${reservationText.message}</div>
     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
@@ -1550,11 +1593,16 @@ ${apiStatus}
                 
                 if (bestScore >= 50) {
                     const reservationText = this.getReservationText();
+                    const consultantText = this.getConsultantText();
                     return `📚 <strong>피닉스 치과 전문 지식 답변</strong><br><br>
                             <strong>Q:</strong> ${bestMatch.question}<br><br>
                             <strong>A:</strong> ${bestMatch.answer}<br><br>
                             <small>💡 전문 지식 데이터베이스에서 제공된 답변입니다.</small>
                             
+                            <div class="reservation-message">
+                                <div class="reservation-message-text">${consultantText.message}</div>
+                                <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
+                            </div>
                             <div class="reservation-message">
                                 <div class="reservation-message-text">${reservationText.message}</div>
                                 <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
@@ -1574,8 +1622,13 @@ ${apiStatus}
                 };
                 
                 const reservationText = this.getReservationText();
+                const consultantText = this.getConsultantText();
                 
                 return content[lang] + `<br><br><div class="reservation-message">
+                    <div class="reservation-message-text">${consultantText.message}</div>
+                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
+                </div>
+                <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
@@ -1590,8 +1643,13 @@ ${apiStatus}
                 };
                 
                 const reservationText = this.getReservationText();
+                const consultantText = this.getConsultantText();
                 
                 return content[lang] + `<br><br><div class="reservation-message">
+                    <div class="reservation-message-text">${consultantText.message}</div>
+                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
+                </div>
+                <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
@@ -1602,12 +1660,17 @@ ${apiStatus}
                     ko: '📞 <strong>피닉스 치과 예약 문의</strong><br><br>🏥 <strong>병원명:</strong> 피닉스 치과<br>📞 <strong>전화번호:</strong> 070-1234-1234<br>💬 <strong>카카오톡:</strong> 피닉스치과<br>🌐 <strong>온라인 예약:</strong> 홈페이지 예약 시스템<br><br>💡 <strong>온라인 예약이 가장 편리합니다!</strong>',
                     en: '📞 <strong>Phoenix Dental Reservation</strong><br><br>🏥 <strong>Clinic:</strong> Phoenix Dental<br>📞 <strong>Phone:</strong> 070-1234-1234<br>💬 <strong>KakaoTalk:</strong> Phoenix Dental<br>🌐 <strong>Online:</strong> Website reservation system<br><br>💡 <strong>Online booking is most convenient!</strong>',
                     ru: '📞 <strong>Запись Phoenix Dental</strong><br><br>🏥 <strong>Клиника:</strong> Phoenix Dental<br>📞 <strong>Телефон:</strong> 070-1234-1234<br>💬 <strong>KakaoTalk:</strong> Phoenix Dental<br>🌐 <strong>Онлайн:</strong> Система записи на сайте<br><br>💡 <strong>Онлайн запись наиболее удобна!</strong>',
-                    ja: '📞 <strong>フェニックス歯科予約</strong><br><br>🏥 <strong>病院名:</strong> フェニックス歯科<br>📞 <strong>電話番号:</strong> 070-1234-1234<br>💬 <strong>カカオトーク:</strong> フェニックス歯科<br>🌐 <strong>オンライン:</strong> ホーム페이지予約システム<br><br>💡 <strong>オンライン予約が最も便利です!</strong>'
+                    ja: '📞 <strong>フェニックス歯科予約</strong><br><br>🏥 <strong>病院名:</strong> フェニックス歯科<br>📞 <strong>電話番号:</strong> 070-1234-1234<br>💬 <strong>カカオトーク:</strong> フェニックス歯科<br>🌐 <strong>オンライン:</strong> ホームページ予約システム<br><br>💡 <strong>オンライン予約が最も便利です!</strong>'
                 };
                 
                 const reservationText = this.getReservationText();
+                const consultantText = this.getConsultantText();
                 
                 return content[lang] + `<br><br><div class="reservation-message">
+                    <div class="reservation-message-text">${consultantText.message}</div>
+                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
+                </div>
+                <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
@@ -1622,8 +1685,13 @@ ${apiStatus}
                 };
                 
                 const reservationText = this.getReservationText();
+                const consultantText = this.getConsultantText();
                 
                 return content[lang] + `<br><br><div class="reservation-message">
+                    <div class="reservation-message-text">${consultantText.message}</div>
+                    <button class="reservation-button" onclick="window.open('http://pf.kakao.com/_DiIin/chat', '_blank')">${consultantText.button}</button>
+                </div>
+                <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
                     <button class="reservation-button" onclick="window.open('reservation.html', '_blank')">${reservationText.button}</button>
                 </div>`;
