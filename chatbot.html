@@ -965,7 +965,15 @@
                     
                 } catch (error) {
                     console.error('❌ 메시지 처리 오류:', error);
-                    this.addBotMessage('죄송합니다. 일시적인 오류가 발생했습니다. 다시 시도해주세요.');
+                    
+                    const errorMessages = {
+                        ko: '죄송합니다. 일시적인 오류가 발생했습니다. 다시 시도해주세요.',
+                        en: 'Sorry. A temporary error occurred. Please try again.',
+                        ru: 'Извините. Произошла временная ошибка. Пожалуйста, попробуйте еще раз.',
+                        ja: '申し訳ございません。一時的なエラーが発生しました。もう一度お試しください。'
+                    };
+                    
+                    this.addBotMessage(errorMessages[this.currentLanguage] || errorMessages['ko']);
                 } finally {
                     this.setProcessingFlag(false);
                 }
@@ -1015,8 +1023,30 @@
                 const lower = message.toLowerCase();
                 const reservationText = this.getReservationText();
                 
-                if (lower.includes('감사') || lower.includes('고마워') || lower.includes('thank')) {
-                    return `천만에요! 피닉스치과를 이용해주셔서 감사합니다. 더 궁금한 점이 있으시면 언제든 문의해주세요 😊
+                const greetingResponses = {
+                    ko: {
+                        thanks: `천만에요! 피닉스치과를 이용해주셔서 감사합니다. 더 궁금한 점이 있으시면 언제든 문의해주세요 😊`,
+                        hello: `안녕하세요! 피닉스치과 AI 상담사입니다. 궁금한 점이 있으시면 언제든 말씀해 주세요 😊`
+                    },
+                    en: {
+                        thanks: `You're welcome! Thank you for using Phoenix Dental. If you have any more questions, please feel free to ask anytime 😊`,
+                        hello: `Hello! I am Phoenix Dental AI consultant. If you have any questions, please feel free to ask anytime 😊`
+                    },
+                    ru: {
+                        thanks: `Пожалуйста! Спасибо, что пользуетесь Phoenix Dental. Если у вас есть еще вопросы, пожалуйста, обращайтесь в любое время 😊`,
+                        hello: `Здравствуйте! Я консультант ИИ стоматологии Phoenix. Если у вас есть вопросы, пожалуйста, обращайтесь в любое время 😊`
+                    },
+                    ja: {
+                        thanks: `どういたしまして！フェニックス歯科をご利用いただき、ありがとうございます。他にご質問がございましたら、いつでもお気軽にお聞かせください 😊`,
+                        hello: `こんにちは！フェニックス歯科AIコンサルタントです。ご質問がございましたら、いつでもお気軽にお聞かせください 😊`
+                    }
+                };
+                
+                const currentResponses = greetingResponses[this.currentLanguage] || greetingResponses['ko'];
+                
+                if (lower.includes('감사') || lower.includes('고마워') || lower.includes('thank') || 
+                    lower.includes('спасибо') || lower.includes('ありがとう')) {
+                    return `${currentResponses.thanks}
                     
                     <div class="reservation-message">
                         <div class="reservation-message-text">${reservationText.message}</div>
@@ -1024,7 +1054,7 @@
                     </div>`;
                 }
                 
-                return `안녕하세요! 피닉스치과 AI 상담사입니다. 궁금한 점이 있으시면 언제든 말씀해 주세요 😊
+                return `${currentResponses.hello}
                 
                 <div class="reservation-message">
                     <div class="reservation-message-text">${reservationText.message}</div>
@@ -1462,7 +1492,14 @@
             
             // AI 응답 생성
             async generateAIResponse(message) {
-                const loadingMessage = this.addBotMessage('👩‍⚕️ 피닉스 치과 AI 상담사가 답변을 준비 중 입니다...⏰<span class="loading-dots"></span>');
+                const loadingMessages = {
+                    ko: '👩‍⚕️ 피닉스 치과 AI 상담사가 답변을 준비 중 입니다...⏰<span class="loading-dots"></span>',
+                    en: '👩‍⚕️ Phoenix Dental AI consultant is preparing an answer...⏰<span class="loading-dots"></span>',
+                    ru: '👩‍⚕️ Консультант ИИ Phoenix Dental готовит ответ...⏰<span class="loading-dots"></span>',
+                    ja: '👩‍⚕️ フェニックス歯科AIコンサルタントが回答を準備中です...⏰<span class="loading-dots"></span>'
+                };
+                
+                const loadingMessage = this.addBotMessage(loadingMessages[this.currentLanguage] || loadingMessages['ko']);
                 
                 try {
                     // API 호출 로직
@@ -1475,6 +1512,15 @@
                 } catch (error) {
                     console.error('AI API 호출 실패:', error);
                     this.removeMessage(loadingMessage);
+                    
+                    const apiErrorMessages = {
+                        ko: '🤖 AI API 호출 중 오류가 발생했습니다. 기본 답변을 제공합니다.',
+                        en: '🤖 An error occurred while calling AI API. Providing default answer.',
+                        ru: '🤖 Произошла ошибка при вызове ИИ API. Предоставляется базовый ответ.',
+                        ja: '🤖 AI API呼び出し中にエラーが発生しました。デフォルト回答を提供します。'
+                    };
+                    
+                    this.addBotMessage(apiErrorMessages[this.currentLanguage] || apiErrorMessages['ko']);
                     const fallbackResponse = this.generateSimulatedResponse(message);
                     this.addBotMessage(fallbackResponse);
                 }
@@ -1482,29 +1528,95 @@
             
             // 시뮬레이션된 응답 생성 (더 자연스럽게)
             generateSimulatedResponse(message) {
-                const responses = [
-                    `안녕하세요! "${message}"에 대한 답변을 도와드리겠습니다.`,
-                    '피닉스치과 AI 상담사입니다. 더 자세한 상담이 필요하시면 언제든 연락주세요!',
-                    '궁금한 점이 있으시면 진료시간, 치료비용, 예약, 오시는길 등을 입력해보세요.'
-                ];
+                const responses = {
+                    ko: [
+                        `안녕하세요! "${message}"에 대한 답변을 도와드리겠습니다.`,
+                        '피닉스치과 AI 상담사입니다. 더 자세한 상담이 필요하시면 언제든 연락주세요!',
+                        '궁금한 점이 있으시면 진료시간, 치료비용, 예약, 오시는길 등을 입력해보세요.'
+                    ],
+                    en: [
+                        `Hello! I'll help you with an answer about "${message}".`,
+                        'I am Phoenix Dental AI consultant. Please contact us anytime if you need more detailed consultation!',
+                        'If you have any questions, please try entering clinic hours, treatment costs, reservation, directions, etc.'
+                    ],
+                    ru: [
+                        `Здравствуйте! Я помогу вам с ответом на "${message}".`,
+                        'Я консультант ИИ стоматологии Phoenix. Пожалуйста, обращайтесь в любое время, если вам нужна более подробная консультация!',
+                        'Если у вас есть вопросы, попробуйте ввести часы работы, стоимость лечения, запись, как добраться и т.д.'
+                    ],
+                    ja: [
+                        `こんにちは！"${message}"についての回答をお手伝いします。`,
+                        'フェニックス歯科AIコンサルタントです。より詳細な相談が必要でしたら、いつでもご連絡ください！',
+                        'ご質問がございましたら、診療時間、治療費、予約、アクセスなどを入力してみてください。'
+                    ]
+                };
                 
-                const apiStatus = this.hasActiveAPI() ? 
-                    '🤖 AI API가 연결되어 있어 더 정확한 답변을 제공할 수 있습니다.' : 
-                    '❌ AI API가 설정되지 않아 기본 답변을 제공합니다. (관리자 메뉴에서 AI API 설정 가능)';
+                const quickMenu = {
+                    ko: {
+                        title: '💡 **빠른 문의 메뉴:**',
+                        clinicHours: '• "진료시간" - 병원 운영시간 안내',
+                        treatmentCost: '• "치료비용" - 치료비 정보',
+                        reservation: '• "예약" - 예약 및 상담 문의',
+                        directions: '• "오시는길" - 병원 위치 안내',
+                        directInquiry: '📞 **직접 문의:** 070-1234-1234'
+                    },
+                    en: {
+                        title: '💡 **Quick Inquiry Menu:**',
+                        clinicHours: '• "Clinic Hours" - Hospital operating hours',
+                        treatmentCost: '• "Treatment Cost" - Treatment cost information',
+                        reservation: '• "Reservation" - Reservation and consultation inquiry',
+                        directions: '• "Directions" - Hospital location guide',
+                        directInquiry: '📞 **Direct Inquiry:** 070-1234-1234'
+                    },
+                    ru: {
+                        title: '💡 **Быстрое меню запросов:**',
+                        clinicHours: '• "Часы работы" - Часы работы больницы',
+                        treatmentCost: '• "Стоимость лечения" - Информация о стоимости лечения',
+                        reservation: '• "Запись" - Запись и консультация',
+                        directions: '• "Как добраться" - Как найти больницу',
+                        directInquiry: '📞 **Прямой запрос:** 070-1234-1234'
+                    },
+                    ja: {
+                        title: '💡 **クイック問い合わせメニュー:**',
+                        clinicHours: '• "診療時間" - 病院営業時間案内',
+                        treatmentCost: '• "治療費" - 治療費情報',
+                        reservation: '• "予約" - 予約・相談問い合わせ',
+                        directions: '• "アクセス" - 病院所在地案内',
+                        directInquiry: '📞 **直接問い合わせ:** 070-1234-1234'
+                    }
+                };
                 
+                const apiStatus = {
+                    ko: this.hasActiveAPI() ? 
+                        '🤖 AI API가 연결되어 있어 더 정확한 답변을 제공할 수 있습니다.' : 
+                        '❌ AI API가 설정되지 않아 기본 답변을 제공합니다. (관리자 메뉴에서 AI API 설정 가능)',
+                    en: this.hasActiveAPI() ? 
+                        '🤖 AI API is connected and can provide more accurate answers.' : 
+                        '❌ AI API is not set up, providing basic answers. (AI API can be set up in admin menu)',
+                    ru: this.hasActiveAPI() ? 
+                        '🤖 ИИ API подключен и может предоставить более точные ответы.' : 
+                        '❌ ИИ API не настроен, предоставляются базовые ответы. (ИИ API можно настроить в меню администратора)',
+                    ja: this.hasActiveAPI() ? 
+                        '🤖 AI APIが接続されており、より正確な回答を提供できます。' : 
+                        '❌ AI APIが設定されていないため、基本的な回答を提供します。（管理者メニューでAI API設定可能）'
+                };
+                
+                const currentResponses = responses[this.currentLanguage] || responses['ko'];
+                const currentQuickMenu = quickMenu[this.currentLanguage] || quickMenu['ko'];
+                const currentApiStatus = apiStatus[this.currentLanguage] || apiStatus['ko'];
                 const reservationText = this.getReservationText();
                 
-                return responses[Math.floor(Math.random() * responses.length)] + `
+                return currentResponses[Math.floor(Math.random() * currentResponses.length)] + `
                 
-💡 **빠른 문의 메뉴:**
-• "진료시간" - 병원 운영시간 안내
-• "치료비용" - 치료비 정보
-• "예약" - 예약 및 상담 문의  
-• "오시는길" - 병원 위치 안내
+${currentQuickMenu.title}
+${currentQuickMenu.clinicHours}
+${currentQuickMenu.treatmentCost}
+${currentQuickMenu.reservation}
+${currentQuickMenu.directions}
 
-${apiStatus}
+${currentApiStatus}
 
-📞 **직접 문의:** 070-1234-1234
+${currentQuickMenu.directInquiry}
 
 <div class="reservation-message">
     <div class="reservation-message-text">${reservationText.message}</div>
@@ -1563,6 +1675,35 @@ ${apiStatus}
             addWelcomeMessage() {
                 const t = this.translations[this.currentLanguage];
                 
+                const quickButtons = {
+                    ko: {
+                        clinicHours: { text: '🕘 진료시간', message: '진료시간 알려주세요' },
+                        treatmentCost: { text: '💰 치료비용', message: '치료비용 궁금해요' },
+                        reservation: { text: '📞 예약문의', message: '예약문의 하고싶어요' },
+                        directions: { text: '🗺️ 오시는길', message: '오시는길 알려주세요' }
+                    },
+                    en: {
+                        clinicHours: { text: '🕘 Clinic Hours', message: 'Tell me about clinic hours' },
+                        treatmentCost: { text: '💰 Treatment Cost', message: 'I want to know about treatment costs' },
+                        reservation: { text: '📞 Reservation', message: 'I want to make a reservation inquiry' },
+                        directions: { text: '🗺️ Directions', message: 'Tell me how to get there' }
+                    },
+                    ru: {
+                        clinicHours: { text: '🕘 Часы работы', message: 'Расскажите о часах работы' },
+                        treatmentCost: { text: '💰 Стоимость лечения', message: 'Хочу узнать о стоимости лечения' },
+                        reservation: { text: '📞 Запись', message: 'Хочу записаться на консультацию' },
+                        directions: { text: '🗺️ Как добраться', message: 'Расскажите как добраться' }
+                    },
+                    ja: {
+                        clinicHours: { text: '🕘 診療時間', message: '診療時間を教えてください' },
+                        treatmentCost: { text: '💰 治療費', message: '治療費について知りたいです' },
+                        reservation: { text: '📞 予約', message: '予約相談をしたいです' },
+                        directions: { text: '🗺️ アクセス', message: 'アクセス方法を教えてください' }
+                    }
+                };
+                
+                const currentButtons = quickButtons[this.currentLanguage] || quickButtons['ko'];
+                
                 const welcomeMessage = `
                     <div style="text-align: center; color: #333;">
                         <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #2c3e50;">
@@ -1572,17 +1713,17 @@ ${apiStatus}
                             ${t.welcomeSubMessage}
                         </div>
                         <div class="quick-buttons">
-                            <button class="quick-button clinic-hours-btn" onclick="chatbot.handleQuickMessage('진료시간 알려주세요')">
-                                🕘 진료시간
+                            <button class="quick-button clinic-hours-btn" onclick="chatbot.handleQuickMessage('${currentButtons.clinicHours.message}')">
+                                ${currentButtons.clinicHours.text}
                             </button>
-                            <button class="quick-button treatment-cost-btn" onclick="chatbot.handleQuickMessage('치료비용 궁금해요')">
-                                💰 치료비용
+                            <button class="quick-button treatment-cost-btn" onclick="chatbot.handleQuickMessage('${currentButtons.treatmentCost.message}')">
+                                ${currentButtons.treatmentCost.text}
                             </button>
-                            <button class="quick-button reservation-btn" onclick="chatbot.handleQuickMessage('예약문의 하고싶어요')">
-                                📞 예약문의
+                            <button class="quick-button reservation-btn" onclick="chatbot.handleQuickMessage('${currentButtons.reservation.message}')">
+                                ${currentButtons.reservation.text}
                             </button>
-                            <button class="quick-button directions-btn" onclick="chatbot.handleQuickMessage('오시는길 알려주세요')">
-                                🗺️ 오시는길
+                            <button class="quick-button directions-btn" onclick="chatbot.handleQuickMessage('${currentButtons.directions.message}')">
+                                ${currentButtons.directions.text}
                             </button>
                         </div>
                     </div>
@@ -2042,10 +2183,32 @@ ${apiStatus}
                 
                 if (bestScore >= 50) {
                     const reservationText = this.getReservationText();
-                    return `📚 <strong>피닉스 치과 전문 지식 답변</strong><br><br>
+                    
+                    const knowledgeResponse = {
+                        ko: {
+                            title: '📚 <strong>피닉스 치과 전문 지식 답변</strong>',
+                            note: '💡 전문 지식 데이터베이스에서 제공된 답변입니다.'
+                        },
+                        en: {
+                            title: '📚 <strong>Phoenix Dental Professional Knowledge Answer</strong>',
+                            note: '💡 Answer provided from professional knowledge database.'
+                        },
+                        ru: {
+                            title: '📚 <strong>Профессиональный ответ Phoenix Dental</strong>',
+                            note: '💡 Ответ предоставлен из профессиональной базы знаний.'
+                        },
+                        ja: {
+                            title: '📚 <strong>フェニックス歯科専門知識回答</strong>',
+                            note: '💡 専門知識データベースから提供された回答です。'
+                        }
+                    };
+                    
+                    const currentKnowledge = knowledgeResponse[this.currentLanguage] || knowledgeResponse['ko'];
+                    
+                    return `${currentKnowledge.title}<br><br>
                             <strong>Q:</strong> ${bestMatch.question}<br><br>
                             <strong>A:</strong> ${bestMatch.answer}<br><br>
-                            <small>💡 전문 지식 데이터베이스에서 제공된 답변입니다.</small>
+                            <small>${currentKnowledge.note}</small>
                             
                             <div class="reservation-message">
                                 <div class="reservation-message-text">${reservationText.message}</div>
@@ -2123,13 +2286,42 @@ ${apiStatus}
             
             // 관리자 기능 처리
             handleAdminCommand() {
+                const adminTexts = {
+                    ko: {
+                        title: '🤖 AI챗봇 관리 로그인',
+                        description: '관리자 페이지에 접속하려면 아래 버튼을 클릭하세요.',
+                        note: '💡 로그인 후 관리자 페이지 상단에서 아이디/비밀번호를 확인할 수 있습니다.',
+                        button: '🔐 관리자 페이지 열기'
+                    },
+                    en: {
+                        title: '🤖 AI Chatbot Admin Login',
+                        description: 'Click the button below to access the admin page.',
+                        note: '💡 After login, you can check the ID/password at the top of the admin page.',
+                        button: '🔐 Open Admin Page'
+                    },
+                    ru: {
+                        title: '🤖 Вход в админ-панель ИИ чат-бота',
+                        description: 'Нажмите кнопку ниже, чтобы получить доступ к странице администратора.',
+                        note: '💡 После входа вы можете проверить ID/пароль в верхней части страницы администратора.',
+                        button: '🔐 Открыть страницу администратора'
+                    },
+                    ja: {
+                        title: '🤖 AIチャットボット管理ログイン',
+                        description: '管理者ページにアクセスするには、下のボタンをクリックしてください。',
+                        note: '💡 ログイン後、管理者ページ上部でID/パスワードを確認できます。',
+                        button: '🔐 管理者ページを開く'
+                    }
+                };
+                
+                const currentAdminText = adminTexts[this.currentLanguage] || adminTexts['ko'];
+                
                 const adminLink = `
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; margin: 15px 0; text-align: center;">
-                        <h4 style="margin-bottom: 15px;">🤖 AI챗봇 관리 로그인</h4>
-                        <p style="margin-bottom: 10px;">관리자 페이지에 접속하려면 아래 버튼을 클릭하세요.</p>
-                        <p style="margin-bottom: 20px; font-size: 14px; opacity: 0.9;">💡 로그인 후 관리자 페이지 상단에서 아이디/비밀번호를 확인할 수 있습니다.</p>
+                        <h4 style="margin-bottom: 15px;">${currentAdminText.title}</h4>
+                        <p style="margin-bottom: 10px;">${currentAdminText.description}</p>
+                        <p style="margin-bottom: 20px; font-size: 14px; opacity: 0.9;">${currentAdminText.note}</p>
                         <button onclick="openAdminPanel()" style="background: white; color: #667eea; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 16px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                            🔐 관리자 페이지 열기
+                            ${currentAdminText.button}
                         </button>
                     </div>
                 `;
@@ -2186,6 +2378,12 @@ ${apiStatus}
                 };
                 
                 chatbot.addBotMessage(changeMessages[language] || changeMessages['ko']);
+                
+                // 언어 변경 후 환영 메시지 다시 표시
+                setTimeout(() => {
+                    chatbot.addWelcomeMessage();
+                }, 1000);
+                
                 chatbot.closeLanguageMenu();
             }
         }
