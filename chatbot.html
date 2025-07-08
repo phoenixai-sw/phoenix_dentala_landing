@@ -2884,13 +2884,9 @@
                 return;
             }
 
-            // 3. FAQ 4개만 고정 답변
+            // 3. FAQ (치료비용은 제외)
             const isClinicHours = message.includes('진료시간') || message.includes('clinic hours') || message.includes('hours') ||
                                   message.includes('часы работы') || message.includes('診療時間');
-            const isTreatmentCost = message.includes('치료비용') || message.includes('가격') || message.includes('비용') ||
-                                    message.includes('cost') || message.includes('price') || message.includes('treatment') ||
-                                    message.includes('стоимость') || message.includes('цена') ||
-                                    message.includes('料金') || message.includes('費用');
             const isReservationInquiry = message.includes('예약') || message.includes('예약문의') ||
                                         message.includes('reservation') || message.includes('booking') || message.includes('inquiry') ||
                                         message.includes('запись') || message.includes('бронирование') ||
@@ -2903,9 +2899,6 @@
             if (isClinicHours) {
                 addBotMessage(t.clinicHours);
                 return;
-            } else if (isTreatmentCost) {
-                addBotMessage(t.treatmentCost);
-                return;
             } else if (isReservationInquiry) {
                 addBotMessage(t.reservationInquiry);
                 return;
@@ -2914,7 +2907,7 @@
                 return;
             }
 
-            // 4. FAQ에 해당하지 않는 질문은 AI API로!
+            // 4. FAQ에 해당하지 않는 질문(치료비용 포함)은 AI API로!
             let apiSettings = null;
             try {
                 const savedSettings = localStorage.getItem('chatbotApiSettings');
