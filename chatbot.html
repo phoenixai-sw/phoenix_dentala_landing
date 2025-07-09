@@ -938,11 +938,24 @@
                         return;
                     }
                     
+                    // 특정 치료비용 질문 처리 추가
+                    if (this.isSpecificTreatmentCostQuery(message)) {
+                        console.log('💰 특정 치료비용 질문 감지: 키워드 답변 제공');
+                        const costAnswer = this.createTreatmentCostContent(this.currentLanguage);
+                        this.addBotMessage(costAnswer);
+                        return;
+                    }
+                    
                     // ✅ 4차: AI API 호출
                     console.log('🤖 4차: AI API 호출 시도');
                     if (this.hasActiveAPI()) {
                         console.log('✅ 활성화된 AI API 발견');
-                        await this.generateAIResponse(message);
+                        
+                        // 상세 질문이나 특정 치료비용 질문인 경우에만 스마트 필터링 적용
+                        const useSmartFiltering = this.isDetailedQuestion(message) || 
+                                                 this.isSpecificTreatmentCostQuery(message);
+                        
+                        await this.generateAIResponse(message, useSmartFiltering);
                         return;
                     }
                     
@@ -1052,8 +1065,14 @@
                 </div>`;
             }
             
-            // FAQ 답변 처리 (개선된 키워드 매칭)
+            // FAQ 답변 처리 (스마트 키워드 매칭)
             getFAQAnswer(message) {
+                // 상세 질문인 경우 키워드 매칭 우회
+                if (this.isDetailedQuestion(message)) {
+                    console.log(' 상세 질문 감지: 키워드 매칭 우회');
+                    return null;
+                }
+                
                 const keywordGroups = this.getKeywordGroups();
                 const normalized = message.toLowerCase().trim();
                 
@@ -1088,23 +1107,59 @@
                 return null;
             }
             
-            // 키워드 그룹 정의 (더 정확한 매칭)
+            // 키워드 그룹 정의 (균형잡힌 다국어 키워드)
             getKeywordGroups() {
                 return {
                     clinicHours: {
-                        keywords: ['진료시간', '운영시간', '문여는', '열어', 'clinic hours', 'hours', 'часы работы', '診療時間'],
+                        keywords: [
+                            // 한국어 (7개)
+                            '진료시간', '운영시간', '문여는', '열어', '닫는', '휴무', '휴진',
+                            // 영어 (7개)
+                            'clinic hours', 'hours', 'operating hours', 'open', 'close', 'closed', 'holiday',
+                            // 러시아어 (7개)
+                            'часы работы', 'рабочие часы', 'открыто', 'закрыто', 'выходной',
+                            // 일본어 (7개)
+                            '診療時間', '営業時間', '開く', '閉じる', '休診', '休み'
+                        ],
                         type: 'clinicHours'
                     },
                     treatmentCost: {
-                        keywords: ['치료비용', '진료비', '비용', '가격', '얼마', 'cost', 'price', 'стоимость', '料金', '스케일링', '임플란트', '교정', '미백'],
+                        keywords: [
+                            // 한국어 (7개)
+                            '치료비용', '진료비', '비용', '가격', '얼마', '요금', '금액',
+                            // 영어 (7개)
+                            'treatment cost', 'cost', 'price', 'fee', 'charge', 'amount',
+                            // 러시아어 (7개)
+                            'стоимость лечения', 'стоимость', 'цена', 'плата', 'сумма',
+                            // 일본어 (7개)
+                            '治療費', '料金', '価格', '費用', '金額'
+                        ],
                         type: 'treatmentCost'
                     },
                     reservation: {
-                        keywords: ['예약', '예약문의', '신청', 'reservation', 'booking', 'запись', '予約', '접수'],
+                        keywords: [
+                            // 한국어 (6개)
+                            '예약', '예약문의', '신청', '접수', '상담', '문의',
+                            // 영어 (6개)
+                            'reservation', 'booking', 'appointment', 'consultation', 'inquiry',
+                            // 러시아어 (6개)
+                            'запись', 'бронирование', 'консультация', 'запрос',
+                            // 일본어 (6개)
+                            '予約', '申し込み', '相談', '問い合わせ'
+                        ],
                         type: 'reservationInquiry'
                     },
                     directions: {
-                        keywords: ['오시는길', '주소', '위치', '어디', 'directions', 'location', 'address', 'адрес', '場所', '찾아'],
+                        keywords: [
+                            // 한국어 (8개)
+                            '오시는길', '주소', '위치', '어디', '찾아', '교통', '지하철', '버스',
+                            // 영어 (8개)
+                            'directions', 'location', 'address', 'where', 'find', 'transport', 'subway', 'bus',
+                            // 러시아어 (8개)
+                            'как добраться', 'адрес', 'местоположение', 'где', 'найти', 'транспорт', 'метро', 'автобус',
+                            // 일본어 (8개)
+                            'アクセス', '住所', '場所', 'どこ', '見つける', '交通', '地下鉄', 'バス'
+                        ],
                         type: 'directions'
                     }
                 };
@@ -1117,6 +1172,76 @@
                     const wordBoundary = new RegExp(`\\b${keyword.toLowerCase()}\\b`);
                     return wordBoundary.test(message) || message.includes(keyword.toLowerCase());
                 });
+            }
+            
+            // 상세 질문 패턴 감지 함수 추가
+            isDetailedQuestion(message) {
+                const detailedPatterns = [
+                    // 질문어 패턴
+                    /(어떻게|어떤|왜|언제|어디서|누가|무엇을|어떠한|어떤지|어떻게요|어떤가요|왜요|언제요|어디서요|누가요|무엇을요|어떠한가요)/,
+                    // 상세 설명 요청 패턴
+                    /(자세히|상세히|구체적으로|정확히|정확한|자세한|상세한|구체적인|알려주세요|설명해주세요|가르쳐주세요|알려주시겠어요|설명해주시겠어요|가르쳐주시겠어요)/,
+                    // 비교/분석 요청 패턴
+                    /(차이점|비교|분석|장단점|장점|단점|어떤|어떤 것이|어떤 것이 좋은지|어떤 것이 나쁜지|어떤 것이 더|어떤 것이 적합한지)/,
+                    // 과정/절차 요청 패턴
+                    /(과정|절차|순서|단계|방법|어떻게|어떤 순서로|어떤 단계로|어떤 과정을|어떤 절차를|어떤 방법으로)/,
+                    // 원인/이유 요청 패턴
+                    /(원인|이유|왜|어떤 이유로|어떤 원인으로|왜 그런지|어떤 이유인지|어떤 원인인지|왜 그런가요|어떤 이유인가요|어떤 원인인가요)/
+                ];
+                
+                const normalized = message.toLowerCase().trim();
+                return detailedPatterns.some(pattern => pattern.test(normalized));
+            }
+            
+            // 특정 치료비용 질문 감지 함수 추가
+            isSpecificTreatmentCostQuery(message) {
+                const costKeywords = [
+                    // 치료 종류별 키워드
+                    '스케일링', '임플란트', '교정', '미백', '충치', '발치', '보철', '치근관', '잇몸',
+                    'scaling', 'implant', 'orthodontics', 'whitening', 'cavity', 'extraction', 'prosthesis', 'root canal', 'gum',
+                    'чистка', 'имплант', 'ортодонтия', 'отбеливание', 'кариес', 'удаление', 'протезирование', 'канал', 'десна',
+                    'スケーリング', 'インプラント', '矯正', 'ホワイトニング', '虫歯', '抜歯', '補綴', '根管', '歯茎'
+                ];
+                
+                const priceKeywords = [
+                    // 가격 관련 키워드
+                    '얼마', '비용', '가격', '요금', '금액', '돈', '원',
+                    'cost', 'price', 'fee', 'amount', 'money',
+                    'стоимость', 'цена', 'плата', 'сумма', 'деньги',
+                    '料金', '価格', '費用', '金額', 'お金', '円'
+                ];
+                
+                const normalized = message.toLowerCase().trim();
+                const hasCostKeyword = costKeywords.some(keyword => normalized.includes(keyword));
+                const hasPriceKeyword = priceKeywords.some(keyword => normalized.includes(keyword));
+                
+                return hasCostKeyword && hasPriceKeyword;
+            }
+            
+            // 스마트 대화 이력 필터링 함수 추가
+            getSmartFilteredHistory(message) {
+                const recentHistory = this.chatHistory.slice(-this.MAX_HISTORY);
+                
+                // 질문 유형에 따른 필터링
+                if (this.isSpecificTreatmentCostQuery(message)) {
+                    // 치료비용 질문: 이력 제외 (정확한 답변을 위해)
+                    console.log('💰 치료비용 질문 감지: 대화 이력 제외');
+                    return [];
+                } else if (this.isDetailedQuestion(message)) {
+                    // 상세 질문: 최근 5개 메시지만 포함 (관련성 높은 컨텍스트만)
+                    console.log(' 상세 질문 감지: 최근 5개 메시지만 포함');
+                    return recentHistory.slice(-5).map(msg => ({
+                        role: msg.role,
+                        content: msg.content
+                    }));
+                } else {
+                    // 일반 질문: 기존 로직 사용
+                    console.log(' 일반 질문: 기존 대화 이력 로직 사용');
+                    return recentHistory.map(msg => ({
+                        role: msg.role,
+                        content: msg.content
+                    }));
+                }
             }
             
             // API 활성 상태 확인
@@ -1204,23 +1329,23 @@
             }
             
             // API 호출 함수
-            async callAPI(provider, message, contextInfo) {
+            async callAPI(provider, message, contextInfo, useSmartFiltering = false) {
                 const settings = this.apiSettings[provider];
                 
                 switch (provider) {
                     case 'chatgpt':
-                        return await this.callChatGPTAPI(message, settings, contextInfo);
+                        return await this.callChatGPTAPI(message, settings, contextInfo, useSmartFiltering);
                     case 'gemini':
-                        return await this.callGeminiAPI(message, settings, contextInfo);
+                        return await this.callGeminiAPI(message, settings, contextInfo, useSmartFiltering);
                     case 'claude':
-                        return await this.callClaudeAPI(message, settings, contextInfo);
+                        return await this.callClaudeAPI(message, settings, contextInfo, useSmartFiltering);
                     default:
                         throw new Error('지원하지 않는 API 제공자입니다.');
                 }
             }
             
             // ChatGPT API 호출
-            async callChatGPTAPI(message, settings, contextInfo) {
+            async callChatGPTAPI(message, settings, contextInfo, useSmartFiltering = false) {
                 const systemPrompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
                 매우 친절하고 전문적으로 답변해주세요.
 
@@ -1268,8 +1393,10 @@
                 - 강조나 구분이 필요한 항목은 큰 괄호 ()를 해서 구분
                 - 전체적으로 고객이 보기 편하고 읽기 쉬운 형식으로 구성`;
 
-                // 대화 이력 가져오기
-                const chatHistory = this.getChatHistoryForAPI();
+                // 대화 이력 가져오기 (스마트 필터링 옵션)
+                const chatHistory = useSmartFiltering ? 
+                    this.getSmartFilteredHistory(message) : 
+                    this.getChatHistoryForAPI();
                 
                 // 메시지 배열 구성 (시스템 프롬프트 + 대화 이력 + 현재 메시지)
                 const messages = [
@@ -1313,9 +1440,11 @@
             }
             
             // Gemini API 호출
-            async callGeminiAPI(message, settings, contextInfo) {
-                // 대화 이력 가져오기
-                const chatHistory = this.getChatHistoryForAPI();
+            async callGeminiAPI(message, settings, contextInfo, useSmartFiltering = false) {
+                // 대화 이력 가져오기 (스마트 필터링 옵션)
+                const chatHistory = useSmartFiltering ? 
+                    this.getSmartFilteredHistory(message) : 
+                    this.getChatHistoryForAPI();
                 
                 // Gemini용 대화 이력 구성
                 let conversationContext = '';
@@ -1409,9 +1538,11 @@
             }
             
             // Claude API 호출
-            async callClaudeAPI(message, settings, contextInfo) {
-                // 대화 이력 가져오기
-                const chatHistory = this.getChatHistoryForAPI();
+            async callClaudeAPI(message, settings, contextInfo, useSmartFiltering = false) {
+                // 대화 이력 가져오기 (스마트 필터링 옵션)
+                const chatHistory = useSmartFiltering ? 
+                    this.getSmartFilteredHistory(message) : 
+                    this.getChatHistoryForAPI();
                 
                 // Claude용 대화 이력 구성
                 let conversationContext = '';
@@ -1566,7 +1697,7 @@
             }
             
             // AI 응답 생성
-            async generateAIResponse(message) {
+            async generateAIResponse(message, useSmartFiltering = false) {
                 const loadingMessages = {
                     ko: '👩‍⚕️ 피닉스 치과 AI 상담사가 답변을 준비 중 입니다...⏰<span class="loading-dots"></span>',
                     en: '👩‍⚕️ Phoenix Dental AI consultant is preparing an answer...⏰<span class="loading-dots"></span>',
@@ -1581,7 +1712,8 @@
                     const activeProvider = this.getActiveProvider();
                     const contextInfo = this.getContextFromKnowledgeBase();
                     
-                    const response = await this.callAPI(activeProvider, message, contextInfo);
+                    // 스마트 필터링 옵션 전달
+                    const response = await this.callAPI(activeProvider, message, contextInfo, useSmartFiltering);
                     this.removeMessage(loadingMessage);
                     this.addBotMessage(this.formatAIResponse(response, activeProvider));
                 } catch (error) {
