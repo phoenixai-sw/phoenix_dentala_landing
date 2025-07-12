@@ -803,8 +803,6 @@
             </div>
         </div>
 
-
-
         <!-- 메시지 영역 -->
         <div class="chatbot-messages" id="chatbotMessages">
             <!-- 메시지들이 여기에 추가됩니다 -->
@@ -2356,7 +2354,7 @@ ${currentQuickMenu.directInquiry}
             // API 설정 로딩
             loadApiSettings() {
                 try {
-                    const saved = localStorage.getItem('chatbot2_ApiSettings');
+                    const saved = localStorage.getItem('chatbotApiSettings');
                     if (saved) {
                         this.apiSettings = JSON.parse(saved);
                         console.log('✅ API 설정 로드 완료:', this.apiSettings);
@@ -2381,7 +2379,7 @@ ${currentQuickMenu.directInquiry}
             // 지식베이스 설정 로딩
             loadKnowledgeBaseSettings() {
                 try {
-                    const saved = localStorage.getItem('chatbot2_KnowledgeBase');
+                    const saved = localStorage.getItem('chatbotKnowledgeBase');
                     if (saved) {
                         const parsed = JSON.parse(saved);
                         this.knowledgeBase.enabled = parsed.enabled || false;
@@ -2396,7 +2394,7 @@ ${currentQuickMenu.directInquiry}
             // 대화 이력 설정 로딩
             loadHistorySettings() {
                 try {
-                    const saved = localStorage.getItem('chatbot2_HistorySettings');
+                    const saved = localStorage.getItem('chatbotHistorySettings');
                     if (saved) {
                         const settings = JSON.parse(saved);
                         this.MAX_HISTORY = settings.maxHistory || 20;
@@ -2581,25 +2579,25 @@ ${currentQuickMenu.directInquiry}
             handleAdminCommand() {
                 const adminTexts = {
                     ko: {
-                        title: '🤖 AI챗봇 관리자 로그인2',
+                        title: '🤖 AI챗봇 관리 로그인',
                         description: '관리자 페이지에 접속하려면 아래 버튼을 클릭하세요.',
                         note: '💡 로그인 후 관리자 페이지 상단에서 아이디/비밀번호를 확인할 수 있습니다.',
                         button: '🔐 관리자 페이지 열기'
                     },
                     en: {
-                        title: '🤖 AI Chatbot Admin Login2',
+                        title: '🤖 AI Chatbot Admin Login',
                         description: 'Click the button below to access the admin page.',
                         note: '💡 After login, you can check the ID/password at the top of the admin page.',
                         button: '🔐 Open Admin Page'
                     },
                     ru: {
-                        title: '🤖 Вход в админ-панель ИИ чат-бота2',
+                        title: '🤖 Вход в админ-панель ИИ чат-бота',
                         description: 'Нажмите кнопку ниже, чтобы получить доступ к странице администратора.',
                         note: '💡 После входа вы можете проверить ID/пароль в верхней части страницы администратора.',
                         button: '🔐 Открыть страницу администратора'
                     },
                     ja: {
-                        title: '🤖 AIチャットボット管理ログイン2',
+                        title: '🤖 AIチャットボット管理ログイン',
                         description: '管理者ページにアクセスするには、下のボタンをクリックしてください。',
                         note: '💡 ログイン後、管理者ページ上部でID/パスワードを確認できます。',
                         button: '🔐 管理者ページを開く'
@@ -2787,7 +2785,7 @@ ${currentQuickMenu.directInquiry}
                             }
                         };
                         
-                        localStorage.setItem('chatbot2_ApiSettings', JSON.stringify(settings));
+                        localStorage.setItem('chatbotApiSettings', JSON.stringify(settings));
                         console.log('✅ API 설정 저장 완료:', settings);
                         
                         // 상태 메시지 업데이트
@@ -2831,7 +2829,7 @@ ${currentQuickMenu.directInquiry}
                         
                         setTimeout(() => {
                             try {
-                                const settings = JSON.parse(localStorage.getItem('chatbot2_ApiSettings') || '{}');
+                                const settings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
                                 let activeApis = [];
                                 
                                 if (settings.chatgpt?.enabled && settings.chatgpt?.apiKey) activeApis.push('ChatGPT');
@@ -2909,7 +2907,7 @@ ${currentQuickMenu.directInquiry}
                             }
                             
                             // 로컬 스토리지에서 설정 제거
-                            localStorage.removeItem('chatbot2_ApiSettings');
+                            localStorage.removeItem('chatbotApiSettings');
                             console.log('✅ API 설정 초기화 완료');
                             
                             // 상태 메시지 업데이트
@@ -3036,9 +3034,9 @@ ${currentQuickMenu.directInquiry}
                 // Q&A 파싱
                 const qaList = parseQAFromContent(content);
                 if (qaList.length > 0) {
-                    const knowledgeData = JSON.parse(localStorage.getItem('chatbot2_KnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                    const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
                     knowledgeData.parsedData = knowledgeData.parsedData.concat(qaList);
-                    localStorage.setItem('chatbot2_KnowledgeBase', JSON.stringify(knowledgeData));
+                    localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
                 }
                 
                 updateKnowledgeStatus();
@@ -3078,7 +3076,7 @@ ${currentQuickMenu.directInquiry}
             // 지식 상태 업데이트 함수
             function updateKnowledgeStatus() {
                 const fileItems = document.querySelectorAll('.file-item');
-                const knowledgeData = JSON.parse(localStorage.getItem('chatbot2_KnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
                 
                 const statusDiv = document.getElementById('knowledgeStatus');
                 if (statusDiv) {
@@ -3091,12 +3089,12 @@ ${currentQuickMenu.directInquiry}
             if (saveKnowledgeBtn) {
                 saveKnowledgeBtn.addEventListener('click', function() {
                     const fileItems = document.querySelectorAll('.file-item');
-                    const knowledgeData = JSON.parse(localStorage.getItem('chatbot2_KnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                    const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
                     
                     knowledgeData.enabled = fileItems.length > 0;
                     knowledgeData.files = Array.from(fileItems).map(item => item.querySelector('strong').textContent.replace('📄 ', ''));
                     
-                    localStorage.setItem('chatbot2_KnowledgeBase', JSON.stringify(knowledgeData));
+                    localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
                     
                     const statusDiv = document.getElementById('knowledgeSettingsStatus');
                     if (statusDiv) {
@@ -3119,7 +3117,7 @@ ${currentQuickMenu.directInquiry}
                     const testQuery = prompt('검색할 질문을 입력하세요:');
                     if (!testQuery) return;
                     
-                    const knowledgeData = JSON.parse(localStorage.getItem('chatbot2_KnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                    const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
                     
                     if (!knowledgeData.enabled || knowledgeData.parsedData.length === 0) {
                         alert('활성화된 지식베이스가 없습니다.');
@@ -3170,7 +3168,7 @@ ${currentQuickMenu.directInquiry}
             const showParsedDataBtn = document.getElementById('showParsedDataBtn');
             if (showParsedDataBtn) {
                 showParsedDataBtn.addEventListener('click', function() {
-                    const knowledgeData = JSON.parse(localStorage.getItem('chatbot2_KnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                    const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
                     const viewDiv = document.getElementById('parsedDataView');
                     const contentDiv = document.getElementById('parsedDataContent');
                     
@@ -3205,7 +3203,7 @@ ${currentQuickMenu.directInquiry}
                         if (fileList) {
                             fileList.innerHTML = '';
                         }
-                        localStorage.removeItem('chatbot2_KnowledgeBase');
+                        localStorage.removeItem('chatbotKnowledgeBase');
                         updateKnowledgeStatus();
                         
                         const statusDiv = document.getElementById('knowledgeSettingsStatus');
@@ -3271,7 +3269,7 @@ ${currentQuickMenu.directInquiry}
                         window.chatbot.MAX_TOKENS = parseInt(maxTokens);
                         
                         // 설정을 로컬 스토리지에 저장
-                        localStorage.setItem('chatbot2_HistorySettings', JSON.stringify({
+                        localStorage.setItem('chatbotHistorySettings', JSON.stringify({
                             maxHistory: parseInt(maxHistory),
                             maxTokens: parseInt(maxTokens)
                         }));
@@ -3363,7 +3361,7 @@ ${currentQuickMenu.directInquiry}
                 console.log('📋 관리자 페이지 설정 로드 시작');
                 
                 // 기존 설정 로드
-                const apiSettings = JSON.parse(localStorage.getItem('chatbot2_ApiSettings') || '{}');
+                const apiSettings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
                 
                 // ChatGPT 설정 로드
                 if (apiSettings.chatgpt) {
@@ -3403,7 +3401,7 @@ ${currentQuickMenu.directInquiry}
                 }
                 
                 // 대화 이력 설정 로드
-                const historySettings = JSON.parse(localStorage.getItem('chatbot2_HistorySettings') || '{}');
+                const historySettings = JSON.parse(localStorage.getItem('chatbotHistorySettings') || '{}');
                 const maxHistorySelect = document.getElementById('maxHistorySelect');
                 const maxTokensSelect = document.getElementById('maxTokensSelect');
                 
