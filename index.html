@@ -481,6 +481,17 @@
             background: #e0a800;
         }
 
+        .btn-warning.message-send {
+            background: #ff69b4;
+            border-color: #ff69b4;
+            color: white;
+        }
+
+        .btn-warning.message-send:hover {
+            background: #ff1493;
+            border-color: #ff1493;
+        }
+
         /* 로딩 모달 스타일 */
         .loading-modal {
             position: fixed;
@@ -2177,13 +2188,13 @@ https://phoenixai-agent.site/reservation.html
                     <h3>📋 예약 명단</h3>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-success" onclick="downloadExcel()">
-                            📥 전체 엑셀 다운로드
+                            📥 전체 예약 고객 엑셀 받기
                         </button>
                         <button class="btn btn-primary" onclick="downloadDentalCheckupExcel()">
-                            🦷 구강검진 대상자 다운로드
+                            📥 무료 검진(구강) 대상자만 엑셀 받기
                         </button>
-                        <button class="btn btn-warning" onclick="sendMessageToDentalTargets()">
-                            🦷 구강검진 대상자에게 메시지 보내기
+                        <button class="btn btn-warning message-send" onclick="sendMessageToDentalTargets()">
+                            📨 무료 검진(구강) 대상자 메시지 보내기
                         </button>
                     </div>
                 </div>
@@ -4181,16 +4192,16 @@ https://phoenixai-agent.site/reservation.html
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
-            // CSV 헤더
+            // 엑셀 헤더
             const headers = [
                 '순번', '예약자명', '생년월일', '전화번호', '최근예약날짜', '최근예약시간', 
                 '상담내용', '구강검진정보', '예약이력', '최초예약일시'
             ];
             
-            // CSV 데이터 생성
-            const csvData = [headers];
+            // 엑셀 데이터 생성
+            const excelData = [headers];
             dataWithDentalInfo.forEach((customer, index) => {
-                csvData.push([
+                excelData.push([
                     index + 1,
                     customer.name,
                     customer.birth,
@@ -4205,7 +4216,7 @@ https://phoenixai-agent.site/reservation.html
             });
             
             const today = new Date().toISOString().split('T')[0];
-            downloadCSV(csvData, `피닉스치과_전체예약명단_${today}.csv`);
+            downloadExcel(excelData, `피닉스치과_전체예약명단_${today}.xlsx`);
             
             alert(`전체 예약 데이터가 다운로드되었습니다.\n총 ${dataWithDentalInfo.length}명의 고객 정보가 포함되어 있습니다.`);
         }
