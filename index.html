@@ -31,12 +31,11 @@
             -webkit-touch-callout: none;
         }
 
-        /* 상단 배너 스타일 */
-        .top-banner {
+        /* 배너 스타일 */
+        .top-banner, .bottom-banner {
             position: fixed;
             left: 0;
             right: 0;
-            top: 0;
             background: #ffd700;
             color: #333;
             padding: 15px 20px;
@@ -46,10 +45,18 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             font-weight: bold;
             font-size: 18px;
+        }
+
+        .top-banner {
+            top: 0;
             animation: pulse 2s infinite;
         }
 
-        .top-banner:hover {
+        .bottom-banner {
+            bottom: 0;
+        }
+
+        .top-banner:hover, .bottom-banner:hover {
             background: #ffed4e;
         }
 
@@ -62,7 +69,7 @@
         /* 메인 컨텐츠 */
         .container {
             max-width: 800px;
-            margin: 70px auto 20px;
+            margin: 70px auto 80px;
             padding: 20px;
         }
 
@@ -1756,12 +1763,7 @@
             <div class="address">📍 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호</div>
         </div>
 
-        <!-- 무료 검진(구강) 확인 버튼 -->
-        <div style="margin: 30px 0; text-align: center;">
-            <button class="dental-checkup-btn" onclick="goToDentalCheckup()">
-                🦷 무료 검진(구강) 확인
-            </button>
-        </div>
+
 
         <!-- 관리자 로그인 버튼 -->
         <div class="admin-buttons">
@@ -1772,7 +1774,10 @@
 
     </div>
 
-
+    <!-- 하단 예약 배너 -->
+    <div class="bottom-banner" onclick="location.href='reservation.html'">
+        📅 지금 예약하기
+    </div>
 
     <!-- 고정 팝업 AI챗봇 배너 -->
     <div class="chatbot-fixed-banner" id="chatbotFixedBanner" onclick="goToChatbot()">
