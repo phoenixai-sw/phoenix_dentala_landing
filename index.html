@@ -2124,10 +2124,10 @@ https://phoenixai-agent.site/reservation.html
                 <div class="upload-area" onclick="document.getElementById('fileInput').click()" ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
                     <div class="upload-icon">📁</div>
                     <div class="upload-text">클릭하거나 파일을 여기로 드래그하세요</div>
-                    <div class="upload-types">💡 <strong>지원 형식: 텍스트 파일(.txt)</strong><br>
-                    <small style="color: #666;">※ PDF, Excel 파일은 내용을 복사해서 텍스트 파일로 저장 후 업로드해주세요</small></div>
+                    <div class="upload-types">💡 <strong>지원 형식: 텍스트(.txt), 엑셀(.xlsx, .xls), JSONL(.jsonl)</strong><br>
+                    <small style="color: #666;">※ 엑셀 파일은 A열에 질문, B열에 답변 형식으로 작성해주세요</small></div>
                 </div>
-                <input type="file" id="fileInput" class="file-input" accept=".txt" multiple onchange="handleFileUpload(event)">
+                <input type="file" id="fileInput" class="file-input" accept=".txt,.xlsx,.xls,.jsonl" multiple onchange="handleFileUpload(event)">
                 
                 <div class="file-list" id="fileList">
                     <!-- 업로드된 파일들이 여기에 표시됩니다 -->
@@ -2373,10 +2373,10 @@ https://phoenixai-agent.site/reservation.html
                 <div class="upload-area" id="uploadArea2">
                     <div class="upload-icon">📁</div>
                     <div class="upload-text">클릭하거나 파일을 여기로 드래그하세요</div>
-                    <div class="upload-types">💡 <strong>지원 형식: 텍스트 파일(.txt)</strong><br>
-                    <small style="color: #666;">※ PDF, Excel 파일은 내용을 복사해서 텍스트 파일로 저장 후 업로드해주세요</small></div>
+                    <div class="upload-types">💡 <strong>지원 형식: 텍스트(.txt), 엑셀(.xlsx, .xls), JSONL(.jsonl)</strong><br>
+                    <small style="color: #666;">※ 엑셀 파일은 A열에 질문, B열에 답변 형식으로 작성해주세요</small></div>
                 </div>
-                <input type="file" id="fileInput2" class="file-input" accept=".txt" multiple>
+                <input type="file" id="fileInput2" class="file-input" accept=".txt,.xlsx,.xls,.jsonl" multiple>
                 
                 <div class="file-list" id="fileList2">
                     <!-- 업로드된 파일들이 여기에 표시됩니다 -->
