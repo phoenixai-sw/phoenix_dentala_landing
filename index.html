@@ -31,11 +31,12 @@
             -webkit-touch-callout: none;
         }
 
-        /* 배너 스타일 */
-        .top-banner, .bottom-banner {
+        /* 상단 배너 스타일 */
+        .top-banner {
             position: fixed;
             left: 0;
             right: 0;
+            top: 0;
             background: #ffd700;
             color: #333;
             padding: 15px 20px;
@@ -45,18 +46,10 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             font-weight: bold;
             font-size: 18px;
-        }
-
-        .top-banner {
-            top: 0;
             animation: pulse 2s infinite;
         }
 
-        .bottom-banner {
-            bottom: 0;
-        }
-
-        .top-banner:hover, .bottom-banner:hover {
+        .top-banner:hover {
             background: #ffed4e;
         }
 
@@ -69,7 +62,7 @@
         /* 메인 컨텐츠 */
         .container {
             max-width: 800px;
-            margin: 70px auto 80px;
+            margin: 70px auto 20px;
             padding: 20px;
         }
 
@@ -245,11 +238,11 @@
         }
 
         .admin-btn.customer {
-            background: #666;
+            background: #ff69b4;
         }
 
         .admin-btn.customer:hover {
-            background: #555;
+            background: #ff1493;
         }
 
         /* 무료 검진 확인 버튼 */
@@ -1664,9 +1657,9 @@
     </style>
 </head>
 <body>
-    <!-- 상단 예약 배너 -->
-    <div class="top-banner" onclick="location.href='reservation.html'">
-        📅 지금 예약하기
+    <!-- 상단 무료 검진 확인 배너 -->
+    <div class="top-banner" onclick="location.href='dental_checkup.html'">
+        🦷 무료 검진(구강) 확인
     </div>
 
     <!-- 메인 컨텐츠 -->
@@ -1772,17 +1765,14 @@
 
         <!-- 관리자 로그인 버튼 -->
         <div class="admin-buttons">
-                <button class="admin-btn customer" onclick="loginCustomerAdmin()" title="아이디: phoenix | 비밀번호: phoenix">👥 고객 관리 로그인</button>
-                <button class="admin-btn chatbot" onclick="loginChatbotAdmin2()" title="아이디: phoenix | 비밀번호: phoenix">🤖 AI챗봇 관리자 로그인2</button>
+                <button class="admin-btn customer" onclick="loginCustomerAdmin()" title="아이디: phoenix | 비밀번호: phoenix">👥 고객 관리자</button>
+                <button class="admin-btn chatbot" onclick="loginChatbotAdmin2()" title="아이디: phoenix | 비밀번호: phoenix">🤖 AI챗봇 관리자</button>
         </div>
 
 
     </div>
 
-    <!-- 하단 예약 배너 -->
-    <div class="bottom-banner" onclick="location.href='reservation.html'">
-        📅 지금 예약하기
-    </div>
+
 
     <!-- 고정 팝업 AI챗봇 배너 -->
     <div class="chatbot-fixed-banner" id="chatbotFixedBanner" onclick="goToChatbot()">
