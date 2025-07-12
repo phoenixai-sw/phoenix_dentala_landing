@@ -1467,8 +1467,8 @@
             animation: chatbotFloat 3s ease-in-out infinite;
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 255, 255, 0.2);
-            display: none;
-            opacity: 0;
+            display: block;
+            opacity: 1;
         }
 
         .chatbot-fixed-banner:hover {
@@ -2455,18 +2455,8 @@ https://phoenixai-agent.site/reservation.html
             initializeData();
             console.log('페이지 로드 완료');
             
-            // 챗봇 배너 지연 표시 (3초 후)
-            setTimeout(() => {
-                const chatbotBanner = document.getElementById('chatbotFixedBanner');
-                if (chatbotBanner) {
-                    chatbotBanner.style.opacity = '0';
-                    chatbotBanner.style.display = 'block';
-                    setTimeout(() => {
-                        chatbotBanner.style.transition = 'opacity 0.5s ease';
-                        chatbotBanner.style.opacity = '1';
-                    }, 100);
-                }
-            }, 3000);
+            // 챗봇 배너 로그
+            console.log('AI챗봇 배너 표시됨');
         });
 
         // 무료 검진(구강) 확인 페이지로 이동
