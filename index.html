@@ -2187,7 +2187,7 @@ https://phoenixai-agent.site/reservation.html
                 <div class="section-header">
                     <h3>📋 예약 명단</h3>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn btn-success" onclick="downloadExcel()">
+                        <button class="btn btn-success" onclick="downloadAllReservations()">
                             📥 전체 예약 고객 엑셀 받기
                         </button>
                         <button class="btn btn-primary" onclick="downloadDentalCheckupExcel()">
@@ -4185,7 +4185,7 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 전체 예약 데이터 엑셀 다운로드
-        function downloadExcel() {
+        function downloadAllReservations() {
             console.log('전체 예약 데이터 엑셀 다운로드');
             
             const rawData = getReservationData();
