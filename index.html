@@ -972,6 +972,18 @@
             display: flex;
             align-items: flex-start;
             gap: 10px;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .message.user {
@@ -1000,17 +1012,19 @@
         }
 
         .message-content {
-            max-width: 70%;
+            max-width: 75%;
             padding: 12px 16px;
             border-radius: 18px;
-            line-height: 1.4;
+            line-height: 1.5;
             font-size: 14px;
+            word-wrap: break-word;
         }
 
         .message.bot .message-content {
             background: white;
             color: #333;
             border-bottom-left-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .message.user .message-content {
@@ -1027,49 +1041,56 @@
             gap: 12px;
         }
 
-        .chatbot-input input, .chatbot-input textarea {
+        .chatbot-input textarea {
             flex: 1;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 25px;
-            outline: none;
+            border: 2px solid #4facfe;
+            border-radius: 20px;
+            padding: 12px 16px;
             font-size: 16px;
-            font-family: inherit;
             resize: none;
+            outline: none;
             min-height: 45px;
             max-height: 120px;
-            touch-action: manipulation;
+            line-height: 1.4;
+            font-family: inherit;
         }
 
-        .chatbot-input input:focus, .chatbot-input textarea:focus {
-            border-color: #4facfe;
+        .chatbot-input textarea:focus {
+            border-color: #00f2fe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
         }
 
         .chatbot-send {
-            background: #4facfe;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             border: none;
-            border-radius: 25px;
-            min-width: 108px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 21px;
+            border-radius: 20px;
+            padding: 12px 24px;
+            font-size: 16px;
             font-weight: bold;
-            padding: 18px 26px;
+            cursor: pointer;
             transition: all 0.3s;
+            min-width: 90px;
+            height: 45px;
         }
 
         .chatbot-send:hover {
-            background: #3d8bfe;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .chatbot-send:active {
+            transform: scale(0.95);
         }
 
         .quick-buttons {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 8px;
-            margin-top: 10px;
+            margin-top: 15px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .quick-button {
@@ -1077,34 +1098,103 @@
             color: #4facfe;
             border: 1px solid #4facfe;
             border-radius: 15px;
-            padding: 8px 12px;
+            padding: 10px 8px;
             font-size: 12px;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .quick-button:hover {
-            background: #4facfe;
-            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-button:active {
+            transform: translateY(0);
+        }
+
+        /* 특별 버튼 스타일 */
+        .clinic-hours-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
+            color: #333 !important;
+            border: none !important;
+        }
+
+        .treatment-cost-btn {
+            background: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%) !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .reservation-btn {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%) !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .directions-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%) !important;
+            color: white !important;
+            border: none !important;
         }
 
         .reservation-link-btn {
-            background: #ffd700;
-            color: #333;
-            border: none;
-            border-radius: 20px;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            display: inline-block;
-            transition: all 0.2s;
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%) !important;
+            color: white !important;
+            border: none !important;
+            padding: 12px 24px !important;
+            border-radius: 25px !important;
+            font-size: 14px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+            margin: 10px 0 !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3) !important;
         }
 
         .reservation-link-btn:hover {
-            background: #ffed4e;
-            transform: translateY(-1px);
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5) !important;
+        }
+
+        .reservation-message {
+            margin-top: 15px !important;
+            padding: 15px !important;
+            background: #f8f9fa !important;
+            border-radius: 10px !important;
+            border-left: 4px solid #4facfe !important;
+            text-align: center !important;
+        }
+
+        .reservation-message-text {
+            font-size: 14px !important;
+            color: #666 !important;
+            margin-bottom: 10px !important;
+        }
+
+        /* 로딩 애니메이션 */
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 80% { content: '...'; }
+            100% { content: ''; }
         }
 
         /* 예약 페이지 스타일 */
@@ -1994,20 +2084,18 @@
                     </div>
                     <br>
                     <div class="quick-buttons">
-                        <button class="quick-button" onclick="sendQuickMessage('진료시간 알려주세요')">진료시간</button>
-                        <button class="quick-button" onclick="sendQuickMessage('예약하고 싶어요')">예약문의</button>
-                        <button class="quick-button" onclick="sendQuickMessage('치료비용 궁금해요')">치료비용</button>
-                        <button class="quick-button" onclick="sendQuickMessage('위치 알려주세요')">오시는길</button>
+                        <button class="quick-button clinic-hours-btn" onclick="sendQuickMessage('진료시간 알려주세요')">진료시간</button>
+                        <button class="quick-button reservation-btn" onclick="sendQuickMessage('예약하고 싶어요')">예약문의</button>
+                        <button class="quick-button treatment-cost-btn" onclick="sendQuickMessage('치료비용 궁금해요')">치료비용</button>
+                        <button class="quick-button directions-btn" onclick="sendQuickMessage('위치 알려주세요')">오시는길</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="chatbot-input">
-            <textarea id="chatbotInput" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress(event)" style="flex: 1; padding: 18px 24px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 22px; resize: none; min-height: 65px; max-height: 140px; font-family: inherit;"></textarea>
-            <button class="chatbot-send" onclick="sendMessage()" style="min-width: 108px; border-radius: 25px; font-size: 21px; padding: 18px 26px; font-weight: bold;">
-                전송
-            </button>
+            <textarea id="chatbotInput" placeholder="메시지를 입력하세요..." rows="1" oninput="adjustTextareaHeight(this)" onkeydown="handleInputKeyDown(event)"></textarea>
+            <button class="chatbot-send" onclick="sendMessage()">전송</button>
         </div>
     </div>
 
@@ -3110,6 +3198,30 @@ https://phoenixai-agent.site/reservation.html
                 // 오류 메시지 표시
                 addBotMessage('❌ 죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
             });
+        }
+
+        function handleInputKeyDown(event) {
+            const textarea = event.target;
+            
+            // Enter: 메시지 전송
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+                return;
+            }
+            
+            // Shift + Enter: 줄바꿈 허용
+            if (event.key === 'Enter' && event.shiftKey) {
+                // 텍스트 영역 자동 높이 조절 (잠시 후)
+                setTimeout(() => {
+                    adjustTextareaHeight(textarea);
+                }, 0);
+            }
+        }
+
+        function adjustTextareaHeight(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
         }
 
         function handleChatKeyPress(event) {
