@@ -2090,6 +2090,208 @@ https://phoenixai-agent.site/reservation.html
         </div>
     </div>
 
+    <!-- AI챗봇 관리자 페이지2 -->
+    <div class="popup-page" id="chatbotAdminPage2" style="display: none;">
+        <div class="admin-header">
+            <div class="admin-title">🤖 AI 챗봇 관리 시스템2</div>
+            <div class="admin-login-info">
+                <div style="font-size: 12px; opacity: 0.9; margin-bottom: 5px;">🔐 관리자 로그인 정보</div>
+                <div style="font-size: 14px; font-weight: bold;">아이디: <span style="color: #ffd700;">phoenix</span> | 비밀번호: <span style="color: #ffd700;">phoenix</span></div>
+            </div>
+            <div class="admin-nav">
+                <button class="nav-btn" onclick="closeChatbotAdmin2()">🏠 메인으로</button>
+                <button class="nav-btn logout" onclick="closeChatbotAdmin2()">로그아웃</button>
+            </div>
+        </div>
+        
+        <div class="admin-content">
+            <!-- 답변 우선순위 정보 -->
+            <div class="admin-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="section-header">
+                    <h3>🎯 AI 챗봇 답변 우선순위</h3>
+                </div>
+                <div style="padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 15px;">
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 15px; text-align: center;">
+                        답변 처리 순서
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 14px;">
+                        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">1차</div>
+                            <div>🔐 관리자 기능</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">2차</div>
+                            <div>📚 지식베이스 검색</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">3차</div>
+                            <div>❓ 기본 FAQ 답변</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">4차</div>
+                            <div>🤖 AI API 호출</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">5차</div>
+                            <div>🎭 시뮬레이션 답변</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 8px; text-align: center; font-size: 13px;">
+                        <span id="adminApiStatus2">
+                            🔴 AI API 설정 필요
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 모델 API 설정 -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3>🤖 챗봇 AI 모델 연결하기</h3>
+                </div>
+                
+                <div class="api-form">
+                    <!-- ChatGPT 설정 -->
+                    <div class="form-group">
+                        <label for="chatgptApiKey2">ChatGPT API Key</label>
+                        <input type="password" id="chatgptApiKey2" placeholder="sk-proj-...">
+                    </div>
+                    <div class="form-group">
+                        <label for="chatgptModel2">ChatGPT 모델선택</label>
+                        <select id="chatgptModel2">
+                            <option value="">-- ChatGPT 모델을 선택하세요 --</option>
+                            <option value="gpt-4o">GPT-4o (최신 멀티모달)</option>
+                            <option value="gpt-4o-mini">GPT-4o Mini (경제적)</option>
+                        </select>
+                    </div>
+
+                    <!-- Gemini 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="geminiApiKey2">Gemini 모델 API Key</label>
+                        <input type="password" id="geminiApiKey2" placeholder="AIza...">
+                    </div>
+                    <div class="form-group">
+                        <label for="geminiModel2">Gemini 모델선택</label>
+                        <select id="geminiModel2">
+                            <option value="">-- Gemini 모델을 선택하세요 --</option>
+                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠른 응답)</option>
+                            <option value="gemini-1.5-pro">Gemini 1.5 Pro (고성능)</option>
+                            <option value="gemini-1.0-pro">Gemini 1.0 Pro (안정성)</option>
+                        </select>
+                    </div>
+
+                    <!-- Claude 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="claudeApiKey2">Claude 모델 API Key</label>
+                        <input type="password" id="claudeApiKey2" placeholder="sk-ant-...">
+                    </div>
+                    <div class="form-group">
+                        <label for="claudeModel2">Claude 모델선택</label>
+                        <select id="claudeModel2">
+                            <option value="">-- Claude 모델을 선택하세요 --</option>
+                            <option value="claude-3-haiku">Claude 3 Haiku (빠르고 효율적)</option>
+                            <option value="claude-3-sonnet">Claude 3 Sonnet (균형적 성능)</option>
+                            <option value="claude-3-opus">Claude 3 Opus (최고 성능)</option>
+                            <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (최신 모델)</option>
+                        </select>
+                    </div>
+
+                    <div class="btn-group" style="margin-top: 30px;">
+                        <button class="btn btn-primary" id="saveApiBtn2">💾 설정 저장</button>
+                        <button class="btn btn-success" id="testApiBtn2">🔗 연결 테스트</button>
+                        <button class="btn btn-danger" id="resetApiBtn2">🔄 설정 초기화</button>
+                    </div>
+                    <div id="apiStatus2" class="status-message"></div>
+                </div>
+            </div>
+
+            <!-- AI 지식 파일 업로드 -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3>📚 AI 지식 파일 업로드</h3>
+                </div>
+                
+                <div class="upload-area" id="uploadArea2">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">클릭하거나 파일을 여기로 드래그하세요</div>
+                    <div class="upload-types">💡 <strong>지원 형식: 텍스트 파일(.txt)</strong><br>
+                    <small style="color: #666;">※ PDF, Excel 파일은 내용을 복사해서 텍스트 파일로 저장 후 업로드해주세요</small></div>
+                </div>
+                <input type="file" id="fileInput2" class="file-input" accept=".txt" multiple>
+                
+                <div class="file-list" id="fileList2">
+                    <!-- 업로드된 파일들이 여기에 표시됩니다 -->
+                </div>
+                
+                <div id="knowledgeStatus2" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; font-size: 14px;">
+                    📖 업로드된 지식 파일: 0개 | 상태: 비활성
+                </div>
+                
+                <!-- 지식 파일 설정 저장 버튼 -->
+                <div class="btn-group" style="margin-top: 20px;">
+                    <button class="btn btn-success" id="saveKnowledgeBtn2">💾 지식 파일 설정 저장</button>
+                    <button class="btn btn-primary" id="testKnowledgeBtn2">🔍 지식 검색 테스트</button>
+                    <button class="btn" style="background: #17a2b8; color: white;" id="showParsedDataBtn2">📋 파싱된 Q&A 보기</button>
+                    <button class="btn btn-danger" id="clearKnowledgeBtn2">🗑️ 모든 지식 삭제</button>
+                </div>
+                <div id="knowledgeSettingsStatus2" class="status-message"></div>
+                
+                <!-- 파싱된 Q&A 표시 영역 -->
+                <div id="parsedDataView2" style="display: none; margin-top: 20px; background: white; border-radius: 10px; padding: 20px; max-height: 400px; overflow-y: auto; border: 1px solid #ddd;">
+                    <h4 style="margin-bottom: 15px; color: #2c3e50;">📋 파싱된 Q&A 데이터</h4>
+                    <div id="parsedDataContent2"></div>
+                </div>
+            </div>
+
+            <!-- 대화 이력 관리 -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3>💬 대화 이력 관리</h3>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="color: #2c3e50; margin-bottom: 10px;">📊 대화 이력 현황</h4>
+                        <div id="chatHistoryStatus2" style="padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #4facfe;">
+                            💬 현재 대화 이력: 0개 메시지 | 최대 저장: 20개 메시지
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #2c3e50; margin-bottom: 10px;">⚙️ 대화 이력 설정</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div>
+                                <label style="font-weight: bold; display: block; margin-bottom: 5px;">최대 대화 이력 개수</label>
+                                <select id="maxHistorySelect2" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                                    <option value="10">10개</option>
+                                    <option value="20" selected>20개</option>
+                                    <option value="30">30개</option>
+                                    <option value="50">50개</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-weight: bold; display: block; margin-bottom: 5px;">API 호출 최대 토큰</label>
+                                <select id="maxTokensSelect2" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                                    <option value="1000">1,000 토큰</option>
+                                    <option value="1500" selected>1,500 토큰</option>
+                                    <option value="2000">2,000 토큰</option>
+                                    <option value="3000">3,000 토큰</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 대화 이력 관리 버튼 -->
+                    <div class="btn-group" style="margin-top: 20px;">
+                        <button class="btn btn-primary" id="viewChatHistoryBtn2">👁️ 대화 이력 보기</button>
+                        <button class="btn btn-warning" id="clearChatHistoryBtn2">🗑️ 대화 이력 삭제</button>
+                        <button class="btn btn-success" id="exportChatHistoryBtn2">📥 대화 이력 내보내기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         console.log('페이지 로드 시작');
 
@@ -2406,25 +2608,25 @@ https://phoenixai-agent.site/reservation.html
                                     // 관리자 페이지 상태 업데이트
                                     updateAdminApiStatus2();
                                 } else {
-                                    const errorMessage = '❌ 활성화된 API가 없습니다. API 키를 입력해주세요.';
+                                    const errorMessage = '❌ 활성화된 API가 없습니다. API 키를 입력하고 설정을 저장해주세요.';
                                     if (statusDiv) {
                                         statusDiv.innerHTML = `<div style="color: #721c24; padding: 10px; background: #f8d7da; border-radius: 5px; margin-top: 10px;">${errorMessage}</div>`;
                                     }
                                     alert(errorMessage);
                                 }
                             } catch (error) {
-                                console.error('❌ API 연결 테스트 중 오류:', error);
-                                const errorMessage = '❌ API 연결 테스트 중 오류가 발생했습니다.';
+                                console.error('❌ API 테스트 실패:', error);
+                                const errorMessage = '❌ API 테스트에 실패했습니다: ' + error.message;
                                 if (statusDiv) {
                                     statusDiv.innerHTML = `<div style="color: #721c24; padding: 10px; background: #f8d7da; border-radius: 5px; margin-top: 10px;">${errorMessage}</div>`;
                                 }
                                 alert(errorMessage);
                             }
-                        }, 1000);
+                        }, 2000);
                         
                     } catch (error) {
-                        console.error('❌ API 연결 테스트 실패:', error);
-                        alert('❌ API 연결 테스트에 실패했습니다. 다시 시도해주세요.');
+                        console.error('❌ API 테스트 시작 실패:', error);
+                        alert('❌ API 테스트를 시작할 수 없습니다: ' + error.message);
                     }
                 });
                 console.log('✅ API 연결 테스트 버튼 이벤트 리스너 추가 완료');
@@ -2434,25 +2636,20 @@ https://phoenixai-agent.site/reservation.html
             const resetApiBtn = document.getElementById('resetApiBtn2');
             if (resetApiBtn) {
                 resetApiBtn.addEventListener('click', function() {
-                    try {
-                        if (confirm('정말로 모든 API 설정을 초기화하시겠습니까?')) {
+                    if (confirm('⚠️ 모든 API 설정을 초기화하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.')) {
+                        try {
                             console.log('🔄 API 설정 초기화 시작');
                             
                             // 입력 필드 초기화
-                            const fields = [
-                                'chatgptApiKey2', 'chatgptModel2',
-                                'geminiApiKey2', 'geminiModel2',
-                                'claudeApiKey2', 'claudeModel2'
-                            ];
-                            
-                            fields.forEach(fieldId => {
-                                const element = document.getElementById(fieldId);
+                            const inputs = ['chatgptApiKey2', 'chatgptModel2', 'geminiApiKey2', 'geminiModel2', 'claudeApiKey2', 'claudeModel2'];
+                            inputs.forEach(id => {
+                                const element = document.getElementById(id);
                                 if (element) {
                                     element.value = '';
                                 }
                             });
                             
-                            // localStorage에서 설정 제거
+                            // localStorage에서 설정 삭제
                             localStorage.removeItem('chatbotApiSettings');
                             
                             // 상태 메시지 업데이트
@@ -2465,15 +2662,52 @@ https://phoenixai-agent.site/reservation.html
                             updateAdminApiStatus2();
                             
                             console.log('✅ API 설정 초기화 완료');
-                            alert('✅ API 설정이 초기화되었습니다.');
+                            alert('✅ API 설정이 초기화되었습니다!');
+                            
+                        } catch (error) {
+                            console.error('❌ API 설정 초기화 실패:', error);
+                            alert('❌ API 설정 초기화에 실패했습니다: ' + error.message);
                         }
-                    } catch (error) {
-                        console.error('❌ API 설정 초기화 실패:', error);
-                        alert('❌ API 설정 초기화에 실패했습니다: ' + error.message);
                     }
                 });
                 console.log('✅ API 설정 초기화 버튼 이벤트 리스너 추가 완료');
             }
+
+            // 기존 설정 불러오기
+            try {
+                const settings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
+                
+                if (settings.chatgpt?.apiKey) {
+                    const chatgptApiKey = document.getElementById('chatgptApiKey2');
+                    if (chatgptApiKey) chatgptApiKey.value = settings.chatgpt.apiKey;
+                }
+                if (settings.chatgpt?.model) {
+                    const chatgptModel = document.getElementById('chatgptModel2');
+                    if (chatgptModel) chatgptModel.value = settings.chatgpt.model;
+                }
+                if (settings.gemini?.apiKey) {
+                    const geminiApiKey = document.getElementById('geminiApiKey2');
+                    if (geminiApiKey) geminiApiKey.value = settings.gemini.apiKey;
+                }
+                if (settings.gemini?.model) {
+                    const geminiModel = document.getElementById('geminiModel2');
+                    if (geminiModel) geminiModel.value = settings.gemini.model;
+                }
+                if (settings.claude?.apiKey) {
+                    const claudeApiKey = document.getElementById('claudeApiKey2');
+                    if (claudeApiKey) claudeApiKey.value = settings.claude.apiKey;
+                }
+                if (settings.claude?.model) {
+                    const claudeModel = document.getElementById('claudeModel2');
+                    if (claudeModel) claudeModel.value = settings.claude.model;
+                }
+                
+                console.log('✅ 기존 API 설정 불러오기 완료');
+            } catch (error) {
+                console.error('❌ 기존 API 설정 불러오기 실패:', error);
+            }
+
+                        console.log('🔧 AI챗봇 관리자 페이지2 이벤트 리스너 설정 완료');
         }
 
         // 예약 관련 전역 변수
