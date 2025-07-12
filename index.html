@@ -3020,7 +3020,7 @@ https://phoenixai-agent.site/reservation.html
                             }
                         };
                         
-                        localStorage.setItem('chatbotApiSettings', JSON.stringify(settings));
+                        localStorage.setItem('chatbot1_ApiSettings', JSON.stringify(settings));
                         console.log('✅ API 설정 저장 완료:', settings);
                         
                         // 상태 메시지 업데이트
@@ -3064,7 +3064,7 @@ https://phoenixai-agent.site/reservation.html
                         
                         setTimeout(() => {
                             try {
-                                const settings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
+                                const settings = JSON.parse(localStorage.getItem('chatbot1_ApiSettings') || '{}');
                                 let activeApis = [];
                                 
                                 if (settings.chatgpt?.enabled && settings.chatgpt?.apiKey) activeApis.push('ChatGPT');
@@ -3136,7 +3136,7 @@ https://phoenixai-agent.site/reservation.html
                             });
                             
                             // localStorage에서 설정 제거
-                            localStorage.removeItem('chatbotApiSettings');
+                            localStorage.removeItem('chatbot1_ApiSettings');
                             
                             // 상태 메시지 업데이트
                             const statusDiv = document.getElementById('apiStatus');
