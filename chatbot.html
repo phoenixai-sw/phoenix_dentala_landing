@@ -3025,18 +3025,14 @@ ${currentQuickMenu.directInquiry}
                     if (fileExtension === 'txt' || file.type === 'text/plain' || file.type === '') {
                         // 텍스트 파일 처리
                         processTextFile(file, fileData);
-                    } else if (fileExtension === 'xlsx' || fileExtension === 'xls' || 
-                              file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-                              file.type === 'application/vnd.ms-excel') {
-                        // Excel 파일 처리
-                        processExcelFile(file, fileData);
+
                     } else if (fileExtension === 'jsonl' || file.type === 'application/jsonl' || file.type === 'text/plain') {
                         // JSONL 파일 처리
                         processJsonlFile(file, fileData);
                     } else {
                         // 지원되지 않는 파일 형식
                         console.warn('지원되지 않는 파일 형식:', file.name, file.type);
-                        alert(`❌ 지원되지 않는 파일 형식입니다: ${file.name}\n\n📁 현재 지원되는 파일 형식:\n• 텍스트 파일 (.txt)\n• Excel 파일 (.xlsx, .xls)\n• JSONL 파일 (.jsonl)`);
+                        alert(`❌ 지원되지 않는 파일 형식입니다: ${file.name}\n\n📁 현재 지원되는 파일 형식:\n• 텍스트 파일 (.txt)\n• JSONL 파일 (.jsonl)`);
                     }
                 }
             }
@@ -3061,38 +3057,7 @@ ${currentQuickMenu.directInquiry}
                 reader.readAsText(file, 'UTF-8');
             }
 
-            // Excel 파일 처리
-            function processExcelFile(file, fileData) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const csvContent = convertExcelToCSV(data);
-                        fileData.content = csvContent;
-                        processKnowledgeFile(fileData.name, csvContent);
-                    } catch (error) {
-                        console.error('Excel 파일 처리 오류:', error);
-                        alert(`❌ Excel 파일 처리 실패: ${file.name}\n\n💡 Excel 파일을 CSV로 저장한 후 업로드해주세요.`);
-                    }
-                };
-                reader.onerror = function() {
-                    console.error('Excel 파일 읽기 오류');
-                    alert(`❌ Excel 파일 읽기 실패: ${file.name}`);
-                };
-                reader.readAsArrayBuffer(file);
-            }
 
-            // Excel을 CSV로 변환 (간단한 구현)
-            function convertExcelToCSV(data) {
-                let text = '';
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i] >= 32 && data[i] <= 126) {
-                        text += String.fromCharCode(data[i]);
-                    }
-                }
-                const lines = text.split('\n').filter(line => line.trim().length > 0);
-                return lines.join('\n');
-            }
 
             // JSONL 파일 처리
             function processJsonlFile(file, fileData) {
@@ -3732,10 +3697,10 @@ ${currentQuickMenu.directInquiry}
                 <div class="upload-area" id="uploadArea">
                     <div class="upload-icon">📁</div>
                     <div class="upload-text">클릭하거나 파일을 여기로 드래그하세요</div>
-                    <div class="upload-types">💡 <strong>지원 형식: 텍스트(.txt), Excel(.xlsx/.xls), JSONL(.jsonl)</strong><br>
-                    <small style="color: #666;">※ 지원 형식: .txt, .xlsx, .xls, .jsonl | PDF는 텍스트로 변환 후 업로드해주세요</small></div>
+                    <div class="upload-types">💡 <strong>지원 형식: 텍스트(.txt), JSONL(.jsonl)</strong><br>
+                    <small style="color: #666;">※ 지원 형식: .txt, .jsonl | PDF는 텍스트로 변환 후 업로드해주세요</small></div>
                 </div>
-                <input type="file" id="fileInput" class="file-input" accept=".txt,.xlsx,.xls,.jsonl" multiple>
+                <input type="file" id="fileInput" class="file-input" accept=".txt,.jsonl" multiple>
                 
                 <div class="file-list" id="fileList">
                     <!-- 업로드된 파일들이 여기에 표시됩니다 -->
