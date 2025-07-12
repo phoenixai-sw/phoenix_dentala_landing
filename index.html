@@ -2923,11 +2923,14 @@ https://phoenixai-agent.site/reservation.html
                     try {
                         console.log('💾 지식 파일 설정 저장 시작');
                         
-                        const fileItems = document.querySelectorAll('#fileList2 .file-item');
                         const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
                         
-                        knowledgeData.enabled = fileItems.length > 0;
-                        knowledgeData.files = Array.from(fileItems).map(item => item.querySelector('strong').textContent.replace('📄 ', ''));
+                        // 파싱된 데이터가 있으면 활성화
+                        knowledgeData.enabled = knowledgeData.parsedData.length > 0;
+                        
+                        // 파일 목록 업데이트 (실제 파싱된 데이터에서 파일명 추출)
+                        const fileNames = [...new Set(knowledgeData.parsedData.map(qa => qa.source).filter(Boolean))];
+                        knowledgeData.files = fileNames;
                         
                         localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
                         
@@ -2937,6 +2940,7 @@ https://phoenixai-agent.site/reservation.html
                         }
                         
                         updateKnowledgeStatus2();
+                        updateFileList2();
                         
                         alert('✅ 지식 설정이 성공적으로 저장되었습니다!');
                         
@@ -2952,21 +2956,24 @@ https://phoenixai-agent.site/reservation.html
             const testKnowledgeBtn2 = document.getElementById('testKnowledgeBtn2');
             if (testKnowledgeBtn2) {
                 testKnowledgeBtn2.addEventListener('click', function() {
-                    const testQuery = prompt('검색할 질문을 입력하세요:');
-                    if (!testQuery) return;
-                    
                     const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
                     
                     if (!knowledgeData.enabled || knowledgeData.parsedData.length === 0) {
-                        alert('활성화된 지식베이스가 없습니다.');
+                        alert('📚 지식 검색 테스트\n\n활성화된 지식베이스가 없습니다.\n\n사용법:\n1. 지식 파일을 업로드하세요 (.txt, .xlsx, .jsonl)\n2. "지식 파일 설정 저장" 버튼을 클릭하세요\n3. 이 버튼으로 업로드된 지식이 제대로 검색되는지 테스트하세요');
                         return;
                     }
                     
+                    const testQuery = prompt(`🔍 지식 검색 테스트\n\n업로드된 ${knowledgeData.parsedData.length}개의 Q&A 중에서 검색할 질문을 입력하세요:\n\n예시: 진료시간, 예약방법, 치료비용 등`);
+                    if (!testQuery) return;
+                    
+                    console.log('🔍 지식 검색 테스트:', testQuery);
+                    console.log('검색 대상 Q&A 개수:', knowledgeData.parsedData.length);
+                    
                     const result = searchInKnowledgeBase2(testQuery, knowledgeData.parsedData);
                     if (result) {
-                        alert(`검색 결과:\n\nQ: ${result.question}\n\nA: ${result.answer}`);
+                        alert(`🔍 검색 결과:\n\nQ: ${result.question}\n\nA: ${result.answer}\n\n출처: ${result.source || '알 수 없음'}\n\n✅ 지식베이스가 정상적으로 작동합니다!`);
                     } else {
-                        alert('관련 답변을 찾을 수 없습니다.');
+                        alert(`❌ 검색 결과 없음\n\n질문: "${testQuery}"\n\n관련 답변을 찾을 수 없습니다.\n다른 키워드로 검색해보세요.\n\n💡 업로드된 파일의 내용을 확인하려면 "📋 파싱된 Q&A 보기" 버튼을 사용하세요.`);
                     }
                 });
                 console.log('✅ 지식 검색 테스트 버튼 이벤트 리스너 추가 완료');
@@ -3142,11 +3149,12 @@ https://phoenixai-agent.site/reservation.html
                     knowledgeData.enabled = knowledgeData.parsedData.length > 0;
                     localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
                     
+                    // 파일 목록과 상태 업데이트
                     updateFileList2();
                     updateKnowledgeStatus2();
                     
                     if (knowledgeData.parsedData.length > 0) {
-                        const message = `✅ ${totalFiles}개 파일 처리 완료!\n📚 총 ${knowledgeData.parsedData.length}개의 Q&A가 파싱되었습니다.\n🤖 지식베이스가 자동으로 활성화되었습니다!`;
+                        const message = `✅ ${totalFiles}개 파일 처리 완료!\n📚 총 ${knowledgeData.parsedData.length}개의 Q&A가 파싱되었습니다.\n🤖 지식베이스가 자동으로 활성화되었습니다!\n\n💾 "지식 파일 설정 저장" 버튼을 클릭하여 설정을 저장하세요.`;
                         showStatus2('knowledgeSettingsStatus2', message, 'success');
                     } else {
                         showStatus2('knowledgeSettingsStatus2', 
