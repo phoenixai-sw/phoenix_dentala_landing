@@ -1970,46 +1970,7 @@
         👩‍⚕️
     </button>
 
-    <!-- AI 챗봇 팝업 -->
-    <div class="chatbot-popup" id="chatbotPopup">
-        <div class="chatbot-header">
-            <div class="chatbot-title">
-                <span>피닉스 치과 AI 상담사👩‍⚕️</span>
-            </div>
-            <button class="chatbot-close" onclick="closeChatbot()">✕</button>
-        </div>
-        
-        <div class="chatbot-messages" id="chatbotMessages">
-            <!-- 초기 환영 메시지 -->
-            <div class="message bot">
-                <div class="message-avatar">👩‍⚕️</div>
-                <div class="message-content">
-                    안녕하세요! 피닉스 치과 AI 상담사입니다. 😊<br><br>
-                    AI상담사의 언어를 선택하세요! (기본언어:한국어🇰🇷)
-                    <div class="quick-buttons" style="margin-top: 15px;">
-                        <button class="quick-button" onclick="sendQuickMessage('한국어로 상담하겠습니다')">🇰🇷 한국어</button>
-                        <button class="quick-button" onclick="sendQuickMessage('영어로 상담하겠습니다')">🇺🇸 영어</button>
-                        <button class="quick-button" onclick="sendQuickMessage('러시아어로 상담하겠습니다')">🇷🇺 러시아어</button>
-                        <button class="quick-button" onclick="sendQuickMessage('일본어로 상담하겠습니다')">🇯🇵 일본어</button>
-                    </div>
-                    <br>
-                    <div class="quick-buttons">
-                        <button class="quick-button" onclick="sendQuickMessage('진료시간 알려주세요')">진료시간</button>
-                        <button class="quick-button" onclick="sendQuickMessage('예약하고 싶어요')">예약문의</button>
-                        <button class="quick-button" onclick="sendQuickMessage('치료비용 궁금해요')">치료비용</button>
-                        <button class="quick-button" onclick="sendQuickMessage('위치 알려주세요')">오시는길</button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="chatbot-input">
-            <textarea id="chatbotInput" placeholder="메시지를 입력하세요... (Shift+Enter: 전송)" onkeypress="handleChatKeyPress(event)" style="flex: 1; padding: 18px 24px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 22px; resize: none; min-height: 65px; max-height: 140px; font-family: inherit;"></textarea>
-            <button class="chatbot-send" onclick="sendMessage()" style="min-width: 108px; border-radius: 25px; font-size: 21px; padding: 18px 26px; font-weight: bold;">
-                전송
-            </button>
-        </div>
-    </div>
 
     <!-- 예약 페이지 -->
     <div class="popup-page" id="reservationPage">
