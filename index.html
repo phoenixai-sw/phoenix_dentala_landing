@@ -2875,7 +2875,768 @@ https://phoenixai-agent.site/reservation.html
                 console.error('❌ 기존 API 설정 불러오기 실패:', error);
             }
 
-                        console.log('🔧 AI챗봇 관리자 페이지2 이벤트 리스너 설정 완료');
+            // 파일 업로드 이벤트 리스너 설정
+            const fileInput2 = document.getElementById('fileInput2');
+            if (fileInput2) {
+                fileInput2.addEventListener('change', function(event) {
+                    const files = event.target.files;
+                    processUploadedFiles2(files);
+                });
+                console.log('✅ 파일 업로드 이벤트 리스너 추가 완료 (fileInput2)');
+            }
+
+            // 파일 드래그 앤 드롭 이벤트 리스너 설정
+            const uploadArea2 = document.getElementById('uploadArea2');
+            if (uploadArea2) {
+                // 클릭 이벤트
+                uploadArea2.addEventListener('click', function() {
+                    document.getElementById('fileInput2').click();
+                });
+                
+                // 드래그 오버 이벤트
+                uploadArea2.addEventListener('dragover', function(event) {
+                    event.preventDefault();
+                    this.style.borderColor = '#4facfe';
+                });
+                
+                // 드래그 리브 이벤트
+                uploadArea2.addEventListener('dragleave', function(event) {
+                    event.preventDefault();
+                    this.style.borderColor = '#ddd';
+                });
+                
+                // 드롭 이벤트
+                uploadArea2.addEventListener('drop', function(event) {
+                    event.preventDefault();
+                    this.style.borderColor = '#ddd';
+                    
+                    const files = event.dataTransfer.files;
+                    processUploadedFiles2(files);
+                });
+                console.log('✅ 파일 드래그 앤 드롭 이벤트 리스너 추가 완료 (uploadArea2)');
+            }
+
+            // 지식 파일 설정 저장 버튼
+            const saveKnowledgeBtn2 = document.getElementById('saveKnowledgeBtn2');
+            if (saveKnowledgeBtn2) {
+                saveKnowledgeBtn2.addEventListener('click', function() {
+                    try {
+                        console.log('💾 지식 파일 설정 저장 시작');
+                        
+                        const fileItems = document.querySelectorAll('#fileList2 .file-item');
+                        const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                        
+                        knowledgeData.enabled = fileItems.length > 0;
+                        knowledgeData.files = Array.from(fileItems).map(item => item.querySelector('strong').textContent.replace('📄 ', ''));
+                        
+                        localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
+                        
+                        const statusDiv = document.getElementById('knowledgeSettingsStatus2');
+                        if (statusDiv) {
+                            statusDiv.innerHTML = '<div style="color: green; padding: 10px; background: #d4edda; border-radius: 5px; margin-top: 10px;">✅ 지식 설정이 저장되었습니다!</div>';
+                        }
+                        
+                        updateKnowledgeStatus2();
+                        
+                        alert('✅ 지식 설정이 성공적으로 저장되었습니다!');
+                        
+                    } catch (error) {
+                        console.error('❌ 지식 설정 저장 실패:', error);
+                        alert('❌ 지식 설정 저장에 실패했습니다: ' + error.message);
+                    }
+                });
+                console.log('✅ 지식 파일 설정 저장 버튼 이벤트 리스너 추가 완료');
+            }
+
+            // 지식 검색 테스트 버튼
+            const testKnowledgeBtn2 = document.getElementById('testKnowledgeBtn2');
+            if (testKnowledgeBtn2) {
+                testKnowledgeBtn2.addEventListener('click', function() {
+                    const testQuery = prompt('검색할 질문을 입력하세요:');
+                    if (!testQuery) return;
+                    
+                    const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                    
+                    if (!knowledgeData.enabled || knowledgeData.parsedData.length === 0) {
+                        alert('활성화된 지식베이스가 없습니다.');
+                        return;
+                    }
+                    
+                    const result = searchInKnowledgeBase2(testQuery, knowledgeData.parsedData);
+                    if (result) {
+                        alert(`검색 결과:\n\nQ: ${result.question}\n\nA: ${result.answer}`);
+                    } else {
+                        alert('관련 답변을 찾을 수 없습니다.');
+                    }
+                });
+                console.log('✅ 지식 검색 테스트 버튼 이벤트 리스너 추가 완료');
+            }
+
+            // 파싱된 Q&A 보기 버튼
+            const showParsedDataBtn2 = document.getElementById('showParsedDataBtn2');
+            if (showParsedDataBtn2) {
+                showParsedDataBtn2.addEventListener('click', function() {
+                    const parsedDataView2 = document.getElementById('parsedDataView2');
+                    const parsedDataContent2 = document.getElementById('parsedDataContent2');
+                    
+                    if (parsedDataView2.style.display === 'none') {
+                        const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                        
+                        if (knowledgeData.parsedData.length === 0) {
+                            alert('파싱된 Q&A 데이터가 없습니다.');
+                            return;
+                        }
+                        
+                        let content = '';
+                        knowledgeData.parsedData.forEach((qa, index) => {
+                            content += `
+                                <div style="border-bottom: 1px solid #eee; padding: 15px 0;">
+                                    <div style="font-weight: bold; color: #2c3e50; margin-bottom: 8px;">
+                                        Q${index + 1}: ${qa.question}
+                                    </div>
+                                    <div style="color: #666; line-height: 1.5;">
+                                        A: ${qa.answer}
+                                    </div>
+                                    <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                                        출처: ${qa.source || '알 수 없음'}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        parsedDataContent2.innerHTML = content;
+                        parsedDataView2.style.display = 'block';
+                        showParsedDataBtn2.textContent = '📋 파싱된 Q&A 숨기기';
+                    } else {
+                        parsedDataView2.style.display = 'none';
+                        showParsedDataBtn2.textContent = '📋 파싱된 Q&A 보기';
+                    }
+                });
+                console.log('✅ 파싱된 Q&A 보기 버튼 이벤트 리스너 추가 완료');
+            }
+
+            // 모든 지식 삭제 버튼
+            const clearKnowledgeBtn2 = document.getElementById('clearKnowledgeBtn2');
+            if (clearKnowledgeBtn2) {
+                clearKnowledgeBtn2.addEventListener('click', function() {
+                    if (confirm('⚠️ 모든 지식 데이터를 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.')) {
+                        try {
+                            console.log('🗑️ 모든 지식 삭제 시작');
+                            
+                            // localStorage에서 지식 데이터 삭제
+                            localStorage.removeItem('chatbotKnowledgeBase');
+                            
+                            // 파일 목록 초기화
+                            const fileList2 = document.getElementById('fileList2');
+                            if (fileList2) {
+                                fileList2.innerHTML = '';
+                            }
+                            
+                            // 파싱된 Q&A 보기 영역 숨기기
+                            const parsedDataView2 = document.getElementById('parsedDataView2');
+                            if (parsedDataView2) {
+                                parsedDataView2.style.display = 'none';
+                            }
+                            
+                            // 상태 업데이트
+                            updateKnowledgeStatus2();
+                            
+                            const statusDiv = document.getElementById('knowledgeSettingsStatus2');
+                            if (statusDiv) {
+                                statusDiv.innerHTML = '<div style="color: #856404; padding: 10px; background: #fff3cd; border-radius: 5px; margin-top: 10px;">🗑️ 모든 지식 데이터가 삭제되었습니다.</div>';
+                            }
+                            
+                            console.log('✅ 모든 지식 삭제 완료');
+                            alert('✅ 모든 지식 데이터가 삭제되었습니다!');
+                            
+                        } catch (error) {
+                            console.error('❌ 지식 삭제 실패:', error);
+                            alert('❌ 지식 삭제에 실패했습니다: ' + error.message);
+                        }
+                    }
+                });
+                console.log('✅ 모든 지식 삭제 버튼 이벤트 리스너 추가 완료');
+            }
+
+            console.log('🔧 AI챗봇 관리자 페이지2 이벤트 리스너 설정 완료');
+        }
+
+        // AI 챗봇 관리자 페이지2 파일 업로드 처리 함수들
+        function processUploadedFiles2(files) {
+            console.log('파일 업로드 처리 시작 (관리자2):', files.length, '개');
+            showStatus2('knowledgeSettingsStatus2', '📁 파일을 처리하고 있습니다...', 'success');
+            
+            let processedCount = 0;
+            const totalFiles = files.length;
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                console.log('파일 처리 중 (관리자2):', file.name, file.type, file.size);
+                
+                const fileData = {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    uploadTime: new Date(),
+                    content: ''
+                };
+                
+                // 파일 확장자 확인
+                const fileExtension = file.name.toLowerCase().split('.').pop();
+                
+                // PDF 파일 경고
+                if (fileExtension === 'pdf' || file.type === 'application/pdf') {
+                    console.warn('PDF 파일 감지 (관리자2):', file.name);
+                    processedCount++;
+                    
+                    if (processedCount === totalFiles) {
+                        showStatus2('knowledgeSettingsStatus2', 
+                            `❌ PDF 파일은 현재 지원되지 않습니다.\nPDF 내용을 텍스트 파일(.txt)로 복사해서 업로드해주세요.`, 
+                            'error');
+                    }
+                    continue;
+                }
+                
+                // 지원되는 파일 형식 처리
+                if (fileExtension === 'txt' || file.type === 'text/plain' || file.type === '') {
+                    // 텍스트 파일 처리
+                    processTextFileWithEncoding2(file, fileData, () => {
+                        processedCount++;
+                        checkAllFilesProcessed2();
+                    });
+                } else if (fileExtension === 'xlsx' || fileExtension === 'xls' || 
+                          file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                          file.type === 'application/vnd.ms-excel') {
+                    // Excel 파일 처리
+                    processExcelFile2(file, fileData, () => {
+                        processedCount++;
+                        checkAllFilesProcessed2();
+                    });
+                } else if (fileExtension === 'jsonl' || file.type === 'application/jsonl' || file.type === 'text/plain') {
+                    // JSONL 파일 처리
+                    processJsonlFile2(file, fileData, () => {
+                        processedCount++;
+                        checkAllFilesProcessed2();
+                    });
+                } else {
+                    // 지원되지 않는 파일 형식
+                    console.warn('지원되지 않는 파일 형식 (관리자2):', file.name, file.type);
+                    processedCount++;
+                    
+                    if (processedCount === totalFiles) {
+                        showStatus2('knowledgeSettingsStatus2', 
+                            `❌ 지원되지 않는 파일 형식입니다: ${file.name}\n\n📁 현재 지원되는 파일 형식:\n• 텍스트 파일 (.txt)\n• Excel 파일 (.xlsx, .xls)\n• JSONL 파일 (.jsonl)`, 
+                            'error');
+                    }
+                    checkAllFilesProcessed2();
+                }
+            }
+            
+            // 모든 파일 처리 완료 확인 함수
+            function checkAllFilesProcessed2() {
+                if (processedCount === totalFiles) {
+                    console.log('전체 파일 처리 완료 (관리자2)');
+                    
+                    // 지식베이스 자동 활성화
+                    const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                    knowledgeData.enabled = knowledgeData.parsedData.length > 0;
+                    localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
+                    
+                    updateFileList2();
+                    updateKnowledgeStatus2();
+                    
+                    if (knowledgeData.parsedData.length > 0) {
+                        const message = `✅ ${totalFiles}개 파일 처리 완료!\n📚 총 ${knowledgeData.parsedData.length}개의 Q&A가 파싱되었습니다.\n🤖 지식베이스가 자동으로 활성화되었습니다!`;
+                        showStatus2('knowledgeSettingsStatus2', message, 'success');
+                    } else {
+                        showStatus2('knowledgeSettingsStatus2', 
+                            `⚠️ 파일은 읽었지만 Q&A 데이터를 찾지 못했습니다.\n\n📝 올바른 형식 예시:\nQ: 진료시간이 어떻게 되나요?\nA: 평일 09:00-18:00입니다.`, 
+                            'error');
+                    }
+                }
+            }
+        }
+
+        // 텍스트 파일을 다양한 인코딩으로 읽기 시도 (관리자2)
+        function processTextFileWithEncoding2(file, fileData, callback) {
+            console.log('🔤 텍스트 파일 인코딩 처리 (관리자2):', file.name);
+            
+            // UTF-8로 먼저 시도
+            const reader1 = new FileReader();
+            reader1.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    
+                    // 한글이 제대로 읽혔는지 확인
+                    const hasKorean = /[가-힣]/.test(content);
+                    const hasBrokenChars = /[◆]/.test(content) || content.includes('');
+                    
+                    if (hasKorean && !hasBrokenChars) {
+                        console.log('✅ UTF-8 인코딩 성공 (관리자2):', file.name);
+                        fileData.content = content;
+                        processKnowledgeFile2(fileData);
+                        callback();
+                        return;
+                    }
+                    
+                    console.log('❌ UTF-8 실패, EUC-KR 시도 (관리자2)');
+                    // EUC-KR로 재시도
+                    tryEucKrEncoding2();
+                    
+                } catch (error) {
+                    console.error('UTF-8 읽기 오류 (관리자2):', error);
+                    tryEucKrEncoding2();
+                }
+            };
+            
+            reader1.onerror = function() {
+                console.error('UTF-8 파일 읽기 오류 (관리자2)');
+                tryEucKrEncoding2();
+            };
+            
+            // EUC-KR 시도 함수
+            function tryEucKrEncoding2() {
+                const reader2 = new FileReader();
+                reader2.onload = function(e) {
+                    try {
+                        const content = e.target.result;
+                        const hasKorean = /[가-힣]/.test(content);
+                        const hasBrokenChars = /[◆]/.test(content) || content.includes('');
+                        
+                        if (hasKorean && !hasBrokenChars) {
+                            console.log('✅ EUC-KR 인코딩 성공 (관리자2):', file.name);
+                            fileData.content = content;
+                            processKnowledgeFile2(fileData);
+                            callback();
+                            return;
+                        }
+                        
+                        // 둘 다 실패한 경우 UTF-8 결과 사용
+                        console.log('⚠️ 한글 감지 실패, UTF-8 결과 사용 (관리자2):', file.name);
+                        fileData.content = reader1.result || '';
+                        processKnowledgeFile2(fileData);
+                        callback();
+                        
+                    } catch (error) {
+                        console.error('EUC-KR 읽기 오류 (관리자2):', error);
+                        // 마지막 수단으로 UTF-8 사용
+                        fileData.content = reader1.result || '';
+                        processKnowledgeFile2(fileData);
+                        callback();
+                    }
+                };
+                
+                reader2.onerror = function() {
+                    console.error('EUC-KR 파일 읽기 오류 (관리자2)');
+                    // UTF-8 결과라도 사용
+                    fileData.content = reader1.result || '';
+                    processKnowledgeFile2(fileData);
+                    callback();
+                };
+                
+                reader2.readAsText(file, 'EUC-KR');
+            }
+            
+            // UTF-8부터 시작
+            reader1.readAsText(file, 'UTF-8');
+        }
+
+        // Excel 파일 처리 함수 (관리자2)
+        function processExcelFile2(file, fileData, callback) {
+            console.log('📊 Excel 파일 처리 시작 (관리자2):', file.name);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const csvContent = convertExcelToCSV2(data);
+                    fileData.content = csvContent;
+                    processKnowledgeFile2(fileData);
+                    callback();
+                    
+                } catch (error) {
+                    console.error('Excel 파일 처리 오류 (관리자2):', error);
+                    showStatus2('knowledgeSettingsStatus2', 
+                        `❌ Excel 파일 처리 실패: ${file.name}\n\n💡 Excel 파일을 CSV로 저장한 후 업로드해주세요.`, 
+                        'error');
+                    callback();
+                }
+            };
+            
+            reader.onerror = function() {
+                console.error('Excel 파일 읽기 오류 (관리자2)');
+                showStatus2('knowledgeSettingsStatus2', 
+                    `❌ Excel 파일 읽기 실패: ${file.name}`, 
+                    'error');
+                callback();
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Excel을 CSV로 변환 (간단한 구현) - 관리자2
+        function convertExcelToCSV2(data) {
+            let text = '';
+            for (let i = 0; i < data.length; i++) {
+                if (data[i] >= 32 && data[i] <= 126) {
+                    text += String.fromCharCode(data[i]);
+                }
+            }
+            const lines = text.split('\n').filter(line => line.trim().length > 0);
+            return lines.join('\n');
+        }
+
+        // JSONL 파일 처리 함수 (관리자2)
+        function processJsonlFile2(file, fileData, callback) {
+            console.log('📄 JSONL 파일 처리 시작 (관리자2):', file.name);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    fileData.content = content;
+                    processJsonlContent2(fileData);
+                    callback();
+                    
+                } catch (error) {
+                    console.error('JSONL 파일 처리 오류 (관리자2):', error);
+                    showStatus2('knowledgeSettingsStatus2', 
+                        `❌ JSONL 파일 처리 실패: ${file.name}`, 
+                        'error');
+                    callback();
+                }
+            };
+            
+            reader.onerror = function() {
+                console.error('JSONL 파일 읽기 오류 (관리자2)');
+                showStatus2('knowledgeSettingsStatus2', 
+                    `❌ JSONL 파일 읽기 실패: ${file.name}`, 
+                    'error');
+                callback();
+            };
+            
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        // JSONL 내용 처리 (관리자2)
+        function processJsonlContent2(fileData) {
+            console.log('📄 JSONL 내용 처리 (관리자2):', fileData.name);
+            
+            if (!fileData.content || fileData.content.trim().length === 0) {
+                console.log('JSONL 내용이 비어있음 (관리자2):', fileData.name);
+                return;
+            }
+            
+            const content = fileData.content;
+            const lines = content.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+            console.log('JSONL 파싱할 라인 수 (관리자2):', lines.length);
+            
+            const parsedQA = [];
+            
+            // 각 라인을 JSON으로 파싱
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                try {
+                    const jsonData = JSON.parse(line);
+                    
+                    // 다양한 JSON 구조 지원
+                    let question = '';
+                    let answer = '';
+                    
+                    if (jsonData.question && jsonData.answer) {
+                        question = jsonData.question;
+                        answer = jsonData.answer;
+                    } else if (jsonData.q && jsonData.a) {
+                        question = jsonData.q;
+                        answer = jsonData.a;
+                    } else if (jsonData.질문 && jsonData.답변) {
+                        question = jsonData.질문;
+                        answer = jsonData.답변;
+                    } else if (jsonData.text && jsonData.response) {
+                        question = jsonData.text;
+                        answer = jsonData.response;
+                    } else if (jsonData.prompt && jsonData.completion) {
+                        question = jsonData.prompt;
+                        answer = jsonData.completion;
+                    } else if (jsonData.input && jsonData.output) {
+                        question = jsonData.input;
+                        answer = jsonData.output;
+                    }
+                    
+                    if (question && answer && question.length > 2 && answer.length > 3) {
+                        const qaItem = {
+                            question: question,
+                            answer: answer,
+                            source: fileData.name,
+                            lineNumber: i + 1,
+                            pattern: 'JSONL'
+                        };
+                        
+                        parsedQA.push(qaItem);
+                        console.log('JSONL Q&A 추가 (관리자2):', question.substring(0, 30) + '...');
+                    }
+                    
+                } catch (error) {
+                    console.warn(`JSONL 라인 ${i + 1} 파싱 실패 (관리자2):`, error);
+                    continue;
+                }
+            }
+            
+            // 기존 데이터에 추가 (중복 제거)
+            const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+            parsedQA.forEach(newQA => {
+                const isDuplicate = knowledgeData.parsedData.some(existingQA => 
+                    existingQA.question === newQA.question && existingQA.source === newQA.source
+                );
+                
+                if (!isDuplicate) {
+                    knowledgeData.parsedData.push(newQA);
+                }
+            });
+            
+            localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
+            console.log(`${fileData.name}에서 새로 파싱된 Q&A (관리자2):`, parsedQA.length, '개');
+        }
+
+        // 지식 파일 처리 함수 (관리자2)
+        function processKnowledgeFile2(fileData) {
+            console.log('지식 파일 처리 (관리자2):', fileData.name);
+            
+            if (!fileData.content || fileData.content.trim().length === 0) {
+                console.log('파일 내용이 비어있음 (관리자2):', fileData.name);
+                return;
+            }
+            
+            const content = fileData.content;
+            const lines = content.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+            console.log('파싱할 라인 수 (관리자2):', lines.length);
+            
+            const parsedQA = [];
+            
+            // 패턴별 파싱 시도
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                let question = '';
+                let answer = '';
+                
+                // 패턴 1: Q: 질문, A: 답변
+                if (line.match(/^[QqㅁㅂㅊㄷㄹㅁㅏqQuestion문질의질문]\s*[:：]\s*(.+)$/i)) {
+                    question = line.replace(/^[QqㅁㅂㅊㄷㄹㅁㅏqQuestion문질의질문]\s*[:：]\s*/i, '').trim();
+                    
+                    // 다음 줄에서 답변 찾기
+                    for (let j = i + 1; j < lines.length && j < i + 5; j++) {
+                        const nextLine = lines[j];
+                        if (nextLine.match(/^[AaAnsw답변답응답]\s*[:：]\s*(.+)$/i)) {
+                            answer = nextLine.replace(/^[AaAnsw답변답응답]\s*[:：]\s*/i, '').trim();
+                            i = j; // 인덱스 업데이트
+                            break;
+                        } else if (!nextLine.match(/^[QqㅁㅂㅊㄷㄹㅁㅏqQuestion문질의질문]\s*[:：]/i)) {
+                            // Q:가 아니면 답변으로 간주
+                            answer = nextLine;
+                            i = j;
+                            break;
+                        }
+                    }
+                }
+                
+                // 패턴 2: 숫자. 질문?
+                else if (line.match(/^\d+\.\s*(.+[?？])\s*$/)) {
+                    question = line.replace(/^\d+\.\s*/, '').trim();
+                    if (i + 1 < lines.length && !lines[i + 1].match(/^\d+\./)) {
+                        answer = lines[i + 1];
+                        i++;
+                    }
+                }
+                
+                // 패턴 3: - 질문?
+                else if (line.match(/^[-•*]\s*(.+[?？])\s*$/)) {
+                    question = line.replace(/^[-•*]\s*/, '').trim();
+                    if (i + 1 < lines.length && !lines[i + 1].match(/^[-•*]/)) {
+                        answer = lines[i + 1];
+                        i++;
+                    }
+                }
+                
+                // 패턴 4: 질문 키워드 포함
+                else if (line.length > 5 && 
+                         (line.includes('?') || line.includes('？') ||
+                          line.match(/(어떻게|언제|어디서|왜|무엇|누가|얼마|몇시|어떤|뭔가|어디|몇|언제까지)/))) {
+                    question = line;
+                    
+                    // 다음 몇 줄을 답변으로 수집
+                    const answerLines = [];
+                    for (let j = i + 1; j < Math.min(i + 4, lines.length); j++) {
+                        const nextLine = lines[j];
+                        // 다음 질문이 나오면 중단
+                        if (nextLine.match(/(어떻게|언제|어디서|왜|무엇|누가|얼마|몇시|어떤)[?？]/) ||
+                            nextLine.match(/^[\d\-•*QqㅁㅂㅊㄷㄹㅁㅏqQuestion문질의질문]/)) {
+                            break;
+                        }
+                        answerLines.push(nextLine);
+                        if (answerLines.join(' ').length > 200) break; // 너무 길면 중단
+                    }
+                    
+                    if (answerLines.length > 0) {
+                        answer = answerLines.join(' ').trim();
+                        i += answerLines.length;
+                    }
+                }
+                
+                // 패턴 5: 제목: 내용
+                else if (line.match(/^([^:：]{2,20})[:：]\s*(.{5,})$/)) {
+                    const matches = line.match(/^([^:：]{2,20})[:：]\s*(.{5,})$/);
+                    if (matches) {
+                        question = matches[1].trim();
+                        answer = matches[2].trim();
+                    }
+                }
+                
+                // 유효한 Q&A 쌍 저장
+                if (question && answer && question.length > 2 && answer.length > 3) {
+                    const qaItem = {
+                        question: question,
+                        answer: answer,
+                        source: fileData.name,
+                        lineNumber: i + 1,
+                        pattern: '자동감지'
+                    };
+                    
+                    parsedQA.push(qaItem);
+                    console.log('Q&A 추가 (관리자2):', question.substring(0, 30) + '...');
+                }
+            }
+            
+            // 기존 데이터에 추가 (중복 제거)
+            const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+            parsedQA.forEach(newQA => {
+                const isDuplicate = knowledgeData.parsedData.some(existingQA => 
+                    existingQA.question === newQA.question && existingQA.source === newQA.source
+                );
+                
+                if (!isDuplicate) {
+                    knowledgeData.parsedData.push(newQA);
+                }
+            });
+            
+            localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
+            console.log(`${fileData.name}에서 새로 파싱된 Q&A (관리자2):`, parsedQA.length, '개');
+        }
+
+        // 파일 목록 업데이트 (관리자2)
+        function updateFileList2() {
+            const fileList2 = document.getElementById('fileList2');
+            if (!fileList2) return;
+            
+            const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+            
+            // 파일별 Q&A 개수 계산
+            const fileQACounts = {};
+            knowledgeData.parsedData.forEach(qa => {
+                if (qa.source) {
+                    fileQACounts[qa.source] = (fileQACounts[qa.source] || 0) + 1;
+                }
+            });
+            
+            // 파일 목록 생성
+            let fileListHTML = '';
+            Object.keys(fileQACounts).forEach(filename => {
+                const qaCount = fileQACounts[filename];
+                fileListHTML += `
+                    <div class="file-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 5px; margin-bottom: 10px;">
+                        <div>
+                            <strong>📄 ${filename}</strong>
+                            <div style="font-size: 12px; color: #666;">Q&A: ${qaCount}개</div>
+                        </div>
+                        <button onclick="removeFile2('${filename}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">삭제</button>
+                    </div>
+                `;
+            });
+            
+            fileList2.innerHTML = fileListHTML;
+        }
+
+        // 파일 삭제 (관리자2)
+        function removeFile2(filename) {
+            if (confirm(`파일 "${filename}"을 삭제하시겠습니까?`)) {
+                const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                
+                // 해당 파일의 Q&A 데이터 삭제
+                knowledgeData.parsedData = knowledgeData.parsedData.filter(qa => qa.source !== filename);
+                
+                localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
+                
+                updateFileList2();
+                updateKnowledgeStatus2();
+                
+                alert(`파일 "${filename}"이 삭제되었습니다.`);
+            }
+        }
+
+        // 지식 상태 업데이트 (관리자2)
+        function updateKnowledgeStatus2() {
+            const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+            const fileItems = document.querySelectorAll('#fileList2 .file-item');
+            
+            const statusDiv = document.getElementById('knowledgeStatus2');
+            if (statusDiv) {
+                statusDiv.innerHTML = `📖 업로드된 지식 파일: ${fileItems.length}개 | 파싱된 Q&A: ${knowledgeData.parsedData.length}개 | 상태: ${knowledgeData.enabled ? '활성' : '비활성'}`;
+            }
+        }
+
+        // 지식베이스 검색 (관리자2)
+        function searchInKnowledgeBase2(query, parsedData) {
+            const normalizedQuery = query.toLowerCase().trim();
+            let bestMatch = null;
+            let bestScore = 0;
+            
+            for (const qa of parsedData) {
+                const question = qa.question.toLowerCase();
+                const answer = qa.answer.toLowerCase();
+                
+                let score = 0;
+                
+                // 질문에서 키워드 매칭
+                const queryWords = normalizedQuery.split(' ');
+                for (const word of queryWords) {
+                    if (question.includes(word)) score += 2;
+                    if (answer.includes(word)) score += 1;
+                }
+                
+                // 정확한 문구 매칭
+                if (question.includes(normalizedQuery)) score += 5;
+                if (answer.includes(normalizedQuery)) score += 3;
+                
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatch = qa;
+                }
+            }
+            
+            return bestScore > 0 ? bestMatch : null;
+        }
+
+        // 상태 메시지 표시 (관리자2)
+        function showStatus2(elementId, message, type) {
+            const statusDiv = document.getElementById(elementId);
+            if (statusDiv) {
+                let bgColor, textColor;
+                switch (type) {
+                    case 'success':
+                        bgColor = '#d4edda';
+                        textColor = 'green';
+                        break;
+                    case 'error':
+                        bgColor = '#f8d7da';
+                        textColor = '#721c24';
+                        break;
+                    default:
+                        bgColor = '#fff3cd';
+                        textColor = '#856404';
+                }
+                
+                statusDiv.innerHTML = `<div style="color: ${textColor}; padding: 10px; background: ${bgColor}; border-radius: 5px; margin-top: 10px;">${message}</div>`;
+            }
         }
 
         // 예약 관련 전역 변수
