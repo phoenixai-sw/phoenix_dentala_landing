@@ -907,14 +907,7 @@
                 this.setProcessingFlag(true);
                 
                 try {
-                    // ✅ 1차: 관리자 기능 (최우선)
-                    if (this.isAdminCommand(message)) {
-                        console.log('🔐 1차: 관리자 기능 처리');
-                        this.handleAdminCommand();
-                        return;
-                    }
-                    
-                    // ✅ 1.5차: 인사/감사 처리 (빠른 응답)
+                    // ✅ 1차: 인사/감사 처리 (빠른 응답)
                     if (this.isGreetingOrThanks(message)) {
                         console.log('😊 1.5차: 인사/감사 처리');
                         const response = this.generateGreetingResponse(message);
@@ -1003,13 +996,7 @@
                 }
             }
             
-            // 관리자 명령어 확인
-            isAdminCommand(message) {
-                const adminKeywords = ['AI관리자', 'AI 관리자', '관리자', 'admin'];
-                return adminKeywords.some(keyword => 
-                    message.toLowerCase().includes(keyword.toLowerCase())
-                );
-            }
+
             
             // 인사/감사 확인
             isGreetingOrThanks(message) {
@@ -2577,49 +2564,7 @@ ${currentQuickMenu.directInquiry}
                 </div>`;
             }
             
-            // 관리자 기능 처리
-            handleAdminCommand() {
-                const adminTexts = {
-                    ko: {
-                        title: '🤖 AI챗봇 관리자 로그인2',
-                        description: '관리자 페이지에 접속하려면 아래 버튼을 클릭하세요.',
-                        note: '💡 로그인 후 관리자 페이지 상단에서 아이디/비밀번호를 확인할 수 있습니다.',
-                        button: '🔐 관리자 페이지 열기'
-                    },
-                    en: {
-                        title: '🤖 AI Chatbot Admin Login2',
-                        description: 'Click the button below to access the admin page.',
-                        note: '💡 After login, you can check the ID/password at the top of the admin page.',
-                        button: '🔐 Open Admin Page'
-                    },
-                    ru: {
-                        title: '🤖 Вход в админ-панель ИИ чат-бота2',
-                        description: 'Нажмите кнопку ниже, чтобы получить доступ к странице администратора.',
-                        note: '💡 После входа вы можете проверить ID/пароль в верхней части страницы администратора.',
-                        button: '🔐 Открыть страницу администратора'
-                    },
-                    ja: {
-                        title: '🤖 AIチャットボット管理ログイン2',
-                        description: '管理者ページにアクセスするには、下のボタンをクリックしてください。',
-                        note: '💡 ログイン後、管理者ページ上部でID/パスワードを確認できます。',
-                        button: '🔐 管理者ページを開く'
-                    }
-                };
-                
-                const currentAdminText = adminTexts[this.currentLanguage] || adminTexts['ko'];
-                
-                const adminLink = `
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 20px; margin: 15px 0; text-align: center;">
-                        <h4 style="margin-bottom: 15px;">${currentAdminText.title}</h4>
-                        <p style="margin-bottom: 10px;">${currentAdminText.description}</p>
-                        <p style="margin-bottom: 20px; font-size: 14px; opacity: 0.9;">${currentAdminText.note}</p>
-                        <button onclick="openAdminPanel()" style="background: white; color: #667eea; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 16px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                            ${currentAdminText.button}
-                        </button>
-                    </div>
-                `;
-                this.addBotMessage(adminLink);
-            }
+
         }
 
         // 🎯 전역 챗봇 인스턴스 생성
@@ -2702,33 +2647,7 @@ ${currentQuickMenu.directInquiry}
             }
         }
 
-        // 🎯 관리자 패널 열기 (간소화된 버전)
-        function openAdminPanel() {
-            const username = prompt("🔐 관리자 로그인\n\n아이디를 입력하세요:");
-            if (username !== "phoenix") {
-                alert("❌ 아이디가 틀렸습니다.");
-                return;
-            }
-            
-            const password = prompt("비밀번호를 입력하세요:");
-            if (password !== "phoenix") {
-                alert("❌ 비밀번호가 틀렸습니다.");
-                return;
-            }
-            
-            console.log('✅ 관리자 로그인 성공');
-            document.getElementById('chatbotAdminPage').style.display = 'block';
-            
-            // 관리자 페이지 API 상태 업데이트
-            setTimeout(() => {
-                updateAdminApiStatus();
-            }, 100);
-            
-            // 관리자 페이지 이벤트 리스너 설정
-            setTimeout(() => {
-                setupAdminEventListeners();
-            }, 100);
-        }
+
 
         // 관리자 페이지 닫기
         function closeChatbotAdmin() {
