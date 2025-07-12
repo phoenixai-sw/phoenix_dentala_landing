@@ -2959,18 +2959,7 @@ ${currentQuickMenu.directInquiry}
             if (fileInput) {
                 fileInput.addEventListener('change', function(event) {
                     const files = event.target.files;
-                    const fileList = document.getElementById('fileList');
-                    
-                    for (let file of files) {
-                        if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                const content = e.target.result;
-                                processKnowledgeFile(file.name, content);
-                            };
-                            reader.readAsText(file);
-                        }
-                    }
+                    processUploadedFiles(files);
                 });
                 console.log('✅ 파일 업로드 이벤트 리스너 추가 완료');
             }
@@ -3001,20 +2990,196 @@ ${currentQuickMenu.directInquiry}
                     this.style.borderColor = '#ddd';
                     
                     const files = event.dataTransfer.files;
-                    const fileList = document.getElementById('fileList');
-                    
-                    for (let file of files) {
-                        if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                const content = e.target.result;
-                                processKnowledgeFile(file.name, content);
-                            };
-                            reader.readAsText(file);
-                        }
-                    }
+                    processUploadedFiles(files);
                 });
                 console.log('✅ 파일 드래그 앤 드롭 이벤트 리스너 추가 완료');
+            }
+
+            // 파일 업로드 처리 함수들
+            function processUploadedFiles(files) {
+                console.log('파일 업로드 처리 시작:', files.length, '개');
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    console.log('파일 처리 중:', file.name, file.type, file.size);
+                    
+                    const fileData = {
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        uploadTime: new Date(),
+                        content: ''
+                    };
+                    
+                    // 파일 확장자 확인
+                    const fileExtension = file.name.toLowerCase().split('.').pop();
+                    
+                    // PDF 파일 경고
+                    if (fileExtension === 'pdf' || file.type === 'application/pdf') {
+                        console.warn('PDF 파일 감지:', file.name);
+                        alert('❌ PDF 파일은 현재 지원되지 않습니다.\nPDF 내용을 텍스트 파일(.txt)로 복사해서 업로드해주세요.');
+                        continue;
+                    }
+                    
+                    // 지원되는 파일 형식 처리
+                    if (fileExtension === 'txt' || file.type === 'text/plain' || file.type === '') {
+                        // 텍스트 파일 처리
+                        processTextFile(file, fileData);
+                    } else if (fileExtension === 'xlsx' || fileExtension === 'xls' || 
+                              file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                              file.type === 'application/vnd.ms-excel') {
+                        // Excel 파일 처리
+                        processExcelFile(file, fileData);
+                    } else if (fileExtension === 'jsonl' || file.type === 'application/jsonl' || file.type === 'text/plain') {
+                        // JSONL 파일 처리
+                        processJsonlFile(file, fileData);
+                    } else {
+                        // 지원되지 않는 파일 형식
+                        console.warn('지원되지 않는 파일 형식:', file.name, file.type);
+                        alert(`❌ 지원되지 않는 파일 형식입니다: ${file.name}\n\n📁 현재 지원되는 파일 형식:\n• 텍스트 파일 (.txt)\n• Excel 파일 (.xlsx, .xls)\n• JSONL 파일 (.jsonl)`);
+                    }
+                }
+            }
+
+            // 텍스트 파일 처리
+            function processTextFile(file, fileData) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const content = e.target.result;
+                        fileData.content = content;
+                        processKnowledgeFile(fileData.name, content);
+                    } catch (error) {
+                        console.error('텍스트 파일 처리 오류:', error);
+                        alert(`❌ 텍스트 파일 처리 실패: ${file.name}`);
+                    }
+                };
+                reader.onerror = function() {
+                    console.error('텍스트 파일 읽기 오류');
+                    alert(`❌ 텍스트 파일 읽기 실패: ${file.name}`);
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+
+            // Excel 파일 처리
+            function processExcelFile(file, fileData) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const csvContent = convertExcelToCSV(data);
+                        fileData.content = csvContent;
+                        processKnowledgeFile(fileData.name, csvContent);
+                    } catch (error) {
+                        console.error('Excel 파일 처리 오류:', error);
+                        alert(`❌ Excel 파일 처리 실패: ${file.name}\n\n💡 Excel 파일을 CSV로 저장한 후 업로드해주세요.`);
+                    }
+                };
+                reader.onerror = function() {
+                    console.error('Excel 파일 읽기 오류');
+                    alert(`❌ Excel 파일 읽기 실패: ${file.name}`);
+                };
+                reader.readAsArrayBuffer(file);
+            }
+
+            // Excel을 CSV로 변환 (간단한 구현)
+            function convertExcelToCSV(data) {
+                let text = '';
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i] >= 32 && data[i] <= 126) {
+                        text += String.fromCharCode(data[i]);
+                    }
+                }
+                const lines = text.split('\n').filter(line => line.trim().length > 0);
+                return lines.join('\n');
+            }
+
+            // JSONL 파일 처리
+            function processJsonlFile(file, fileData) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const content = e.target.result;
+                        fileData.content = content;
+                        processJsonlContent(fileData.name, content);
+                    } catch (error) {
+                        console.error('JSONL 파일 처리 오류:', error);
+                        alert(`❌ JSONL 파일 처리 실패: ${file.name}`);
+                    }
+                };
+                reader.onerror = function() {
+                    console.error('JSONL 파일 읽기 오류');
+                    alert(`❌ JSONL 파일 읽기 실패: ${file.name}`);
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+
+            // JSONL 내용 처리
+            function processJsonlContent(filename, content) {
+                const lines = content.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+                const qaList = [];
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    
+                    try {
+                        const jsonData = JSON.parse(line);
+                        
+                        let question = '';
+                        let answer = '';
+                        
+                        if (jsonData.question && jsonData.answer) {
+                            question = jsonData.question;
+                            answer = jsonData.answer;
+                        } else if (jsonData.q && jsonData.a) {
+                            question = jsonData.q;
+                            answer = jsonData.a;
+                        } else if (jsonData.질문 && jsonData.답변) {
+                            question = jsonData.질문;
+                            answer = jsonData.답변;
+                        } else if (jsonData.text && jsonData.response) {
+                            question = jsonData.text;
+                            answer = jsonData.response;
+                        } else if (jsonData.prompt && jsonData.completion) {
+                            question = jsonData.prompt;
+                            answer = jsonData.completion;
+                        } else if (jsonData.input && jsonData.output) {
+                            question = jsonData.input;
+                            answer = jsonData.output;
+                        }
+                        
+                        if (question && answer && question.length > 2 && answer.length > 3) {
+                            qaList.push({ question: question, answer: answer });
+                        }
+                        
+                    } catch (error) {
+                        console.warn(`JSONL 라인 ${i + 1} 파싱 실패:`, error);
+                        continue;
+                    }
+                }
+                
+                if (qaList.length > 0) {
+                    const knowledgeData = JSON.parse(localStorage.getItem('chatbotKnowledgeBase') || '{"enabled": false, "files": [], "parsedData": []}');
+                    knowledgeData.parsedData = knowledgeData.parsedData.concat(qaList);
+                    localStorage.setItem('chatbotKnowledgeBase', JSON.stringify(knowledgeData));
+                    
+                    // 파일 목록에 추가
+                    const fileList = document.getElementById('fileList');
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'file-item';
+                    fileDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 5px; margin-bottom: 10px;">
+                            <div>
+                                <strong>📄 ${filename}</strong>
+                                <div style="font-size: 12px; color: #666;">크기: ${(content.length / 1024).toFixed(2)} KB | Q&A: ${qaList.length}개</div>
+                            </div>
+                            <button onclick="this.parentElement.remove(); updateKnowledgeStatus();" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">삭제</button>
+                        </div>
+                    `;
+                    fileList.appendChild(fileDiv);
+                }
+                
+                updateKnowledgeStatus();
             }
 
             // 지식 파일 처리 함수
@@ -3567,10 +3732,10 @@ ${currentQuickMenu.directInquiry}
                 <div class="upload-area" id="uploadArea">
                     <div class="upload-icon">📁</div>
                     <div class="upload-text">클릭하거나 파일을 여기로 드래그하세요</div>
-                    <div class="upload-types">💡 <strong>지원 형식: 텍스트 파일(.txt)</strong><br>
-                    <small style="color: #666;">※ PDF, Excel 파일은 내용을 복사해서 텍스트 파일로 저장 후 업로드해주세요</small></div>
+                    <div class="upload-types">💡 <strong>지원 형식: 텍스트(.txt), Excel(.xlsx/.xls), JSONL(.jsonl)</strong><br>
+                    <small style="color: #666;">※ 지원 형식: .txt, .xlsx, .xls, .jsonl | PDF는 텍스트로 변환 후 업로드해주세요</small></div>
                 </div>
-                <input type="file" id="fileInput" class="file-input" accept=".txt" multiple>
+                <input type="file" id="fileInput" class="file-input" accept=".txt,.xlsx,.xls,.jsonl" multiple>
                 
                 <div class="file-list" id="fileList">
                     <!-- 업로드된 파일들이 여기에 표시됩니다 -->

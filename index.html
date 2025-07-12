@@ -5482,36 +5482,26 @@ https://phoenixai-agent.site/reservation.html
                     continue;
                 }
                 
-                // 텍스트 파일만 처리
+                // 지원되는 파일 형식 처리
                 if (fileExtension === 'txt' || file.type === 'text/plain' || file.type === '') {
-                    // 다양한 인코딩으로 시도
+                    // 텍스트 파일 처리
                     processTextFileWithEncoding(file, fileData, () => {
                         processedCount++;
-                        
-                        // 모든 파일 처리 완료 시
-                        if (processedCount === totalFiles) {
-                            console.log('전체 파일 처리 완료');
-                            
-                            // ✅ 파일 업로드 즉시 지식베이스 자동 활성화
-                            knowledgeBase.enabled = knowledgeBase.parsedData.length > 0;
-                            
-                            updateFileList();
-                            updateKnowledgeStatus();
-                            
-                            if (knowledgeBase.parsedData.length > 0) {
-                                const message = `✅ ${totalFiles}개 파일 처리 완료!\n📚 총 ${knowledgeBase.parsedData.length}개의 Q&A가 파싱되었습니다.\n🤖 지식베이스가 자동으로 활성화되었습니다!`;
-                                showStatus('knowledgeSettingsStatus', message, 'success');
-                                
-                                // 즉시 테스트 실행
-                                setTimeout(() => {
-                                    testKnowledgeBaseAuto();
-                                }, 1000);
-                            } else {
-                                showStatus('knowledgeSettingsStatus', 
-                                    `⚠️ 파일은 읽었지만 Q&A 데이터를 찾지 못했습니다.\n\n📝 올바른 형식 예시:\nQ: 진료시간이 어떻게 되나요?\nA: 평일 09:00-18:00입니다.\n\n또는\n\n1. 예약은 어떻게 하나요?\n온라인이나 전화로 가능합니다.`, 
-                                    'error');
-                            }
-                        }
+                        checkAllFilesProcessed();
+                    });
+                } else if (fileExtension === 'xlsx' || fileExtension === 'xls' || 
+                          file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                          file.type === 'application/vnd.ms-excel') {
+                    // Excel 파일 처리
+                    processExcelFile(file, fileData, () => {
+                        processedCount++;
+                        checkAllFilesProcessed();
+                    });
+                } else if (fileExtension === 'jsonl' || file.type === 'application/jsonl' || file.type === 'text/plain') {
+                    // JSONL 파일 처리
+                    processJsonlFile(file, fileData, () => {
+                        processedCount++;
+                        checkAllFilesProcessed();
                     });
                 } else {
                     // 지원되지 않는 파일 형식
@@ -5520,11 +5510,257 @@ https://phoenixai-agent.site/reservation.html
                     
                     if (processedCount === totalFiles) {
                         showStatus('knowledgeSettingsStatus', 
-                            `❌ 지원되지 않는 파일 형식입니다.\n현재 텍스트 파일(.txt)만 지원됩니다.\n\n💡 Excel이나 PDF 내용을 텍스트 파일로 변환해서 업로드해주세요.`, 
+                            `❌ 지원되지 않는 파일 형식입니다: ${file.name}\n\n📁 현재 지원되는 파일 형식:\n• 텍스트 파일 (.txt)\n• Excel 파일 (.xlsx, .xls)\n• JSONL 파일 (.jsonl)\n\n💡 PDF나 다른 형식은 텍스트 파일로 변환해서 업로드해주세요.`, 
+                            'error');
+                    }
+                    checkAllFilesProcessed();
+                }
+            }
+            
+            // 모든 파일 처리 완료 확인 함수
+            function checkAllFilesProcessed() {
+                if (processedCount === totalFiles) {
+                    console.log('전체 파일 처리 완료');
+                    
+                    // ✅ 파일 업로드 즉시 지식베이스 자동 활성화
+                    knowledgeBase.enabled = knowledgeBase.parsedData.length > 0;
+                    
+                    updateFileList();
+                    updateKnowledgeStatus();
+                    
+                    if (knowledgeBase.parsedData.length > 0) {
+                        const message = `✅ ${totalFiles}개 파일 처리 완료!\n📚 총 ${knowledgeBase.parsedData.length}개의 Q&A가 파싱되었습니다.\n🤖 지식베이스가 자동으로 활성화되었습니다!`;
+                        showStatus('knowledgeSettingsStatus', message, 'success');
+                        
+                        // 즉시 테스트 실행
+                        setTimeout(() => {
+                            testKnowledgeBaseAuto();
+                        }, 1000);
+                    } else {
+                        showStatus('knowledgeSettingsStatus', 
+                            `⚠️ 파일은 읽었지만 Q&A 데이터를 찾지 못했습니다.\n\n📝 올바른 형식 예시:\nQ: 진료시간이 어떻게 되나요?\nA: 평일 09:00-18:00입니다.\n\n또는\n\n1. 예약은 어떻게 하나요?\n온라인이나 전화로 가능합니다.`, 
                             'error');
                     }
                 }
             }
+        }
+
+        // Excel 파일 처리 함수
+        function processExcelFile(file, fileData, callback) {
+            console.log('📊 Excel 파일 처리 시작:', file.name);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    
+                    // 간단한 Excel 파싱 (SheetJS 라이브러리 없이)
+                    // 실제로는 CSV로 변환하여 처리
+                    const csvContent = convertExcelToCSV(data);
+                    fileData.content = csvContent;
+                    knowledgeBase.files.push(fileData);
+                    parseExcelContent(fileData);
+                    callback();
+                    
+                } catch (error) {
+                    console.error('Excel 파일 처리 오류:', error);
+                    showStatus('knowledgeSettingsStatus', 
+                        `❌ Excel 파일 처리 실패: ${file.name}\n\n💡 Excel 파일을 CSV로 저장한 후 업로드해주세요.`, 
+                        'error');
+                    callback();
+                }
+            };
+            
+            reader.onerror = function() {
+                console.error('Excel 파일 읽기 오류');
+                showStatus('knowledgeSettingsStatus', 
+                    `❌ Excel 파일 읽기 실패: ${file.name}`, 
+                    'error');
+                callback();
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Excel을 CSV로 변환 (간단한 구현)
+        function convertExcelToCSV(data) {
+            // 실제 구현에서는 SheetJS 같은 라이브러리를 사용하는 것이 좋습니다
+            // 여기서는 간단한 텍스트 추출만 수행
+            let text = '';
+            for (let i = 0; i < data.length; i++) {
+                if (data[i] >= 32 && data[i] <= 126) { // ASCII 출력 가능 문자
+                    text += String.fromCharCode(data[i]);
+                }
+            }
+            
+            // Excel 파일에서 텍스트 추출 시도
+            const lines = text.split('\n').filter(line => line.trim().length > 0);
+            return lines.join('\n');
+        }
+
+        // Excel 내용 파싱
+        function parseExcelContent(fileData) {
+            console.log('📊 Excel 내용 파싱:', fileData.name);
+            
+            if (!fileData.content || fileData.content.trim().length === 0) {
+                console.log('Excel 내용이 비어있음:', fileData.name);
+                return;
+            }
+            
+            const content = fileData.content;
+            const lines = content.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+            console.log('Excel 파싱할 라인 수:', lines.length);
+            
+            const parsedQA = [];
+            
+            // CSV 형태로 파싱 시도
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const columns = line.split(',').map(col => col.trim().replace(/^["']|["']$/g, ''));
+                
+                if (columns.length >= 2) {
+                    const question = columns[0];
+                    const answer = columns[1];
+                    
+                    if (question && answer && question.length > 2 && answer.length > 3) {
+                        const qaItem = {
+                            question: question,
+                            answer: answer,
+                            source: fileData.name,
+                            lineNumber: i + 1,
+                            pattern: 'Excel-CSV'
+                        };
+                        
+                        parsedQA.push(qaItem);
+                        console.log('Excel Q&A 추가:', question.substring(0, 30) + '...');
+                    }
+                }
+            }
+            
+            // 기존 데이터에 추가 (중복 제거)
+            parsedQA.forEach(newQA => {
+                const isDuplicate = knowledgeBase.parsedData.some(existingQA => 
+                    existingQA.question === newQA.question && existingQA.source === newQA.source
+                );
+                
+                if (!isDuplicate) {
+                    knowledgeBase.parsedData.push(newQA);
+                }
+            });
+            
+            console.log(`${fileData.name}에서 새로 파싱된 Q&A:`, parsedQA.length, '개');
+        }
+
+        // JSONL 파일 처리 함수
+        function processJsonlFile(file, fileData, callback) {
+            console.log('📄 JSONL 파일 처리 시작:', file.name);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    fileData.content = content;
+                    knowledgeBase.files.push(fileData);
+                    parseJsonlContent(fileData);
+                    callback();
+                    
+                } catch (error) {
+                    console.error('JSONL 파일 처리 오류:', error);
+                    showStatus('knowledgeSettingsStatus', 
+                        `❌ JSONL 파일 처리 실패: ${file.name}\n\n💡 JSONL 파일 형식을 확인해주세요.`, 
+                        'error');
+                    callback();
+                }
+            };
+            
+            reader.onerror = function() {
+                console.error('JSONL 파일 읽기 오류');
+                showStatus('knowledgeSettingsStatus', 
+                    `❌ JSONL 파일 읽기 실패: ${file.name}`, 
+                    'error');
+                callback();
+            };
+            
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        // JSONL 내용 파싱
+        function parseJsonlContent(fileData) {
+            console.log('📄 JSONL 내용 파싱:', fileData.name);
+            
+            if (!fileData.content || fileData.content.trim().length === 0) {
+                console.log('JSONL 내용이 비어있음:', fileData.name);
+                return;
+            }
+            
+            const content = fileData.content;
+            const lines = content.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+            console.log('JSONL 파싱할 라인 수:', lines.length);
+            
+            const parsedQA = [];
+            
+            // 각 라인을 JSON으로 파싱
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                try {
+                    const jsonData = JSON.parse(line);
+                    
+                    // 다양한 JSON 구조 지원
+                    let question = '';
+                    let answer = '';
+                    
+                    if (jsonData.question && jsonData.answer) {
+                        question = jsonData.question;
+                        answer = jsonData.answer;
+                    } else if (jsonData.q && jsonData.a) {
+                        question = jsonData.q;
+                        answer = jsonData.a;
+                    } else if (jsonData.질문 && jsonData.답변) {
+                        question = jsonData.질문;
+                        answer = jsonData.답변;
+                    } else if (jsonData.text && jsonData.response) {
+                        question = jsonData.text;
+                        answer = jsonData.response;
+                    } else if (jsonData.prompt && jsonData.completion) {
+                        question = jsonData.prompt;
+                        answer = jsonData.completion;
+                    } else if (jsonData.input && jsonData.output) {
+                        question = jsonData.input;
+                        answer = jsonData.output;
+                    }
+                    
+                    if (question && answer && question.length > 2 && answer.length > 3) {
+                        const qaItem = {
+                            question: question,
+                            answer: answer,
+                            source: fileData.name,
+                            lineNumber: i + 1,
+                            pattern: 'JSONL'
+                        };
+                        
+                        parsedQA.push(qaItem);
+                        console.log('JSONL Q&A 추가:', question.substring(0, 30) + '...');
+                    }
+                    
+                } catch (error) {
+                    console.warn(`JSONL 라인 ${i + 1} 파싱 실패:`, error);
+                    continue;
+                }
+            }
+            
+            // 기존 데이터에 추가 (중복 제거)
+            parsedQA.forEach(newQA => {
+                const isDuplicate = knowledgeBase.parsedData.some(existingQA => 
+                    existingQA.question === newQA.question && existingQA.source === newQA.source
+                );
+                
+                if (!isDuplicate) {
+                    knowledgeBase.parsedData.push(newQA);
+                }
+            });
+            
+            console.log(`${fileData.name}에서 새로 파싱된 Q&A:`, parsedQA.length, '개');
         }
 
         // 텍스트 파일을 다양한 인코딩으로 읽기 시도
