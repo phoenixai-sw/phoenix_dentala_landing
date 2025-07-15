@@ -5152,8 +5152,9 @@ https://phoenixai-agent.site/reservation.html
                 // ⚠️ 브라우저에서 직접 호출 시 CORS 문제 발생
                 // 실제 운영환경에서는 백엔드 서버를 통해 호출해야 함
                 
-                const apiKey = 'NCSB9YCYYOFTRCXO';
-                const apiSecret = 'FSBQEHIOEXDHW6OLGEWSJ7VDP2BHIEGF';
+                // API 키는 서버사이드에서만 사용 (보안상 프론트엔드에서 제거)
+                const apiKey = 'REMOVED_FOR_SECURITY';
+                const apiSecret = 'REMOVED_FOR_SECURITY';
                 const fromNumber = '010-2965-7510';
                 
                 // 타임스탬프 생성
@@ -6966,41 +6967,12 @@ https://phoenixai-agent.site/reservation.html
                     console.log('Netlify Functions 실패, 직접 Supabase 연결 시도:', netlifyError);
                     
                     // 직접 Supabase 연결 (Netlify Functions 실패 시 대안)
-                    const supabaseUrl = 'https://nxoauczxmbwuublnuaox.supabase.co';
-                    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54b2F1Y3p4bWJ3dXVibG51YW94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0ODU5NzMsImV4cCI6MjA2ODA2MTk3M30.OnqDoHG8PVqkllcOSC74lUGFaKq-PChQC5pLoU6INYI';
+                    // 보안상 프론트엔드에서 키 제거 - Netlify Functions만 사용
+                    console.log('Netlify Functions 실패로 인해 직접 로그인 불가능');
+                    throw new Error('Netlify Functions 연결 실패 - 관리자에게 문의하세요');
                     
-                    const response = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=password`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'apikey': supabaseKey,
-                            'Authorization': `Bearer ${supabaseKey}`
-                        },
-                        body: JSON.stringify({ email, password })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (response.ok && data.access_token) {
-                        // 로그인 성공
-                        sessionStorage.setItem('adminToken', data.access_token);
-                        sessionStorage.setItem('adminEmail', email);
-                        
-                        statusDiv.innerHTML = '<span style="color: green;">✅ 로그인 성공!</span>';
-                        
-                        setTimeout(() => {
-                            closeAdminLoginPopup();
-                            
-                            if (window.currentLoginType === 'customer') {
-                                openCustomerAdmin();
-                            } else if (window.currentLoginType === 'chatbot') {
-                                openChatbotAdmin2();
-                            }
-                        }, 1000);
-                        
-                    } else {
-                        statusDiv.innerHTML = `<span style="color: red;">❌ 로그인 실패: ${data.error_description || '잘못된 이메일 또는 비밀번호'}</span>`;
-                    }
+                    // Netlify Functions 실패 시 로그인 불가능
+                    statusDiv.innerHTML = '<span style="color: red;">❌ 서버 연결 실패 - 잠시 후 다시 시도해주세요</span>';
                 }
                 
             } catch (error) {
