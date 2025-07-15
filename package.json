@@ -1,0 +1,20 @@
+{
+  "name": "phoenix-dentala-landing",
+  "version": "1.0.0",
+  "description": "Phoenix Dental Clinic Landing Page with Netlify Functions",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "keywords": [
+    "dental",
+    "clinic",
+    "landing-page",
+    "netlify-functions"
+  ],
+  "author": "Phoenix Dental",
+  "license": "MIT"
+} 
