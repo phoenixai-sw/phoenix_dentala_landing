@@ -1,9 +1,26 @@
 const { createClient } = require('@supabase/supabase-js');
 
 exports.handler = async (event) => {
+  // CORS 헤더 설정
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
+
+  // OPTIONS 요청 처리 (preflight)
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
+  }
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers,
       body: JSON.stringify({ error: 'Method Not Allowed' })
     };
   }
@@ -12,6 +29,7 @@ exports.handler = async (event) => {
   if (!email || !password) {
     return {
       statusCode: 400,
+      headers,
       body: JSON.stringify({ error: 'Email and password required' })
     };
   }
@@ -47,6 +65,7 @@ exports.handler = async (event) => {
     console.error('Login error:', loginError);
     return {
       statusCode: 401,
+      headers,
       body: JSON.stringify({ 
         error: loginError.message || 'Invalid credentials',
         details: loginError
@@ -56,6 +75,7 @@ exports.handler = async (event) => {
 
   return {
     statusCode: 200,
+    headers,
     body: JSON.stringify({ 
       token: loginData.session?.access_token,
       user: loginData.user?.email,
