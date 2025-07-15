@@ -35,51 +35,94 @@ exports.handler = async (event) => {
   }
 
   console.log('Login attempt:', { email, password: '***' });
+  
+  // 환경변수 상세 확인
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+  
   console.log('Environment check:', {
-    hasUrl: !!process.env.SUPABASE_URL,
-    hasAnonKey: !!process.env.SUPABASE_ANON_KEY,
-    urlLength: process.env.SUPABASE_URL?.length,
-    keyLength: process.env.SUPABASE_ANON_KEY?.length
+    hasUrl: !!supabaseUrl,
+    hasAnonKey: !!supabaseKey,
+    urlLength: supabaseUrl?.length,
+    keyLength: supabaseKey?.length,
+    urlStart: supabaseUrl?.substring(0, 20) + '...',
+    keyStart: supabaseKey?.substring(0, 20) + '...'
   });
 
-  const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY
-  );
-
-  // 실제 로그인 시도
-  console.log('Attempting Supabase login...');
-  const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  console.log('Login result:', { 
-    success: !loginError, 
-    hasData: !!loginData, 
-    hasSession: !!loginData?.session,
-    error: loginError?.message 
-  });
-
-  if (loginError) {
-    console.error('Login error:', loginError);
+  // 환경변수 검증
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('Missing environment variables:', {
+      hasUrl: !!supabaseUrl,
+      hasKey: !!supabaseKey
+    });
     return {
-      statusCode: 401,
+      statusCode: 500,
       headers,
       body: JSON.stringify({ 
-        error: loginError.message || 'Invalid credentials',
-        details: loginError
+        error: 'Server configuration error - missing environment variables',
+        details: { hasUrl: !!supabaseUrl, hasKey: !!supabaseKey }
       })
     };
   }
 
-  return {
-    statusCode: 200,
-    headers,
-    body: JSON.stringify({ 
-      token: loginData.session?.access_token,
-      user: loginData.user?.email,
-      success: true
-    })
-  };
+  try {
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    console.log('Supabase client created successfully');
+
+    // 실제 로그인 시도
+    console.log('Attempting Supabase login...');
+    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    console.log('Login result:', { 
+      success: !loginError, 
+      hasData: !!loginData, 
+      hasSession: !!loginData?.session,
+      error: loginError?.message,
+      errorType: loginError?.name
+    });
+
+    if (loginError) {
+      console.error('Login error details:', loginError);
+      return {
+        statusCode: 401,
+        headers,
+        body: JSON.stringify({ 
+          error: loginError.message || 'Invalid credentials',
+          details: {
+            name: loginError.name,
+            status: loginError.status,
+            originalError: loginError.originalError
+          }
+        })
+      };
+    }
+
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ 
+        token: loginData.session?.access_token,
+        user: loginData.user?.email,
+        success: true
+      })
+    };
+
+  } catch (error) {
+    console.error('Unexpected error during login:', error);
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ 
+        error: 'Internal server error during login',
+        details: {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        }
+      })
+    };
+  }
 };
