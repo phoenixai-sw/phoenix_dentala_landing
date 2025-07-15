@@ -2519,116 +2519,16 @@ https://phoenixai-agent.site/reservation.html
 
 
         function loginCustomerAdmin() {
-            // 중복 실행 방지
-            if (window.isCustomerLoggingIn) {
-                console.log('고객 관리 로그인 진행 중 - 중복 실행 방지');
-                return;
-            }
-            
-            window.isCustomerLoggingIn = true;
-            console.log('고객 관리 로그인 클릭됨');
-            
-            try {
-                // 아이디 입력
-                const username = prompt("🔐 고객 관리자 로그인\n\n아이디를 입력하세요:");
-                
-                // 취소 버튼 클릭 시
-                if (username === null) {
-                    console.log('로그인 취소됨');
-                    window.isCustomerLoggingIn = false; // 취소 시 플래그 리셋
-                    return;
-                }
-                
-                // 아이디 검증
-                if (username.trim() === "phoenix") {
-                    // 비밀번호 입력
-                    const password = prompt("비밀번호를 입력하세요:");
-                    
-                    // 취소 버튼 클릭 시
-                    if (password === null) {
-                        console.log('비밀번호 입력 취소됨');
-                        window.isCustomerLoggingIn = false; // 취소 시 플래그 리셋
-                        return;
-                    }
-                    
-                    // 비밀번호 검증
-                    if (password.trim() === "phoenix") {
-                        console.log('✅ 고객 관리 로그인 성공');
-                        alert('✅ 로그인 성공!\n\n고객 관리 페이지로 이동합니다.');
-                        openCustomerAdmin();
-                        window.isCustomerLoggingIn = false; // 로그인 완료 후 플래그 리셋
-                    } else {
-                        console.log('❌ 비밀번호 오류:', password);
-                        alert("❌ 비밀번호가 틀렸습니다.\n\n아이디: phoenix\n비밀번호: phoenix");
-                        window.isCustomerLoggingIn = false; // 로그인 실패 후 플래그 리셋
-                    }
-                } else {
-                    console.log('❌ 아이디 오류:', username);
-                    alert("❌ 아이디가 틀렸습니다.\n\n아이디: phoenix\n비밀번호: phoenix");
-                    window.isCustomerLoggingIn = false; // 로그인 실패 후 플래그 리셋
-                }
-            } catch (error) {
-                console.error('고객 관리 로그인 오류:', error);
-                alert('❌ 로그인에 실패했습니다.\n\n다시 시도해주세요.');
-                window.isCustomerLoggingIn = false; // 오류 발생 후 플래그 리셋
-            }
+            console.log('고객 관리 로그인 팝업 열기');
+            window.currentLoginType = 'customer';
+            document.getElementById('adminLoginPopup').style.display = 'flex';
         }
 
         // AI챗봇 관리자 로그인2 함수
         function loginChatbotAdmin2() {
-            // 중복 실행 방지
-            if (window.isChatbotLoggingIn2) {
-                console.log('AI챗봇 관리자 로그인2 진행 중 - 중복 실행 방지');
-                return;
-            }
-            
-            window.isChatbotLoggingIn2 = true;
-            console.log('AI챗봇 관리자 로그인2 클릭됨');
-            
-            try {
-                // 아이디 입력
-                const username = prompt("🔐 AI챗봇 관리자 로그인2\n\n아이디를 입력하세요:");
-                
-                // 취소 버튼 클릭 시
-                if (username === null) {
-                    console.log('로그인 취소됨');
-                    window.isChatbotLoggingIn2 = false; // 취소 시 플래그 리셋
-                    return;
-                }
-                
-                // 아이디 검증
-                if (username.trim() === "phoenix") {
-                    // 비밀번호 입력
-                    const password = prompt("비밀번호를 입력하세요:");
-                    
-                    // 취소 버튼 클릭 시
-                    if (password === null) {
-                        console.log('비밀번호 입력 취소됨');
-                        window.isChatbotLoggingIn2 = false; // 취소 시 플래그 리셋
-                        return;
-                    }
-                    
-                    // 비밀번호 검증
-                    if (password.trim() === "phoenix") {
-                        console.log('✅ AI챗봇 관리자 로그인2 성공');
-                        alert('✅ 로그인 성공!\n\nAI챗봇 관리 페이지로 이동합니다.');
-                        openChatbotAdmin2();
-                        window.isChatbotLoggingIn2 = false; // 로그인 완료 후 플래그 리셋
-                    } else {
-                        console.log('❌ 비밀번호 오류:', password);
-                        alert("❌ 비밀번호가 틀렸습니다.\n\n아이디: phoenix\n비밀번호: phoenix");
-                        window.isChatbotLoggingIn2 = false; // 로그인 실패 후 플래그 리셋
-                    }
-                } else {
-                    console.log('❌ 아이디 오류:', username);
-                    alert("❌ 아이디가 틀렸습니다.\n\n아이디: phoenix\n비밀번호: phoenix");
-                    window.isChatbotLoggingIn2 = false; // 로그인 실패 후 플래그 리셋
-                }
-            } catch (error) {
-                console.error('AI챗봇 관리자 로그인2 오류:', error);
-                alert('❌ 로그인에 실패했습니다.\n\n다시 시도해주세요.');
-                window.isChatbotLoggingIn2 = false; // 오류 발생 후 플래그 리셋
-            }
+            console.log('AI챗봇 관리자 로그인 팝업 열기');
+            window.currentLoginType = 'chatbot';
+            document.getElementById('adminLoginPopup').style.display = 'flex';
         }
 
 
@@ -7009,7 +6909,110 @@ https://phoenixai-agent.site/reservation.html
                 openReservation();
             }
         });
+
+        // 관리자 로그인 처리 함수
+        async function handleAdminLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const statusDiv = document.getElementById('loginStatus');
+            
+            if (!email || !password) {
+                statusDiv.innerHTML = '<span style="color: red;">이메일과 비밀번호를 입력해주세요.</span>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<span style="color: blue;">로그인 중...</span>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/admin-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.token) {
+                    // 로그인 성공 - 토큰을 sessionStorage에 저장
+                    sessionStorage.setItem('adminToken', data.token);
+                    sessionStorage.setItem('adminEmail', email);
+                    
+                    statusDiv.innerHTML = '<span style="color: green;">✅ 로그인 성공!</span>';
+                    
+                    // 팝업 닫기
+                    setTimeout(() => {
+                        closeAdminLoginPopup();
+                        
+                        // 로그인 타입에 따라 다른 페이지 열기
+                        if (window.currentLoginType === 'customer') {
+                            openCustomerAdmin();
+                        } else if (window.currentLoginType === 'chatbot') {
+                            openChatbotAdmin2();
+                        }
+                    }, 1000);
+                    
+                } else {
+                    statusDiv.innerHTML = `<span style="color: red;">❌ 로그인 실패: ${data.error || '알 수 없는 오류'}</span>`;
+                }
+                
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                statusDiv.innerHTML = '<span style="color: red;">❌ 네트워크 오류가 발생했습니다.</span>';
+            }
+        }
+
+        // 관리자 로그인 팝업 닫기
+        function closeAdminLoginPopup() {
+            document.getElementById('adminLoginPopup').style.display = 'none';
+            document.getElementById('adminEmail').value = '';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('loginStatus').innerHTML = '';
+        }
+
+        // 로그인 상태 확인 함수
+        function checkAdminLogin() {
+            const token = sessionStorage.getItem('adminToken');
+            return token ? true : false;
+        }
+
+        // 로그아웃 함수
+        function logoutAdmin() {
+            sessionStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminEmail');
+            alert('로그아웃되었습니다.');
+            location.reload();
+        }
     </script>
+
+    <!-- 관리자 로그인 팝업 -->
+    <div id="adminLoginPopup" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
+        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 400px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <h3 style="text-align: center; margin-bottom: 25px; color: #2c3e50;">🔐 관리자 로그인</h3>
+            
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">이메일</label>
+                    <input type="email" id="adminEmail" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;" placeholder="관리자 이메일을 입력하세요">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">비밀번호</label>
+                    <input type="password" id="adminPassword" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;" placeholder="비밀번호를 입력하세요">
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" onclick="closeAdminLoginPopup()" style="flex: 1; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">취소</button>
+                    <button type="submit" style="flex: 1; padding: 12px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer;">로그인</button>
+                </div>
+            </form>
+            
+            <div id="loginStatus" style="margin-top: 15px; text-align: center; font-size: 14px;"></div>
+        </div>
+    </div>
+
 </body>
-</html>
 </html>

@@ -21,11 +21,6 @@ exports.handler = async (event) => {
     process.env.SUPABASE_SERVICE_KEY
   );
 
-  const { data, error } = await supabase.auth.admin.createUser({
-    email,
-    password
-  });
-
   // 실제 로그인 시도
   const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
     email,
