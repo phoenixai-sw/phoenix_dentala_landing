@@ -6926,6 +6926,7 @@ https://phoenixai-agent.site/reservation.html
             statusDiv.innerHTML = '<span style="color: blue;">로그인 중...</span>';
             
             try {
+                // 실제 Netlify Functions 호출
                 const response = await fetch('/.netlify/functions/admin-login', {
                     method: 'POST',
                     headers: {

@@ -30,21 +30,6 @@ exports.handler = async (event) => {
   );
 
   // 실제 로그인 시도
-  // 임시 테스트용 하드코딩 로그인 (Supabase 연결 문제 시)
-  if ((email === 'phoenixai.sw@gmail.com' && password === 'phoenixai') ||
-      (email === 'phoenixai.edu@gmail.com' && password === 'phoenixai')) {
-    console.log('Using hardcoded login for testing');
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ 
-        token: 'test-token-' + Date.now(),
-        user: email,
-        success: true,
-        message: 'Test login successful'
-      })
-    };
-  }
-
   console.log('Attempting Supabase login...');
   const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
     email,
