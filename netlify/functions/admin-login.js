@@ -18,7 +18,7 @@ exports.handler = async (event) => {
 
   const supabase = createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_KEY
+    process.env.SUPABASE_ANON_KEY
   );
 
   // 실제 로그인 시도
@@ -28,9 +28,10 @@ exports.handler = async (event) => {
   });
 
   if (loginError) {
+    console.error('Login error:', loginError);
     return {
       statusCode: 401,
-      body: JSON.stringify({ error: 'Invalid credentials' })
+      body: JSON.stringify({ error: loginError.message || 'Invalid credentials' })
     };
   }
 
