@@ -2649,13 +2649,13 @@ https://phoenixai-agent.site/reservation.html
 
 
 
-        function openCustomerAdmin() {
+        async function openCustomerAdmin() {
             console.log('고객 관리 페이지 열기');
             document.getElementById('customerAdminPage').style.display = 'block';
             
             // 최신 예약 데이터로 테이블 업데이트
-            updateCustomerTable();
-            updateStatistics();
+            await updateCustomerTable();
+            await updateStatistics();
         }
 
         function closeCustomerAdmin() {
@@ -3762,7 +3762,7 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 예약 제출
-        function submitReservation() {
+        async function submitReservation() {
             if (!selectedDate || !selectedTime) {
                 alert('날짜와 시간을 선택해주세요.');
                 return;
@@ -3800,8 +3800,62 @@ https://phoenixai-agent.site/reservation.html
                 createdAt: new Date()
             };
 
-            reservations.push(reservation);
-            showConfirmation(reservation);
+            // 서버에 예약 데이터 저장
+            try {
+                const response = await fetch('/api/reservations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: reservation.name,
+                        birthDate: reservation.birthDate,
+                        phone: reservation.phone,
+                        date: reservation.date.toISOString().split('T')[0],
+                        time: reservation.time,
+                        consult: reservation.consult,
+                        createdAt: new Date().toISOString()
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`서버 오류: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('예약 데이터 서버 저장 완료:', result);
+                
+                reservations.push(reservation);
+                showConfirmation(reservation);
+                
+            } catch (error) {
+                console.error('예약 데이터 서버 저장 실패:', error);
+                
+                // 서버 오류 시 fallback으로 localStorage 사용
+                console.log('localStorage로 fallback 저장 시도...');
+                try {
+                    const existingReservations = JSON.parse(localStorage.getItem('phoenixDentalReservations') || '[]');
+                    existingReservations.push({
+                        id: Date.now(),
+                        name: reservation.name,
+                        birthDate: reservation.birthDate,
+                        phone: reservation.phone,
+                        date: reservation.date.toISOString().split('T')[0],
+                        time: reservation.time,
+                        consult: reservation.consult,
+                        createdAt: new Date().toISOString()
+                    });
+                    localStorage.setItem('phoenixDentalReservations', JSON.stringify(existingReservations));
+                    console.log('localStorage fallback 저장 완료');
+                    
+                    reservations.push(reservation);
+                    showConfirmation(reservation);
+                    
+                } catch (fallbackError) {
+                    console.error('localStorage fallback도 실패:', fallbackError);
+                    alert('예약 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+                }
+            }
         }
 
         // 예약 확인 팝업 표시
@@ -4732,21 +4786,49 @@ https://phoenixai-agent.site/reservation.html
             return currentYear - birthYear;
         }
 
-        // 실제 예약 데이터 가져오기 (localStorage에서)
-        function getReservationData() {
+        // 실제 예약 데이터 가져오기 (서버에서)
+        async function getReservationData() {
             try {
-                const storedReservations = JSON.parse(localStorage.getItem('phoenixDentalReservations') || '[]');
+                const response = await fetch('/api/reservations', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`서버 오류: ${response.status}`);
+                }
+
+                const serverReservations = await response.json();
+                console.log('서버에서 예약 데이터 로드 완료:', serverReservations);
                 
-                // 저장된 데이터가 없으면 샘플 데이터 사용
-                if (storedReservations.length === 0) {
+                // 서버 데이터가 있으면 사용, 없으면 샘플 데이터
+                if (serverReservations && serverReservations.length > 0) {
+                    return serverReservations;
+                } else {
                     return getSampleReservationData();
                 }
                 
-                return storedReservations;
-                
             } catch (error) {
-                console.error('예약 데이터 로드 실패:', error);
-                return getSampleReservationData();
+                console.error('서버에서 예약 데이터 로드 실패:', error);
+                
+                // 서버 오류 시 fallback으로 localStorage 사용
+                console.log('localStorage로 fallback 로드 시도...');
+                try {
+                    const storedReservations = JSON.parse(localStorage.getItem('phoenixDentalReservations') || '[]');
+                    
+                    if (storedReservations.length > 0) {
+                        console.log('localStorage fallback 로드 완료');
+                        return storedReservations;
+                    } else {
+                        return getSampleReservationData();
+                    }
+                    
+                } catch (fallbackError) {
+                    console.error('localStorage fallback도 실패:', fallbackError);
+                    return getSampleReservationData();
+                }
             }
         }
 
@@ -4920,10 +5002,10 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 전체 예약 데이터 엑셀 다운로드
-        function downloadAllReservations() {
+        async function downloadAllReservations() {
             console.log('전체 예약 데이터 엑셀 다운로드');
             
-            const rawData = getReservationData();
+            const rawData = await getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
@@ -4957,10 +5039,10 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 구강검진 대상자만 엑셀 다운로드
-        function downloadDentalCheckupExcel() {
+        async function downloadDentalCheckupExcel() {
             console.log('구강검진 대상자 엑셀 다운로드');
             
-            const rawData = getReservationData();
+            const rawData = await getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
@@ -5006,10 +5088,10 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 구강검진 대상자에게 메시지 보내기
-        function sendMessageToDentalTargets() {
+        async function sendMessageToDentalTargets() {
             console.log('구강검진 대상자에게 메시지 보내기');
             
-            const rawData = getReservationData();
+            const rawData = await getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
@@ -5914,8 +5996,8 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 고객 테이블 업데이트
-        function updateCustomerTable() {
-            const rawData = getReservationData();
+        async function updateCustomerTable() {
+            const rawData = await getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
@@ -5949,8 +6031,8 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 통계 업데이트
-        function updateStatistics() {
-            const rawData = getReservationData();
+        async function updateStatistics() {
+            const rawData = await getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             
             const today = new Date().toISOString().split('T')[0];
