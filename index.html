@@ -2518,6 +2518,8 @@ https://phoenixai-agent.site/reservation.html
 
 
 
+        // 기존 로그인 함수 (주석 처리)
+        /*
         function loginCustomerAdmin() {
             // 중복 실행 방지
             if (window.isCustomerLoggingIn) {
@@ -2573,8 +2575,16 @@ https://phoenixai-agent.site/reservation.html
                 window.isCustomerLoggingIn = false; // 오류 발생 후 플래그 리셋
             }
         }
+        */
+        
+        // 새로운 로그인 함수들
+        function loginCustomerAdmin() {
+            console.log('고객 관리 로그인 모달 열기');
+            openLoginModal('customer');
+        }
 
-        // AI챗봇 관리자 로그인2 함수
+        // AI챗봇 관리자 로그인2 함수 (주석 처리)
+        /*
         function loginChatbotAdmin2() {
             // 중복 실행 방지
             if (window.isChatbotLoggingIn2) {
@@ -2629,6 +2639,12 @@ https://phoenixai-agent.site/reservation.html
                 alert('❌ 로그인에 실패했습니다.\n\n다시 시도해주세요.');
                 window.isChatbotLoggingIn2 = false; // 오류 발생 후 플래그 리셋
             }
+        }
+        */
+        
+        function loginChatbotAdmin2() {
+            console.log('AI챗봇 관리자 로그인 모달 열기');
+            openLoginModal('chatbot');
         }
 
 
@@ -6981,6 +6997,129 @@ https://phoenixai-agent.site/reservation.html
         // 페이지 로드 완료
         console.log('모든 함수 로드 완료');
         console.log('로그인 함수 확인:', typeof loginChatbotAdmin === 'function', typeof loginCustomerAdmin === 'function');
+        
+        // 새로운 로그인 모달 관련 함수들
+        let currentLoginType = null; // 'customer' 또는 'chatbot'
+        
+        // 로그인 모달 열기
+        function openLoginModal(type) {
+            currentLoginType = type;
+            const modal = document.getElementById('loginModal');
+            const title = document.getElementById('loginModalTitle');
+            
+            if (type === 'customer') {
+                title.textContent = '🔐 고객 관리자 로그인';
+            } else if (type === 'chatbot') {
+                title.textContent = '🔐 AI챗봇 관리자 로그인';
+            }
+            
+            modal.style.display = 'flex';
+            
+            // 입력 필드 초기화
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginError').style.display = 'none';
+            
+            // 첫 번째 입력 필드에 포커스
+            setTimeout(() => {
+                document.getElementById('loginEmail').focus();
+            }, 100);
+        }
+        
+        // 로그인 모달 닫기
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            currentLoginType = null;
+        }
+        
+        // 로그인 폼 제출 처리
+        async function handleLoginSubmit(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            const submitBtn = document.querySelector('.login-submit-btn');
+            
+            // 입력 검증
+            if (!email || !password) {
+                showLoginError('이메일과 비밀번호를 모두 입력해주세요.');
+                return;
+            }
+            
+            // 버튼 비활성화
+            submitBtn.disabled = true;
+            submitBtn.textContent = '로그인 중...';
+            
+            try {
+                console.log('로그인 요청 시작:', { email, type: currentLoginType });
+                
+                // 서버에 로그인 요청
+                const response = await fetch('/.netlify/functions/admin-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        type: currentLoginType
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    console.log('✅ 로그인 성공:', data);
+                    
+                    // JWT 토큰을 sessionStorage에 저장
+                    sessionStorage.setItem('adminToken', data.token);
+                    sessionStorage.setItem('adminType', currentLoginType);
+                    
+                    // 모달 닫기
+                    closeLoginModal();
+                    
+                    // 성공 메시지
+                    alert('✅ 로그인 성공!\n\n관리자 페이지로 이동합니다.');
+                    
+                    // 해당 관리자 페이지 열기
+                    if (currentLoginType === 'customer') {
+                        openCustomerAdmin();
+                    } else if (currentLoginType === 'chatbot') {
+                        openChatbotAdmin2();
+                    }
+                    
+                } else {
+                    console.log('❌ 로그인 실패:', data);
+                    showLoginError(data.message || '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+                }
+                
+            } catch (error) {
+                console.error('❌ 로그인 요청 오류:', error);
+                showLoginError('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+            } finally {
+                // 버튼 다시 활성화
+                submitBtn.disabled = false;
+                submitBtn.textContent = '로그인';
+            }
+        }
+        
+        // 로그인 에러 표시
+        function showLoginError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        // 모달 외부 클릭 시 닫기
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('loginModal');
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    closeLoginModal();
+                }
+            });
+        });
 
         // 전화번호 자동 포맷팅 초기화
         document.addEventListener('DOMContentLoaded', function() {
@@ -7010,6 +7149,164 @@ https://phoenixai-agent.site/reservation.html
             }
         });
     </script>
+
+    <!-- 로그인 모달 -->
+    <div id="loginModal" class="login-modal" style="display: none;">
+        <div class="login-modal-content">
+            <div class="login-modal-header">
+                <h3 id="loginModalTitle">🔐 관리자 로그인</h3>
+                <button class="login-close-btn" onclick="closeLoginModal()">✕</button>
+            </div>
+            <div class="login-modal-body">
+                <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+                    <div class="form-group">
+                        <label for="loginEmail">이메일</label>
+                        <input type="email" id="loginEmail" required placeholder="관리자 이메일을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">비밀번호</label>
+                        <input type="password" id="loginPassword" required placeholder="비밀번호를 입력하세요">
+                    </div>
+                    <div id="loginError" class="login-error" style="display: none;"></div>
+                    <button type="submit" class="login-submit-btn">로그인</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* 로그인 모달 스타일 */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .login-modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-modal-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .login-modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .login-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .login-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .login-modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .login-error {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .login-submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .login-submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+    </style>
 </body>
-</html>
 </html>
