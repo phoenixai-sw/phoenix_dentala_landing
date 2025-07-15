@@ -1866,80 +1866,18 @@ ${currentQuickMenu.directInquiry}
             
             // 대화 이력에 메시지 추가
             addToChatHistory(role, content) {
-                const messageData = {
+                this.chatHistory.push({
                     role: role,
                     content: content,
                     timestamp: Date.now()
-                };
-                
-                this.chatHistory.push(messageData);
+                });
                 
                 // 최대 이력 개수 제한
                 if (this.chatHistory.length > this.MAX_HISTORY * 2) {
                     this.chatHistory = this.chatHistory.slice(-this.MAX_HISTORY * 2);
                 }
                 
-                // 서버에 채팅 로그 저장
-                this.saveChatLogToServer(messageData);
-                
                 console.log(`💬 대화 이력 추가: ${role} - ${content.substring(0, 50)}...`);
-            }
-            
-            // 서버에 채팅 로그 저장
-            async saveChatLogToServer(messageData) {
-                try {
-                    const response = await fetch('/api/chat-logs', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            role: messageData.role,
-                            content: messageData.content,
-                            timestamp: messageData.timestamp,
-                            sessionId: this.getSessionId(),
-                            language: this.currentLanguage,
-                            userAgent: navigator.userAgent
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`서버 오류: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-                    console.log('채팅 로그 서버 저장 완료:', result);
-                    
-                } catch (error) {
-                    console.error('채팅 로그 서버 저장 실패:', error);
-                    
-                    // 서버 오류 시 fallback으로 localStorage 사용
-                    console.log('localStorage로 fallback 저장 시도...');
-                    try {
-                        const existingLogs = JSON.parse(localStorage.getItem('phoenixDentalChatLogs') || '[]');
-                        existingLogs.push({
-                            ...messageData,
-                            sessionId: this.getSessionId(),
-                            language: this.currentLanguage,
-                            userAgent: navigator.userAgent,
-                            savedAt: new Date().toISOString()
-                        });
-                        localStorage.setItem('phoenixDentalChatLogs', JSON.stringify(existingLogs));
-                        console.log('localStorage fallback 저장 완료');
-                    } catch (fallbackError) {
-                        console.error('localStorage fallback도 실패:', fallbackError);
-                    }
-                }
-            }
-            
-            // 세션 ID 생성/가져오기
-            getSessionId() {
-                let sessionId = sessionStorage.getItem('chatbotSessionId');
-                if (!sessionId) {
-                    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    sessionStorage.setItem('chatbotSessionId', sessionId);
-                }
-                return sessionId;
             }
             
             // HTML 태그 제거

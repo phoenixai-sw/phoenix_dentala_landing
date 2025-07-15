@@ -2397,30 +2397,6 @@ https://phoenixai-agent.site/reservation.html
                 
                 <!-- 파싱된 Q&A 표시 영역 -->
                 <div id="parsedDataView2" style="display: none; margin-top: 20px; background: white; border-radius: 10px; padding: 20px; max-height: 400px; overflow-y: auto; border: 1px solid #ddd;">
-                
-                <!-- 채팅 로그 조회 -->
-                <div class="admin-section" style="margin-top: 30px;">
-                    <div class="section-header">
-                        <h3>💬 AI 챗봇 대화 로그 조회</h3>
-                    </div>
-                    
-                    <div class="btn-group" style="margin-bottom: 20px;">
-                        <button class="btn btn-primary" onclick="loadChatLogs()">📊 채팅 로그 불러오기</button>
-                        <button class="btn btn-success" onclick="downloadChatLogs()">📥 로그 다운로드</button>
-                        <button class="btn btn-warning" onclick="clearChatLogs()">🗑️ 로그 초기화</button>
-                    </div>
-                    
-                    <div id="chatLogsStatus" class="status-message"></div>
-                    
-                    <div id="chatLogsContainer" style="display: none; margin-top: 20px;">
-                        <div style="background: white; border-radius: 10px; padding: 20px; max-height: 500px; overflow-y: auto; border: 1px solid #ddd;">
-                            <h4 style="margin-bottom: 15px; color: #2c3e50;">📋 최근 채팅 로그</h4>
-                            <div id="chatLogsList">
-                                <!-- 채팅 로그가 여기에 표시됩니다 -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
                     <h4 style="margin-bottom: 15px; color: #2c3e50;">📋 파싱된 Q&A 데이터</h4>
                     <div id="parsedDataContent2"></div>
                 </div>
@@ -2542,8 +2518,6 @@ https://phoenixai-agent.site/reservation.html
 
 
 
-        // 기존 로그인 함수 (주석 처리)
-        /*
         function loginCustomerAdmin() {
             // 중복 실행 방지
             if (window.isCustomerLoggingIn) {
@@ -2599,16 +2573,8 @@ https://phoenixai-agent.site/reservation.html
                 window.isCustomerLoggingIn = false; // 오류 발생 후 플래그 리셋
             }
         }
-        */
-        
-        // 새로운 로그인 함수들
-        function loginCustomerAdmin() {
-            console.log('고객 관리 로그인 모달 열기');
-            openLoginModal('customer');
-        }
 
-        // AI챗봇 관리자 로그인2 함수 (주석 처리)
-        /*
+        // AI챗봇 관리자 로그인2 함수
         function loginChatbotAdmin2() {
             // 중복 실행 방지
             if (window.isChatbotLoggingIn2) {
@@ -2664,22 +2630,16 @@ https://phoenixai-agent.site/reservation.html
                 window.isChatbotLoggingIn2 = false; // 오류 발생 후 플래그 리셋
             }
         }
-        */
-        
-        function loginChatbotAdmin2() {
-            console.log('AI챗봇 관리자 로그인 모달 열기');
-            openLoginModal('chatbot');
-        }
 
 
 
-        async function openCustomerAdmin() {
+        function openCustomerAdmin() {
             console.log('고객 관리 페이지 열기');
             document.getElementById('customerAdminPage').style.display = 'block';
             
             // 최신 예약 데이터로 테이블 업데이트
-            await updateCustomerTable();
-            await updateStatistics();
+            updateCustomerTable();
+            updateStatistics();
         }
 
         function closeCustomerAdmin() {
@@ -3786,7 +3746,7 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 예약 제출
-        async function submitReservation() {
+        function submitReservation() {
             if (!selectedDate || !selectedTime) {
                 alert('날짜와 시간을 선택해주세요.');
                 return;
@@ -3824,62 +3784,8 @@ https://phoenixai-agent.site/reservation.html
                 createdAt: new Date()
             };
 
-            // 서버에 예약 데이터 저장
-            try {
-                const response = await fetch('/api/reservations', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: reservation.name,
-                        birthDate: reservation.birthDate,
-                        phone: reservation.phone,
-                        date: reservation.date.toISOString().split('T')[0],
-                        time: reservation.time,
-                        consult: reservation.consult,
-                        createdAt: new Date().toISOString()
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`서버 오류: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('예약 데이터 서버 저장 완료:', result);
-                
-                reservations.push(reservation);
-                showConfirmation(reservation);
-                
-            } catch (error) {
-                console.error('예약 데이터 서버 저장 실패:', error);
-                
-                // 서버 오류 시 fallback으로 localStorage 사용
-                console.log('localStorage로 fallback 저장 시도...');
-                try {
-                    const existingReservations = JSON.parse(localStorage.getItem('phoenixDentalReservations') || '[]');
-                    existingReservations.push({
-                        id: Date.now(),
-                        name: reservation.name,
-                        birthDate: reservation.birthDate,
-                        phone: reservation.phone,
-                        date: reservation.date.toISOString().split('T')[0],
-                        time: reservation.time,
-                        consult: reservation.consult,
-                        createdAt: new Date().toISOString()
-                    });
-                    localStorage.setItem('phoenixDentalReservations', JSON.stringify(existingReservations));
-                    console.log('localStorage fallback 저장 완료');
-                    
-                    reservations.push(reservation);
-                    showConfirmation(reservation);
-                    
-                } catch (fallbackError) {
-                    console.error('localStorage fallback도 실패:', fallbackError);
-                    alert('예약 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
-                }
-            }
+            reservations.push(reservation);
+            showConfirmation(reservation);
         }
 
         // 예약 확인 팝업 표시
@@ -4810,49 +4716,21 @@ https://phoenixai-agent.site/reservation.html
             return currentYear - birthYear;
         }
 
-        // 실제 예약 데이터 가져오기 (서버에서)
-        async function getReservationData() {
+        // 실제 예약 데이터 가져오기 (localStorage에서)
+        function getReservationData() {
             try {
-                const response = await fetch('/api/reservations', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`서버 오류: ${response.status}`);
-                }
-
-                const serverReservations = await response.json();
-                console.log('서버에서 예약 데이터 로드 완료:', serverReservations);
+                const storedReservations = JSON.parse(localStorage.getItem('phoenixDentalReservations') || '[]');
                 
-                // 서버 데이터가 있으면 사용, 없으면 샘플 데이터
-                if (serverReservations && serverReservations.length > 0) {
-                    return serverReservations;
-                } else {
+                // 저장된 데이터가 없으면 샘플 데이터 사용
+                if (storedReservations.length === 0) {
                     return getSampleReservationData();
                 }
+                
+                return storedReservations;
                 
             } catch (error) {
-                console.error('서버에서 예약 데이터 로드 실패:', error);
-                
-                // 서버 오류 시 fallback으로 localStorage 사용
-                console.log('localStorage로 fallback 로드 시도...');
-                try {
-                    const storedReservations = JSON.parse(localStorage.getItem('phoenixDentalReservations') || '[]');
-                    
-                    if (storedReservations.length > 0) {
-                        console.log('localStorage fallback 로드 완료');
-                        return storedReservations;
-                    } else {
-                        return getSampleReservationData();
-                    }
-                    
-                } catch (fallbackError) {
-                    console.error('localStorage fallback도 실패:', fallbackError);
-                    return getSampleReservationData();
-                }
+                console.error('예약 데이터 로드 실패:', error);
+                return getSampleReservationData();
             }
         }
 
@@ -5026,10 +4904,10 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 전체 예약 데이터 엑셀 다운로드
-        async function downloadAllReservations() {
+        function downloadAllReservations() {
             console.log('전체 예약 데이터 엑셀 다운로드');
             
-            const rawData = await getReservationData();
+            const rawData = getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
@@ -5063,10 +4941,10 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 구강검진 대상자만 엑셀 다운로드
-        async function downloadDentalCheckupExcel() {
+        function downloadDentalCheckupExcel() {
             console.log('구강검진 대상자 엑셀 다운로드');
             
-            const rawData = await getReservationData();
+            const rawData = getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
@@ -5112,10 +4990,10 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 구강검진 대상자에게 메시지 보내기
-        async function sendMessageToDentalTargets() {
+        function sendMessageToDentalTargets() {
             console.log('구강검진 대상자에게 메시지 보내기');
             
-            const rawData = await getReservationData();
+            const rawData = getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
@@ -6020,8 +5898,8 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 고객 테이블 업데이트
-        async function updateCustomerTable() {
-            const rawData = await getReservationData();
+        function updateCustomerTable() {
+            const rawData = getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             const dataWithDentalInfo = addDentalCheckupInfo(consolidatedData);
             
@@ -6055,8 +5933,8 @@ https://phoenixai-agent.site/reservation.html
         }
 
         // 통계 업데이트
-        async function updateStatistics() {
-            const rawData = await getReservationData();
+        function updateStatistics() {
+            const rawData = getReservationData();
             const consolidatedData = consolidateCustomers(rawData);
             
             const today = new Date().toISOString().split('T')[0];
@@ -7103,329 +6981,6 @@ https://phoenixai-agent.site/reservation.html
         // 페이지 로드 완료
         console.log('모든 함수 로드 완료');
         console.log('로그인 함수 확인:', typeof loginChatbotAdmin === 'function', typeof loginCustomerAdmin === 'function');
-        
-        // 새로운 로그인 모달 관련 함수들
-        let currentLoginType = null; // 'customer' 또는 'chatbot'
-        
-        // 로그인 모달 열기
-        function openLoginModal(type) {
-            currentLoginType = type;
-            const modal = document.getElementById('loginModal');
-            const title = document.getElementById('loginModalTitle');
-            
-            if (type === 'customer') {
-                title.textContent = '🔐 고객 관리자 로그인';
-            } else if (type === 'chatbot') {
-                title.textContent = '🔐 AI챗봇 관리자 로그인';
-            }
-            
-            modal.style.display = 'flex';
-            
-            // 입력 필드 초기화
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('loginError').style.display = 'none';
-            
-            // 첫 번째 입력 필드에 포커스
-            setTimeout(() => {
-                document.getElementById('loginEmail').focus();
-            }, 100);
-        }
-        
-        // 로그인 모달 닫기
-        function closeLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-            currentLoginType = null;
-        }
-        
-        // 로그인 폼 제출 처리
-        async function handleLoginSubmit(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const errorDiv = document.getElementById('loginError');
-            const submitBtn = document.querySelector('.login-submit-btn');
-            
-            // 입력 검증
-            if (!email || !password) {
-                showLoginError('이메일과 비밀번호를 모두 입력해주세요.');
-                return;
-            }
-            
-            // 버튼 비활성화
-            submitBtn.disabled = true;
-            submitBtn.textContent = '로그인 중...';
-            
-            try {
-                console.log('로그인 요청 시작:', { email, type: currentLoginType });
-                
-                // 서버에 로그인 요청
-                const response = await fetch('/.netlify/functions/admin-login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password,
-                        type: currentLoginType
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok && data.success) {
-                    console.log('✅ 로그인 성공:', data);
-                    
-                    // JWT 토큰을 sessionStorage에 저장
-                    sessionStorage.setItem('adminToken', data.token);
-                    sessionStorage.setItem('adminType', currentLoginType);
-                    
-                    // 모달 닫기
-                    closeLoginModal();
-                    
-                    // 성공 메시지
-                    alert('✅ 로그인 성공!\n\n관리자 페이지로 이동합니다.');
-                    
-                    // 해당 관리자 페이지 열기
-                    if (currentLoginType === 'customer') {
-                        openCustomerAdmin();
-                    } else if (currentLoginType === 'chatbot') {
-                        openChatbotAdmin2();
-                    }
-                    
-                } else {
-                    console.log('❌ 로그인 실패:', data);
-                    showLoginError(data.message || '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
-                }
-                
-            } catch (error) {
-                console.error('❌ 로그인 요청 오류:', error);
-                showLoginError('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
-            } finally {
-                // 버튼 다시 활성화
-                submitBtn.disabled = false;
-                submitBtn.textContent = '로그인';
-            }
-        }
-        
-        // 로그인 에러 표시
-        function showLoginError(message) {
-            const errorDiv = document.getElementById('loginError');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-        }
-        
-        // 모달 외부 클릭 시 닫기
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('loginModal');
-            modal.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    closeLoginModal();
-                }
-            });
-        });
-
-        // 채팅 로그 관련 함수들
-        async function loadChatLogs() {
-            try {
-                console.log('채팅 로그 불러오기 시작');
-                showStatus('chatLogsStatus', '📊 채팅 로그를 불러오는 중...', 'success');
-                
-                const response = await fetch('/api/chat-logs', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`서버 오류: ${response.status}`);
-                }
-
-                const serverLogs = await response.json();
-                console.log('서버에서 채팅 로그 로드 완료:', serverLogs);
-                
-                // 서버 데이터가 있으면 사용, 없으면 localStorage 사용
-                let logsToDisplay = [];
-                if (serverLogs && serverLogs.length > 0) {
-                    logsToDisplay = serverLogs;
-                } else {
-                    // localStorage fallback
-                    const localLogs = JSON.parse(localStorage.getItem('phoenixDentalChatLogs') || '[]');
-                    logsToDisplay = localLogs;
-                }
-                
-                displayChatLogs(logsToDisplay);
-                
-            } catch (error) {
-                console.error('채팅 로그 로드 실패:', error);
-                
-                // localStorage fallback
-                try {
-                    const localLogs = JSON.parse(localStorage.getItem('phoenixDentalChatLogs') || '[]');
-                    displayChatLogs(localLogs);
-                    showStatus('chatLogsStatus', '⚠️ 서버 연결 실패. 로컬 로그를 표시합니다.', 'error');
-                } catch (fallbackError) {
-                    console.error('localStorage fallback도 실패:', fallbackError);
-                    showStatus('chatLogsStatus', '❌ 채팅 로그를 불러올 수 없습니다.', 'error');
-                }
-            }
-        }
-
-        function displayChatLogs(logs) {
-            const container = document.getElementById('chatLogsContainer');
-            const list = document.getElementById('chatLogsList');
-            
-            if (logs.length === 0) {
-                list.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">채팅 로그가 없습니다.</p>';
-                container.style.display = 'block';
-                showStatus('chatLogsStatus', '📋 채팅 로그가 없습니다.', 'success');
-                return;
-            }
-            
-            // 세션별로 그룹화
-            const sessions = {};
-            logs.forEach(log => {
-                const sessionId = log.sessionId || 'unknown';
-                if (!sessions[sessionId]) {
-                    sessions[sessionId] = [];
-                }
-                sessions[sessionId].push(log);
-            });
-            
-            let html = '';
-            Object.entries(sessions).forEach(([sessionId, sessionLogs]) => {
-                // 세션별로 시간순 정렬
-                sessionLogs.sort((a, b) => a.timestamp - b.timestamp);
-                
-                html += `
-                    <div style="border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #f8f9fa;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <strong style="color: #495057;">세션: ${sessionId}</strong>
-                            <small style="color: #6c757d;">${new Date(sessionLogs[0].timestamp).toLocaleString('ko-KR')}</small>
-                        </div>
-                `;
-                
-                sessionLogs.forEach(log => {
-                    const time = new Date(log.timestamp).toLocaleTimeString('ko-KR');
-                    const role = log.role === 'user' ? '👤 사용자' : '🤖 AI';
-                    const content = log.content.length > 100 ? log.content.substring(0, 100) + '...' : log.content;
-                    
-                    html += `
-                        <div style="margin: 5px 0; padding: 8px; background: white; border-radius: 5px; border-left: 3px solid ${log.role === 'user' ? '#4facfe' : '#28a745'};">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                <span style="font-weight: bold; color: #495057;">${role}</span>
-                                <small style="color: #6c757d;">${time}</small>
-                            </div>
-                            <div style="color: #333; font-size: 14px;">${content}</div>
-                        </div>
-                    `;
-                });
-                
-                html += '</div>';
-            });
-            
-            list.innerHTML = html;
-            container.style.display = 'block';
-            showStatus('chatLogsStatus', `✅ ${logs.length}개의 채팅 로그를 불러왔습니다.`, 'success');
-        }
-
-        async function downloadChatLogs() {
-            try {
-                console.log('채팅 로그 다운로드 시작');
-                
-                const response = await fetch('/api/chat-logs', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-
-                let logs = [];
-                if (response.ok) {
-                    logs = await response.json();
-                } else {
-                    // localStorage fallback
-                    logs = JSON.parse(localStorage.getItem('phoenixDentalChatLogs') || '[]');
-                }
-                
-                if (logs.length === 0) {
-                    alert('다운로드할 채팅 로그가 없습니다.');
-                    return;
-                }
-                
-                // CSV 형식으로 변환
-                const headers = ['세션ID', '역할', '내용', '타임스탬프', '언어', '사용자에이전트'];
-                const csvData = [headers];
-                
-                logs.forEach(log => {
-                    csvData.push([
-                        log.sessionId || 'unknown',
-                        log.role,
-                        log.content,
-                        new Date(log.timestamp).toLocaleString('ko-KR'),
-                        log.language || 'ko',
-                        log.userAgent || ''
-                    ]);
-                });
-                
-                const csvContent = csvData.map(row => row.join(',')).join('\n');
-                const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                const timestamp = new Date().toISOString().slice(0, 16).replace('T', '_').replace(/:/g, '');
-                
-                link.setAttribute('href', url);
-                link.setAttribute('download', `피닉스치과_채팅로그_${timestamp}.csv`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                alert(`📥 채팅 로그가 다운로드되었습니다.\n파일명: 피닉스치과_채팅로그_${timestamp}.csv`);
-                
-            } catch (error) {
-                console.error('채팅 로그 다운로드 실패:', error);
-                alert('❌ 채팅 로그 다운로드에 실패했습니다.');
-            }
-        }
-
-        async function clearChatLogs() {
-            if (!confirm('모든 채팅 로그를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
-                return;
-            }
-            
-            try {
-                console.log('채팅 로그 초기화 시작');
-                
-                // 서버에서 삭제 시도
-                const response = await fetch('/api/chat-logs', {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-
-                // localStorage에서도 삭제
-                localStorage.removeItem('phoenixDentalChatLogs');
-                
-                // UI 업데이트
-                document.getElementById('chatLogsContainer').style.display = 'none';
-                showStatus('chatLogsStatus', '🗑️ 모든 채팅 로그가 삭제되었습니다.', 'success');
-                
-                console.log('채팅 로그 초기화 완료');
-                
-            } catch (error) {
-                console.error('채팅 로그 초기화 실패:', error);
-                
-                // localStorage만 삭제
-                localStorage.removeItem('phoenixDentalChatLogs');
-                document.getElementById('chatLogsContainer').style.display = 'none';
-                showStatus('chatLogsStatus', '🗑️ 로컬 채팅 로그가 삭제되었습니다.', 'success');
-            }
-        }
 
         // 전화번호 자동 포맷팅 초기화
         document.addEventListener('DOMContentLoaded', function() {
@@ -7455,164 +7010,6 @@ https://phoenixai-agent.site/reservation.html
             }
         });
     </script>
-
-    <!-- 로그인 모달 -->
-    <div id="loginModal" class="login-modal" style="display: none;">
-        <div class="login-modal-content">
-            <div class="login-modal-header">
-                <h3 id="loginModalTitle">🔐 관리자 로그인</h3>
-                <button class="login-close-btn" onclick="closeLoginModal()">✕</button>
-            </div>
-            <div class="login-modal-body">
-                <form id="loginForm" onsubmit="handleLoginSubmit(event)">
-                    <div class="form-group">
-                        <label for="loginEmail">이메일</label>
-                        <input type="email" id="loginEmail" required placeholder="관리자 이메일을 입력하세요">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">비밀번호</label>
-                        <input type="password" id="loginPassword" required placeholder="비밀번호를 입력하세요">
-                    </div>
-                    <div id="loginError" class="login-error" style="display: none;"></div>
-                    <button type="submit" class="login-submit-btn">로그인</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        /* 로그인 모달 스타일 */
-        .login-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-
-        .login-modal-content {
-            background: white;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            animation: modalSlideIn 0.3s ease-out;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .login-modal-header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px 15px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .login-modal-header h3 {
-            margin: 0;
-            font-size: 18px;
-        }
-
-        .login-close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.3s;
-        }
-
-        .login-close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .login-modal-body {
-            padding: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-            box-sizing: border-box;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #4facfe;
-        }
-
-        .login-error {
-            background: #fee;
-            color: #c33;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .login-submit-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .login-submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
-        }
-
-        .login-submit-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-    </style>
 </body>
+</html>
 </html>

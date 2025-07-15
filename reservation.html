@@ -1269,70 +1269,41 @@
             document.getElementById('privacyPolicyPopup').style.display = 'none';
         }
 
-        // 서버에 예약 데이터 저장
-        async function saveReservationToServer(reservation) {
+        // localStorage에 예약 데이터 저장
+        function saveReservationToStorage(reservation) {
             try {
-                const response = await fetch('/api/reservations', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: reservation.name,
-                        birth: reservation.birth,
-                        phone: reservation.phone,
-                        date: reservation.date.toISOString().split('T')[0],
-                        time: reservation.time,
-                        consult: reservation.consult,
-                        age: reservation.age,
-                        dentalCheckupYear: reservation.dentalCheckupYear,
-                        dentalCheckupInfo: reservation.dentalCheckupInfo,
-                        privacyConsent: reservation.privacyConsent,
-                        createdAt: new Date().toISOString()
-                    })
+                // 기존 예약 데이터 가져오기
+                const existingReservations = JSON.parse(localStorage.getItem('phoenixDentalReservations') || '[]');
+                
+                // 새 예약 데이터 추가
+                existingReservations.push({
+                    id: Date.now(), // 고유 ID
+                    name: reservation.name,
+                    birth: reservation.birth,
+                    phone: reservation.phone,
+                    date: reservation.date.toISOString().split('T')[0],
+                    time: reservation.time,
+                    consult: reservation.consult,
+                    age: reservation.age,
+                    dentalCheckupYear: reservation.dentalCheckupYear,
+                    dentalCheckupInfo: reservation.dentalCheckupInfo,
+                    privacyConsent: reservation.privacyConsent,
+                    createdAt: new Date().toISOString(),
+                    reservationHistory: [`${reservation.date.toISOString().split('T')[0]} ${reservation.time}`]
                 });
-
-                if (!response.ok) {
-                    throw new Error(`서버 오류: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('예약 데이터 서버 저장 완료:', result);
-                return result;
+                
+                // localStorage에 저장
+                localStorage.setItem('phoenixDentalReservations', JSON.stringify(existingReservations));
+                
+                console.log('예약 데이터 저장 완료:', reservation.name);
                 
             } catch (error) {
-                console.error('예약 데이터 서버 저장 실패:', error);
-                
-                // 서버 오류 시 fallback으로 localStorage 사용
-                console.log('localStorage로 fallback 저장 시도...');
-                try {
-                    const existingReservations = JSON.parse(localStorage.getItem('phoenixDentalReservations') || '[]');
-                    existingReservations.push({
-                        id: Date.now(),
-                        name: reservation.name,
-                        birth: reservation.birth,
-                        phone: reservation.phone,
-                        date: reservation.date.toISOString().split('T')[0],
-                        time: reservation.time,
-                        consult: reservation.consult,
-                        age: reservation.age,
-                        dentalCheckupYear: reservation.dentalCheckupYear,
-                        dentalCheckupInfo: reservation.dentalCheckupInfo,
-                        privacyConsent: reservation.privacyConsent,
-                        createdAt: new Date().toISOString(),
-                        reservationHistory: [`${reservation.date.toISOString().split('T')[0]} ${reservation.time}`]
-                    });
-                    localStorage.setItem('phoenixDentalReservations', JSON.stringify(existingReservations));
-                    console.log('localStorage fallback 저장 완료');
-                } catch (fallbackError) {
-                    console.error('localStorage fallback도 실패:', fallbackError);
-                    throw error; // 원래 오류를 다시 던짐
-                }
+                console.error('예약 데이터 저장 실패:', error);
             }
         }
 
         // 예약 제출
-        async function submitReservation(event) {
+        function submitReservation(event) {
             event.preventDefault();
             
             if (!selectedDate || !selectedTime) {
@@ -1390,13 +1361,8 @@
 
             reservations.push(reservation);
             
-            // 서버에 예약 데이터 저장
-            try {
-                await saveReservationToServer(reservation);
-            } catch (error) {
-                alert('예약 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
-                return;
-            }
+            // localStorage에 예약 데이터 저장
+            saveReservationToStorage(reservation);
             
             showConfirmation(reservation);
         }
