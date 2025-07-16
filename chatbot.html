@@ -3407,21 +3407,19 @@ ${currentQuickMenu.directInquiry}
                 const apiSettings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
                 
                 // ChatGPT 설정 로드
-                if (apiSettings.chatgpt) {
-                    const chatgptApiKey = document.getElementById('chatgptApiKey');
-                    const chatgptModel = document.getElementById('chatgptModel');
-                    const chatgptFinetuningModel = document.getElementById('chatgptFinetuningModel');
-                    
-                    if (chatgptApiKey) chatgptApiKey.value = apiSettings.chatgpt.apiKey || '';
-                    if (chatgptModel) chatgptModel.value = apiSettings.chatgpt.model || '';
-                    if (chatgptFinetuningModel) chatgptFinetuningModel.value = apiSettings.chatgpt.finetuningModel || '';
-                    
-                    // Finetuning 모델이 선택된 경우 그룹 표시
-                    if (apiSettings.chatgpt.model === 'finetuning') {
-                        const finetuningGroup = document.getElementById('chatgptFinetuningGroup');
-                        if (finetuningGroup) {
-                            finetuningGroup.style.display = 'block';
-                        }
+                const chatgptApiKey = document.getElementById('chatgptApiKey');
+                const chatgptModel = document.getElementById('chatgptModel');
+                const chatgptFinetuningModel = document.getElementById('chatgptFinetuningModel');
+                
+                if (chatgptApiKey) chatgptApiKey.value = apiSettings.chatgpt?.apiKey || '';
+                if (chatgptModel) chatgptModel.value = apiSettings.chatgpt?.model || 'gpt-4o';  // 기본값 설정
+                if (chatgptFinetuningModel) chatgptFinetuningModel.value = apiSettings.chatgpt?.finetuningModel || '';
+                
+                // Finetuning 모델이 선택된 경우 그룹 표시
+                if (apiSettings.chatgpt?.model === 'finetuning') {
+                    const finetuningGroup = document.getElementById('chatgptFinetuningGroup');
+                    if (finetuningGroup) {
+                        finetuningGroup.style.display = 'block';
                     }
                 }
                 
@@ -3549,7 +3547,7 @@ ${currentQuickMenu.directInquiry}
                         <label for="chatgptModel">ChatGPT 모델선택</label>
                         <select id="chatgptModel">
                             <option value="">-- ChatGPT 모델을 선택하세요 --</option>
-                            <option value="gpt-4o">GPT-4o (최신 멀티모달)</option>
+                            <option value="gpt-4o" selected>GPT-4o (최신 멀티모달)</option>
                             <option value="gpt-4o-mini">GPT-4o Mini (경제적)</option>
                             <option value="finetuning">Finetuning Model (커스텀 모델)</option>
                         </select>
