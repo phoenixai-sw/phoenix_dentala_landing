@@ -2681,18 +2681,18 @@ ${currentQuickMenu.directInquiry}
                         
                         const settings = {
                             chatgpt: {
-                                enabled: chatgptApiKey.value.trim() !== '',
+                                enabled: chatgptModel.value !== '',  // 모델이 선택되면 활성화
                                 apiKey: chatgptApiKey.value.trim(),
                                 model: chatgptModel.value,
                                 finetuningModel: chatgptFinetuningModel ? chatgptFinetuningModel.value : ''
                             },
                             gemini: {
-                                enabled: geminiApiKey.value.trim() !== '',
+                                enabled: geminiModel.value !== '',  // 모델이 선택되면 활성화
                                 apiKey: geminiApiKey.value.trim(),
                                 model: geminiModel.value
                             },
                             claude: {
-                                enabled: claudeApiKey.value.trim() !== '',
+                                enabled: claudeModel.value !== '',  // 모델이 선택되면 활성화
                                 apiKey: claudeApiKey.value.trim(),
                                 model: claudeModel.value
                             }
