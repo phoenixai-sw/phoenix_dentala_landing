@@ -2084,9 +2084,8 @@ https://phoenixai-agent.site/reservation.html
                         <label for="geminiModel">Gemini 모델선택</label>
                         <select id="geminiModel">
                             <option value="">-- Gemini 모델을 선택하세요 --</option>
-                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠른 응답)</option>
-                            <option value="gemini-1.5-pro">Gemini 1.5 Pro (고성능)</option>
-                            <option value="gemini-1.0-pro">Gemini 1.0 Pro (안정성)</option>
+                            <option value="gemini-2.5-flash">Gemini 2.5 Flash (최신 빠른 응답)</option>
+                            <option value="gemini-2.5-pro">Gemini 2.5 Pro (최신 고성능)</option>
                         </select>
                     </div>
 
@@ -2099,10 +2098,22 @@ https://phoenixai-agent.site/reservation.html
                         <label for="claudeModel">Claude 모델선택</label>
                         <select id="claudeModel">
                             <option value="">-- Claude 모델을 선택하세요 --</option>
-                            <option value="claude-3-haiku">Claude 3 Haiku (빠르고 효율적)</option>
-                            <option value="claude-3-sonnet">Claude 3 Sonnet (균형적 성능)</option>
-                            <option value="claude-3-opus">Claude 3 Opus (최고 성능)</option>
-                            <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (최신 모델)</option>
+                            <option value="claude-sonnet-4">Sonnet 4</option>
+                            <option value="claude-sonnet-3-7">Sonnet 3.7</option>
+                        </select>
+                    </div>
+
+                    <!-- PhoenixAI 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="phoenixaiApiKey">PhoenixAI 모델 API Key</label>
+                        <input type="password" id="phoenixaiApiKey" placeholder="phoenix-...">
+                    </div>
+                    <div class="form-group">
+                        <label for="phoenixaiModel">PhoenixAI 모델선택</label>
+                        <select id="phoenixaiModel">
+                            <option value="">-- PhoenixAI 모델을 선택하세요 --</option>
+                            <option value="karma-3">Karma 3</option>
+                            <option value="karma-3-5">Karma 3.5</option>
                         </select>
                     </div>
 
@@ -2333,9 +2344,8 @@ https://phoenixai-agent.site/reservation.html
                         <label for="geminiModel2">Gemini 모델선택</label>
                         <select id="geminiModel2">
                             <option value="">-- Gemini 모델을 선택하세요 --</option>
-                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠른 응답)</option>
-                            <option value="gemini-1.5-pro">Gemini 1.5 Pro (고성능)</option>
-                            <option value="gemini-1.0-pro">Gemini 1.0 Pro (안정성)</option>
+                            <option value="gemini-2.5-flash">Gemini 2.5 Flash (최신 빠른 응답)</option>
+                            <option value="gemini-2.5-pro">Gemini 2.5 Pro (최신 고성능)</option>
                         </select>
                     </div>
 
@@ -2348,10 +2358,22 @@ https://phoenixai-agent.site/reservation.html
                         <label for="claudeModel2">Claude 모델선택</label>
                         <select id="claudeModel2">
                             <option value="">-- Claude 모델을 선택하세요 --</option>
-                            <option value="claude-3-haiku">Claude 3 Haiku (빠르고 효율적)</option>
-                            <option value="claude-3-sonnet">Claude 3 Sonnet (균형적 성능)</option>
-                            <option value="claude-3-opus">Claude 3 Opus (최고 성능)</option>
-                            <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (최신 모델)</option>
+                            <option value="claude-sonnet-4">Sonnet 4</option>
+                            <option value="claude-sonnet-3-7">Sonnet 3.7</option>
+                        </select>
+                    </div>
+
+                    <!-- PhoenixAI 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="phoenixaiApiKey2">PhoenixAI 모델 API Key</label>
+                        <input type="password" id="phoenixaiApiKey2" placeholder="phoenix-...">
+                    </div>
+                    <div class="form-group">
+                        <label for="phoenixaiModel2">PhoenixAI 모델선택</label>
+                        <select id="phoenixaiModel2">
+                            <option value="">-- PhoenixAI 모델을 선택하세요 --</option>
+                            <option value="karma-3">Karma 3</option>
+                            <option value="karma-3-5">Karma 3.5</option>
                         </select>
                     </div>
 
@@ -2507,6 +2529,11 @@ https://phoenixai-agent.site/reservation.html
                 model: '',
                 enabled: false
             },
+            phoenixai: {
+                apiKey: '',
+                model: '',
+                enabled: false
+            },
             activeProvider: '' // 현재 활성화된 AI 서비스
         };
         let knowledgeBase = {
@@ -2574,7 +2601,7 @@ https://phoenixai-agent.site/reservation.html
             if (adminApiStatus) {
                 // API 설정 확인
                 const settings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
-                const hasActiveAPI = settings.chatgpt?.enabled || settings.gemini?.enabled || settings.claude?.enabled;
+                const hasActiveAPI = settings.chatgpt?.enabled || settings.gemini?.enabled || settings.claude?.enabled || settings.phoenixai?.enabled;
                 adminApiStatus.innerHTML = hasActiveAPI ? '🟢 AI API 연결됨' : '🔴 AI API 설정 필요';
             }
         }
@@ -2597,8 +2624,10 @@ https://phoenixai-agent.site/reservation.html
                         const geminiModel = document.getElementById('geminiModel2');
                         const claudeApiKey = document.getElementById('claudeApiKey2');
                         const claudeModel = document.getElementById('claudeModel2');
+                        const phoenixaiApiKey = document.getElementById('phoenixaiApiKey2');
+                        const phoenixaiModel = document.getElementById('phoenixaiModel2');
                         
-                        if (!chatgptApiKey || !chatgptModel || !geminiApiKey || !geminiModel || !claudeApiKey || !claudeModel) {
+                        if (!chatgptApiKey || !chatgptModel || !geminiApiKey || !geminiModel || !claudeApiKey || !claudeModel || !phoenixaiApiKey || !phoenixaiModel) {
                             throw new Error('필수 입력 필드를 찾을 수 없습니다.');
                         }
                         
@@ -2617,6 +2646,11 @@ https://phoenixai-agent.site/reservation.html
                                 enabled: claudeApiKey.value.trim() !== '',
                                 apiKey: claudeApiKey.value.trim(),
                                 model: claudeModel.value
+                            },
+                            phoenixai: {
+                                enabled: phoenixaiApiKey.value.trim() !== '',
+                                apiKey: phoenixaiApiKey.value.trim(),
+                                model: phoenixaiModel.value
                             }
                         };
                         
@@ -2663,6 +2697,7 @@ https://phoenixai-agent.site/reservation.html
                                 if (settings.chatgpt?.enabled && settings.chatgpt?.apiKey) activeApis.push('ChatGPT');
                                 if (settings.gemini?.enabled && settings.gemini?.apiKey) activeApis.push('Gemini');
                                 if (settings.claude?.enabled && settings.claude?.apiKey) activeApis.push('Claude');
+                                if (settings.phoenixai?.enabled && settings.phoenixai?.apiKey) activeApis.push('PhoenixAI');
                                 
                                 console.log('🔍 활성화된 API:', activeApis);
                                 
@@ -2709,7 +2744,7 @@ https://phoenixai-agent.site/reservation.html
                             console.log('🔄 API 설정 초기화 시작');
                             
                             // 입력 필드 초기화
-                            const inputs = ['chatgptApiKey2', 'chatgptModel2', 'geminiApiKey2', 'geminiModel2', 'claudeApiKey2', 'claudeModel2'];
+                            const inputs = ['chatgptApiKey2', 'chatgptModel2', 'geminiApiKey2', 'geminiModel2', 'claudeApiKey2', 'claudeModel2', 'phoenixaiApiKey2', 'phoenixaiModel2'];
                             inputs.forEach(id => {
                                 const element = document.getElementById(id);
                                 if (element) {
@@ -2768,6 +2803,14 @@ https://phoenixai-agent.site/reservation.html
                 if (settings.claude?.model) {
                     const claudeModel = document.getElementById('claudeModel2');
                     if (claudeModel) claudeModel.value = settings.claude.model;
+                }
+                if (settings.phoenixai?.apiKey) {
+                    const phoenixaiApiKey = document.getElementById('phoenixaiApiKey2');
+                    if (phoenixaiApiKey) phoenixaiApiKey.value = settings.phoenixai.apiKey;
+                }
+                if (settings.phoenixai?.model) {
+                    const phoenixaiModel = document.getElementById('phoenixaiModel2');
+                    if (phoenixaiModel) phoenixaiModel.value = settings.phoenixai.model;
                 }
                 
                 console.log('✅ 기존 API 설정 불러오기 완료');
@@ -4455,6 +4498,10 @@ https://phoenixai-agent.site/reservation.html
             const claudeModel = document.getElementById('claudeModel').value;
             const claudeApiKey = document.getElementById('claudeApiKey').value.trim();
             
+            // PhoenixAI 설정
+            const phoenixaiModel = document.getElementById('phoenixaiModel').value;
+            const phoenixaiApiKey = document.getElementById('phoenixaiApiKey').value.trim();
+            
             // ChatGPT 모델 처리 (Finetuning 모델인 경우 별도 처리)
             let finalChatGPTModel = chatgptModel;
             if (chatgptModel === 'finetuning' && chatgptFinetuningModel) {
@@ -4474,6 +4521,10 @@ https://phoenixai-agent.site/reservation.html
             apiSettings.claude.apiKey = claudeApiKey;
             apiSettings.claude.enabled = claudeModel && claudeApiKey;
             
+            apiSettings.phoenixai.model = phoenixaiModel;
+            apiSettings.phoenixai.apiKey = phoenixaiApiKey;
+            apiSettings.phoenixai.enabled = phoenixaiModel && phoenixaiApiKey;
+            
             // 활성화된 서비스 확인
             let activeCount = 0;
             let lastActive = '';
@@ -4492,6 +4543,11 @@ https://phoenixai-agent.site/reservation.html
                 activeCount++;
                 lastActive = 'Claude';
                 if (!apiSettings.activeProvider) apiSettings.activeProvider = 'claude';
+            }
+            if (apiSettings.phoenixai.enabled) {
+                activeCount++;
+                lastActive = 'PhoenixAI';
+                if (!apiSettings.activeProvider) apiSettings.activeProvider = 'phoenixai';
             }
             
             if (activeCount === 0) {
@@ -4517,7 +4573,7 @@ https://phoenixai-agent.site/reservation.html
             console.log('API 연결 테스트');
             
             // 활성화된 API가 있는지 확인
-            if (!apiSettings.chatgpt.enabled && !apiSettings.gemini.enabled && !apiSettings.claude.enabled) {
+            if (!apiSettings.chatgpt.enabled && !apiSettings.gemini.enabled && !apiSettings.claude.enabled && !apiSettings.phoenixai.enabled) {
                 showStatus('apiStatus', '❌ 먼저 API 설정을 저장해주세요.', 'error');
                 return;
             }
@@ -4552,6 +4608,10 @@ https://phoenixai-agent.site/reservation.html
                 testResults.push('✅ Claude API 연결 성공');
             }
             
+            if (apiSettings.phoenixai.enabled) {
+                testResults.push('✅ PhoenixAI API 연결 성공');
+            }
+            
             return testResults;
         }
 
@@ -4568,12 +4628,15 @@ https://phoenixai-agent.site/reservation.html
                 document.getElementById('geminiApiKey').value = '';
                 document.getElementById('claudeModel').value = '';
                 document.getElementById('claudeApiKey').value = '';
+                document.getElementById('phoenixaiModel').value = '';
+                document.getElementById('phoenixaiApiKey').value = '';
                 
                 // 설정 객체 초기화
                 apiSettings = {
                     chatgpt: { apiKey: '', model: '', enabled: false },
                     gemini: { apiKey: '', model: '', enabled: false },
                     claude: { apiKey: '', model: '', enabled: false },
+                    phoenixai: { apiKey: '', model: '', enabled: false },
                     activeProvider: ''
                 };
                 

@@ -1250,6 +1250,8 @@
                     return 'gemini';
                 } else if (this.apiSettings?.claude?.enabled) {
                     return 'claude';
+                } else if (this.apiSettings?.phoenixai?.enabled) {
+                    return 'phoenixai';
                 }
                 return null;
             }
@@ -1328,6 +1330,8 @@
                         return await this.callGeminiAPI(message, settings, contextInfo, useSmartFiltering);
                     case 'claude':
                         return await this.callClaudeAPI(message, settings, contextInfo, useSmartFiltering);
+                    case 'phoenixai':
+                        return await this.callPhoenixAIAPI(message, settings, contextInfo, useSmartFiltering);
                     default:
                         throw new Error('지원하지 않는 API 제공자입니다.');
                 }
@@ -1593,6 +1597,101 @@
                 });
 
                 const response = await fetch('/.netlify/functions/ask-claude', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: settings.model,
+                        max_tokens: 800,
+                        messages: [{
+                            role: "user",
+                            content: prompt
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                return data.content[0].text;
+            }
+            
+            // PhoenixAI API 호출
+            async callPhoenixAIAPI(message, settings, contextInfo, useSmartFiltering = false) {
+                // 대화 이력 가져오기 (스마트 필터링 옵션)
+                const chatHistory = useSmartFiltering ? 
+                    this.getSmartFilteredHistory(message) : 
+                    this.getChatHistoryForAPI();
+                
+                // PhoenixAI용 대화 이력 구성
+                let conversationContext = '';
+                if (chatHistory.length > 0) {
+                    conversationContext = '\n\n=== 이전 대화 내용 ===\n';
+                    chatHistory.forEach((msg, index) => {
+                        const role = msg.role === 'user' ? '사용자' : 'AI 상담사';
+                        conversationContext += `${role}: ${msg.content}\n`;
+                    });
+                    conversationContext += '\n=== 현재 질문 ===\n';
+                }
+
+                const prompt = `당신은 피닉스 치과 병원의 전문 AI 상담사입니다. 
+                매우 친절하고 전문적으로 답변해주세요.
+
+                병원 기본 정보:
+                • 병원명: 피닉스 치과 병원
+                • 원장: 홍길동 (25년 경력 치주질환 전문의)
+                • 진료시간: 평일 09:00-18:00, 토요일 09:00-15:00, 점심시간 12:30-13:30
+                • 휴진: 일요일, 공휴일
+                • 전화: 070-1234-1234 (24시간 응급상담 가능)
+                • 주소: 피닉스시 피닉스로 11길 11, 피닉스타워 11층 11호
+                • 교통: 지하철 2호선 강남역 3번 출구 도보 5분
+                • 주차: 건물 지하 1-3층 무료 주차 (3시간)
+                • 진료과목: 일반진료, 미백치료, 교정치료, 임플란트, 보철치료, 소아치과
+
+                치료비 안내:
+                • 일반진료: 초진 15,000원, 재진 10,000원
+                • 스케일링: 50,000원 (건강보험 적용 시 연 1회 무료)
+                • 미백치료: 200,000-300,000원
+                • 교정치료: 1,500,000-6,000,000원
+                • 임플란트: 1,200,000-1,500,000원
+
+                ${contextInfo}
+
+                답변 작성 원칙:
+                1. 매우 친절하고 따뜻한 말투를 사용하세요
+                2. 전문적이면서도 이해하기 쉽게 설명하세요
+                3. 구체적인 정보를 제공하되, 정확하지 않은 의료 진단은 피하세요
+                4. 예약이나 상담이 필요한 경우 적극 안내하세요
+                5. 답변을 구조화하여 읽기 쉽게 정리해주세요
+                6. 고객이 보기 편하게 정리되어서 나가야 합니다
+                7. 단어와 문장에 적합한 이모티콘도 적절히 사용하세요
+                8. 이전 대화 내용을 참고하여 자연스럽게 대화를 이어가세요
+
+                답변 형식 가이드라인:
+                - 제목은 이모티콘과 함께 자연스럽게 작성 (예: 🏥 병원 안내, 💡 치료 정보)
+                - 중요 정보는 <strong>굵게</strong> 표시하여 강조
+                - 리스트는 • 또는 번호로 정리
+                - 섹션 구분은 큰 괄호 () 사용하여 구분
+                - 인용구는 큰 괄호 () 안에 작성
+                - =, #, ---, ### 등의 특수문자는 사용하지 않음
+                - 문장의 시작과 끝을 의미하는 구분선 대신 자연스러운 줄바꿈 사용
+                - 제목 강조는 글자를 진하게 표시하거나 제목에 적합한 이모티콘을 제목앞에 붙여서 표현
+                - 강조나 구분이 필요한 항목은 큰 괄호 ()를 해서 구분
+                - 전체적으로 고객이 보기 편하고 읽기 쉬운 형식으로 구성
+
+                ${conversationContext}
+                질문: ${message}`;
+
+                console.log('🤖 PhoenixAI API 호출 - 대화 이력 포함:', {
+                    historyCount: chatHistory.length,
+                    conversationContext: conversationContext.substring(0, 100) + '...',
+                    currentMessage: message.substring(0, 100) + '...'
+                });
+
+                const response = await fetch('/.netlify/functions/ask-phoenixai', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -2356,7 +2455,8 @@ ${currentQuickMenu.directInquiry}
                     this.apiSettings = {
                         chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' },
                         gemini: { enabled: false, apiKey: '', model: '' },
-                        claude: { enabled: false, apiKey: '', model: '' }
+                        claude: { enabled: false, apiKey: '', model: '' },
+                        phoenixai: { enabled: false, apiKey: '', model: '' }
                     };
                 }
             }
@@ -2409,6 +2509,7 @@ ${currentQuickMenu.directInquiry}
                 if (this.apiSettings?.chatgpt?.enabled) activeApis.push('ChatGPT');
                 if (this.apiSettings?.gemini?.enabled) activeApis.push('Gemini');
                 if (this.apiSettings?.claude?.enabled) activeApis.push('Claude');
+                if (this.apiSettings?.phoenixai?.enabled) activeApis.push('PhoenixAI');
                 
                 apiStatus.innerHTML = `<span class="blink">🟢</span> AI ON`;
                 apiStatus.className = 'ai-on';
@@ -2678,8 +2779,10 @@ ${currentQuickMenu.directInquiry}
                         const geminiModel = document.getElementById('geminiModel');
                         const claudeApiKey = document.getElementById('claudeApiKey');
                         const claudeModel = document.getElementById('claudeModel');
+                        const phoenixaiApiKey = document.getElementById('phoenixaiApiKey');
+                        const phoenixaiModel = document.getElementById('phoenixaiModel');
                         
-                        if (!chatgptApiKey || !chatgptModel || !geminiApiKey || !geminiModel || !claudeApiKey || !claudeModel) {
+                        if (!chatgptApiKey || !chatgptModel || !geminiApiKey || !geminiModel || !claudeApiKey || !claudeModel || !phoenixaiApiKey || !phoenixaiModel) {
                             throw new Error('필수 입력 필드를 찾을 수 없습니다.');
                         }
                         
@@ -2699,6 +2802,11 @@ ${currentQuickMenu.directInquiry}
                                 enabled: claudeModel.value !== '',  // 모델이 선택되면 활성화
                                 apiKey: claudeApiKey.value.trim(),
                                 model: claudeModel.value
+                            },
+                            phoenixai: {
+                                enabled: phoenixaiModel.value !== '',  // 모델이 선택되면 활성화
+                                apiKey: phoenixaiApiKey.value.trim(),
+                                model: phoenixaiModel.value
                             }
                         };
                         
@@ -2773,6 +2881,7 @@ ${currentQuickMenu.directInquiry}
                                 if (settings.chatgpt?.enabled) activeApis.push('ChatGPT');
                                 if (settings.gemini?.enabled) activeApis.push('Gemini');
                                 if (settings.claude?.enabled) activeApis.push('Claude');
+                                if (settings.phoenixai?.enabled) activeApis.push('PhoenixAI');
                                 
                                 console.log('🔍 활성화된 API:', activeApis);
                                 
@@ -2830,7 +2939,8 @@ ${currentQuickMenu.directInquiry}
                             const fields = [
                                 'chatgptApiKey', 'chatgptModel', 'chatgptFinetuningModel',
                                 'geminiApiKey', 'geminiModel',
-                                'claudeApiKey', 'claudeModel'
+                                'claudeApiKey', 'claudeModel',
+                                'phoenixaiApiKey', 'phoenixaiModel'
                             ];
                             
                             fields.forEach(fieldId => {
@@ -3468,6 +3578,15 @@ ${currentQuickMenu.directInquiry}
                     if (claudeModel) claudeModel.value = apiSettings.claude.model || '';
                 }
                 
+                // PhoenixAI 설정 로드
+                if (apiSettings.phoenixai) {
+                    const phoenixaiApiKey = document.getElementById('phoenixaiApiKey');
+                    const phoenixaiModel = document.getElementById('phoenixaiModel');
+                    
+                    if (phoenixaiApiKey) phoenixaiApiKey.value = apiSettings.phoenixai.apiKey || '';
+                    if (phoenixaiModel) phoenixaiModel.value = apiSettings.phoenixai.model || '';
+                }
+                
                 // 대화 이력 설정 로드
                 const historySettings = JSON.parse(localStorage.getItem('chatbotHistorySettings') || '{}');
                 const maxHistorySelect = document.getElementById('maxHistorySelect');
@@ -3593,9 +3712,6 @@ ${currentQuickMenu.directInquiry}
                         <label for="geminiModel">Gemini 모델선택</label>
                         <select id="geminiModel">
                             <option value="">-- Gemini 모델을 선택하세요 --</option>
-                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠른 응답)</option>
-                            <option value="gemini-1.5-pro">Gemini 1.5 Pro (고성능)</option>
-                            <option value="gemini-1.0-pro">Gemini 1.0 Pro (안정성)</option>
                             <option value="gemini-2.5-flash">Gemini 2.5 Flash (최신 빠른 응답)</option>
                             <option value="gemini-2.5-pro">Gemini 2.5 Pro (최신 고성능)</option>
                         </select>
@@ -3610,15 +3726,16 @@ ${currentQuickMenu.directInquiry}
                         <label for="claudeModel">Claude 모델선택</label>
                         <select id="claudeModel">
                             <option value="">-- Claude 모델을 선택하세요 --</option>
-                            <option value="claude-3-haiku">Claude 3 Haiku (빠르고 효율적)</option>
-                            <option value="claude-3-sonnet">Claude 3 Sonnet (균형적 성능)</option>
-                            <option value="claude-3-opus">Claude 3 Opus (최고 성능)</option>
-                            <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (최신 모델)</option>
                             <option value="claude-sonnet-4">Sonnet 4</option>
                             <option value="claude-sonnet-3-7">Sonnet 3.7</option>
                         </select>
                     </div>
 
+                    <!-- PhoenixAI 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="phoenixaiApiKey">PhoenixAI 모델 API Key</label>
+                        <input type="password" id="phoenixaiApiKey" placeholder="phoenix-...">
+                    </div>
                     <div class="form-group">
                         <label for="phoenixaiModel">PhoenixAI 모델선택</label>
                         <select id="phoenixaiModel">

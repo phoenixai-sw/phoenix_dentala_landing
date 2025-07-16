@@ -74,6 +74,11 @@ exports.handler = async (event) => {
           enabled: false,
           model: '',
           apiKey: ''
+        },
+        phoenixai: {
+          enabled: false,
+          model: '',
+          apiKey: ''
         }
       };
 
