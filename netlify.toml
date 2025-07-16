@@ -12,6 +12,22 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    # 브라우저 호환성을 위한 추가 헤더
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
+
+# CORS 설정 강화
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, X-Requested-With, Accept, Origin"
+    Access-Control-Max-Age = "86400"
+    # 브라우저별 호환성을 위한 추가 헤더
+    Access-Control-Allow-Credentials = "true"
+    Access-Control-Expose-Headers = "Content-Length, Content-Range"
 
 [[redirects]]
   from = "/api/*"

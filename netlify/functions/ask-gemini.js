@@ -1,15 +1,11 @@
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
-  // CORS 헤더 설정 (브라우저 호환성 강화)
+  // CORS 헤더 설정
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Cache-Control, Pragma',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
-    'Access-Control-Allow-Credentials': 'true',
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0'
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
   // OPTIONS 요청 처리 (preflight)
