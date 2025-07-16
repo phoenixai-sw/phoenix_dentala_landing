@@ -1233,22 +1233,25 @@
                 }
             }
             
-            // API 활성 상태 확인 (Netlify 환경변수 사용)
+            // API 활성 상태 확인
             hasActiveAPI() {
-                // Netlify 환경변수에 API 키가 있으면 항상 AI ON 상태
-                return true;
+                return this.apiSettings && (
+                    (this.apiSettings.chatgpt?.enabled) ||
+                    (this.apiSettings.gemini?.enabled) ||
+                    (this.apiSettings.claude?.enabled)
+                );
             }
             
-            // 활성화된 API 제공자 가져오기 (Netlify 환경변수 사용)
+            // 활성화된 API 제공자 가져오기
             getActiveProvider() {
-                // Netlify 환경변수에 API 키가 있으면 ChatGPT 사용
-                return 'chatgpt';
-            }
-            
-            // API 키가 있는 활성 API 확인 (Netlify 환경변수 사용)
-            hasActiveAPIWithKey() {
-                // Netlify 환경변수에 API 키가 있으면 항상 true
-                return true;
+                if (this.apiSettings?.chatgpt?.enabled) {
+                    return 'chatgpt';
+                } else if (this.apiSettings?.gemini?.enabled) {
+                    return 'gemini';
+                } else if (this.apiSettings?.claude?.enabled) {
+                    return 'claude';
+                }
+                return null;
             }
             
             // 지식베이스에서 컨텍스트 정보 추출
@@ -1686,7 +1689,7 @@
                 const loadingMessage = this.addBotMessage(loadingMessages[this.currentLanguage] || loadingMessages['ko']);
                 
                 try {
-                    // Netlify 환경변수를 사용한 API 호출
+                    // API 호출 로직
                     const activeProvider = this.getActiveProvider();
                     const contextInfo = this.getContextFromKnowledgeBase();
                     
@@ -1772,10 +1775,18 @@
                 };
                 
                 const apiStatus = {
-                    ko: '🤖 Netlify 환경변수를 통해 AI API가 연결되어 있어 정확한 답변을 제공합니다.',
-                    en: '🤖 AI API is connected through Netlify environment variables and provides accurate answers.',
-                    ru: '🤖 ИИ API подключен через переменные окружения Netlify и предоставляет точные ответы.',
-                    ja: '🤖 Netlify環境変数を通じてAI APIが接続されており、正確な回答を提供します。'
+                    ko: this.hasActiveAPI() ? 
+                        '🤖 AI API가 연결되어 있어 더 정확한 답변을 제공할 수 있습니다.' : 
+                        '❌ AI API가 설정되지 않아 기본 답변을 제공합니다. (관리자 메뉴에서 AI API 설정 가능)',
+                    en: this.hasActiveAPI() ? 
+                        '🤖 AI API is connected and can provide more accurate answers.' : 
+                        '❌ AI API is not set up, providing basic answers. (AI API can be set up in admin menu)',
+                    ru: this.hasActiveAPI() ? 
+                        '🤖 ИИ API подключен и может предоставить более точные ответы.' : 
+                        '❌ ИИ API не настроен, предоставляются базовые ответы. (ИИ API можно настроить в меню администратора)',
+                    ja: this.hasActiveAPI() ? 
+                        '🤖 AI APIが接続されており、より正確な回答を提供できます。' : 
+                        '❌ AI APIが設定されていないため、基本的な回答を提供します。（管理者メニューでAI API設定可能）'
                 };
                 
                 const currentResponses = responses[this.currentLanguage] || responses['ko'];
@@ -2330,14 +2341,18 @@ ${currentQuickMenu.directInquiry}
                         console.log('✅ API 설정 로드 완료:', this.apiSettings);
                     } else {
                         this.apiSettings = {
-                            chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' }  // Netlify 환경변수 사용
+                            chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' },
+                            gemini: { enabled: false, apiKey: '', model: '' },
+                            claude: { enabled: false, apiKey: '', model: '' }
                         };
-                        console.log('✅ 기본 API 설정 초기화 완료 (GPT4o 기본 활성화)');
+                        console.log('✅ 기본 API 설정 초기화 완료');
                     }
                 } catch (error) {
                     console.error('❌ API 설정 로드 실패:', error);
                     this.apiSettings = {
-                        chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' }  // Netlify 환경변수 사용
+                        chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' },
+                        gemini: { enabled: false, apiKey: '', model: '' },
+                        claude: { enabled: false, apiKey: '', model: '' }
                     };
                 }
             }
@@ -2387,7 +2402,9 @@ ${currentQuickMenu.directInquiry}
                 }
                 
                 const activeApis = [];
-                if (this.apiSettings?.chatgpt?.enabled) activeApis.push('ChatGPT (Netlify 환경변수)');
+                if (this.apiSettings?.chatgpt?.enabled) activeApis.push('ChatGPT');
+                if (this.apiSettings?.gemini?.enabled) activeApis.push('Gemini');
+                if (this.apiSettings?.claude?.enabled) activeApis.push('Claude');
                 
                 apiStatus.innerHTML = `<span class="blink">🟢</span> AI ON`;
                 apiStatus.className = 'ai-on';
@@ -2634,7 +2651,7 @@ ${currentQuickMenu.directInquiry}
         function updateAdminApiStatus() {
             const adminApiStatus = document.getElementById('adminApiStatus');
             if (adminApiStatus && window.chatbot) {
-                                    adminApiStatus.innerHTML = '🟢 Netlify 환경변수로 AI API 연결됨';
+                adminApiStatus.innerHTML = window.chatbot.hasActiveAPI() ? '🟢 AI API 연결됨' : '🔴 AI API 설정 필요';
             }
         }
 
@@ -2650,19 +2667,34 @@ ${currentQuickMenu.directInquiry}
                         console.log('💾 API 설정 저장 시작');
                         
                         // 입력 필드에서 값 가져오기
+                        const chatgptApiKey = document.getElementById('chatgptApiKey');
                         const chatgptModel = document.getElementById('chatgptModel');
                         const chatgptFinetuningModel = document.getElementById('chatgptFinetuningModel');
+                        const geminiApiKey = document.getElementById('geminiApiKey');
+                        const geminiModel = document.getElementById('geminiModel');
+                        const claudeApiKey = document.getElementById('claudeApiKey');
+                        const claudeModel = document.getElementById('claudeModel');
                         
-                        if (!chatgptModel) {
-                            throw new Error('ChatGPT 모델 선택 필드를 찾을 수 없습니다.');
+                        if (!chatgptApiKey || !chatgptModel || !geminiApiKey || !geminiModel || !claudeApiKey || !claudeModel) {
+                            throw new Error('필수 입력 필드를 찾을 수 없습니다.');
                         }
                         
                         const settings = {
                             chatgpt: {
-                                enabled: true,  // Netlify 환경변수 사용
-                                apiKey: '',  // 서버 측에서 관리
+                                enabled: chatgptModel.value !== '',  // 모델이 선택되면 활성화
+                                apiKey: chatgptApiKey.value.trim(),
                                 model: chatgptModel.value,
                                 finetuningModel: chatgptFinetuningModel ? chatgptFinetuningModel.value : ''
+                            },
+                            gemini: {
+                                enabled: geminiModel.value !== '',  // 모델이 선택되면 활성화
+                                apiKey: geminiApiKey.value.trim(),
+                                model: geminiModel.value
+                            },
+                            claude: {
+                                enabled: claudeModel.value !== '',  // 모델이 선택되면 활성화
+                                apiKey: claudeApiKey.value.trim(),
+                                model: claudeModel.value
                             }
                         };
                         
@@ -2713,7 +2745,9 @@ ${currentQuickMenu.directInquiry}
                                 const settings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
                                 let activeApis = [];
                                 
-                                if (settings.chatgpt?.enabled) activeApis.push('ChatGPT (Netlify 환경변수 사용)');
+                                                if (settings.chatgpt?.enabled) activeApis.push('ChatGPT');
+                if (settings.gemini?.enabled) activeApis.push('Gemini');
+                if (settings.claude?.enabled) activeApis.push('Claude');
                                 
                                 console.log('🔍 활성화된 API:', activeApis);
                                 
@@ -2765,9 +2799,11 @@ ${currentQuickMenu.directInquiry}
                         if (confirm('정말로 모든 API 설정을 초기화하시겠습니까?')) {
                             console.log('🔄 API 설정 초기화 시작');
                             
-                            // 입력 필드 초기화 (Netlify 환경변수 사용)
+                            // 입력 필드 초기화
                             const fields = [
-                                'chatgptFinetuningModel'
+                                'chatgptApiKey', 'chatgptModel', 'chatgptFinetuningModel',
+                                'geminiApiKey', 'geminiModel',
+                                'claudeApiKey', 'claudeModel'
                             ];
                             
                             fields.forEach(fieldId => {
@@ -2776,12 +2812,6 @@ ${currentQuickMenu.directInquiry}
                                     element.value = '';
                                 }
                             });
-                            
-                            // ChatGPT 모델은 GPT4o로 기본 설정
-                            const chatgptModel = document.getElementById('chatgptModel');
-                            if (chatgptModel) {
-                                chatgptModel.value = 'gpt-4o';
-                            }
                             
                             // Finetuning 그룹 숨기기
                             const finetuningGroup = document.getElementById('chatgptFinetuningGroup');
@@ -3376,11 +3406,13 @@ ${currentQuickMenu.directInquiry}
                 // 기존 설정 로드
                 const apiSettings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
                 
-                // ChatGPT 설정 로드 (Netlify 환경변수 사용)
+                // ChatGPT 설정 로드
+                const chatgptApiKey = document.getElementById('chatgptApiKey');
                 const chatgptModel = document.getElementById('chatgptModel');
                 const chatgptFinetuningModel = document.getElementById('chatgptFinetuningModel');
                 
-                if (chatgptModel) chatgptModel.value = apiSettings.chatgpt?.model || 'gpt-4o';  // GPT4o 기본값 설정
+                if (chatgptApiKey) chatgptApiKey.value = apiSettings.chatgpt?.apiKey || '';
+                if (chatgptModel) chatgptModel.value = apiSettings.chatgpt?.model || 'gpt-4o';  // 기본값 설정
                 if (chatgptFinetuningModel) chatgptFinetuningModel.value = apiSettings.chatgpt?.finetuningModel || '';
                 
                 // Finetuning 모델이 선택된 경우 그룹 표시
@@ -3391,7 +3423,23 @@ ${currentQuickMenu.directInquiry}
                     }
                 }
                 
-                // Netlify 환경변수 사용으로 인해 Gemini, Claude 설정은 제거됨
+                // Gemini 설정 로드
+                if (apiSettings.gemini) {
+                    const geminiApiKey = document.getElementById('geminiApiKey');
+                    const geminiModel = document.getElementById('geminiModel');
+                    
+                    if (geminiApiKey) geminiApiKey.value = apiSettings.gemini.apiKey || '';
+                    if (geminiModel) geminiModel.value = apiSettings.gemini.model || '';
+                }
+                
+                // Claude 설정 로드
+                if (apiSettings.claude) {
+                    const claudeApiKey = document.getElementById('claudeApiKey');
+                    const claudeModel = document.getElementById('claudeModel');
+                    
+                    if (claudeApiKey) claudeApiKey.value = apiSettings.claude.apiKey || '';
+                    if (claudeModel) claudeModel.value = apiSettings.claude.model || '';
+                }
                 
                 // 대화 이력 설정 로드
                 const historySettings = JSON.parse(localStorage.getItem('chatbotHistorySettings') || '{}');
@@ -3477,7 +3525,7 @@ ${currentQuickMenu.directInquiry}
                     </div>
                     <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 8px; text-align: center; font-size: 13px;">
                         <span id="adminApiStatus">
-                            🟢 Netlify 환경변수로 AI API 연결됨
+                            ${this.hasActiveAPI() ? '🟢 AI API 연결됨' : '🔴 AI API 설정 필요'}
                         </span>
                     </div>
                 </div>
@@ -3486,25 +3534,20 @@ ${currentQuickMenu.directInquiry}
             <!-- AI 모델 API 설정 -->
             <div class="admin-section">
                 <div class="section-header">
-                    <h3>🤖 챗봇 AI 모델 설정</h3>
-                </div>
-                
-                <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                    <h4 style="color: #155724; margin-bottom: 15px;">🟢 Netlify 환경변수로 AI API 연결됨</h4>
-                    <p style="color: #155724; margin-bottom: 10px;">
-                        <strong>현재 상태:</strong> OpenAI API 키가 Netlify 환경변수에 설정되어 있어 모든 사용자에게 AI 챗봇 서비스를 제공합니다.
-                    </p>
-                    <p style="color: #155724; font-size: 14px;">
-                        💡 API 키는 서버 측에서 안전하게 관리되며, 클라이언트 측에서는 별도 설정이 필요하지 않습니다.
-                    </p>
+                    <h3>🤖 챗봇 AI 모델 연결하기</h3>
                 </div>
                 
                 <div class="api-form">
-                    <!-- ChatGPT 모델 설정 -->
+                    <!-- ChatGPT 설정 -->
+                    <div class="form-group">
+                        <label for="chatgptApiKey">ChatGPT API Key</label>
+                        <input type="password" id="chatgptApiKey" placeholder="sk-proj-...">
+                    </div>
                     <div class="form-group">
                         <label for="chatgptModel">ChatGPT 모델선택</label>
                         <select id="chatgptModel">
-                            <option value="gpt-4o" selected>GPT-4o (최신 멀티모달) - 기본</option>
+                            <option value="">-- ChatGPT 모델을 선택하세요 --</option>
+                            <option value="gpt-4o" selected>GPT-4o (최신 멀티모달)</option>
                             <option value="gpt-4o-mini">GPT-4o Mini (경제적)</option>
                             <option value="finetuning">Finetuning Model (커스텀 모델)</option>
                         </select>
@@ -3514,9 +3557,41 @@ ${currentQuickMenu.directInquiry}
                         <input type="text" id="chatgptFinetuningModel" placeholder="ft:gpt-4o-mini-2024-07-18:...">
                     </div>
 
+                    <!-- Gemini 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="geminiApiKey">Gemini 모델 API Key</label>
+                        <input type="password" id="geminiApiKey" placeholder="AIza...">
+                    </div>
+                    <div class="form-group">
+                        <label for="geminiModel">Gemini 모델선택</label>
+                        <select id="geminiModel">
+                            <option value="">-- Gemini 모델을 선택하세요 --</option>
+                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠른 응답)</option>
+                            <option value="gemini-1.5-pro">Gemini 1.5 Pro (고성능)</option>
+                            <option value="gemini-1.0-pro">Gemini 1.0 Pro (안정성)</option>
+                        </select>
+                    </div>
+
+                    <!-- Claude 설정 -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="claudeApiKey">Claude 모델 API Key</label>
+                        <input type="password" id="claudeApiKey" placeholder="sk-ant-...">
+                    </div>
+                    <div class="form-group">
+                        <label for="claudeModel">Claude 모델선택</label>
+                        <select id="claudeModel">
+                            <option value="">-- Claude 모델을 선택하세요 --</option>
+                            <option value="claude-3-haiku">Claude 3 Haiku (빠르고 효율적)</option>
+                            <option value="claude-3-sonnet">Claude 3 Sonnet (균형적 성능)</option>
+                            <option value="claude-3-opus">Claude 3 Opus (최고 성능)</option>
+                            <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (최신 모델)</option>
+                        </select>
+                    </div>
+
                     <div class="btn-group" style="margin-top: 30px;">
-                        <button class="btn btn-primary" id="saveApiBtn">💾 모델 설정 저장</button>
+                        <button class="btn btn-primary" id="saveApiBtn">💾 설정 저장</button>
                         <button class="btn btn-success" id="testApiBtn">🔗 연결 테스트</button>
+                        <button class="btn btn-danger" id="resetApiBtn">🔄 설정 초기화</button>
                     </div>
                     <div id="apiStatus" class="status-message"></div>
                 </div>
