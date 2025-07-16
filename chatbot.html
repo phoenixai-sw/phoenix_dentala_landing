@@ -3690,17 +3690,17 @@ ${currentQuickMenu.directInquiry}
                         <input type="password" id="chatgptApiKey" placeholder="sk-proj-...">
                     </div>
                     <div class="form-group">
-                        <label for="chatgptModel">ChatGPT 모델선택</label>
+                        <label for="chatgptModel">OpenAI 모델선택</label>
                         <select id="chatgptModel">
-                            <option value="">-- ChatGPT 모델을 선택하세요 --</option>
+                            <option value="">-- OpenAI 모델을 선택하세요 --</option>
                             <option value="gpt-4o" selected>GPT-4o (최신 멀티모달)</option>
                             <option value="gpt-4o-mini">GPT-4o Mini (경제적)</option>
-                            <option value="finetuning">Finetuning Model (커스텀 모델)</option>
+                            <option value="finetuning">파인튜닝(FineTuning)-Data학습 모델</option>
                         </select>
                     </div>
                     <div class="form-group" id="chatgptFinetuningGroup" style="display: none;">
                         <label for="chatgptFinetuningModel">Finetuning 모델명 입력</label>
-                        <input type="text" id="chatgptFinetuningModel" placeholder="ft:gpt-4o-mini-2024-07-18:...">
+                        <input type="text" id="chatgptFinetuningModel" placeholder="ft:gpt-4o-mini-2024-07-18-phoenixai-dental...">
                     </div>
 
                     <!-- Gemini 설정 -->
