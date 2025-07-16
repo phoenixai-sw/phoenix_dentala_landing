@@ -1236,19 +1236,19 @@
             // API 활성 상태 확인
             hasActiveAPI() {
                 return this.apiSettings && (
-                    (this.apiSettings.chatgpt?.enabled && this.apiSettings.chatgpt?.apiKey) ||
-                    (this.apiSettings.gemini?.enabled && this.apiSettings.gemini?.apiKey) ||
-                    (this.apiSettings.claude?.enabled && this.apiSettings.claude?.apiKey)
+                    (this.apiSettings.chatgpt?.enabled) ||
+                    (this.apiSettings.gemini?.enabled) ||
+                    (this.apiSettings.claude?.enabled)
                 );
             }
             
             // 활성화된 API 제공자 가져오기
             getActiveProvider() {
-                if (this.apiSettings?.chatgpt?.enabled && this.apiSettings.chatgpt?.apiKey) {
+                if (this.apiSettings?.chatgpt?.enabled) {
                     return 'chatgpt';
-                } else if (this.apiSettings?.gemini?.enabled && this.apiSettings.gemini?.apiKey) {
+                } else if (this.apiSettings?.gemini?.enabled) {
                     return 'gemini';
-                } else if (this.apiSettings?.claude?.enabled && this.apiSettings.claude?.apiKey) {
+                } else if (this.apiSettings?.claude?.enabled) {
                     return 'claude';
                 }
                 return null;
@@ -2402,9 +2402,9 @@ ${currentQuickMenu.directInquiry}
                 }
                 
                 const activeApis = [];
-                if (this.apiSettings?.chatgpt?.enabled && this.apiSettings.chatgpt?.apiKey) activeApis.push('ChatGPT');
-                if (this.apiSettings?.gemini?.enabled && this.apiSettings.gemini?.apiKey) activeApis.push('Gemini');
-                if (this.apiSettings?.claude?.enabled && this.apiSettings.claude?.apiKey) activeApis.push('Claude');
+                if (this.apiSettings?.chatgpt?.enabled) activeApis.push('ChatGPT');
+                if (this.apiSettings?.gemini?.enabled) activeApis.push('Gemini');
+                if (this.apiSettings?.claude?.enabled) activeApis.push('Claude');
                 
                 apiStatus.innerHTML = `<span class="blink">🟢</span> AI ON`;
                 apiStatus.className = 'ai-on';
@@ -2745,9 +2745,9 @@ ${currentQuickMenu.directInquiry}
                                 const settings = JSON.parse(localStorage.getItem('chatbotApiSettings') || '{}');
                                 let activeApis = [];
                                 
-                                if (settings.chatgpt?.enabled && settings.chatgpt?.apiKey) activeApis.push('ChatGPT');
-                                if (settings.gemini?.enabled && settings.gemini?.apiKey) activeApis.push('Gemini');
-                                if (settings.claude?.enabled && settings.claude?.apiKey) activeApis.push('Claude');
+                                                if (settings.chatgpt?.enabled) activeApis.push('ChatGPT');
+                if (settings.gemini?.enabled) activeApis.push('Gemini');
+                if (settings.claude?.enabled) activeApis.push('Claude');
                                 
                                 console.log('🔍 활성화된 API:', activeApis);
                                 
