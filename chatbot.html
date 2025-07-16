@@ -771,6 +771,144 @@
                 padding: 10px 15px;
             }
         }
+        
+        /* 네이버 웨일 브라우저 최적화 */
+        .windows-whale .chatbot-main {
+            /* Windows 웨일에서 안정적인 스타일 */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .windows-whale .chatbot-input textarea {
+            /* Windows 웨일에서 입력 필드 최적화 */
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .windows-whale .chatbot-send {
+            /* Windows 웨일에서 버튼 최적화 */
+            font-size: 15px;
+            padding: 12px 26px;
+        }
+        
+        .macos-whale .chatbot-main {
+            /* macOS 웨일에서 최적화된 스타일 */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+        
+        .macos-whale .language-current {
+            /* macOS 웨일에서 언어 선택 버튼 최적화 */
+            font-size: 13px;
+            padding: 9px 14px;
+        }
+        
+        /* iOS 카카오톡 브라우저 최적화 */
+        .ios-kakao .chatbot-main {
+            height: 100vh;
+            height: -webkit-fill-available;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .ios-kakao .chatbot-header {
+            padding-top: calc(18px + env(safe-area-inset-top));
+            padding-bottom: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .ios-kakao .chatbot-input {
+            padding-bottom: calc(15px + env(safe-area-inset-bottom));
+            background: #f8f9fa;
+        }
+        
+        .ios-kakao .language-current {
+            min-height: 44px;
+            font-size: 13px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .ios-kakao .language-option {
+            min-height: 44px;
+            font-size: 13px;
+            padding: 10px 12px;
+            border-radius: 6px;
+        }
+        
+        .ios-kakao .chatbot-send {
+            min-height: 44px;
+            font-size: 15px;
+            padding: 12px 24px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .ios-kakao .quick-button {
+            min-height: 44px;
+            font-size: 13px;
+            padding: 10px 8px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .ios-kakao .chatbot-message {
+            border-radius: 18px;
+            margin: 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .ios-kakao .chatbot-message.user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .ios-kakao .chatbot-message.assistant {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        /* iOS 카카오톡 브라우저 터치 최적화 */
+        .ios-kakao button,
+        .ios-kakao .language-current,
+        .ios-kakao .language-option,
+        .ios-kakao .quick-button {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            transition: transform 0.1s ease;
+        }
+        
+        .ios-kakao button:active,
+        .ios-kakao .language-current:active,
+        .ios-kakao .language-option:active,
+        .ios-kakao .quick-button:active {
+            transform: scale(0.98);
+        }
+        
+        /* iOS 카카오톡 브라우저 입력 필드 최적화 */
+        .ios-kakao input,
+        .ios-kakao textarea {
+            font-size: 16px !important;
+            -webkit-appearance: none;
+            border-radius: 0;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        /* iOS 카카오톡 브라우저 스크롤 최적화 */
+        .ios-kakao .chatbot-messages {
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
     </style>
 </head>
 <body>
@@ -785,6 +923,14 @@
             
             <!-- API 설정 상태 표시 -->
             <div id="apiStatus">❌ AI API 설정 안됨</div>
+            
+            <!-- 브라우저별 진단 버튼 (개발자용) -->
+            <div id="browserDiagnosis" style="position: absolute; top: 10px; right: 10px; z-index: 1002;">
+                <button onclick="runBrowserDiagnosis()" style="background: #007bff; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">🔍 진단</button>
+                <button onclick="fixChromeIssues()" style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 4px;">🔧 Chrome</button>
+                <button onclick="fixWhaleIssues()" style="background: #28a745; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 4px;">🐋 웨일</button>
+                <button onclick="fixIOSKakaoIssues()" style="background: #ffc107; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 4px;">📱 iOS 카카오톡</button>
+            </div>
             
             <!-- 언어 선택 드롭다운 -->
             <div class="header-language-dropdown">
@@ -819,6 +965,191 @@
 
     <script>
         console.log('🚀 피닉스 치과 AI 챗봇 시작 (최적화 버전)');
+
+        // 🌐 브라우저별 테스트 및 디버깅 도구
+        window.browserTestTools = {
+            // 브라우저 정보 출력
+            logBrowserInfo() {
+                const userAgent = navigator.userAgent;
+                const browserInfo = {
+                    userAgent: userAgent,
+                    isChrome: /Chrome/.test(userAgent) && !/Edge/.test(userAgent),
+                    isEdge: /Edge/.test(userAgent),
+                    isFirefox: /Firefox/.test(userAgent),
+                    isSafari: /Safari/.test(userAgent) && !/Chrome/.test(userAgent),
+                    isWhale: /Whale/.test(userAgent),
+                    isAndroid: /Android/.test(userAgent),
+                    isKakao: /KAKAO/.test(userAgent),
+                    isWindows: /Windows/.test(userAgent),
+                    isMacOS: /Mac OS X/.test(userAgent),
+                    isIOS: /iPhone|iPad|iPod/.test(userAgent),
+                    localStorageAvailable: (() => {
+                        try {
+                            const test = '__test__';
+                            localStorage.setItem(test, test);
+                            localStorage.removeItem(test);
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    })(),
+                    cookiesEnabled: navigator.cookieEnabled,
+                    isSecureContext: window.isSecureContext,
+                    language: navigator.language,
+                    platform: navigator.platform
+                };
+                
+                console.log('🌐 브라우저 정보:', browserInfo);
+                return browserInfo;
+            },
+            
+            // API 설정 상태 확인
+            checkApiStatus() {
+                if (window.chatbot) {
+                    const status = {
+                        hasActiveAPI: window.chatbot.hasActiveAPI(),
+                        apiSettings: window.chatbot.apiSettings,
+                        knowledgeBase: window.chatbot.knowledgeBase,
+                        currentLanguage: window.chatbot.currentLanguage
+                    };
+                    console.log('🔍 API 상태:', status);
+                    return status;
+                } else {
+                    console.error('❌ chatbot 인스턴스가 없습니다');
+                    return null;
+                }
+            },
+            
+            // localStorage 테스트
+            testLocalStorage() {
+                const tests = {
+                    write: false,
+                    read: false,
+                    delete: false
+                };
+                
+                try {
+                    const testKey = '__browser_test__';
+                    const testValue = 'test_value_' + Date.now();
+                    
+                    // 쓰기 테스트
+                    localStorage.setItem(testKey, testValue);
+                    tests.write = true;
+                    
+                    // 읽기 테스트
+                    const readValue = localStorage.getItem(testKey);
+                    tests.read = (readValue === testValue);
+                    
+                    // 삭제 테스트
+                    localStorage.removeItem(testKey);
+                    const afterDelete = localStorage.getItem(testKey);
+                    tests.delete = (afterDelete === null);
+                    
+                } catch (error) {
+                    console.error('❌ localStorage 테스트 실패:', error);
+                }
+                
+                console.log('💾 localStorage 테스트 결과:', tests);
+                return tests;
+            },
+            
+            // 네트워크 연결 테스트
+            async testNetworkConnection() {
+                const tests = {
+                    netlifyFunctions: false,
+                    openai: false,
+                    gemini: false,
+                    claude: false
+                };
+                
+                try {
+                    // Netlify 함수 테스트
+                    const netlifyResponse = await fetch('/.netlify/functions/test-supabase', {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    tests.netlifyFunctions = netlifyResponse.ok;
+                    
+                    // 외부 API 연결 테스트 (헤드 요청)
+                    const testPromises = [
+                        fetch('https://api.openai.com', { method: 'HEAD' }).then(() => true).catch(() => false),
+                        fetch('https://generativelanguage.googleapis.com', { method: 'HEAD' }).then(() => true).catch(() => false),
+                        fetch('https://api.anthropic.com', { method: 'HEAD' }).then(() => true).catch(() => false)
+                    ];
+                    
+                    const [openai, gemini, claude] = await Promise.all(testPromises);
+                    tests.openai = openai;
+                    tests.gemini = gemini;
+                    tests.claude = claude;
+                    
+                } catch (error) {
+                    console.error('❌ 네트워크 테스트 실패:', error);
+                }
+                
+                console.log('🌐 네트워크 연결 테스트 결과:', tests);
+                return tests;
+            },
+            
+            // 종합 진단 실행
+            async runFullDiagnosis() {
+                console.log('🔍 브라우저별 종합 진단 시작...');
+                
+                const results = {
+                    browserInfo: this.logBrowserInfo(),
+                    apiStatus: this.checkApiStatus(),
+                    localStorage: this.testLocalStorage(),
+                    network: await this.testNetworkConnection(),
+                    timestamp: new Date().toISOString()
+                };
+                
+                console.log('📊 종합 진단 결과:', results);
+                
+                // 결과를 화면에 표시
+                this.displayDiagnosisResults(results);
+                
+                return results;
+            },
+            
+            // 진단 결과 화면 표시
+            displayDiagnosisResults(results) {
+                const messagesContainer = document.getElementById('chatbotMessages');
+                if (!messagesContainer) return;
+                
+                const diagnosisDiv = document.createElement('div');
+                diagnosisDiv.style.cssText = `
+                    background: #f8f9fa; 
+                    border: 1px solid #dee2e6; 
+                    padding: 15px; 
+                    margin: 10px 0; 
+                    border-radius: 8px; 
+                    font-family: monospace; 
+                    font-size: 12px;
+                    max-height: 300px;
+                    overflow-y: auto;
+                `;
+                
+                diagnosisDiv.innerHTML = `
+                    <strong>🔍 브라우저별 진단 결과</strong><br>
+                    <strong>브라우저:</strong> ${results.browserInfo.isWhale ? '네이버 웨일' : 
+                                               results.browserInfo.isChrome ? 'Chrome' : 
+                                               results.browserInfo.isEdge ? 'Edge' : 
+                                               results.browserInfo.isFirefox ? 'Firefox' : 
+                                               results.browserInfo.isSafari ? 'Safari' : 'Unknown'}<br>
+                    <strong>OS:</strong> ${results.browserInfo.isWindows ? 'Windows' : 
+                                         results.browserInfo.isMacOS ? 'macOS' : 
+                                         results.browserInfo.isAndroid ? 'Android' : 
+                                         results.browserInfo.isIOS ? 'iOS' : 'Unknown'}<br>
+                    <strong>localStorage:</strong> ${results.localStorage.write && results.localStorage.read ? '✅ 정상' : '❌ 문제'}<br>
+                    <strong>API 상태:</strong> ${results.apiStatus?.hasActiveAPI ? '✅ 활성' : '❌ 비활성'}<br>
+                    <strong>Netlify 함수:</strong> ${results.network.netlifyFunctions ? '✅ 접근 가능' : '❌ 접근 불가'}<br>
+                    <strong>시크릿 모드:</strong> ${results.browserInfo.isSecureContext ? '❌ 가능' : '✅ 일반 모드'}<br>
+                    <strong>쿠키:</strong> ${results.browserInfo.cookiesEnabled ? '✅ 활성' : '❌ 비활성'}<br>
+                    <small>진단 시간: ${new Date(results.timestamp).toLocaleString()}</small>
+                `;
+                
+                messagesContainer.appendChild(diagnosisDiv);
+            }
+        };
 
         // 🎯 챗봇 핵심 클래스 (단일 책임 원칙 적용)
         class PhoenixChatbot {
@@ -1409,14 +1740,20 @@
                 const response = await fetch('/.netlify/functions/ask-ai', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
                     },
                     body: JSON.stringify({
                         model: settings.model,
                         messages: messages,
                         max_tokens: 800,
                         temperature: 0.7
-                    })
+                    }),
+                    // 브라우저별 네트워크 요청 최적화
+                    mode: 'cors',
+                    credentials: 'same-origin',
+                    cache: 'no-cache'
                 });
 
                 if (!response.ok) {
@@ -1502,14 +1839,20 @@
                 const response = await fetch('/.netlify/functions/ask-gemini', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
                     },
                     body: JSON.stringify({
                         model: settings.model,
                         prompt: prompt,
                         maxOutputTokens: 800,
                         temperature: 0.7
-                    })
+                    }),
+                    // 브라우저별 네트워크 요청 최적화
+                    mode: 'cors',
+                    credentials: 'same-origin',
+                    cache: 'no-cache'
                 });
 
                 if (!response.ok) {
@@ -1595,7 +1938,9 @@
                 const response = await fetch('/.netlify/functions/ask-claude', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
                     },
                     body: JSON.stringify({
                         model: settings.model,
@@ -1604,7 +1949,11 @@
                             role: "user",
                             content: prompt
                         }]
-                    })
+                    }),
+                    // 브라우저별 네트워크 요청 최적화
+                    mode: 'cors',
+                    credentials: 'same-origin',
+                    cache: 'no-cache'
                 });
 
                 if (!response.ok) {
@@ -2204,10 +2553,11 @@ ${currentQuickMenu.directInquiry}
             this.detectAndroidKakaoBrowser();
         }
         
-        // 브라우저 감지 (안드로이드 카카오톡 + 윈도우 브라우저)
+        // 브라우저 감지 (안드로이드 카카오톡 + iOS 카카오톡 + 윈도우 브라우저)
         detectAndroidKakaoBrowser() {
             const userAgent = navigator.userAgent;
             const isAndroid = /Android/.test(userAgent);
+            const isIOS = /iPhone|iPad|iPod/.test(userAgent);
             const isKakao = /KAKAO/.test(userAgent);
             const isWindows = /Windows/.test(userAgent);
             const isChrome = /Chrome/.test(userAgent) && !/Edge/.test(userAgent);
@@ -2216,6 +2566,7 @@ ${currentQuickMenu.directInquiry}
             
             console.log('브라우저 감지 결과:', {
                 isAndroid: isAndroid,
+                isIOS: isIOS,
                 isKakao: isKakao,
                 isWindows: isWindows,
                 isChrome: isChrome,
@@ -2229,6 +2580,14 @@ ${currentQuickMenu.directInquiry}
                 
                 // 안드로이드 카카오톡 브라우저 특별 최적화
                 this.setupAndroidKakaoOptimizations();
+            } else if (isIOS && isKakao) {
+                console.log('iOS 카카오톡 브라우저 감지됨');
+                document.body.classList.add('ios-kakao');
+                
+                // iOS 카카오톡 브라우저 특별 최적화
+                this.applyIOSKakaoOptimizations();
+                this.setupIOSKakaoEventHandlers();
+                this.monitorIOSKakaoPerformance();
             } else if (isWindows) {
                 console.log('윈도우 브라우저 감지됨');
                 document.body.classList.add('windows-browser');
@@ -2332,28 +2691,80 @@ ${currentQuickMenu.directInquiry}
                 });
             }
             
-            // API 설정 로딩
+            // API 설정 로딩 (브라우저 호환성 개선)
             loadApiSettings() {
                 try {
+                    // localStorage 접근 가능성 먼저 확인
+                    if (!this.isLocalStorageAvailable()) {
+                        console.warn('⚠️ localStorage 접근 불가 - 기본 설정 사용');
+                        this.apiSettings = this.getDefaultApiSettings();
+                        return;
+                    }
+                    
                     const saved = localStorage.getItem('chatbotApiSettings');
                     if (saved) {
                         this.apiSettings = JSON.parse(saved);
                         console.log('✅ API 설정 로드 완료:', this.apiSettings);
+                        
+                        // 설정 유효성 검증
+                        if (!this.validateApiSettings(this.apiSettings)) {
+                            console.warn('⚠️ API 설정 유효성 검증 실패 - 기본 설정으로 복구');
+                            this.apiSettings = this.getDefaultApiSettings();
+                            this.saveApiSettings();
+                        }
                     } else {
-                        this.apiSettings = {
-                            chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' },
-                            gemini: { enabled: false, apiKey: '', model: '' },
-                            claude: { enabled: false, apiKey: '', model: '' }
-                        };
+                        this.apiSettings = this.getDefaultApiSettings();
                         console.log('✅ 기본 API 설정 초기화 완료');
+                        this.saveApiSettings();
                     }
                 } catch (error) {
                     console.error('❌ API 설정 로드 실패:', error);
-                    this.apiSettings = {
-                        chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' },
-                        gemini: { enabled: false, apiKey: '', model: '' },
-                        claude: { enabled: false, apiKey: '', model: '' }
-                    };
+                    this.apiSettings = this.getDefaultApiSettings();
+                }
+            }
+            
+            // 기본 API 설정 반환
+            getDefaultApiSettings() {
+                return {
+                    chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' },
+                    gemini: { enabled: false, apiKey: '', model: '' },
+                    claude: { enabled: false, apiKey: '', model: '' }
+                };
+            }
+            
+            // API 설정 유효성 검증
+            validateApiSettings(settings) {
+                if (!settings || typeof settings !== 'object') {
+                    return false;
+                }
+                
+                const requiredProviders = ['chatgpt', 'gemini', 'claude'];
+                for (const provider of requiredProviders) {
+                    if (!settings[provider] || typeof settings[provider] !== 'object') {
+                        return false;
+                    }
+                    if (typeof settings[provider].enabled !== 'boolean') {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+            
+            // API 설정 저장 (안전한 방식)
+            saveApiSettings() {
+                try {
+                    if (this.isLocalStorageAvailable()) {
+                        localStorage.setItem('chatbotApiSettings', JSON.stringify(this.apiSettings));
+                        console.log('✅ API 설정 저장 완료');
+                        return true;
+                    } else {
+                        console.warn('⚠️ localStorage 접근 불가 - 설정 저장 실패');
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('❌ API 설정 저장 실패:', error);
+                    return false;
                 }
             }
             
@@ -2395,6 +2806,9 @@ ${currentQuickMenu.directInquiry}
                 const apiStatus = document.getElementById('apiStatus');
                 if (!apiStatus) return; // 요소가 없으면 리턴
                 
+                // 브라우저별 진단 정보 추가
+                this.diagnoseBrowserIssues();
+                
                 if (!this.hasActiveAPI()) {
                     apiStatus.innerHTML = '🔴 AI OFF';
                     apiStatus.className = 'ai-off';
@@ -2408,6 +2822,704 @@ ${currentQuickMenu.directInquiry}
                 
                 apiStatus.innerHTML = `<span class="blink">🟢</span> AI ON`;
                 apiStatus.className = 'ai-on';
+            }
+            
+            // 브라우저별 문제 진단
+            diagnoseBrowserIssues() {
+                const userAgent = navigator.userAgent;
+                const isChrome = /Chrome/.test(userAgent) && !/Edge/.test(userAgent);
+                const isEdge = /Edge/.test(userAgent);
+                const isFirefox = /Firefox/.test(userAgent);
+                const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
+                const isWhale = /Whale/.test(userAgent);
+                const isWindows = /Windows/.test(userAgent);
+                const isMacOS = /Mac OS X/.test(userAgent);
+                const isIOS = /iPhone|iPad|iPod/.test(userAgent);
+                const isKakao = /KAKAO/.test(userAgent);
+                const isAndroid = /Android/.test(userAgent);
+                
+                console.log('🔍 브라우저별 API 상태 진단:', {
+                    userAgent: userAgent,
+                    isChrome: isChrome,
+                    isEdge: isEdge,
+                    isFirefox: isFirefox,
+                    isSafari: isSafari,
+                    isWhale: isWhale,
+                    isWindows: isWindows,
+                    isMacOS: isMacOS,
+                    isIOS: isIOS,
+                    isKakao: isKakao,
+                    isAndroid: isAndroid,
+                    localStorageAvailable: this.isLocalStorageAvailable(),
+                    apiSettings: this.apiSettings,
+                    hasActiveAPI: this.hasActiveAPI()
+                });
+                
+                // iOS 카카오톡 브라우저 특화 진단
+                if (isIOS && isKakao) {
+                    this.diagnoseIOSKakaoIssues();
+                }
+                // Android 카카오톡 브라우저 특화 진단
+                else if (isAndroid && isKakao) {
+                    this.diagnoseAndroidKakaoIssues();
+                }
+                // 네이버 웨일 브라우저 특화 진단
+                else if (isWhale) {
+                    this.diagnoseWhaleIssues(isWindows, isMacOS);
+                }
+                // Chrome 특화 문제 진단
+                else if (isChrome) {
+                    this.diagnoseChromeIssues();
+                }
+                
+                // localStorage 접근성 확인
+                if (!this.isLocalStorageAvailable()) {
+                    console.error('❌ localStorage 접근 불가 - 브라우저 설정 확인 필요');
+                    this.showBrowserWarning();
+                }
+            }
+            
+            // 네이버 웨일 브라우저 특화 진단
+            diagnoseWhaleIssues(isWindows, isMacOS) {
+                console.log('🐋 네이버 웨일 브라우저 특화 진단 시작');
+                
+                const whaleInfo = {
+                    isWindows: isWindows,
+                    isMacOS: isMacOS,
+                    userAgent: navigator.userAgent,
+                    localStorageAvailable: this.isLocalStorageAvailable(),
+                    cookiesEnabled: navigator.cookieEnabled,
+                    isSecureContext: window.isSecureContext,
+                    platform: navigator.platform
+                };
+                
+                console.log('🐋 네이버 웨일 브라우저 정보:', whaleInfo);
+                
+                // Windows 웨일 특화 문제 진단
+                if (isWindows) {
+                    this.diagnoseWindowsWhaleIssues();
+                }
+                // macOS 웨일 특화 문제 진단
+                else if (isMacOS) {
+                    this.diagnoseMacOSWhaleIssues();
+                }
+                
+                // 공통 웨일 브라우저 문제 진단
+                this.diagnoseCommonWhaleIssues();
+            }
+            
+            // Windows 웨일 특화 문제 진단
+            diagnoseWindowsWhaleIssues() {
+                console.log('🐋 Windows 웨일 브라우저 진단');
+                
+                // 1. Windows 웨일의 localStorage 제한 확인
+                const localStorageTest = this.testWindowsWhaleLocalStorage();
+                if (!localStorageTest.success) {
+                    console.warn('⚠️ Windows 웨일 localStorage 제한 감지');
+                    this.showWindowsWhaleWarning();
+                }
+                
+                // 2. Windows 웨일의 API 설정 복구 시도
+                this.attemptWindowsWhaleApiRecovery();
+                
+                // 3. Windows 웨일 특화 설정 적용
+                this.applyWindowsWhaleOptimizations();
+            }
+            
+            // macOS 웨일 특화 문제 진단
+            diagnoseMacOSWhaleIssues() {
+                console.log('🐋 macOS 웨일 브라우저 진단');
+                
+                // macOS 웨일은 일반적으로 문제가 적음
+                console.log('✅ macOS 웨일 브라우저 - 정상 동작 예상');
+                
+                // macOS 웨일 최적화 적용
+                this.applyMacOSWhaleOptimizations();
+            }
+            
+            // 공통 웨일 브라우저 문제 진단
+            diagnoseCommonWhaleIssues() {
+                console.log('🐋 공통 웨일 브라우저 진단');
+                
+                // 1. 웨일 브라우저의 보안 정책 확인
+                const securityPolicy = this.checkWhaleSecurityPolicy();
+                
+                // 2. 웨일 브라우저의 네트워크 요청 제한 확인
+                const networkLimits = this.checkWhaleNetworkLimits();
+                
+                // 3. 웨일 브라우저의 API 호환성 확인
+                const apiCompatibility = this.checkWhaleApiCompatibility();
+                
+                console.log('🐋 웨일 브라우저 진단 결과:', {
+                    securityPolicy,
+                    networkLimits,
+                    apiCompatibility
+                });
+            }
+            
+            // Windows 웨일 localStorage 테스트
+            testWindowsWhaleLocalStorage() {
+                const result = { success: false, error: null };
+                
+                try {
+                    const testKey = '__whale_windows_test__';
+                    const testValue = 'whale_test_' + Date.now();
+                    
+                    // 쓰기 테스트
+                    localStorage.setItem(testKey, testValue);
+                    
+                    // 읽기 테스트
+                    const readValue = localStorage.getItem(testKey);
+                    
+                    // 삭제 테스트
+                    localStorage.removeItem(testKey);
+                    
+                    result.success = (readValue === testValue);
+                    
+                } catch (error) {
+                    result.error = error.message;
+                    console.error('❌ Windows 웨일 localStorage 테스트 실패:', error);
+                }
+                
+                return result;
+            }
+            
+            // 웨일 브라우저 보안 정책 확인
+            checkWhaleSecurityPolicy() {
+                const policy = {
+                    thirdPartyCookies: navigator.cookieEnabled,
+                    localStorage: this.isLocalStorageAvailable(),
+                    sessionStorage: (() => {
+                        try {
+                            sessionStorage.setItem('test', 'test');
+                            sessionStorage.removeItem('test');
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    })(),
+                    secureContext: window.isSecureContext
+                };
+                
+                return policy;
+            }
+            
+            // 웨일 브라우저 네트워크 제한 확인
+            async checkWhaleNetworkLimits() {
+                const limits = {
+                    fetchAvailable: typeof fetch !== 'undefined',
+                    xhrAvailable: typeof XMLHttpRequest !== 'undefined',
+                    corsSupport: true // 기본적으로 지원
+                };
+                
+                // 실제 네트워크 요청 테스트
+                try {
+                    const response = await fetch('/.netlify/functions/test-supabase', {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    limits.netlifyAccess = response.ok;
+                } catch (error) {
+                    limits.netlifyAccess = false;
+                    limits.netlifyError = error.message;
+                }
+                
+                return limits;
+            }
+            
+            // 웨일 브라우저 API 호환성 확인
+            checkWhaleApiCompatibility() {
+                const compatibility = {
+                    // 기본 Web API 지원
+                    localStorage: typeof Storage !== 'undefined',
+                    sessionStorage: typeof Storage !== 'undefined',
+                    fetch: typeof fetch !== 'undefined',
+                    xhr: typeof XMLHttpRequest !== 'undefined',
+                    
+                    // 모던 JavaScript 기능
+                    asyncAwait: (() => {
+                        try {
+                            eval('async function test() {}');
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    })(),
+                    arrowFunctions: (() => {
+                        try {
+                            eval('const test = () => {}');
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    })(),
+                    
+                    // 브라우저 특정 기능
+                    userAgent: navigator.userAgent.includes('Whale'),
+                    platform: navigator.platform
+                };
+                
+                return compatibility;
+            }
+            
+            // Windows 웨일 API 복구 시도
+            attemptWindowsWhaleApiRecovery() {
+                console.log('🔧 Windows 웨일 API 설정 복구 시도');
+                
+                // 1. 기본 설정으로 강제 초기화
+                if (!this.apiSettings || !this.hasActiveAPI()) {
+                    console.log('🔄 Windows 웨일 API 설정 강제 초기화');
+                    this.apiSettings = this.getDefaultApiSettings();
+                    
+                    // localStorage에 저장 시도 (Windows 웨일 특화)
+                    try {
+                        localStorage.setItem('chatbotApiSettings', JSON.stringify(this.apiSettings));
+                        console.log('✅ Windows 웨일 API 설정 저장 성공');
+                    } catch (e) {
+                        console.error('❌ Windows 웨일 API 설정 저장 실패:', e);
+                        this.showWindowsWhaleWarning();
+                    }
+                }
+                
+                // 2. Windows 웨일 특화 설정 적용
+                this.applyWindowsWhaleSettings();
+            }
+            
+            // Windows 웨일 특화 설정 적용
+            applyWindowsWhaleSettings() {
+                console.log('🔧 Windows 웨일 특화 설정 적용');
+                
+                // Windows 웨일에서 안정적인 설정
+                const whaleSettings = {
+                    chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' },
+                    gemini: { enabled: false, apiKey: '', model: '' },
+                    claude: { enabled: false, apiKey: '', model: '' }
+                };
+                
+                // 설정 병합
+                this.apiSettings = { ...this.apiSettings, ...whaleSettings };
+                
+                // localStorage에 저장
+                try {
+                    localStorage.setItem('chatbotApiSettings', JSON.stringify(this.apiSettings));
+                    console.log('✅ Windows 웨일 특화 설정 저장 완료');
+                } catch (e) {
+                    console.error('❌ Windows 웨일 설정 저장 실패:', e);
+                }
+            }
+            
+            // Windows 웨일 최적화 적용
+            applyWindowsWhaleOptimizations() {
+                console.log('🔧 Windows 웨일 최적화 적용');
+                
+                // Windows 웨일 특화 CSS 클래스 추가
+                document.body.classList.add('windows-whale');
+                
+                // Windows 웨일 특화 이벤트 처리
+                this.setupWindowsWhaleEventHandlers();
+            }
+            
+            // macOS 웨일 최적화 적용
+            applyMacOSWhaleOptimizations() {
+                console.log('🔧 macOS 웨일 최적화 적용');
+                
+                // macOS 웨일 특화 CSS 클래스 추가
+                document.body.classList.add('macos-whale');
+                
+                // macOS 웨일 특화 이벤트 처리
+                this.setupMacOSWhaleEventHandlers();
+            }
+            
+            // Windows 웨일 이벤트 핸들러 설정
+            setupWindowsWhaleEventHandlers() {
+                console.log('🔧 Windows 웨일 이벤트 핸들러 설정');
+                
+                // Windows 웨일에서 안정적인 이벤트 처리
+                const buttons = document.querySelectorAll('button, .language-current, .language-option');
+                buttons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        // Windows 웨일에서 더블 클릭 방지
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // 지연 처리로 안정성 향상
+                        setTimeout(() => {
+                            button.click();
+                        }, 50);
+                    });
+                });
+            }
+            
+            // macOS 웨일 이벤트 핸들러 설정
+            setupMacOSWhaleEventHandlers() {
+                console.log('🔧 macOS 웨일 이벤트 핸들러 설정');
+                
+                // macOS 웨일은 일반적인 이벤트 처리 사용
+                // 추가 최적화가 필요한 경우 여기에 구현
+            }
+            
+            // iOS 카카오톡 브라우저 특화 진단
+            diagnoseIOSKakaoIssues() {
+                console.log('📱 iOS 카카오톡 브라우저 특화 진단 시작');
+                
+                const iosKakaoInfo = {
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    localStorageAvailable: this.isLocalStorageAvailable(),
+                    cookiesEnabled: navigator.cookieEnabled,
+                    isSecureContext: window.isSecureContext,
+                    screenWidth: window.screen.width,
+                    screenHeight: window.screen.height,
+                    devicePixelRatio: window.devicePixelRatio,
+                    viewportWidth: window.innerWidth,
+                    viewportHeight: window.innerHeight
+                };
+                
+                console.log('📱 iOS 카카오톡 브라우저 정보:', iosKakaoInfo);
+                
+                // iOS 카카오톡 브라우저 특화 최적화 적용
+                this.applyIOSKakaoOptimizations();
+                
+                // iOS 카카오톡 브라우저 특화 이벤트 처리
+                this.setupIOSKakaoEventHandlers();
+                
+                // iOS 카카오톡 브라우저 성능 모니터링
+                this.monitorIOSKakaoPerformance();
+            }
+            
+            // Android 카카오톡 브라우저 특화 진단
+            diagnoseAndroidKakaoIssues() {
+                console.log('🤖 Android 카카오톡 브라우저 특화 진단 시작');
+                
+                // 기존 Android 카카오톡 최적화 로직 유지
+                this.setupAndroidKakaoOptimizations();
+            }
+            
+            // iOS 카카오톡 브라우저 최적화 적용
+            applyIOSKakaoOptimizations() {
+                console.log('🔧 iOS 카카오톡 브라우저 최적화 적용');
+                
+                // iOS 카카오톡 브라우저 특화 CSS 클래스 추가
+                document.body.classList.add('ios-kakao');
+                
+                // iOS Safe Area 지원
+                this.setupIOSSafeArea();
+                
+                // iOS 카카오톡 브라우저 특화 스타일 적용
+                this.applyIOSKakaoStyles();
+                
+                // iOS 카카오톡 브라우저 뷰포트 최적화
+                this.optimizeIOSKakaoViewport();
+            }
+            
+            // iOS Safe Area 설정
+            setupIOSSafeArea() {
+                console.log('🔧 iOS Safe Area 설정');
+                
+                // iOS Safe Area CSS 변수 설정
+                const safeAreaTop = getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-top') || '0px';
+                const safeAreaBottom = getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-bottom') || '0px';
+                
+                document.documentElement.style.setProperty('--safe-area-inset-top', safeAreaTop);
+                document.documentElement.style.setProperty('--safe-area-inset-bottom', safeAreaBottom);
+                
+                console.log('✅ iOS Safe Area 설정 완료:', { safeAreaTop, safeAreaBottom });
+            }
+            
+            // iOS 카카오톡 브라우저 특화 스타일 적용
+            applyIOSKakaoStyles() {
+                console.log('🔧 iOS 카카오톡 브라우저 특화 스타일 적용');
+                
+                // iOS 카카오톡 브라우저에서 안정적인 스타일 적용
+                const style = document.createElement('style');
+                style.textContent = `
+                    .ios-kakao .chatbot-main {
+                        height: 100vh;
+                        height: -webkit-fill-available;
+                        padding-top: env(safe-area-inset-top);
+                        padding-bottom: env(safe-area-inset-bottom);
+                    }
+                    
+                    .ios-kakao .chatbot-header {
+                        padding-top: calc(18px + env(safe-area-inset-top));
+                        padding-bottom: 18px;
+                    }
+                    
+                    .ios-kakao .chatbot-input {
+                        padding-bottom: calc(15px + env(safe-area-inset-bottom));
+                    }
+                    
+                    .ios-kakao .language-current {
+                        min-height: 44px;
+                        font-size: 13px;
+                        padding: 10px 12px;
+                    }
+                    
+                    .ios-kakao .language-option {
+                        min-height: 44px;
+                        font-size: 13px;
+                        padding: 10px 12px;
+                    }
+                    
+                    .ios-kakao .chatbot-send {
+                        min-height: 44px;
+                        font-size: 15px;
+                        padding: 12px 24px;
+                    }
+                    
+                    .ios-kakao .quick-button {
+                        min-height: 44px;
+                        font-size: 13px;
+                        padding: 10px 8px;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                console.log('✅ iOS 카카오톡 브라우저 특화 스타일 적용 완료');
+            }
+            
+            // iOS 카카오톡 브라우저 뷰포트 최적화
+            optimizeIOSKakaoViewport() {
+                console.log('🔧 iOS 카카오톡 브라우저 뷰포트 최적화');
+                
+                // iOS 카카오톡 브라우저에서 동적 뷰포트 높이 설정
+                const setViewportHeight = () => {
+                    const vh = window.innerHeight * 0.01;
+                    document.documentElement.style.setProperty('--vh', `${vh}px`);
+                };
+                
+                // 초기 설정
+                setViewportHeight();
+                
+                // 화면 회전 및 리사이즈 시 재설정
+                window.addEventListener('resize', setViewportHeight);
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(setViewportHeight, 100);
+                });
+                
+                console.log('✅ iOS 카카오톡 브라우저 뷰포트 최적화 완료');
+            }
+            
+            // iOS 카카오톡 브라우저 이벤트 핸들러 설정
+            setupIOSKakaoEventHandlers() {
+                console.log('🔧 iOS 카카오톡 브라우저 이벤트 핸들러 설정');
+                
+                // iOS 카카오톡 브라우저에서 안정적인 터치 이벤트 처리
+                const buttons = document.querySelectorAll('button, .language-current, .language-option, .quick-button');
+                buttons.forEach(button => {
+                    // iOS 카카오톡 브라우저에서 터치 최적화
+                    button.style.setProperty('-webkit-tap-highlight-color', 'transparent', 'important');
+                    button.style.setProperty('touch-action', 'manipulation', 'important');
+                    button.style.setProperty('-webkit-touch-callout', 'none', 'important');
+                    button.style.setProperty('-webkit-user-select', 'none', 'important');
+                    button.style.setProperty('user-select', 'none', 'important');
+                    
+                    // iOS 카카오톡 브라우저에서 클릭 이벤트 최적화
+                    button.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        button.style.transform = 'scale(0.98)';
+                    }, { passive: false });
+                    
+                    button.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        button.style.transform = 'scale(1)';
+                    }, { passive: false });
+                });
+                
+                // iOS 카카오톡 브라우저에서 입력 필드 최적화
+                const inputs = document.querySelectorAll('input, textarea');
+                inputs.forEach(input => {
+                    input.style.setProperty('font-size', '16px', 'important'); // iOS에서 줌 방지
+                    input.style.setProperty('-webkit-appearance', 'none', 'important');
+                    input.style.setProperty('border-radius', '0', 'important');
+                });
+                
+                console.log('✅ iOS 카카오톡 브라우저 이벤트 핸들러 설정 완료');
+            }
+            
+            // iOS 카카오톡 브라우저 성능 모니터링
+            monitorIOSKakaoPerformance() {
+                console.log('📊 iOS 카카오톡 브라우저 성능 모니터링 시작');
+                
+                // 성능 메트릭 수집
+                const performanceMetrics = {
+                    loadTime: performance.now(),
+                    memoryUsage: performance.memory ? performance.memory.usedJSHeapSize : 'N/A',
+                    userAgent: navigator.userAgent,
+                    timestamp: new Date().toISOString()
+                };
+                
+                console.log('📊 iOS 카카오톡 브라우저 성능 메트릭:', performanceMetrics);
+                
+                // 주기적 성능 모니터링 (개발용)
+                if (console.log) {
+                    setInterval(() => {
+                        const currentMemory = performance.memory ? performance.memory.usedJSHeapSize : 'N/A';
+                        console.log('📊 iOS 카카오톡 브라우저 메모리 사용량:', currentMemory);
+                    }, 30000); // 30초마다 체크
+                }
+            }
+            
+            // Windows 웨일 경고 표시
+            showWindowsWhaleWarning() {
+                const warningMessage = `
+                    <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; margin: 10px 0; border-radius: 8px; color: #856404;">
+                        <strong>⚠️ Windows 네이버 웨일 브라우저 설정 확인</strong><br>
+                        • Windows 웨일에서 localStorage 접근이 제한될 수 있습니다<br>
+                        • 브라우저 설정에서 쿠키와 로컬 스토리지를 활성화해주세요<br>
+                        • 문제가 지속되면 다른 브라우저로 시도해보세요
+                    </div>
+                `;
+                
+                const messagesContainer = document.getElementById('chatbotMessages');
+                if (messagesContainer) {
+                    const warningDiv = document.createElement('div');
+                    warningDiv.innerHTML = warningMessage;
+                    warningDiv.style.marginBottom = '10px';
+                    messagesContainer.appendChild(warningDiv);
+                }
+            }
+            
+            // Chrome 특화 문제 진단
+            diagnoseChromeIssues() {
+                console.log('🔍 Chrome 특화 진단 시작');
+                
+                // 1. 시크릿 모드 확인
+                const isIncognito = this.isIncognitoMode();
+                if (isIncognito) {
+                    console.warn('⚠️ Chrome 시크릿 모드 감지 - localStorage 제한 가능성');
+                }
+                
+                // 2. 쿠키 설정 확인
+                const cookiesEnabled = navigator.cookieEnabled;
+                if (!cookiesEnabled) {
+                    console.error('❌ 쿠키 비활성화 - API 설정 저장 불가');
+                }
+                
+                // 3. 보안 컨텍스트 확인
+                const isSecureContext = window.isSecureContext;
+                if (!isSecureContext) {
+                    console.warn('⚠️ 비보안 컨텍스트 - 일부 기능 제한 가능성');
+                }
+                
+                // 4. API 설정 강제 복구 시도
+                this.attemptChromeApiRecovery();
+            }
+            
+            // 시크릿 모드 감지
+            isIncognitoMode() {
+                try {
+                    // Chrome 시크릿 모드 감지 방법
+                    const testKey = '__incognito_test__';
+                    localStorage.setItem(testKey, 'test');
+                    localStorage.removeItem(testKey);
+                    return false;
+                } catch (e) {
+                    return true;
+                }
+            }
+            
+            // localStorage 접근 가능성 확인
+            isLocalStorageAvailable() {
+                try {
+                    const test = '__localStorage_test__';
+                    localStorage.setItem(test, test);
+                    localStorage.removeItem(test);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+            
+            // Chrome API 설정 복구 시도
+            attemptChromeApiRecovery() {
+                console.log('🔧 Chrome API 설정 복구 시도');
+                
+                // 1. 기본 설정으로 강제 초기화
+                if (!this.apiSettings || !this.hasActiveAPI()) {
+                    console.log('🔄 API 설정 강제 초기화');
+                    this.apiSettings = {
+                        chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' },
+                        gemini: { enabled: false, apiKey: '', model: '' },
+                        claude: { enabled: false, apiKey: '', model: '' }
+                    };
+                    
+                    // localStorage에 저장 시도
+                    try {
+                        localStorage.setItem('chatbotApiSettings', JSON.stringify(this.apiSettings));
+                        console.log('✅ API 설정 저장 성공');
+                    } catch (e) {
+                        console.error('❌ API 설정 저장 실패:', e);
+                        this.showChromeWarning();
+                    }
+                }
+                
+                // 2. Netlify 환경 변수 확인
+                this.checkNetlifyEnvironment();
+            }
+            
+            // Netlify 환경 변수 확인
+            async checkNetlifyEnvironment() {
+                try {
+                    console.log('🔍 Netlify 환경 변수 확인 중...');
+                    
+                    // 간단한 API 테스트 요청
+                    const response = await fetch('/.netlify/functions/test-supabase', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        console.log('✅ Netlify 함수 접근 가능');
+                    } else {
+                        console.warn('⚠️ Netlify 함수 접근 문제:', response.status);
+                    }
+                } catch (error) {
+                    console.error('❌ Netlify 환경 확인 실패:', error);
+                }
+            }
+            
+            // Chrome 경고 표시
+            showChromeWarning() {
+                const warningMessage = `
+                    <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; margin: 10px 0; border-radius: 8px; color: #856404;">
+                        <strong>⚠️ Chrome 브라우저 설정 확인 필요</strong><br>
+                        • 시크릿 모드에서는 설정이 저장되지 않을 수 있습니다<br>
+                        • 쿠키와 localStorage가 활성화되어 있는지 확인해주세요<br>
+                        • 일반 모드에서 다시 시도해보세요
+                    </div>
+                `;
+                
+                // 경고 메시지를 화면에 표시
+                const messagesContainer = document.getElementById('chatbotMessages');
+                if (messagesContainer) {
+                    const warningDiv = document.createElement('div');
+                    warningDiv.innerHTML = warningMessage;
+                    warningDiv.style.marginBottom = '10px';
+                    messagesContainer.appendChild(warningDiv);
+                }
+            }
+            
+            // 브라우저 경고 표시
+            showBrowserWarning() {
+                const warningMessage = `
+                    <div style="background: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; margin: 10px 0; border-radius: 8px; color: #721c24;">
+                        <strong>❌ 브라우저 설정 문제</strong><br>
+                        • localStorage 접근이 제한되어 있습니다<br>
+                        • 브라우저 설정에서 쿠키와 로컬 스토리지를 활성화해주세요<br>
+                        • 시크릿 모드에서는 일반 모드로 변경해주세요
+                    </div>
+                `;
+                
+                const messagesContainer = document.getElementById('chatbotMessages');
+                if (messagesContainer) {
+                    const warningDiv = document.createElement('div');
+                    warningDiv.innerHTML = warningMessage;
+                    warningDiv.style.marginBottom = '10px';
+                    messagesContainer.appendChild(warningDiv);
+                }
             }
             
             // 지식베이스 검색 (간소화된 버전)
@@ -2636,6 +3748,133 @@ ${currentQuickMenu.directInquiry}
                 window.history.back();
             } else {
                 window.location.href = 'index.html';
+            }
+        }
+
+        // 🌐 브라우저별 진단 함수들
+        function runBrowserDiagnosis() {
+            if (window.browserTestTools) {
+                window.browserTestTools.runFullDiagnosis();
+            } else {
+                console.error('❌ 브라우저 테스트 도구가 로드되지 않았습니다');
+                alert('브라우저 테스트 도구를 사용할 수 없습니다. 페이지를 새로고침해주세요.');
+            }
+        }
+        
+        function testChromeIssues() {
+            if (window.chatbot) {
+                window.chatbot.diagnoseChromeIssues();
+            } else {
+                console.error('❌ chatbot 인스턴스가 없습니다');
+            }
+        }
+        
+        function checkApiStatus() {
+            if (window.browserTestTools) {
+                window.browserTestTools.checkApiStatus();
+            } else {
+                console.error('❌ 브라우저 테스트 도구가 로드되지 않았습니다');
+            }
+        }
+        
+        function testLocalStorage() {
+            if (window.browserTestTools) {
+                window.browserTestTools.testLocalStorage();
+            } else {
+                console.error('❌ 브라우저 테스트 도구가 로드되지 않았습니다');
+            }
+        }
+        
+        function testNetworkConnection() {
+            if (window.browserTestTools) {
+                window.browserTestTools.testNetworkConnection();
+            } else {
+                console.error('❌ 브라우저 테스트 도구가 로드되지 않았습니다');
+            }
+        }
+        
+        // Chrome 특화 문제 해결 함수
+        function fixChromeIssues() {
+            console.log('🔧 Chrome 문제 해결 시도');
+            
+            // 1. localStorage 강제 초기화
+            try {
+                localStorage.clear();
+                console.log('✅ localStorage 초기화 완료');
+            } catch (e) {
+                console.error('❌ localStorage 초기화 실패:', e);
+            }
+            
+            // 2. API 설정 강제 복구
+            if (window.chatbot) {
+                window.chatbot.attemptChromeApiRecovery();
+            }
+            
+            // 3. 페이지 새로고침 안내
+            alert('Chrome 문제 해결을 위해 페이지를 새로고침해주세요.');
+        }
+        
+        // iOS 카카오톡 브라우저 특화 문제 해결 함수
+        function fixIOSKakaoIssues() {
+            console.log('📱 iOS 카카오톡 브라우저 문제 해결 시도');
+            
+            // 1. localStorage 강제 초기화
+            try {
+                localStorage.clear();
+                console.log('✅ iOS 카카오톡 localStorage 초기화 완료');
+            } catch (e) {
+                console.error('❌ iOS 카카오톡 localStorage 초기화 실패:', e);
+            }
+            
+            // 2. iOS 카카오톡 브라우저 특화 복구
+            if (window.chatbot) {
+                window.chatbot.fixIOSKakaoIssues();
+            }
+            
+            // 3. iOS 카카오톡 브라우저 최적화 재적용
+            if (window.chatbot) {
+                window.chatbot.applyIOSKakaoOptimizations();
+            }
+            
+            // 4. 성공 메시지
+            alert('✅ iOS 카카오톡 브라우저 최적화가 적용되었습니다!');
+        }
+        
+        // 네이버 웨일 특화 문제 해결 함수
+        function fixWhaleIssues() {
+            console.log('🐋 네이버 웨일 문제 해결 시도');
+            
+            const userAgent = navigator.userAgent;
+            const isWindows = /Windows/.test(userAgent);
+            const isMacOS = /Mac OS X/.test(userAgent);
+            
+            if (isWindows) {
+                console.log('🔧 Windows 웨일 문제 해결');
+                
+                // 1. Windows 웨일 특화 설정 적용
+                if (window.chatbot) {
+                    window.chatbot.attemptWindowsWhaleApiRecovery();
+                }
+                
+                // 2. localStorage 초기화
+                try {
+                    localStorage.clear();
+                    console.log('✅ Windows 웨일 localStorage 초기화 완료');
+                } catch (e) {
+                    console.error('❌ Windows 웨일 localStorage 초기화 실패:', e);
+                }
+                
+                alert('Windows 네이버 웨일 문제 해결을 위해 페이지를 새로고침해주세요.');
+                
+            } else if (isMacOS) {
+                console.log('🔧 macOS 웨일 문제 해결');
+                
+                // macOS 웨일은 일반적으로 문제가 적음
+                if (window.chatbot) {
+                    window.chatbot.applyMacOSWhaleOptimizations();
+                }
+                
+                alert('macOS 네이버 웨일 최적화가 적용되었습니다.');
             }
         }
 
