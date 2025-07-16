@@ -2341,7 +2341,7 @@ ${currentQuickMenu.directInquiry}
                         console.log('✅ API 설정 로드 완료:', this.apiSettings);
                     } else {
                         this.apiSettings = {
-                            chatgpt: { enabled: false, apiKey: '', model: '' },
+                            chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' },
                             gemini: { enabled: false, apiKey: '', model: '' },
                             claude: { enabled: false, apiKey: '', model: '' }
                         };
@@ -2350,7 +2350,7 @@ ${currentQuickMenu.directInquiry}
                 } catch (error) {
                     console.error('❌ API 설정 로드 실패:', error);
                     this.apiSettings = {
-                        chatgpt: { enabled: false, apiKey: '', model: '' },
+                        chatgpt: { enabled: true, apiKey: '', model: 'gpt-4o' },
                         gemini: { enabled: false, apiKey: '', model: '' },
                         claude: { enabled: false, apiKey: '', model: '' }
                     };
