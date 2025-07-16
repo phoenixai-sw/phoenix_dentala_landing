@@ -29,11 +29,6 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body || '{}');
     const apiKey = process.env.OPENAI_API_KEY;
 
-    // === 일반 고객은 항상 GPT-4o로 고정 ===
-    // TODO: 관리자 여부 판별 시 아래 조건 분기 추가
-    body.model = 'gpt-4o'; // 관리자가 아니면 무조건 GPT-4o 사용
-    // ================================
-
     console.log('🤖 AI 챗봇 요청:', {
       hasApiKey: !!apiKey,
       messageLength: body.messages?.length || 0,
