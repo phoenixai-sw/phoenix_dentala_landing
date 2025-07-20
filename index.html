@@ -4712,11 +4712,31 @@ https://phoenixai-agent.site/reservation.html
                     updateLoadingProgress(loadingModal, i + 1, excelData.length);
                     
                     try {
-                                                // 개인화된 메시지 생성
+                        // 디버깅: 고객 데이터 로그
+                        console.log('📋 고객 데이터:', customer);
+                        
+                        // 개인화된 메시지 생성
                         const personalizedMessage = createPersonalizedMessage(customer);
                         
+                        // 전화번호 필드 확인 및 수정
+                        const phoneNumber = customer.전화번호 || customer.phone || customer.Phone || customer.PHONE || customer['전화번호'] || customer['Phone Number'] || '';
+                        
+                        console.log('📱 전화번호 확인:', phoneNumber);
+                        
+                        if (!phoneNumber) {
+                            console.error('❌ 전화번호 필드를 찾을 수 없습니다:', customer);
+                            failCount++;
+                            sendResults.push({
+                                name: customer.예약자명 || customer.name || '알 수 없음',
+                                phone: '전화번호 없음',
+                                status: '실패',
+                                error: '전화번호 필드를 찾을 수 없습니다'
+                            });
+                            continue;
+                        }
+                        
                         // 솔라피 API 호출
-                        const result = await sendSingleSMS(customer.전화번호, personalizedMessage);
+                        const result = await sendSingleSMS(phoneNumber, personalizedMessage);
                         
                         if (result.success) {
                             successCount++;
@@ -4771,18 +4791,27 @@ https://phoenixai-agent.site/reservation.html
         // 솔라피 API를 통한 개별 SMS 발송 (실제 발송 모드)
         async function sendSingleSMS(phoneNumber, message) {
             try {
+                // 전화번호 유효성 검사 강화
+                if (!phoneNumber || typeof phoneNumber !== 'string') {
+                    console.error('❌ 전화번호가 유효하지 않습니다:', phoneNumber);
+                    return {
+                        success: false,
+                        error: '전화번호가 유효하지 않습니다: ' + phoneNumber
+                    };
+                }
+                
                 console.log('📱 실제 SMS 발송 시도:', {
                     to: phoneNumber,
-                    message: message.substring(0, 50) + '...',
+                    message: message ? message.substring(0, 50) + '...' : '메시지 없음',
                     timestamp: new Date().toLocaleString()
                 });
                 
-                // 전화번호 유효성 검사
+                // 전화번호 정리
                 const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
                 if (cleanPhone.length < 10 || cleanPhone.length > 11) {
                     return {
                         success: false,
-                        error: '유효하지 않은 전화번호 형식'
+                        error: '유효하지 않은 전화번호 형식: ' + phoneNumber
                     };
                 }
                 
@@ -4887,10 +4916,15 @@ https://phoenixai-agent.site/reservation.html
 
 - 피닉스치과 -`;
             
+            // 다양한 필드명 지원
+            const name = customer.예약자명 || customer.name || customer.Name || customer.NAME || customer['예약자명'] || customer['Name'] || '고객';
+            const age = customer.나이 || customer.age || customer.Age || customer.AGE || customer['나이'] || customer['Age'] || '';
+            const checkupYear = customer.구강검진대상연도 || customer.checkupYear || customer.CheckupYear || customer['구강검진대상연도'] || customer['Checkup Year'] || new Date().getFullYear();
+            
             return template
-                .replace(/#{이름}/g, customer.예약자명 || '고객')
-                .replace(/#{나이}/g, customer.나이 || '')
-                .replace(/#{검진연도}/g, customer.구강검진대상연도 || new Date().getFullYear());
+                .replace(/#{이름}/g, name)
+                .replace(/#{나이}/g, age)
+                .replace(/#{검진연도}/g, checkupYear);
         }
 
         // 엑셀 파일 파싱 (CSV 형식)
