@@ -1847,15 +1847,15 @@
                 <div class="tab-content active" id="smsTab">
                     <div class="file-upload-section">
                         <div class="file-upload-icon">📁</div>
-                        <div class="file-upload-text">SMS 발송용 엑셀 파일 업로드</div>
+                        <div class="file-upload-text">SMS 발송용 CSV 파일 업로드</div>
                         <div class="file-upload-desc">
-                            발송할 내용이 포함된 엑셀 파일을 업로드하세요<br>
-                            <small>지원 형식: .xlsx, .xls</small>
+                            발송할 내용이 포함된 CSV 파일을 업로드하세요<br>
+                            <small>지원 형식: .csv (Excel 파일은 CSV로 변환 후 업로드)</small>
                         </div>
                         <button class="file-upload-btn" onclick="document.getElementById('smsFileInput').click()">
                             📁 파일 선택
                         </button>
-                        <input type="file" id="smsFileInput" class="file-upload-input" accept=".xlsx,.xls" onchange="uploadSmsFile(event)">
+                        <input type="file" id="smsFileInput" class="file-upload-input" accept=".csv" onchange="uploadSmsFile(event)">
                         <div class="file-selected" id="smsFileName" style="display: none;">선택된 파일 없음</div>
                     </div>
                     
@@ -4957,13 +4957,30 @@ https://phoenixai-agent.site/reservation.html
                 .replace(/#{검진연도}/g, checkupYear);
         }
 
-        // 엑셀 파일 파싱 (CSV 형식)
+        // 엑셀 파일 파싱 (Excel 및 CSV 형식 지원)
         async function parseExcelFile(file) {
             return new Promise((resolve, reject) => {
+                // 파일 확장자 확인
+                const fileName = file.name.toLowerCase();
+                const isExcel = fileName.endsWith('.xlsx') || fileName.endsWith('.xls');
+                
+                if (isExcel) {
+                    // Excel 파일인 경우 CSV로 변환 안내
+                    reject(new Error('Excel 파일(.xlsx/.xls)은 지원하지 않습니다. CSV 형식으로 저장 후 다시 업로드해주세요.\n\n변환 방법:\n1. Excel에서 파일 열기\n2. "다른 이름으로 저장" 선택\n3. 파일 형식을 "CSV UTF-8 (쉼표로 분리)" 선택\n4. 저장 후 업로드'));
+                    return;
+                }
+                
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     try {
                         const csvData = e.target.result;
+                        
+                        // 파일 내용이 Excel 형식인지 확인
+                        if (csvData.includes('PK') && csvData.includes('[Content_Types].xml')) {
+                            reject(new Error('Excel 파일이 감지되었습니다. CSV 형식으로 변환 후 다시 업로드해주세요.\n\n변환 방법:\n1. Excel에서 파일 열기\n2. "다른 이름으로 저장" 선택\n3. 파일 형식을 "CSV UTF-8 (쉼표로 분리)" 선택\n4. 저장 후 업로드'));
+                            return;
+                        }
+                        
                         const lines = csvData.split('\n');
                         
                         // 더 정확한 CSV 파싱 (쉼표가 포함된 필드 처리)
@@ -4990,7 +5007,7 @@ https://phoenixai-agent.site/reservation.html
                         const headers = parseCSVLine(lines[0]);
                         
                         // 디버깅: 헤더 정보 로그
-                        console.log('📋 엑셀 파일 헤더:', headers);
+                        console.log('📋 CSV 파일 헤더:', headers);
                         
                         const data = [];
                         for (let i = 1; i < lines.length; i++) {
@@ -5011,7 +5028,7 @@ https://phoenixai-agent.site/reservation.html
                         
                         resolve(data);
                     } catch (error) {
-                        reject(new Error('엑셀 파일 파싱 실패: ' + error.message));
+                        reject(new Error('CSV 파일 파싱 실패: ' + error.message));
                     }
                 };
                 reader.onerror = () => reject(new Error('파일 읽기 실패'));
