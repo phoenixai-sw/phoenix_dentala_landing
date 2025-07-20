@@ -1818,9 +1818,105 @@
 
 
 
+    <!-- 예약 페이지 -->
+    <div class="popup-page" id="reservationPage">
+        <div class="popup-header">
+            <h2>📅 예약 정보를 입력하세요</h2>
+            <button class="close-btn" onclick="closeReservation()">✕</button>
+        </div>
+        <div class="popup-content">
+            <div class="reservation-container">
+                <!-- 캘린더 섹션 -->
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <button class="calendar-nav" onclick="previousMonth()">◀</button>
+                        <div class="calendar-title" id="calendarTitle">2025년 7월</div>
+                        <button class="calendar-nav" onclick="nextMonth()">▶</button>
+                    </div>
+                    <div class="calendar-grid">
+                        <!-- 요일 헤더 -->
+                        <div class="calendar-day-header">일</div>
+                        <div class="calendar-day-header">월</div>
+                        <div class="calendar-day-header">화</div>
+                        <div class="calendar-day-header">수</div>
+                        <div class="calendar-day-header">목</div>
+                        <div class="calendar-day-header">금</div>
+                        <div class="calendar-day-header">토</div>
+                        <!-- 날짜들은 JavaScript로 생성 -->
+                    </div>
+                </div>
 
+                <!-- 시간 선택 섹션 -->
+                <div class="time-section" id="timeSection">
+                    <div class="time-header">시간을 선택하세요</div>
+                    <div class="time-grid">
+                        <div class="time-slot" onclick="selectTime(this, '09:00')">09:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '09:30')">09:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '10:00')">10:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '10:30')">10:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '11:00')">11:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '11:30')">11:30</div>
+                        <div class="time-slot disabled">12:00</div>
+                        <div class="time-slot disabled">12:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '13:30')">13:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '14:00')">14:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '14:30')">14:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '15:00')">15:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '15:30')">15:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '16:00')">16:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '16:30')">16:30</div>
+                        <div class="time-slot" onclick="selectTime(this, '17:00')">17:00</div>
+                        <div class="time-slot" onclick="selectTime(this, '17:30')">17:30</div>
+                    </div>
+                </div>
 
+                <!-- 예약자 정보 입력 -->
+                <div class="info-form-section" id="infoFormSection">
+                    <div class="form-header">예약자 정보를 입력하세요</div>
+                    <form id="reservationForm" onsubmit="event.preventDefault(); submitReservation();">
+                        <div class="form-group">
+                            <label class="form-label">이름 <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="userName" placeholder="이름을 입력하세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">생년월일 <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="birthDate" placeholder="예: 850101" maxlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">전화번호 <span class="required">*</span></label>
+                            <input type="tel" class="form-input" id="phoneNumber" placeholder="예: 010-1234-5678" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">상담 내용</label>
+                            <textarea class="form-input" id="consultContent" placeholder="상담 내용을 입력해주세요" rows="3" style="resize:vertical;"></textarea>
+                        </div>
+                        <button class="reservation-submit" type="submit">예약하기</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- 예약 확인 팝업 -->
+    <div class="confirmation-popup" id="confirmationPopup">
+        <div class="confirmation-content">
+            <div class="confirmation-icon">✅</div>
+            <div class="confirmation-title">예약이 완료되었습니다!</div>
+            <div class="confirmation-message">
+                고객님의 예약이 성공적으로 접수되었습니다.<br>
+                아래 예약 정보를 확인해주세요.
+            </div>
+            <div class="confirmation-details" id="confirmationDetails">
+                <!-- 예약 상세 정보가 여기에 표시됩니다 -->
+            </div>
+            <div class="confirmation-note">
+                피닉스치과 연락처 070-1234-1234<br>
+                예약 확인 및 연락을 드리겠습니다!<br>
+                그 밖의 궁금한 점이 있으시면 AI챗봇을 이용해주세요!
+            </div>
+            <button class="confirmation-button" onclick="closeConfirmation()">확인</button>
+        </div>
+    </div>
 
     <!-- 메시지 발송 팝업 -->
     <div class="message-sending-popup" id="messageSendingPopup">
@@ -3399,7 +3495,219 @@ https://phoenixai-agent.site/reservation.html
                 
                 statusDiv.innerHTML = `<div style="color: ${textColor}; padding: 10px; background: ${bgColor}; border-radius: 5px; margin-top: 10px;">${message}</div>`;
             }
+        }
 
+        // 예약 관련 전역 변수
+        let currentYear = 2025;
+        let currentMonth = 6; // 7월 (0부터 시작)
+        let selectedDate = null;
+        let selectedTime = null;
+        let reservations = [];
+
+        // 예약 페이지
+        function openReservation() {
+            console.log('예약 페이지 열기');
+            document.getElementById('reservationPage').style.display = 'block';
+            renderCalendar();
+        }
+
+        function closeReservation() {
+            console.log('예약 페이지 닫기');
+            document.getElementById('reservationPage').style.display = 'none';
+            resetReservationForm();
+        }
+
+        // 예약 폼 초기화
+        function resetReservationForm() {
+            selectedDate = null;
+            selectedTime = null;
+            document.getElementById('userName').value = '';
+            document.getElementById('birthDate').value = '';
+            document.getElementById('phoneNumber').value = '';
+            document.getElementById('consultContent').value = '';
+            document.querySelectorAll('.calendar-day.selected').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.time-slot.selected').forEach(el => el.classList.remove('selected'));
+        }
+
+        // 캘린더 렌더링
+        function renderCalendar() {
+            const calendarGrid = document.querySelector('.calendar-grid');
+            const calendarTitle = document.getElementById('calendarTitle');
+            
+            // 요일 헤더 유지하고 날짜만 제거
+            const dayHeaders = calendarGrid.querySelectorAll('.calendar-day-header');
+            calendarGrid.innerHTML = '';
+            dayHeaders.forEach(header => calendarGrid.appendChild(header));
+            
+            // 현재 날짜
+            const today = new Date();
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const firstDayOfWeek = firstDay.getDay();
+            
+            // 캘린더 제목 업데이트
+            calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월`;
+            
+            // 빈 칸 채우기
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'calendar-day disabled';
+                calendarGrid.appendChild(emptyDiv);
+            }
+            
+            // 날짜 채우기
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                dayDiv.textContent = day;
+                
+                const date = new Date(currentYear, currentMonth, day);
+                const dayOfWeek = date.getDay();
+                
+                // 요일에 따른 색상
+                if (dayOfWeek === 0) dayDiv.classList.add('sunday');
+                if (dayOfWeek === 6) dayDiv.classList.add('saturday');
+                
+                // 과거 날짜, 일요일 비활성화
+                if (date < today || dayOfWeek === 0) {
+                    dayDiv.classList.add('disabled');
+                } else {
+                    dayDiv.onclick = () => selectDate(day);
+                }
+                
+                calendarGrid.appendChild(dayDiv);
+            }
+        }
+
+        // 날짜 선택
+        function selectDate(day) {
+            // 이전 선택 제거
+            document.querySelectorAll('.calendar-day.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // 새로운 선택
+            event.target.classList.add('selected');
+            selectedDate = new Date(currentYear, currentMonth, day);
+            
+            // 시간 선택 섹션 표시
+            document.getElementById('timeSection').style.display = 'block';
+            
+            // 토요일인 경우 오후 시간 비활성화
+            updateTimeSlots();
+        }
+
+        // 시간대 업데이트
+        function updateTimeSlots() {
+            const timeSlots = document.querySelectorAll('.time-slot');
+            const isSaturday = selectedDate.getDay() === 6;
+            
+            timeSlots.forEach(slot => {
+                const time = slot.textContent;
+                const hour = parseInt(time.split(':')[0]);
+                
+                // 토요일 15시 이후 비활성화
+                if (isSaturday && hour >= 15) {
+                    slot.classList.add('disabled');
+                    slot.onclick = null;
+                } else if (!time.includes('12:')) { // 점심시간이 아닌 경우
+                    slot.classList.remove('disabled');
+                    slot.onclick = function() { selectTime(this, time); };
+                }
+            });
+        }
+
+        // 시간 선택
+        function selectTime(element, time) {
+            document.querySelectorAll('.time-slot.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedTime = time;
+        }
+
+        // 이전/다음 달
+        function previousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        }
+
+        // 예약 제출
+        function submitReservation() {
+            if (!selectedDate || !selectedTime) {
+                alert('날짜와 시간을 선택해주세요.');
+                return;
+            }
+
+            const userName = document.getElementById('userName').value.trim();
+            const birthDate = document.getElementById('birthDate').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const consultContent = document.getElementById('consultContent').value.trim();
+
+            if (!userName || !birthDate || !phoneNumber) {
+                alert('모든 필수 정보를 입력해주세요.');
+                return;
+            }
+
+            if (birthDate.length !== 6 || isNaN(birthDate)) {
+                alert('생년월일은 6자리 숫자로 입력해주세요. (예: 850101)');
+                return;
+            }
+
+            const phoneRegex = /^010-\d{4}-\d{4}$/;
+            if (!phoneRegex.test(phoneNumber)) {
+                alert('전화번호는 010-0000-0000 형식으로 입력해주세요.');
+                return;
+            }
+
+            const reservation = {
+                id: reservations.length + 1,
+                name: userName,
+                birthDate: birthDate,
+                phone: phoneNumber,
+                date: selectedDate,
+                time: selectedTime,
+                consult: consultContent,
+                createdAt: new Date()
+            };
+
+            reservations.push(reservation);
+            showConfirmation(reservation);
+        }
+
+        // 예약 확인 팝업 표시
+        function showConfirmation(reservation) {
+            const details = document.getElementById('confirmationDetails');
+            const dateStr = `${reservation.date.getFullYear()}. ${reservation.date.getMonth() + 1}. ${reservation.date.getDate()}.`;
+            details.innerHTML = `
+                <p><strong>예약자:</strong> ${reservation.name}</p>
+                <p><strong>생년월일:</strong> ${reservation.birthDate}</p>
+                <p><strong>전화번호:</strong> ${reservation.phone}</p>
+                <p><strong>예약 날짜:</strong> ${dateStr}</p>
+                <p><strong>예약 시간:</strong> ${reservation.time}</p>
+                <p><strong>상담 내용:</strong> ${reservation.consult ? reservation.consult.replace(/\n/g, '<br>') : ''}</p>
+            `;
+            document.getElementById('confirmationPopup').style.display = 'flex';
+            closeReservation();
+        }
+
+        // 예약 확인 팝업 닫기
+        function closeConfirmation() {
+            document.getElementById('confirmationPopup').style.display = 'none';
+        }
 
         // 서비스 상세 페이지
         function showServiceDetail(serviceType) {
@@ -5721,6 +6029,16 @@ https://phoenixai-agent.site/reservation.html
             // 3차: 기본 FAQ 응답 (API 설정이 없는 경우)
             return Promise.resolve(getDefaultResponse(userMessage));
         }
+        function toggleFinetuningInput(provider) {
+            const selectElement = document.getElementById(`${provider}Model`);
+            const finetuningGroup = document.getElementById(`${provider}FinetuningGroup`);
+            
+            if (selectElement.value === 'finetuning') {
+                finetuningGroup.style.display = 'block';
+            } else {
+                finetuningGroup.style.display = 'none';
+            }
+        }
 
         // 파일 업로드 관련 함수들
         function handleFileUpload(event) {
@@ -6172,7 +6490,118 @@ https://phoenixai-agent.site/reservation.html
             }
         }
 
-
+        function parseFileContent(fileData) {
+            console.log('파일 내용 파싱:', fileData.name);
+            
+            const content = fileData.content;
+            const lines = content.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            
+            const parsedQA = [];
+            
+            // 다양한 Q&A 패턴 인식
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                let question = '';
+                let answer = '';
+                
+                // 패턴 1: Q: ... A: ... 형태
+                const qaPattern1 = /^([QqㅂquentionQ문질문][\:\.\s]*)\s*(.+)$/;
+                const qaPattern2 = /^([AaAnsw답변답A응답][\:\.\s]*)\s*(.+)$/;
+                
+                if (qaPattern1.test(line)) {
+                    question = line.replace(qaPattern1, '$2').trim();
+                    // 다음 줄에서 답변 찾기
+                    for (let j = i + 1; j < lines.length; j++) {
+                        const nextLine = lines[j];
+                        if (qaPattern2.test(nextLine)) {
+                            answer = nextLine.replace(qaPattern2, '$2').trim();
+                            i = j; // 인덱스 업데이트
+                            break;
+                        } else if (qaPattern1.test(nextLine)) {
+                            // 다음 질문이 나오면 중단
+                            break;
+                        } else if (!qaPattern1.test(nextLine) && !qaPattern2.test(nextLine)) {
+                            // 일반 텍스트면 답변으로 간주
+                            answer = nextLine;
+                            i = j;
+                            break;
+                        }
+                    }
+                }
+                
+                // 패턴 2: 숫자. 질문 형태 (1. 진료시간이 어떻게 되나요?)
+                const numberedPattern = /^(\d+[\.\)]\s*)(.+[\?？])\s*$/;
+                if (numberedPattern.test(line)) {
+                    question = line.replace(numberedPattern, '$2').trim();
+                    // 다음 줄을 답변으로 간주
+                    if (i + 1 < lines.length && !numberedPattern.test(lines[i + 1])) {
+                        answer = lines[i + 1];
+                        i++; // 다음 줄 스킵
+                    }
+                }
+                
+                // 패턴 3: - 질문 형태
+                const dashPattern = /^[\-\•\*]\s*(.+[\?？])\s*$/;
+                if (dashPattern.test(line)) {
+                    question = line.replace(dashPattern, '$1').trim();
+                    if (i + 1 < lines.length && !dashPattern.test(lines[i + 1])) {
+                        answer = lines[i + 1];
+                        i++;
+                    }
+                }
+                
+                // 패턴 4: 질문 키워드가 포함된 라인
+                const questionKeywords = ['어떻게', '언제', '어디서', '왜', '무엇', '누가', '얼마', '몇시', '어떤', '?', '？'];
+                if (questionKeywords.some(keyword => line.includes(keyword)) && line.length > 5) {
+                    question = line;
+                    // 다음 몇 줄을 합쳐서 답변으로 사용
+                    let answerLines = [];
+                    for (let j = i + 1; j < Math.min(i + 4, lines.length); j++) {
+                        const nextLine = lines[j];
+                        // 다음 질문이 나오면 중단
+                        if (questionKeywords.some(keyword => nextLine.includes(keyword)) && nextLine.includes('?')) {
+                            break;
+                        }
+                        answerLines.push(nextLine);
+                        if (answerLines.join(' ').length > 100) break; // 너무 길면 중단
+                    }
+                    if (answerLines.length > 0) {
+                        answer = answerLines.join(' ');
+                        i += answerLines.length;
+                    }
+                }
+                
+                // 패턴 5: 제목: 내용 형태
+                const colonPattern = /^([^:：]+)[:：]\s*(.+)$/;
+                if (colonPattern.test(line) && line.length > 10) {
+                    const matches = line.match(colonPattern);
+                    question = matches[1].trim();
+                    answer = matches[2].trim();
+                }
+                
+                // 유효한 Q&A 쌍이면 추가
+                if (question && answer && question.length > 3 && answer.length > 3) {
+                    parsedQA.push({
+                        question: question,
+                        answer: answer,
+                        source: fileData.name,
+                        lineNumber: i + 1
+                    });
+                }
+            }
+            
+            // 기존 데이터에 추가
+            knowledgeBase.parsedData = knowledgeBase.parsedData.concat(parsedQA);
+            knowledgeBase.enabled = knowledgeBase.parsedData.length > 0;
+            
+            console.log(`${fileData.name}에서 파싱된 Q&A:`, parsedQA.length, '개');
+            console.log('전체 Q&A 데이터:', knowledgeBase.parsedData.length, '개');
+            
+            // 파싱 결과 미리보기 (디버깅용)
+            if (parsedQA.length > 0) {
+                console.log('파싱 결과 샘플:', parsedQA.slice(0, 3));
+            }
+        }
 
         function updateFileList() {
             const fileListContainer = document.getElementById('fileList');
@@ -6248,7 +6677,7 @@ https://phoenixai-agent.site/reservation.html
             // 파싱된 데이터도 재생성
             knowledgeBase.parsedData = [];
             knowledgeBase.files.forEach(file => {
-                parseFileContentImproved(file);
+                parseFileContent(file);
             });
             
             updateFileList();
@@ -6458,8 +6887,6 @@ https://phoenixai-agent.site/reservation.html
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM 로드 완료 - 예약 페이지 초기화');
             
-
-            
             // 전화번호 자동 포맷팅
             setTimeout(() => {
                 const phoneInput = document.getElementById('phoneNumber');
@@ -6480,7 +6907,7 @@ https://phoenixai-agent.site/reservation.html
             // 해시/파라미터로 바로 메뉴 열기
             const hash = window.location.hash;
             if (hash === '#reservation') {
-                window.location.href = 'reservation.html';
+                openReservation();
             }
         });
 
@@ -6542,10 +6969,10 @@ https://phoenixai-agent.site/reservation.html
                     // 직접 Supabase 연결 (Netlify Functions 실패 시 대안)
                     // 보안상 프론트엔드에서 키 제거 - Netlify Functions만 사용
                     console.log('Netlify Functions 실패로 인해 직접 로그인 불가능');
+                    throw new Error('Netlify Functions 연결 실패 - 관리자에게 문의하세요');
                     
                     // Netlify Functions 실패 시 로그인 불가능
                     statusDiv.innerHTML = '<span style="color: red;">❌ 서버 연결 실패 - 잠시 후 다시 시도해주세요</span>';
-                    throw new Error('Netlify Functions 연결 실패 - 관리자에게 문의하세요');
                 }
                 
             } catch (error) {
