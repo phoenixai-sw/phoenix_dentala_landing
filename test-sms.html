@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS 발송 시스템 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 SMS 발송 시스템 테스트</h1>
+        <p>Step 4-C 완성 후 실제 SMS 발송 시스템을 테스트합니다.</p>
+        
+        <div class="test-section">
+            <h3>🔐 1단계: 관리자 로그인</h3>
+            <div class="form-group">
+                <label>관리자 이메일:</label>
+                <input type="email" id="adminEmail" placeholder="관리자 이메일을 입력하세요">
+            </div>
+            <div class="form-group">
+                <label>관리자 비밀번호:</label>
+                <input type="password" id="adminPassword" placeholder="관리자 비밀번호를 입력하세요">
+            </div>
+            <button onclick="loginAdmin()">관리자 로그인</button>
+            <div id="loginStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📱 2단계: SMS 발송 테스트</h3>
+            <div class="form-group">
+                <label>수신자 전화번호:</label>
+                <input type="tel" id="testPhone" placeholder="010-1234-5678" value="010-1234-5678">
+            </div>
+            <div class="form-group">
+                <label>테스트 메시지:</label>
+                <textarea id="testMessage" placeholder="테스트 메시지를 입력하세요">[피닉스치과] SMS 발송 시스템 테스트입니다. 🦷</textarea>
+            </div>
+            <button onclick="testSMS()" id="testSMSBtn" disabled>실제 SMS 발송 테스트</button>
+            <div id="smsTestStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔧 3단계: 시스템 상태 확인</h3>
+            <button onclick="checkSystemStatus()">시스템 상태 확인</button>
+            <div id="systemStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 4단계: 로그 확인</h3>
+            <button onclick="clearLogs()">로그 지우기</button>
+            <div id="logs"></div>
+        </div>
+    </div>
+
+    <script>
+        let isLoggedIn = false;
+        let adminToken = '';
+        
+        // 관리자 로그인
+        async function loginAdmin() {
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const statusDiv = document.getElementById('loginStatus');
+            
+            if (!email || !password) {
+                statusDiv.innerHTML = '<div class="status error">이메일과 비밀번호를 입력해주세요.</div>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<div class="status info">관리자 로그인 중...</div>';
+            
+            try {
+                // Netlify Functions를 통한 관리자 로그인
+                const response = await fetch('/.netlify/functions/admin-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.token) {
+                    // 로그인 성공 - 토큰을 sessionStorage에 저장
+                    sessionStorage.setItem('adminToken', data.token);
+                    sessionStorage.setItem('adminEmail', email);
+                    
+                    adminToken = data.token;
+                    isLoggedIn = true;
+                    
+                    document.getElementById('testSMSBtn').disabled = false;
+                    statusDiv.innerHTML = '<div class="status success">✅ 관리자 로그인 성공! SMS 발송 테스트가 가능합니다.</div>';
+                    
+                    addLog('관리자 로그인 성공: ' + email);
+                    
+                } else {
+                    throw new Error(data.error || '로그인 실패');
+                }
+                
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ 관리자 로그인 실패: ' + error.message + '</div>';
+                addLog('관리자 로그인 실패: ' + error.message);
+            }
+        }
+        
+        // SMS 발송 테스트
+        async function testSMS() {
+            if (!isLoggedIn) {
+                alert('먼저 관리자 로그인을 해주세요.');
+                return;
+            }
+            
+            const phone = document.getElementById('testPhone').value;
+            const message = document.getElementById('testMessage').value;
+            const statusDiv = document.getElementById('smsTestStatus');
+            
+            if (!phone || !message) {
+                statusDiv.innerHTML = '<div class="status error">전화번호와 메시지를 모두 입력해주세요.</div>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<div class="status info">📱 실제 SMS 발송 중...</div>';
+            addLog('SMS 발송 시도: ' + phone);
+            
+            try {
+                // 실제 SMS 발송 함수 호출 (index.html의 함수 사용)
+                const result = await sendSingleSMS(phone, message);
+                
+                if (result.success) {
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ SMS 발송 성공!<br>
+                            Message ID: ${result.messageId}<br>
+                            Status Code: ${result.statusCode}
+                        </div>
+                    `;
+                    addLog('SMS 발송 성공: ' + result.messageId);
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ SMS 발송 실패<br>
+                            오류: ${result.error}<br>
+                            Status Code: ${result.statusCode}
+                        </div>
+                    `;
+                    addLog('SMS 발송 실패: ' + result.error);
+                }
+                
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ SMS 발송 시스템 오류: ' + error.message + '</div>';
+                addLog('SMS 발송 시스템 오류: ' + error.message);
+            }
+        }
+        
+        // 시스템 상태 확인
+        async function checkSystemStatus() {
+            const statusDiv = document.getElementById('systemStatus');
+            statusDiv.innerHTML = '<div class="status info">시스템 상태 확인 중...</div>';
+            
+            try {
+                // 환경변수 확인
+                const envResponse = await fetch('/.netlify/functions/test');
+                const envData = await envResponse.json();
+                
+                // SMS 함수 테스트
+                const smsResponse = await fetch('/.netlify/functions/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer test-token'
+                    },
+                    body: JSON.stringify({
+                        phone: '010-1234-5678',
+                        message: '시스템 테스트'
+                    })
+                });
+                
+                let html = '<h4>🔧 시스템 상태</h4>';
+                
+                // 환경변수 상태
+                html += '<h5>환경변수:</h5>';
+                html += '<ul>';
+                html += `<li>MESSAGING_API_KEY: ${envData.environment.hasMessagingApiKey ? '✅ 설정됨' : '❌ 설정안됨'}</li>`;
+                html += `<li>MESSAGING_SECRET_KEY: ${envData.environment.hasMessagingSecretKey ? '✅ 설정됨' : '❌ 설정안됨'}</li>`;
+                html += `<li>ADMIN_PASSWORD: ${envData.environment.hasAdminPassword ? '✅ 설정됨' : '❌ 설정안됨'}</li>`;
+                html += '</ul>';
+                
+                // SMS 함수 상태
+                html += '<h5>SMS 함수:</h5>';
+                html += `<p>응답 상태: ${smsResponse.status}</p>`;
+                
+                if (smsResponse.status === 401) {
+                    html += '<p>✅ SMS 함수 정상 작동 (인증 필요)</p>';
+                } else {
+                    const smsData = await smsResponse.json();
+                    html += '<pre>' + JSON.stringify(smsData, null, 2) + '</pre>';
+                }
+                
+                statusDiv.innerHTML = html;
+                addLog('시스템 상태 확인 완료');
+                
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ 시스템 상태 확인 실패: ' + error.message + '</div>';
+                addLog('시스템 상태 확인 실패: ' + error.message);
+            }
+        }
+        
+        // 로그 추가
+        function addLog(message) {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleString();
+            const logEntry = `[${timestamp}] ${message}`;
+            
+            if (logsDiv.innerHTML === '') {
+                logsDiv.innerHTML = '<pre>' + logEntry + '</pre>';
+            } else {
+                logsDiv.innerHTML += '\n' + logEntry;
+            }
+        }
+        
+        // 로그 지우기
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+        
+        // SMS 발송 함수 (index.html에서 복사)
+        async function sendSingleSMS(phoneNumber, message) {
+            try {
+                console.log('📱 실제 SMS 발송 시도:', {
+                    to: phoneNumber,
+                    message: message.substring(0, 50) + '...',
+                    timestamp: new Date().toLocaleString()
+                });
+                
+                // 전화번호 유효성 검사
+                const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
+                if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+                    return {
+                        success: false,
+                        error: '유효하지 않은 전화번호 형식'
+                    };
+                }
+                
+                // 관리자 인증 토큰 확인
+                const adminToken = localStorage.getItem('adminToken');
+                if (!adminToken) {
+                    return {
+                        success: false,
+                        error: '관리자 인증이 필요합니다. 먼저 관리자 로그인을 해주세요.'
+                    };
+                }
+                
+                // Netlify Functions를 통한 실제 SMS 발송
+                const response = await fetch('/.netlify/functions/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({
+                        phone: cleanPhone,
+                        message: message
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const errorMessage = errorData.error || `HTTP ${response.status}: ${response.statusText}`;
+                    
+                    return {
+                        success: false,
+                        error: errorMessage,
+                        statusCode: response.status.toString()
+                    };
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    return {
+                        success: true,
+                        messageId: result.messageId,
+                        statusCode: '2000'
+                    };
+                } else {
+                    return {
+                        success: false,
+                        error: result.error,
+                        statusCode: result.statusCode || '4000'
+                    };
+                }
+                
+            } catch (error) {
+                return {
+                    success: false,
+                    error: '시스템 오류: ' + error.message
+                };
+            }
+        }
+        
+        // 페이지 로드 시 로그인 상태 확인
+        window.addEventListener('load', function() {
+            const savedToken = sessionStorage.getItem('adminToken');
+            const savedEmail = sessionStorage.getItem('adminEmail');
+            if (savedToken && savedEmail) {
+                adminToken = savedToken;
+                isLoggedIn = true;
+                document.getElementById('testSMSBtn').disabled = false;
+                document.getElementById('loginStatus').innerHTML = '<div class="status success">✅ 이전 로그인 세션이 유지됩니다. (' + savedEmail + ')</div>';
+            }
+            addLog('테스트 페이지 로드 완료');
+        });
+    </script>
+</body>
+</html> 

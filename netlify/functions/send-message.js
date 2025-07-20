@@ -25,13 +25,70 @@ exports.handler = async (event) => {
     };
   }
 
+  // Supabase 클라이언트 생성
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ 
+        success: false,
+        error: 'Supabase 설정이 누락되었습니다',
+        statusCode: '5000'
+      })
+    };
+  }
+
   // 인증 토큰 확인 (Authorization: Bearer ...)
   const auth = event.headers['authorization'] || '';
   if (!auth.startsWith('Bearer ')) {
     return {
       statusCode: 401,
       headers,
-      body: JSON.stringify({ error: 'Unauthorized' })
+      body: JSON.stringify({ 
+        success: false,
+        error: '관리자 인증이 필요합니다',
+        statusCode: '4001'
+      })
+    };
+  }
+
+  const token = auth.replace('Bearer ', '');
+  
+  try {
+    // Supabase 클라이언트 생성
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    
+    // 토큰 유효성 검사
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      return {
+        statusCode: 401,
+        headers,
+        body: JSON.stringify({ 
+          success: false,
+          error: '유효하지 않은 관리자 토큰입니다',
+          statusCode: '4001'
+        })
+      };
+    }
+    
+    console.log('관리자 인증 성공:', user.email);
+    
+  } catch (authError) {
+    console.error('인증 오류:', authError);
+    return {
+      statusCode: 401,
+      headers,
+      body: JSON.stringify({ 
+        success: false,
+        error: '관리자 인증 실패',
+        statusCode: '4001'
+      })
     };
   }
 
@@ -83,16 +140,41 @@ exports.handler = async (event) => {
     });
     
     const data = await response.json();
-    return {
-      statusCode: response.status,
-      headers,
-      body: JSON.stringify(data)
-    };
+    
+    // 솔라피 API 응답 처리
+    if (response.ok && data.statusCode === '2000') {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          messageId: data.messageId,
+          statusCode: data.statusCode,
+          message: 'SMS 발송 성공'
+        })
+      };
+    } else {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: data.errorMessage || 'SMS 발송 실패',
+          statusCode: data.statusCode || '4000',
+          details: data
+        })
+      };
+    }
   } catch (e) {
+    console.error('SMS 발송 오류:', e);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: e.message })
+      body: JSON.stringify({
+        success: false,
+        error: 'SMS 발송 시스템 오류: ' + e.message,
+        statusCode: '5000'
+      })
     };
   }
 };
