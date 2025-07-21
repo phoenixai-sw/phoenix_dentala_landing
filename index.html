@@ -4445,6 +4445,47 @@ https://phoenixai-agent.site/reservation.html
             }
         }
 
+        // CSV 파일 다운로드 함수
+        function downloadCSV(data, filename) {
+            try {
+                // CSV 데이터 생성
+                const csvContent = data.map(row => 
+                    row.map(cell => {
+                        // 셀 내용에 쉼표나 따옴표가 있으면 따옴표로 감싸기
+                        const cellStr = cell ? cell.toString() : '';
+                        if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+                            return `"${cellStr.replace(/"/g, '""')}"`;
+                        }
+                        return cellStr;
+                    }).join(',')
+                ).join('\n');
+                
+                // BOM 추가 (한글 깨짐 방지)
+                const BOM = '\uFEFF';
+                const csvWithBOM = BOM + csvContent;
+                
+                // Blob 생성 및 다운로드
+                const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                
+                if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+                
+                console.log('✅ CSV 파일 다운로드 완료:', filename);
+                
+            } catch (error) {
+                console.error('❌ CSV 파일 생성 오류:', error);
+                alert('CSV 파일 생성 중 오류가 발생했습니다.\n' + error.message);
+            }
+        }
+
         // 엑셀 파일 다운로드 함수 (SheetJS 사용)
         function downloadExcel(data, filename) {
             try {
@@ -4527,7 +4568,7 @@ https://phoenixai-agent.site/reservation.html
             });
             
             const today = new Date().toISOString().split('T')[0];
-            downloadExcel(excelData, `피닉스치과_전체예약명단_${today}.xlsx`);
+            downloadCSV(excelData, `피닉스치과_전체예약명단_${today}.csv`);
             
             alert(`전체 예약 데이터가 다운로드되었습니다.\n총 ${dataWithDentalInfo.length}명의 고객 정보가 포함되어 있습니다.`);
         }
@@ -4576,7 +4617,7 @@ https://phoenixai-agent.site/reservation.html
             });
             
             const today = new Date().toISOString().split('T')[0];
-            downloadExcel(excelData, `피닉스치과_${currentYear}년_구강검진대상자_${today}.xlsx`);
+            downloadCSV(excelData, `피닉스치과_${currentYear}년_구강검진대상자_${today}.csv`);
             
             alert(`${currentYear}년 구강검진 대상자 데이터가 다운로드되었습니다.\n총 ${currentYearCheckupCustomers.length}명의 고객 정보가 포함되어 있습니다.`);
         }
@@ -4856,7 +4897,7 @@ https://phoenixai-agent.site/reservation.html
                 }
                 
                 // Netlify Functions를 통한 실제 SMS 발송
-                const response = await fetch('/.netlify/functions/send-message', {
+                const response = await fetch('/.netlify/functions/send-sms', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

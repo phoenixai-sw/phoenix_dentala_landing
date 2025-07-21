@@ -237,7 +237,7 @@
                 const envData = await envResponse.json();
                 
                 // SMS 함수 테스트
-                const smsResponse = await fetch('/.netlify/functions/send-message', {
+                const smsResponse = await fetch('/.netlify/functions/send-sms', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -325,7 +325,7 @@
                 }
                 
                 // Netlify Functions를 통한 실제 SMS 발송
-                const response = await fetch('/.netlify/functions/send-message', {
+                const response = await fetch('/.netlify/functions/send-sms', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

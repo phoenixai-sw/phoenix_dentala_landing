@@ -25,32 +25,25 @@ exports.handler = async (event) => {
     };
   }
 
-  // 완전한 테스트 모드: 인증 완전 우회 (SMS 발송 테스트용)
-  console.log('🔧 SMS 발송 테스트 모드 활성화');
-  console.log('📱 실제 SMS 발송을 진행합니다...');
-  
-  // 간단한 토큰 확인 (실제 인증 없이)
-  const auth = event.headers['authorization'] || '';
-  if (!auth.startsWith('Bearer ')) {
-    return {
-      statusCode: 401,
-      headers,
-      body: JSON.stringify({ 
-        success: false,
-        error: '인증 헤더가 필요합니다',
-        statusCode: '4001'
-      })
-    };
-  }
+  console.log('🔧 SMS 발송 함수 시작');
+  console.log('📱 순수 SMS 발송 모드 (인증 없음)');
 
+  // 요청 데이터 파싱
   const { phone, message } = JSON.parse(event.body || '{}');
   if (!phone || !message) {
     return {
       statusCode: 400,
       headers,
-      body: JSON.stringify({ error: 'Missing phone or message' })
+      body: JSON.stringify({ 
+        success: false,
+        error: '전화번호와 메시지가 필요합니다',
+        statusCode: '4000'
+      })
     };
   }
+
+  console.log('📞 발송 대상:', phone);
+  console.log('💬 메시지:', message);
 
   // 솔라피 API 호출
   try {
@@ -100,6 +93,8 @@ exports.handler = async (event) => {
       }
     };
     
+    console.log('📤 API 요청 데이터:', JSON.stringify(requestData, null, 2));
+    
     // 솔라피 API 호출
     const response = await fetch('https://api.solapi.com/messages/v4/send', {
       method: 'POST',
@@ -111,9 +106,11 @@ exports.handler = async (event) => {
     });
     
     const data = await response.json();
+    console.log('📥 API 응답:', JSON.stringify(data, null, 2));
     
     // 솔라피 API 응답 처리
     if (response.ok && data.statusCode === '2000') {
+      console.log('✅ SMS 발송 성공:', data.messageId);
       return {
         statusCode: 200,
         headers,
@@ -125,6 +122,7 @@ exports.handler = async (event) => {
         })
       };
     } else {
+      console.error('❌ SMS 발송 실패:', data);
       return {
         statusCode: 400,
         headers,
@@ -137,7 +135,7 @@ exports.handler = async (event) => {
       };
     }
   } catch (e) {
-    console.error('SMS 발송 오류:', e);
+    console.error('❌ SMS 발송 시스템 오류:', e);
     return {
       statusCode: 500,
       headers,
@@ -148,4 +146,4 @@ exports.handler = async (event) => {
       })
     };
   }
-};
+}; 
